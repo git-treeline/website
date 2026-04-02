@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-surface text-gray-300 font-sans antialiased;
+  }
+
+  h1, h2, h3 {
+    @apply font-mono text-white;
+  }
+}
+
+@layer components {
+  .terminal {
+    @apply bg-surface-raised border border-surface-border rounded-lg font-mono text-sm leading-relaxed overflow-x-auto;
+  }
+
+  .terminal-header {
+    @apply flex items-center gap-2 px-4 py-3 border-b border-surface-border;
+  }
+
+  .terminal-dot {
+    @apply w-3 h-3 rounded-full;
+  }
+
+  .terminal-body {
+    @apply p-5;
+  }
+
+  .terminal .prompt {
+    @apply text-accent-light;
+  }
+
+  .terminal .command {
+    @apply text-white;
+  }
+
+  .terminal .output {
+    @apply text-muted;
+  }
+
+  .terminal .highlight {
+    @apply text-accent;
+  }
+
+  .install-cmd {
+    @apply bg-surface-raised border border-surface-border rounded-lg px-5 py-3 font-mono text-sm flex items-center justify-between gap-4;
+  }
+
+  .section-heading {
+    @apply text-3xl md:text-4xl font-mono font-bold text-white mb-4;
+  }
+
+  .section-subtext {
+    @apply text-lg text-muted max-w-2xl;
+  }
+}
