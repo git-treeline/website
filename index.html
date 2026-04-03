@@ -33,7 +33,7 @@
     "description": "Worktree environment manager. Allocates ports, clones PostgreSQL and SQLite databases, assigns Redis namespaces, writes env files, and runs setup commands per git worktree. Create worktrees, review GitHub PRs, and manage the full dev environment lifecycle from one CLI.",
     "url": "https://git-treeline.dev",
     "downloadUrl": "https://github.com/git-treeline/git-treeline/releases",
-    "softwareVersion": "0.16.0",
+    "softwareVersion": "0.18.0",
     "license": "https://opensource.org/licenses/MIT",
     "author": {
       "@type": "Organization",
@@ -61,7 +61,10 @@
       "Live status monitoring with health checks",
       "Database management: reset, restore from pg_dump, clone from alternate source",
       "Batch release and prune for merged branches",
-      "Smart init with framework auto-detection",
+      "Smart init with framework auto-detection (Rails, Next.js, Vite, Express, Python, Rust, Go)",
+      "Post-init diagnostics with framework-specific port wiring and dotenv guidance",
+      "Supervisor injects allocated env vars directly into the child process",
+      "Auto-migration of legacy config keys (setup_commands → commands.setup, start_command → commands.start)",
       "Agent context file generation for Cursor and Claude",
       "Zero runtime dependency — CLI-only, nothing in your bundle or deploy",
       "Opt-in per developer with no lock-in"
@@ -231,7 +234,7 @@
     <div class="max-w-5xl mx-auto">
       <h2 class="section-heading text-center mb-4">Human-visible, agent-controllable</h2>
       <p class="section-subtext text-center mx-auto mb-12">
-        <code class="text-accent-light">gtl start</code> runs your dev server under a supervisor. Agents can stop and restart it remotely while you watch the logs in your own terminal. No hidden processes, no detached sessions.
+        <code class="text-accent-light">gtl start</code> runs your dev server under a supervisor with allocated env vars injected directly into the process &mdash; no <code class="text-accent-light">.env</code> file reading required. Agents can stop and restart it remotely while you watch the logs in your own terminal. No hidden processes, no detached sessions.
       </p>
       <div class="grid md:grid-cols-2 gap-6">
         <div class="terminal">
@@ -363,7 +366,7 @@
           <div class="install-cmd justify-center">
             <code class="text-accent-light text-xs">gtl init</code>
           </div>
-          <p class="text-xs text-muted mt-3">Auto-detects your framework and creates <code class="text-accent-light">.treeline.yml</code></p>
+          <p class="text-xs text-muted mt-3">Auto-detects your framework, creates <code class="text-accent-light">.treeline.yml</code>, prints setup guidance</p>
         </div>
         <div class="text-center">
           <div class="text-accent text-3xl font-mono font-bold mb-4">3</div>

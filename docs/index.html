@@ -108,7 +108,7 @@
         </div>
       </div>
       <p class="text-muted mb-8">
-        <code class="text-accent-light">gtl init</code> auto-detects your framework and generates a <code class="text-accent-light">.treeline.yml</code> config tailored to your stack. Pass <code class="text-accent-light">--skip-agent-config</code> to skip generating AI agent context files.
+        <code class="text-accent-light">gtl init</code> auto-detects your framework (Rails, Next.js, Vite, Express, Python, Rust, Go) and generates a tailored <code class="text-accent-light">.treeline.yml</code>. After generating the config, it prints actionable diagnostics &mdash; for example, Vite projects get <code class="text-accent-light">vite.config.js</code> port wiring guidance, Node projects without <code class="text-accent-light">dotenv</code> get a warning. Pass <code class="text-accent-light">--skip-agent-config</code> to skip AI agent context files.
       </p>
 
       <h3 class="text-xl font-mono text-white mb-4">Create your first worktree</h3>
@@ -219,14 +219,14 @@
               <td class="px-5 py-3 text-muted">Key-value pairs written to the env file. Supports interpolation tokens.</td>
             </tr>
             <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">setup_commands</td>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">commands.setup</td>
               <td class="px-5 py-3 text-muted">list</td>
               <td class="px-5 py-3 text-muted">Commands to run after env file is written. Allocated values like <code class="text-accent-light">$PORT</code> are available. See <a href="#setup-commands" class="text-accent-light hover:text-accent underline underline-offset-2">setup commands</a>.</td>
             </tr>
             <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">start_command</td>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">commands.start</td>
               <td class="px-5 py-3 text-muted">string</td>
-              <td class="px-5 py-3 text-muted">Command to boot the app. Used by <code class="text-accent-light">--start</code> flag on <code class="text-accent-light">new</code> and <code class="text-accent-light">review</code>.</td>
+              <td class="px-5 py-3 text-muted">Command to boot the app. Used by <code class="text-accent-light">gtl start</code> and the <code class="text-accent-light">--start</code> flag on <code class="text-accent-light">new</code> and <code class="text-accent-light">review</code>.</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">editor.vscode_title</td>
@@ -393,7 +393,7 @@
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">start</td>
               <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Run <code class="text-accent-light">start_command</code> under a Unix socket supervisor. If the supervisor is already running, resumes the server process.</td>
+              <td class="px-5 py-3 text-muted">Run <code class="text-accent-light">commands.start</code> under a Unix socket supervisor. Injects allocated env vars into the child process. If the supervisor is already running, resumes the server.</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">stop</td>
@@ -512,6 +512,31 @@
         <code class="text-accent-light">gtl init</code> prints this guidance automatically for Next.js projects.
       </p>
 
+      <h3 class="text-xl font-mono text-white mb-4 mt-8">Vite (React, Vue, Svelte, etc.)</h3>
+      <p class="text-muted mb-4">
+        <code class="text-accent-light">gtl init</code> auto-detects Vite projects (<code class="text-accent-light">vite.config.js</code>, <code class="text-accent-light">vite.config.ts</code>, <code class="text-accent-light">vite.config.mjs</code>) and generates a tailored config with <code class="text-accent-light">.env.local</code> wiring and <code class="text-accent-light">npx vite</code> as the start command.
+      </p>
+      <p class="text-muted mb-4">
+        Vite loads <code class="text-accent-light">.env.local</code> for <code class="text-accent-light">import.meta.env</code> in your app code, but <strong class="text-white">does not</strong> use <code class="text-accent-light">PORT</code> for the dev server port by default. Add this to your <code class="text-accent-light">vite.config.js</code>:
+      </p>
+      <div class="terminal mb-4">
+        <div class="terminal-header">
+          <span class="text-xs text-muted">vite.config.js</span>
+        </div>
+        <div class="terminal-body">
+          <pre class="text-sm"><span class="text-muted">import</span> <span class="text-white">{ defineConfig, loadEnv }</span> <span class="text-muted">from</span> <span class="text-accent-light">'vite'</span>
+<span class="text-muted">export default</span> <span class="text-white">defineConfig</span>(<span class="text-muted">({</span> <span class="text-white">mode</span> <span class="text-muted">}) =></span> <span class="text-muted">{</span>
+  <span class="text-muted">const</span> <span class="text-white">env</span> <span class="text-muted">=</span> <span class="text-white">loadEnv</span>(<span class="text-white">mode</span>, <span class="text-white">process.cwd</span>(), <span class="text-accent-light">''</span>)
+  <span class="text-muted">return {</span>
+    <span class="text-white">server</span><span class="text-muted">: {</span> <span class="text-white">port</span><span class="text-muted">:</span> <span class="text-white">parseInt</span>(<span class="text-white">env.PORT</span> <span class="text-muted">||</span> <span class="text-accent-light">'5173'</span>) <span class="text-muted">}</span>
+  <span class="text-muted">}</span>
+<span class="text-muted">})</span></pre>
+        </div>
+      </div>
+      <p class="text-muted mb-4">
+        <code class="text-accent-light">gtl init</code> prints this guidance automatically. Alternatively, if you use <code class="text-accent-light">gtl start</code>, the supervisor injects <code class="text-accent-light">PORT</code> directly into the process environment, so <code class="text-accent-light">npx vite --port $PORT</code> works without any <code class="text-accent-light">vite.config.js</code> changes.
+      </p>
+
       <h3 class="text-xl font-mono text-white mb-4 mt-8">Express / Node</h3>
       <p class="text-muted mb-4">
         Most Express apps already read <code class="text-accent-light">process.env.PORT</code>. Point <code class="text-accent-light">env_file.target</code> at <code class="text-accent-light">.env</code> and your app picks up the allocated port at startup.
@@ -529,7 +554,7 @@
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Setup commands</h2>
       <p class="text-muted mb-8">
-        The <code class="text-accent-light">setup_commands</code> list runs after every resource allocation. Dependency installs, migrations, data fixups &mdash; anything your worktree needs before it's ready to boot.
+        The <code class="text-accent-light">commands.setup</code> list runs after every resource allocation. Dependency installs, migrations, data fixups &mdash; anything your worktree needs before it's ready to boot.
       </p>
 
       <h3 class="text-xl font-mono text-white mb-4">Execution order</h3>
@@ -541,7 +566,7 @@
         <li>Copy files from main worktree (<code class="text-accent-light">copy_files</code>)</li>
         <li>Write env file with interpolated values</li>
         <li>Clone database <span class="text-sm">(skipped on reused allocations)</span></li>
-        <li><strong class="text-white">Run setup_commands</strong> with allocated values in the environment</li>
+        <li><strong class="text-white">Run commands.setup</strong> with allocated values in the environment</li>
         <li>Configure editor</li>
       </ol>
       <p class="text-muted mb-8">
@@ -550,7 +575,7 @@
 
       <h3 class="text-xl font-mono text-white mb-4">Port-dependent data</h3>
       <p class="text-muted mb-4">
-        Some apps store URLs that include the port &mdash; OAuth redirect URIs, webhook endpoints, CORS origins, API base URLs in database records. Those values go stale when Git Treeline allocates a new port. Use <code class="text-accent-light">setup_commands</code> to patch them.
+        Some apps store URLs that include the port &mdash; OAuth redirect URIs, webhook endpoints, CORS origins, API base URLs in database records. Those values go stale when Git Treeline allocates a new port. Use <code class="text-accent-light">commands.setup</code> to patch them.
       </p>
 
       <h4 class="text-base font-mono text-white mb-3 mt-6">Example: OAuth redirect URI (Doorkeeper)</h4>
@@ -562,10 +587,11 @@
           <span class="text-xs text-muted">.treeline.yml</span>
         </div>
         <div class="terminal-body">
-          <pre class="text-sm"><span class="text-accent-light">setup_commands</span><span class="text-muted">:</span>
-  <span class="text-muted">-</span> <span class="text-white">bundle install --quiet</span>
-  <span class="text-muted">-</span> <span class="text-white">bin/rails db:migrate</span>
-  <span class="text-muted">-</span> <span class="text-white">bin/fix-port-data</span></pre>
+          <pre class="text-sm"><span class="text-accent-light">commands</span><span class="text-muted">:</span>
+  <span class="text-accent-light">setup</span><span class="text-muted">:</span>
+    <span class="text-muted">-</span> <span class="text-white">bundle install --quiet</span>
+    <span class="text-muted">-</span> <span class="text-white">bin/rails db:migrate</span>
+    <span class="text-muted">-</span> <span class="text-white">bin/fix-port-data</span></pre>
         </div>
       </div>
       <div class="terminal mb-6">
@@ -660,7 +686,7 @@
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Process supervisor</h2>
       <p class="text-muted mb-8">
-        <code class="text-accent-light">gtl start</code> runs the <code class="text-accent-light">start_command</code> from your <code class="text-accent-light">.treeline.yml</code> under a Unix socket supervisor. The server logs stream to your terminal while other processes (AI agents, scripts, teammates) can send <code class="text-accent-light">stop</code>, <code class="text-accent-light">start</code>, and <code class="text-accent-light">restart</code> commands remotely.
+        <code class="text-accent-light">gtl start</code> runs the <code class="text-accent-light">commands.start</code> from your <code class="text-accent-light">.treeline.yml</code> under a Unix socket supervisor. The supervisor reads the worktree's allocation, resolves env templates, and injects them as real environment variables into the child process &mdash; <code class="text-accent-light">PORT</code>, <code class="text-accent-light">DATABASE_URL</code>, etc. are available without requiring the app to read <code class="text-accent-light">.env</code> files. Server logs stream to your terminal while other processes can send <code class="text-accent-light">stop</code>, <code class="text-accent-light">start</code>, and <code class="text-accent-light">restart</code> commands remotely.
       </p>
 
       <h3 class="text-xl font-mono text-white mb-4">How it works</h3>
@@ -704,14 +730,15 @@
 
       <h3 class="text-xl font-mono text-white mb-4">Configuration</h3>
       <p class="text-muted mb-4">
-        The supervisor uses the <code class="text-accent-light">start_command</code> field from your <code class="text-accent-light">.treeline.yml</code>:
+        The supervisor uses the <code class="text-accent-light">commands.start</code> field from your <code class="text-accent-light">.treeline.yml</code>:
       </p>
       <div class="terminal mb-8">
         <div class="terminal-header">
           <span class="text-xs text-muted">.treeline.yml</span>
         </div>
         <div class="terminal-body">
-          <pre class="text-sm"><span class="text-accent-light">start_command</span><span class="text-muted">:</span> <span class="text-white">bin/dev</span></pre>
+          <pre class="text-sm"><span class="text-accent-light">commands</span><span class="text-muted">:</span>
+  <span class="text-accent-light">start</span><span class="text-muted">:</span> <span class="text-white">bin/dev</span></pre>
         </div>
       </div>
 
