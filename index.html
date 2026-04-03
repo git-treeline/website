@@ -33,7 +33,7 @@
     "description": "Worktree environment manager. Allocates ports, clones PostgreSQL and SQLite databases, assigns Redis namespaces, writes env files, and runs setup commands per git worktree. Create worktrees, review GitHub PRs, and manage the full dev environment lifecycle from one CLI.",
     "url": "https://git-treeline.dev",
     "downloadUrl": "https://github.com/git-treeline/git-treeline/releases",
-    "softwareVersion": "0.14.0",
+    "softwareVersion": "0.16.0",
     "license": "https://opensource.org/licenses/MIT",
     "author": {
       "@type": "Organization",
@@ -51,15 +51,20 @@
       "SQLite database cloning via file copy",
       "Redis namespacing with prefix or database strategy",
       "Env file interpolation with allocated values",
+      "Post-allocation setup commands with full environment access",
       "Secret file copying from main worktree",
       "One-command worktree creation with gtl new",
       "GitHub PR review with gtl review",
+      "Process supervisor with remote start/stop/restart",
       "AI agent lifecycle hooks and context generation",
       "JSON output for programmatic access",
       "Live status monitoring with health checks",
+      "Database management: reset, restore from pg_dump, clone from alternate source",
       "Batch release and prune for merged branches",
       "Smart init with framework auto-detection",
-      "Agent context file generation for Cursor and Claude"
+      "Agent context file generation for Cursor and Claude",
+      "Zero runtime dependency — CLI-only, nothing in your bundle or deploy",
+      "Opt-in per developer with no lock-in"
     ]
   }
   </script>
@@ -99,7 +104,7 @@
   </script>
 
   <!-- Hero -->
-  <section id="hero" class="min-h-0 sm:min-h-[85vh] flex flex-col items-center justify-center text-center px-4 sm:px-6 pt-24 sm:pt-32 pb-12 sm:pb-24">
+  <section id="hero" class="flex flex-col items-center text-center px-4 sm:px-6 pt-28 sm:pt-40 pb-16 sm:pb-28">
     <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-6">
       git-treeline
     </h1>
@@ -125,295 +130,212 @@
         View on GitHub
       </a>
     </div>
-    <div class="flex items-center gap-4">
-      <a href="https://github.com/git-treeline/git-treeline" class="inline-flex items-center gap-2 text-sm text-muted hover:text-white transition-colors">
-        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568L24 9.306l-6 5.848 1.416 8.259L12 19.446l-7.416 3.967L6 15.154 0 9.306l8.332-1.151z"/></svg>
-        Star on GitHub
+    <div class="flex flex-wrap items-center justify-center gap-4">
+      <a href="https://github.com/git-treeline/git-treeline" class="inline-flex items-center">
+        <img src="https://img.shields.io/github/stars/git-treeline/git-treeline?style=social" alt="GitHub stars" class="h-5" loading="lazy">
       </a>
-      <span class="text-surface-border">|</span>
+      <span class="text-surface-border hidden sm:inline">|</span>
       <span class="text-sm text-muted">Open source &middot; MIT License &middot; Free forever</span>
     </div>
   </section>
 
-  <!-- The Problem -->
-  <section id="problem" class="px-4 sm:px-6 py-12 sm:py-24 max-w-4xl mx-auto">
-    <h2 class="section-heading">Worktrees are easy to create.<br class="hidden md:inline"> Hard&nbsp;to&nbsp;run.</h2>
-    <p class="section-subtext mb-4">
-      <code class="text-accent-light">git worktree add</code> gives you a second checkout in seconds. But that checkout isn't runnable. It needs its own port, its own database, its own env file, its own dependencies installed. Until all of that is in place, nobody can open it in a browser and see what was built.
-    </p>
-    <p class="section-subtext mb-8">
-      Three feature branches ready for review, zero of them running. That's the gap Git Treeline closes.
-    </p>
-    <div class="terminal">
-      <div class="terminal-header">
-        <span class="terminal-dot bg-red-500"></span>
-        <span class="terminal-dot bg-yellow-500"></span>
-        <span class="terminal-dot bg-green-500"></span>
-        <span class="text-xs text-muted ml-2">without git-treeline</span>
-      </div>
-      <div class="terminal-body space-y-3">
-        <div>
-          <p><span class="prompt">~/feature-a $</span> <span class="command">npm run dev</span></p>
-          <p class="output">&#9656; Ready on http://localhost:3000</p>
-        </div>
-        <div>
-          <p><span class="prompt">~/feature-b $</span> <span class="command">bin/dev</span></p>
-          <p class="text-red-400">Error: listen EADDRINUSE: address already in use :::3000</p>
-        </div>
-        <div>
-          <p><span class="prompt">~/feature-b $</span> <span class="command">psql -c "CREATE DATABASE myapp_dev"</span></p>
-          <p class="text-red-400">ERROR: database "myapp_dev" already exists</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- The Solution -->
-  <section id="solution" class="px-4 sm:px-6 py-12 sm:py-24 bg-surface-raised">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="section-heading">One command. Fully isolated.</h2>
-      <p class="section-subtext mb-12">
-        <code class="text-accent-light">git-treeline new</code> creates a worktree, allocates resources, writes your env file, and runs setup &mdash; in one step.
+  <!-- Problem + Solution (paired) -->
+  <section id="problem-solution" class="px-4 sm:px-6 py-12 sm:py-24 bg-surface-raised">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="section-heading text-center mb-4">Worktrees are easy to create. Hard&nbsp;to&nbsp;run.</h2>
+      <p class="section-subtext text-center mx-auto mb-12">
+        <code class="text-accent-light">git worktree add</code> gives you a second checkout in seconds. But that checkout shares ports, databases, and config with every other branch. Three features ready for review, zero running.
       </p>
-      <div class="terminal">
-        <div class="terminal-header">
-          <span class="terminal-dot bg-red-500"></span>
-          <span class="terminal-dot bg-yellow-500"></span>
-          <span class="terminal-dot bg-green-500"></span>
-          <span class="text-xs text-muted ml-2">terminal</span>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="terminal-dot bg-red-500"></span>
+            <span class="terminal-dot bg-yellow-500"></span>
+            <span class="terminal-dot bg-green-500"></span>
+            <span class="text-xs text-red-400 ml-2">without git-treeline</span>
+          </div>
+          <div class="terminal-body space-y-3">
+            <div>
+              <p><span class="prompt">~/feature-a $</span> <span class="command">npm run dev</span></p>
+              <p class="output">&#9656; Ready on http://localhost:3000</p>
+            </div>
+            <div>
+              <p><span class="prompt">~/feature-b $</span> <span class="command">bin/dev</span></p>
+              <p class="text-red-400">Error: listen EADDRINUSE :::3000</p>
+            </div>
+            <div>
+              <p><span class="prompt">~/feature-b $</span> <span class="command">psql -c "CREATE DATABASE myapp_dev"</span></p>
+              <p class="text-red-400">ERROR: database "myapp_dev" already exists</p>
+            </div>
+          </div>
         </div>
-        <div class="terminal-body space-y-4">
-          <div>
-            <p><span class="prompt">~ $</span> <span class="command">git-treeline new feature-auth</span></p>
-            <p class="output">Creating worktree <span class="highlight">feature-auth</span></p>
-            <p class="output">Allocated port <span class="highlight">3010</span></p>
-            <p class="output">Cloned database <span class="highlight">myapp_dev_feature_auth</span> from template myapp_development</p>
-            <p class="output">Assigned Redis namespace <span class="highlight">myapp:feature-auth</span></p>
-            <p class="output">Copied <span class="highlight">.env.production</span></p>
-            <p class="output">Wrote <span class="highlight">.env.local</span></p>
-            <p class="output">Running setup commands...</p>
-            <p class="output">  <span class="text-white">npm install --silent</span></p>
-            <p class="output">  <span class="text-white">npx prisma migrate deploy</span></p>
-            <p class="output text-accent mt-1">Ready. Start your server in this worktree.</p>
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="terminal-dot bg-red-500"></span>
+            <span class="terminal-dot bg-yellow-500"></span>
+            <span class="terminal-dot bg-green-500"></span>
+            <span class="text-xs text-accent ml-2">with git-treeline</span>
+          </div>
+          <div class="terminal-body space-y-3">
+            <div>
+              <p><span class="prompt">~ $</span> <span class="command">gtl new feature-auth</span></p>
+              <p class="output">Creating worktree <span class="highlight">feature-auth</span></p>
+              <p class="output">Allocated port <span class="highlight">3010</span></p>
+              <p class="output">Cloned database <span class="highlight">myapp_dev_feature_auth</span></p>
+              <p class="output">Assigned Redis namespace <span class="highlight">myapp:feature-auth</span></p>
+              <p class="output">Wrote <span class="highlight">.env.local</span></p>
+              <p class="output">Running setup commands...</p>
+              <p class="output text-accent mt-1">Ready. Start your server in this worktree.</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Resource Isolation -->
+  <!-- What Treeline manages -->
   <section id="capabilities" class="px-4 sm:px-6 py-12 sm:py-24">
     <div class="max-w-5xl mx-auto">
       <h2 class="section-heading text-center mb-4">Everything a worktree needs to run</h2>
-      <p class="section-subtext text-center mx-auto mb-16">
-        Each capability is opt-in. Use what your project needs, skip what it doesn't.
+      <p class="section-subtext text-center mx-auto mb-12">
+        Each capability is opt-in. Declare what your project needs in <code class="text-accent-light">.treeline.yml</code>, skip what it doesn't.
       </p>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div class="p-6 rounded-lg border border-surface-border">
           <h3 class="text-lg mb-2">Port allocation</h3>
           <p class="text-muted text-sm mb-3">
-            Assigns a unique port per worktree from a configurable base. Multi-port support for apps that need it &mdash; like Rails with a separate esbuild port.
+            Assigns a unique port per worktree from a configurable base. Multi-port support for apps with separate asset build processes.
           </p>
           <code class="text-xs text-accent-light">PORT=3010 ESBUILD_PORT=3011</code>
         </div>
         <div class="p-6 rounded-lg border border-surface-border">
           <h3 class="text-lg mb-2">Database cloning</h3>
           <p class="text-muted text-sm mb-3">
-            Clones your development database per worktree. PostgreSQL via <code class="text-accent-light">createdb&nbsp;--template</code>, SQLite via file copy. Full schema and seed data, zero migration overhead.
+            Clones your development database per worktree. PostgreSQL via <code class="text-accent-light">createdb&nbsp;--template</code>, SQLite via file copy. Reset, restore from a dump, or clone from a different source with <code class="text-accent-light">gtl&nbsp;db</code>.
           </p>
-          <code class="text-xs text-accent-light">myapp_dev_feature_auth</code>
+          <code class="text-xs text-accent-light">gtl db reset &middot; gtl db restore dump.sql</code>
         </div>
         <div class="p-6 rounded-lg border border-surface-border">
-          <h3 class="text-lg mb-2">Redis namespacing</h3>
+          <h3 class="text-lg mb-2">Environment isolation</h3>
           <p class="text-muted text-sm mb-3">
-            Prevents key collisions across worktrees. Choose key-prefix strategy (unlimited worktrees) or separate Redis databases (1&ndash;15).
+            Writes your <code class="text-accent-light">.env</code> file with interpolated ports, database names, and Redis URLs. Copies secrets from the main worktree. Runs setup commands with all allocated values available.
           </p>
-          <code class="text-xs text-accent-light">myapp:feature-auth:session:*</code>
-        </div>
-        <div class="p-6 rounded-lg border border-surface-border">
-          <h3 class="text-lg mb-2">Env file management</h3>
-          <p class="text-muted text-sm mb-3">
-            Copies your env template, interpolates allocated values (ports, database names, Redis URLs), and writes the result. Token-based &mdash; works with any <code class="text-accent-light">.env</code> format.
-          </p>
-          <code class="text-xs text-accent-light">.env.local &larr; .env.local + allocations</code>
-        </div>
-        <div class="p-6 rounded-lg border border-surface-border">
-          <h3 class="text-lg mb-2">Setup commands</h3>
-          <p class="text-muted text-sm mb-3">
-            Runs your install and migration commands after allocation. <code class="text-accent-light">bundle install</code>, <code class="text-accent-light">npm install</code>, <code class="text-accent-light">prisma migrate deploy</code> &mdash; whatever your stack needs.
-          </p>
-          <code class="text-xs text-accent-light">setup_commands: [...]</code>
-        </div>
-        <div class="p-6 rounded-lg border border-surface-border">
-          <h3 class="text-lg mb-2">File copying</h3>
-          <p class="text-muted text-sm mb-3">
-            Copies files from the main worktree that aren't in git &mdash; secrets, credentials, local config. No more "where's my master.key" after checkout.
-          </p>
-          <code class="text-xs text-accent-light">copy_files: [config/master.key]</code>
+          <code class="text-xs text-accent-light">.env.local &larr; allocated values</code>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Workflow Commands -->
-  <section id="workflow" class="px-4 sm:px-6 py-12 sm:py-24 bg-surface-raised">
+  <!-- Process Supervisor -->
+  <section id="supervisor" class="px-4 sm:px-6 py-12 sm:py-24 bg-surface-raised">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="section-heading text-center mb-4">Human-visible, agent-controllable</h2>
+      <p class="section-subtext text-center mx-auto mb-12">
+        <code class="text-accent-light">gtl start</code> runs your dev server under a supervisor. Agents can stop and restart it remotely while you watch the logs in your own terminal. No hidden processes, no detached sessions.
+      </p>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="text-xs text-muted">your terminal</span>
+          </div>
+          <div class="terminal-body space-y-3">
+            <div>
+              <p><span class="prompt">~/feature-auth $</span> <span class="command">gtl start</span></p>
+              <p class="output">Starting server on port <span class="highlight">3010</span>...</p>
+              <p class="output text-muted">[HMR] Listening on ws://localhost:3010</p>
+              <p class="output text-muted">GET / 200 in 23ms</p>
+              <p class="output text-muted">GET /api/auth 200 in 8ms</p>
+            </div>
+            <div>
+              <p class="output text-yellow-400">Restarting...</p>
+              <p class="output">Starting server on port <span class="highlight">3010</span>...</p>
+              <p class="output text-muted">[HMR] Listening on ws://localhost:3010</p>
+              <p class="output text-muted">GET / 200 in 12ms</p>
+            </div>
+          </div>
+        </div>
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="text-xs text-muted">agent or remote process</span>
+          </div>
+          <div class="terminal-body space-y-3">
+            <div>
+              <p class="text-xs text-muted mb-1"># agent modifies code, then bounces the server</p>
+              <p><span class="prompt">$</span> <span class="command">gtl restart</span></p>
+              <p class="output text-accent">Restarting server...</p>
+              <p class="output text-accent">Server started.</p>
+            </div>
+            <div class="mt-4">
+              <p class="text-xs text-muted mb-1"># pause the server</p>
+              <p><span class="prompt">$</span> <span class="command">gtl stop</span></p>
+              <p class="output text-accent">Server stopped.</p>
+            </div>
+            <div class="mt-4">
+              <p class="text-xs text-muted mb-1"># resume — logs appear back in your terminal</p>
+              <p><span class="prompt">$</span> <span class="command">gtl start</span></p>
+              <p class="output text-accent">Server started.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Zero Footprint -->
+  <section id="zero-footprint" class="px-4 sm:px-6 py-12 sm:py-24">
     <div class="max-w-4xl mx-auto">
-      <h2 class="section-heading">From checkout to running app</h2>
-      <p class="section-subtext mb-4">
-        Create worktrees, review pull requests, monitor environments, and clean up &mdash; all from the CLI. Every command designed for both human developers and automated agents.
+      <h2 class="section-heading text-center mb-4">Zero footprint until you need it</h2>
+      <p class="section-subtext text-center mx-auto mb-12">
+        Git Treeline is invisible until you need it, and out of the way once it's done.
       </p>
-      <p class="text-sm text-muted mb-12">
-        <code class="text-accent-light">git-treeline</code> installs a short alias &mdash; <code class="text-accent-light">gtl</code> &mdash; so you'll see it used from here on.
-      </p>
-      <div class="grid md:grid-cols-2 gap-6 mb-8">
-        <div class="terminal">
-          <div class="terminal-header">
-            <span class="text-xs text-muted">create + setup in one step</span>
-          </div>
-          <div class="terminal-body space-y-3">
-            <div>
-              <p><span class="prompt">$</span> <span class="command">gtl new feature-auth --start</span></p>
-              <p class="output">Creating worktree <span class="highlight">feature-auth</span></p>
-              <p class="output">Allocated port <span class="highlight">3010</span></p>
-              <p class="output">Cloned database <span class="highlight">myapp_dev_feature_auth</span></p>
-              <p class="output">Wrote <span class="highlight">.env.local</span></p>
-              <p class="output">Running setup commands...</p>
-              <p class="output text-accent mt-1">Starting server on port 3010...</p>
-            </div>
-          </div>
+      <div class="grid sm:grid-cols-2 gap-6">
+        <div class="p-6 rounded-lg border border-surface-border">
+          <h3 class="text-lg mb-2">No runtime dependency</h3>
+          <p class="text-muted text-sm">
+            Git Treeline is a CLI tool, not a library. It doesn't ship in your bundle, your Docker image, or your production deploy. It writes a <code class="text-accent-light">.env</code> file and walks away.
+          </p>
         </div>
-        <div class="terminal">
-          <div class="terminal-header">
-            <span class="text-xs text-muted">review a PR locally</span>
-          </div>
-          <div class="terminal-body space-y-3">
-            <div>
-              <p><span class="prompt">$</span> <span class="command">gtl review 42 --start</span></p>
-              <p class="output">Fetching PR <span class="highlight">#42</span> (Add OAuth login)</p>
-              <p class="output">Creating worktree <span class="highlight">myapp-pr-42</span></p>
-              <p class="output">Allocated port <span class="highlight">3020</span></p>
-              <p class="output">Cloned database <span class="highlight">myapp_dev_pr_42</span></p>
-              <p class="output">Wrote <span class="highlight">.env.local</span></p>
-              <p class="output text-accent mt-1">Starting server on port 3020...</p>
-            </div>
-          </div>
+        <div class="p-6 rounded-lg border border-surface-border">
+          <h3 class="text-lg mb-2">No lock-in</h3>
+          <p class="text-muted text-sm">
+            <code class="text-accent-light">.treeline.yml</code> is declarative config that sits in your repo. Developers who don't have <code class="text-accent-light">gtl</code> installed just ignore it. The app works exactly as before.
+          </p>
         </div>
-      </div>
-      <div class="terminal mb-8">
-        <div class="terminal-header">
-          <span class="terminal-dot bg-red-500"></span>
-          <span class="terminal-dot bg-yellow-500"></span>
-          <span class="terminal-dot bg-green-500"></span>
-          <span class="text-xs text-muted ml-2">monitor everything</span>
+        <div class="p-6 rounded-lg border border-surface-border">
+          <h3 class="text-lg mb-2">No magic</h3>
+          <p class="text-muted text-sm">
+            No git hooks. No background daemons. No shell integrations. No implicit behavior. You run <code class="text-accent-light">gtl setup</code>, it allocates resources and writes your env file. That's it.
+          </p>
         </div>
-        <div class="terminal-body">
-          <div class="min-w-max">
-            <p><span class="prompt">~ $</span> <span class="command">gtl status --check</span></p>
-            <p class="output mt-4">┌──────────────────────┬──────┬────────┬──────────────────────────┬───────────────────────┐</p>
-            <p class="output">│ <span class="text-white">Worktree</span>             │ <span class="text-white">Port</span> │ <span class="text-white">Status</span> │ <span class="text-white">Database</span>                  │ <span class="text-white">Redis</span>                 │</p>
-            <p class="output">├──────────────────────┼──────┼────────┼──────────────────────────┼───────────────────────┤</p>
-            <p class="output">│ myapp (main)         │ <span class="highlight">3000</span> │ <span class="text-accent">● up</span>   │ <span class="highlight">myapp_dev</span>                │ <span class="highlight">default</span>               │</p>
-            <p class="output">│ myapp-feature-auth   │ <span class="highlight">3010</span> │ <span class="text-accent">● up</span>   │ <span class="highlight">myapp_dev_feature_auth</span>   │ <span class="highlight">myapp:feature-auth</span>   │</p>
-            <p class="output">│ myapp-pr-42          │ <span class="highlight">3020</span> │ <span class="text-accent">● up</span>   │ <span class="highlight">myapp_dev_pr_42</span>          │ <span class="highlight">myapp:pr-42</span>          │</p>
-            <p class="output">│ myapp-fix-payments   │ <span class="highlight">3030</span> │ <span class="text-muted">○ down</span> │ <span class="highlight">myapp_dev_fix_payments</span>   │ <span class="highlight">myapp:fix-payments</span>   │</p>
-            <p class="output">└──────────────────────┴──────┴────────┴──────────────────────────┴───────────────────────┘</p>
-          </div>
-        </div>
-      </div>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="p-5 rounded-lg border border-surface-border">
-          <h3 class="text-sm font-mono text-accent mb-2">release</h3>
-          <p class="text-muted text-sm">Free ports, drop the cloned database, release Redis namespace. Batch with <code class="text-accent-light">--project</code> or <code class="text-accent-light">--all</code>.</p>
-        </div>
-        <div class="p-5 rounded-lg border border-surface-border">
-          <h3 class="text-sm font-mono text-accent mb-2">prune</h3>
-          <p class="text-muted text-sm">Remove allocations for deleted worktrees. Use <code class="text-accent-light">--merged</code> to target branches already merged to main.</p>
-        </div>
-        <div class="p-5 rounded-lg border border-surface-border">
-          <h3 class="text-sm font-mono text-accent mb-2">status --watch</h3>
-          <p class="text-muted text-sm">Live-updating dashboard with port health checks. Set refresh rate with <code class="text-accent-light">--interval</code>.</p>
+        <div class="p-6 rounded-lg border border-surface-border">
+          <h3 class="text-lg mb-2">Opt-in per developer</h3>
+          <p class="text-muted text-sm">
+            Commit the config, let the team decide. Developers who work in worktrees install <code class="text-accent-light">gtl</code> and get isolated environments. Everyone else doesn't notice it exists.
+          </p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Built for AI Agents -->
-  <section id="agents" class="px-4 sm:px-6 py-12 sm:py-24">
+  <section id="agents" class="px-4 sm:px-6 py-12 sm:py-24 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
-      <h2 class="section-heading">Built for AI agents</h2>
-      <p class="section-subtext mb-10">
-        Two commands plug Git Treeline into any agent orchestrator. Allocate on worktree creation, tear down on completion. Add context files so agents understand the environment they're working in.
+      <h2 class="section-heading text-center mb-4">Built for AI agents</h2>
+      <p class="section-subtext text-center mx-auto mb-12">
+        Two commands plug Git Treeline into any agent orchestrator. Allocate on worktree creation, tear down on completion. Structured output and auto-generated context files keep agents informed.
       </p>
-      <div class="grid md:grid-cols-2 gap-6 mb-6">
-        <div class="terminal">
-          <div class="terminal-header">
-            <span class="text-xs text-muted">agent lifecycle hooks</span>
-          </div>
-          <div class="terminal-body space-y-3">
-            <div>
-              <p class="text-xs text-muted mb-1"># on worktree creation</p>
-              <p><span class="prompt">$</span> <span class="command">gtl setup .</span></p>
-            </div>
-            <div>
-              <p class="text-xs text-muted mb-1"># on worktree teardown</p>
-              <p><span class="prompt">$</span> <span class="command">gtl release . --drop-db</span></p>
-            </div>
-          </div>
-        </div>
-        <div class="terminal">
-          <div class="terminal-header">
-            <span class="text-xs text-muted">programmatic access</span>
-          </div>
-          <div class="terminal-body">
-            <p><span class="prompt">$</span> <span class="command">gtl status --json</span></p>
-            <pre class="output mt-2">[{
-  "<span class="text-white">worktree</span>": "<span class="highlight">agent-task-42</span>",
-  "<span class="text-white">port</span>": <span class="highlight">3010</span>,
-  "<span class="text-white">database</span>": "<span class="highlight">myapp_dev_task_42</span>",
-  "<span class="text-white">redis_prefix</span>": "<span class="highlight">myapp:task-42</span>"
-}]</pre>
-          </div>
-        </div>
-      </div>
-      <div class="grid md:grid-cols-2 gap-6 mb-6">
-        <div class="terminal">
-          <div class="terminal-header">
-            <span class="text-xs text-muted">agent context auto-generation</span>
-          </div>
-          <div class="terminal-body space-y-3">
-            <div>
-              <p><span class="prompt">$</span> <span class="command">gtl init --project myapp</span></p>
-              <p class="output">Detected <span class="highlight">Rails</span> project</p>
-              <p class="output">Wrote <span class="highlight">.treeline.yml</span></p>
-              <p class="output">Wrote <span class="highlight">.cursor/rules/treeline.mdc</span></p>
-              <p class="output text-muted mt-1">Agent context files teach AI tools how to use Treeline in this project.</p>
-            </div>
-          </div>
-        </div>
-        <div class="terminal">
-          <div class="terminal-header">
-            <span class="text-xs text-muted">conductor config</span>
-          </div>
-          <div class="terminal-body">
-            <pre class="text-sm">{
-  "<span class="text-accent-light">setup</span>": "<span class="text-white">gtl setup .</span>",
-  "<span class="text-accent-light">archive</span>": "<span class="text-white">gtl release . --drop-db</span>"
-}</pre>
-          </div>
-        </div>
-      </div>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid sm:grid-cols-3 gap-6">
         <div class="p-5 rounded-lg border border-surface-border">
           <h3 class="text-sm font-mono text-accent mb-2">Lifecycle hooks</h3>
-          <p class="text-muted text-sm">Two commands &mdash; <code class="text-accent-light">setup</code> and <code class="text-accent-light">release</code> &mdash; map directly to agent worktree creation and teardown.</p>
-        </div>
-        <div class="p-5 rounded-lg border border-surface-border">
-          <h3 class="text-sm font-mono text-accent mb-2">Agent context</h3>
-          <p class="text-muted text-sm"><code class="text-accent-light">gtl init</code> generates <code class="text-accent-light">.cursor/rules/treeline.mdc</code> or <code class="text-accent-light">CLAUDE.md</code> sections so agents know how to use Treeline.</p>
+          <p class="text-muted text-sm"><code class="text-accent-light">gtl setup</code> and <code class="text-accent-light">gtl release --drop-db</code> map directly to agent worktree creation and teardown.</p>
         </div>
         <div class="p-5 rounded-lg border border-surface-border">
           <h3 class="text-sm font-mono text-accent mb-2">Machine output</h3>
           <p class="text-muted text-sm"><code class="text-accent-light">--json</code> on any read command. Orchestrators get structured data &mdash; ports, databases, paths &mdash; without parsing.</p>
+        </div>
+        <div class="p-5 rounded-lg border border-surface-border">
+          <h3 class="text-sm font-mono text-accent mb-2">Agent context</h3>
+          <p class="text-muted text-sm"><code class="text-accent-light">gtl init</code> generates <code class="text-accent-light">.cursor/rules/treeline.mdc</code> or <code class="text-accent-light">CLAUDE.md</code> sections so agents know how to use Treeline.</p>
         </div>
       </div>
     </div>
@@ -455,93 +377,6 @@
     </div>
   </section>
 
-  <!-- Configuration -->
-  <section id="configuration" class="px-4 sm:px-6 py-12 sm:py-24 bg-surface-raised">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="section-heading">Declare what your project needs</h2>
-      <p class="section-subtext mb-4">
-        Commit <code class="text-accent-light">.treeline.yml</code> to your repo. Every team member and every agent gets the same setup.
-      </p>
-      <p class="section-subtext mb-10">
-        <code class="text-accent-light">gtl init</code> auto-detects your framework &mdash; Next.js, Rails, Express, Python, Rust, Go &mdash; and generates a tailored config.
-      </p>
-      <div class="grid lg:grid-cols-2 gap-6">
-        <div>
-          <div class="terminal">
-            <div class="terminal-header">
-              <span class="text-xs text-muted">.treeline.yml &mdash; Rails app</span>
-            </div>
-            <div class="terminal-body">
-              <pre class="text-sm"><span class="text-accent-light">project</span><span class="text-muted">:</span> <span class="text-white">myapp</span>
-<span class="text-accent-light">merge_target</span><span class="text-muted">:</span> <span class="text-white">develop</span>  <span class="text-muted"># auto-detected; set if not main</span>
-<span class="text-accent-light">ports_needed</span><span class="text-muted">:</span> <span class="text-white">2</span>
-
-<span class="text-accent-light">env_file</span><span class="text-muted">:</span>
-  <span class="text-accent-light">target</span><span class="text-muted">:</span> <span class="text-white">.env.local</span>
-  <span class="text-accent-light">source</span><span class="text-muted">:</span> <span class="text-white">.env.local</span>
-
-<span class="text-accent-light">database</span><span class="text-muted">:</span>
-  <span class="text-accent-light">adapter</span><span class="text-muted">:</span> <span class="text-white">postgresql</span>
-  <span class="text-accent-light">template</span><span class="text-muted">:</span> <span class="text-white">myapp_development</span>
-  <span class="text-accent-light">pattern</span><span class="text-muted">:</span> <span class="text-white">"{template}_{worktree}"</span>
-
-<span class="text-accent-light">copy_files</span><span class="text-muted">:</span>
-  <span class="text-muted">-</span> <span class="text-white">config/master.key</span>
-
-<span class="text-accent-light">env</span><span class="text-muted">:</span>
-  <span class="text-accent-light">PORT</span><span class="text-muted">:</span> <span class="text-white">"{port}"</span>
-  <span class="text-accent-light">DATABASE_NAME</span><span class="text-muted">:</span> <span class="text-white">"{database}"</span>
-  <span class="text-accent-light">REDIS_URL</span><span class="text-muted">:</span> <span class="text-white">"{redis_url}"</span>
-  <span class="text-accent-light">ESBUILD_PORT</span><span class="text-muted">:</span> <span class="text-white">"{port_2}"</span>
-
-<span class="text-accent-light">setup_commands</span><span class="text-muted">:</span>
-  <span class="text-muted">-</span> <span class="text-white">bundle install --quiet</span>
-  <span class="text-muted">-</span> <span class="text-white">yarn install --silent</span>
-
-<span class="text-accent-light">start_command</span><span class="text-muted">:</span> <span class="text-white">bin/dev</span></pre>
-            </div>
-          </div>
-        </div>
-        <div>
-          <div class="terminal mb-6">
-            <div class="terminal-header">
-              <span class="text-xs text-muted">.treeline.yml &mdash; Next.js + Prisma</span>
-            </div>
-            <div class="terminal-body">
-              <pre class="text-sm"><span class="text-accent-light">project</span><span class="text-muted">:</span> <span class="text-white">frontend</span>
-
-<span class="text-accent-light">env_file</span><span class="text-muted">:</span>
-  <span class="text-accent-light">target</span><span class="text-muted">:</span> <span class="text-white">.env.local</span>
-  <span class="text-accent-light">source</span><span class="text-muted">:</span> <span class="text-white">.env.local</span>
-
-<span class="text-accent-light">database</span><span class="text-muted">:</span>
-  <span class="text-accent-light">adapter</span><span class="text-muted">:</span> <span class="text-white">postgresql</span>
-  <span class="text-accent-light">template</span><span class="text-muted">:</span> <span class="text-white">frontend_dev</span>
-  <span class="text-accent-light">pattern</span><span class="text-muted">:</span> <span class="text-white">"{template}_{worktree}"</span>
-
-<span class="text-accent-light">env</span><span class="text-muted">:</span>
-  <span class="text-accent-light">PORT</span><span class="text-muted">:</span> <span class="text-white">"{port}"</span>
-  <span class="text-accent-light">DATABASE_URL</span><span class="text-muted">:</span> <span class="text-white">"postgresql://localhost/{database}"</span>
-
-<span class="text-accent-light">setup_commands</span><span class="text-muted">:</span>
-  <span class="text-muted">-</span> <span class="text-white">npm install</span>
-  <span class="text-muted">-</span> <span class="text-white">npx prisma migrate deploy</span>
-
-<span class="text-accent-light">start_command</span><span class="text-muted">:</span> <span class="text-white">npm run dev</span></pre>
-            </div>
-          </div>
-          <div class="p-5 rounded-lg border border-surface-border">
-            <h3 class="text-sm font-mono text-accent mb-2">Framework agnostic</h3>
-            <p class="text-muted text-sm mb-3">
-              Rails reads <code class="text-accent-light">dotenv-rails</code>, Next.js reads <code class="text-accent-light">.env.local</code>, Express reads <code class="text-accent-light">.env</code>. Git Treeline writes the file your stack already loads. No extra dependencies.
-            </p>
-            <code class="text-xs text-accent-light">gtl init</code> <span class="text-xs text-muted">detects your framework</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- FAQ -->
   <section id="faq" class="px-4 sm:px-6 py-12 sm:py-24 bg-surface-raised">
     <div class="max-w-3xl mx-auto">
@@ -560,54 +395,33 @@
           </div>
         </details>
         <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-          <summary class="faq-summary" itemprop="name">What's the difference between <code class="text-accent-light">setup</code> and <code class="text-accent-light">new</code>?</summary>
-          <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text"><code class="text-accent-light">gtl new</code> creates a git worktree <em>and</em> sets it up in one step &mdash; it runs <code class="text-accent-light">git worktree add</code> followed by full resource allocation and setup. <code class="text-accent-light">gtl setup</code> only allocates resources for an existing worktree. Use <code class="text-accent-light">new</code> when starting fresh, <code class="text-accent-light">setup</code> when you've already created the worktree yourself.</p>
-          </div>
-        </details>
-        <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-          <summary class="faq-summary" itemprop="name">Can I use git-treeline with SQLite?</summary>
-          <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">Yes. Set <code class="text-accent-light">database.adapter: sqlite</code> in your <code class="text-accent-light">.treeline.yml</code>. Treeline clones SQLite databases by copying the file, and cleans up on release. PostgreSQL uses <code class="text-accent-light">createdb --template</code> for the same effect. Both adapters give each worktree a fully isolated database.</p>
-          </div>
-        </details>
-        <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
           <summary class="faq-summary" itemprop="name">How do I review a GitHub PR with git-treeline?</summary>
           <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
             <p itemprop="text">Run <code class="text-accent-light">gtl review &lt;PR-number&gt;</code>. Treeline uses the <code class="text-accent-light">gh</code> CLI to fetch the PR, creates a worktree for it, allocates isolated resources, and runs setup. Add <code class="text-accent-light">--start</code> to boot the app immediately. When you're done, <code class="text-accent-light">gtl release --drop-db</code> cleans everything up.</p>
           </div>
         </details>
         <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-          <summary class="faq-summary" itemprop="name">How does database cloning work?</summary>
-          <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">For PostgreSQL, Git Treeline uses <code class="text-accent-light">createdb --template</code> to clone your development database per worktree. This copies the full schema and seed data without running migrations, so each worktree gets a complete database in seconds. For SQLite, it copies the database file. Use <code class="text-accent-light">gtl release --drop-db</code> to clean up when you're done.</p>
-          </div>
-        </details>
-        <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
           <summary class="faq-summary" itemprop="name">Does it work with AI coding agents?</summary>
           <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">Yes. Git Treeline is designed for it. Add <code class="text-accent-light">gtl setup .</code> as a lifecycle hook when an agent creates a worktree, and <code class="text-accent-light">gtl release . --drop-db</code> on teardown. Use <code class="text-accent-light">--json</code> output for programmatic access to allocated resources. <code class="text-accent-light">gtl init</code> can also generate agent context files for Cursor and Claude so agents understand the Treeline setup.</p>
+            <p itemprop="text">Yes. Git Treeline is designed for it. Add <code class="text-accent-light">gtl setup .</code> as a lifecycle hook when an agent creates a worktree, and <code class="text-accent-light">gtl release . --drop-db</code> on teardown. Use <code class="text-accent-light">--json</code> output for programmatic access. <code class="text-accent-light">gtl init</code> generates agent context files for Cursor and Claude so agents understand the environment.</p>
           </div>
         </details>
         <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-          <summary class="faq-summary" itemprop="name">Does git-treeline work with Cursor and Claude Code?</summary>
+          <summary class="faq-summary" itemprop="name">Does git-treeline add runtime dependencies to my app?</summary>
           <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">Yes. When you run <code class="text-accent-light">gtl init</code>, it can generate agent context files &mdash; <code class="text-accent-light">.cursor/rules/treeline.mdc</code> for Cursor or a <code class="text-accent-light">CLAUDE.md</code> section for Claude Code. These files teach AI agents how to use Treeline commands in your project. Use <code class="text-accent-light">--skip-agent-config</code> to opt out.</p>
+            <p itemprop="text">No. Git Treeline is a standalone CLI binary. It doesn't ship in your bundle, your Docker image, or your production deploy. It writes a <code class="text-accent-light">.env</code> file at setup time and nothing else. Your app has zero awareness that Treeline exists.</p>
           </div>
         </details>
         <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-          <summary class="faq-summary" itemprop="name">What happens if I forget to clean up?</summary>
+          <summary class="faq-summary" itemprop="name">What if some team members don't use git-treeline?</summary>
           <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text"><code class="text-accent-light">gtl prune --stale</code> scans for allocations whose worktree directories no longer exist and removes them. <code class="text-accent-light">gtl prune --merged</code> goes further and releases allocations for branches that have been merged to main. It's garbage collection for your dev environment.</p>
-          </div>
-        </details>
-        <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-          <summary class="faq-summary" itemprop="name">How do I clean up merged branch worktrees?</summary>
-          <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">Run <code class="text-accent-light">gtl prune --merged</code> to detect and release allocations for worktrees on branches that have been merged to main. Add <code class="text-accent-light">--drop-db</code> to also remove their cloned databases. For bulk cleanup, <code class="text-accent-light">gtl release --all --drop-db</code> releases everything across all projects.</p>
+            <p itemprop="text">Nothing changes for them. <code class="text-accent-light">.treeline.yml</code> is a config file in your repo that they can ignore. The app still boots on default ports with the default database. Developers who work in worktrees install <code class="text-accent-light">gtl</code> and get isolated environments. Everyone else keeps their existing workflow.</p>
           </div>
         </details>
       </div>
+      <p class="text-sm text-muted text-center mt-8">
+        More questions answered in the <a href="/docs/" class="text-accent-light hover:text-accent underline underline-offset-2">documentation</a>.
+      </p>
     </div>
   </section>
 

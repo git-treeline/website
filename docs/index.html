@@ -63,6 +63,9 @@
         <a href="#cli-reference" class="text-accent-light hover:text-accent transition-colors">CLI reference</a>
         <a href="#user-config" class="text-accent-light hover:text-accent transition-colors">User config</a>
         <a href="#rails-integration" class="text-accent-light hover:text-accent transition-colors">Framework integration</a>
+        <a href="#setup-commands" class="text-accent-light hover:text-accent transition-colors">Setup commands</a>
+        <a href="#db-management" class="text-accent-light hover:text-accent transition-colors">Database management</a>
+        <a href="#supervisor" class="text-accent-light hover:text-accent transition-colors">Process supervisor</a>
         <a href="#ai-agents" class="text-accent-light hover:text-accent transition-colors">AI agent setup</a>
       </nav>
     </div>
@@ -71,7 +74,10 @@
   <!-- Getting Started -->
   <section id="getting-started" class="px-4 sm:px-6 py-10 sm:py-16">
     <div class="max-w-4xl mx-auto">
-      <h2 class="section-heading mb-8">Getting started</h2>
+      <h2 class="section-heading mb-4">Getting started</h2>
+      <p class="text-muted mb-8">
+        Git Treeline is a standalone CLI binary &mdash; no runtime dependency, no git hooks, no background processes. It writes an env file at setup time and gets out of the way. Team members who don't use it just ignore the config file.
+      </p>
 
       <h3 class="text-xl font-mono text-white mb-4">Install</h3>
       <p class="text-muted mb-4">Homebrew (macOS and Linux):</p>
@@ -215,7 +221,7 @@
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">setup_commands</td>
               <td class="px-5 py-3 text-muted">list</td>
-              <td class="px-5 py-3 text-muted">Commands to run after resource allocation. Dependency installs, migrations, etc.</td>
+              <td class="px-5 py-3 text-muted">Commands to run after env file is written. Allocated values like <code class="text-accent-light">$PORT</code> are available. See <a href="#setup-commands" class="text-accent-light hover:text-accent underline underline-offset-2">setup commands</a>.</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">start_command</td>
@@ -365,6 +371,41 @@
               <td class="px-5 py-3 text-muted">Open config in <code class="text-accent-light">$EDITOR</code>.</td>
             </tr>
             <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">db name</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
+              <td class="px-5 py-3 text-muted">Print the worktree's database name.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">db reset</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs"><code>--from &lt;db&gt;</code></td>
+              <td class="px-5 py-3 text-muted">Drop and re-clone from template. <code class="text-accent-light">--from</code> overrides the source database.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">db restore &lt;file&gt;</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
+              <td class="px-5 py-3 text-muted">Drop and restore from a <code class="text-accent-light">pg_dump</code> file. Auto-detects custom format vs plain SQL.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">db drop</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
+              <td class="px-5 py-3 text-muted">Drop the worktree's database without re-cloning.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">start</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
+              <td class="px-5 py-3 text-muted">Run <code class="text-accent-light">start_command</code> under a Unix socket supervisor. If the supervisor is already running, resumes the server process.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">stop</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
+              <td class="px-5 py-3 text-muted">Pause the supervised server. The supervisor stays alive so the server can be resumed.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">restart</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
+              <td class="px-5 py-3 text-muted">Atomic stop + start. Bounces the supervised server in one step.</td>
+            </tr>
+            <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">version</td>
               <td class="px-5 py-3 font-mono text-muted text-xs"></td>
               <td class="px-5 py-3 text-muted">Print version.</td>
@@ -483,8 +524,206 @@
     </div>
   </section>
 
+  <!-- Setup Commands -->
+  <section id="setup-commands" class="px-4 sm:px-6 py-10 sm:py-16 bg-surface-raised">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading mb-4">Setup commands</h2>
+      <p class="text-muted mb-8">
+        The <code class="text-accent-light">setup_commands</code> list runs after every resource allocation. Dependency installs, migrations, data fixups &mdash; anything your worktree needs before it's ready to boot.
+      </p>
+
+      <h3 class="text-xl font-mono text-white mb-4">Execution order</h3>
+      <p class="text-muted mb-4">
+        When <code class="text-accent-light">gtl new</code> or <code class="text-accent-light">gtl setup</code> runs, Git Treeline processes resources in this order:
+      </p>
+      <ol class="list-decimal list-inside text-muted space-y-2 mb-8 pl-2">
+        <li>Allocate ports, database name, Redis namespace</li>
+        <li>Copy files from main worktree (<code class="text-accent-light">copy_files</code>)</li>
+        <li>Write env file with interpolated values</li>
+        <li>Clone database <span class="text-sm">(skipped on reused allocations)</span></li>
+        <li><strong class="text-white">Run setup_commands</strong> with allocated values in the environment</li>
+        <li>Configure editor</li>
+      </ol>
+      <p class="text-muted mb-8">
+        By the time your setup commands run, <code class="text-accent-light">$PORT</code>, <code class="text-accent-light">$DATABASE_NAME</code>, and every other key from your <code class="text-accent-light">env</code> map are available as environment variables. Setup commands always run &mdash; even on re-setup with a reused allocation.
+      </p>
+
+      <h3 class="text-xl font-mono text-white mb-4">Port-dependent data</h3>
+      <p class="text-muted mb-4">
+        Some apps store URLs that include the port &mdash; OAuth redirect URIs, webhook endpoints, CORS origins, API base URLs in database records. Those values go stale when Git Treeline allocates a new port. Use <code class="text-accent-light">setup_commands</code> to patch them.
+      </p>
+
+      <h4 class="text-base font-mono text-white mb-3 mt-6">Example: OAuth redirect URI (Doorkeeper)</h4>
+      <p class="text-muted mb-4">
+        A Rails app seeds an OAuth application with <code class="text-accent-light">redirect_uri: "http://localhost:3000/callback"</code>. When Treeline allocates port 3010 for a worktree, that URI is wrong. Add a fixup:
+      </p>
+      <div class="terminal mb-6">
+        <div class="terminal-header">
+          <span class="text-xs text-muted">.treeline.yml</span>
+        </div>
+        <div class="terminal-body">
+          <pre class="text-sm"><span class="text-accent-light">setup_commands</span><span class="text-muted">:</span>
+  <span class="text-muted">-</span> <span class="text-white">bundle install --quiet</span>
+  <span class="text-muted">-</span> <span class="text-white">bin/rails db:migrate</span>
+  <span class="text-muted">-</span> <span class="text-white">bin/fix-port-data</span></pre>
+        </div>
+      </div>
+      <div class="terminal mb-6">
+        <div class="terminal-header">
+          <span class="text-xs text-muted">bin/fix-port-data</span>
+        </div>
+        <div class="terminal-body">
+          <pre class="text-sm"><span class="text-muted">#!/usr/bin/env ruby</span>
+<span class="text-white">port = ENV.fetch("PORT")</span>
+<span class="text-white">app = OauthApplication.find_by(name: "Dev")</span>
+<span class="text-white">app&.update!(redirect_uri: "http://localhost:#{port}/callback")</span></pre>
+        </div>
+      </div>
+      <p class="text-muted mb-8">
+        The same pattern works for webhook URLs, CORS allowlists, asset host configs, or any record that embeds a port number. The script reads <code class="text-accent-light">$PORT</code> from the environment &mdash; already set by the time setup commands execute.
+      </p>
+
+      <h3 class="text-xl font-mono text-white mb-4">Re-setup behavior</h3>
+      <p class="text-muted mb-4">
+        Running <code class="text-accent-light">gtl release</code> followed by <code class="text-accent-light">gtl setup</code> on the same worktree produces a fresh allocation: new port, new env file, new database clone. Setup commands run again with the new <code class="text-accent-light">$PORT</code> in the environment, so the fixup script patches data to match.
+      </p>
+      <p class="text-muted">
+        On a reused allocation (e.g. running <code class="text-accent-light">gtl setup</code> without releasing first), Treeline skips the database clone but still runs setup commands. This makes <code class="text-accent-light">setup</code> safe to re-run &mdash; deps get installed, migrations run, and port-dependent data stays correct.
+      </p>
+    </div>
+  </section>
+
+  <!-- Database Management -->
+  <section id="db-management" class="px-4 sm:px-6 py-10 sm:py-16">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading mb-4">Database management</h2>
+      <p class="text-muted mb-8">
+        The <code class="text-accent-light">gtl db</code> commands manage worktree databases after initial setup. Reset to a clean state, restore from a dump, or clone from a different source.
+      </p>
+
+      <h3 class="text-xl font-mono text-white mb-4">Reset to template</h3>
+      <p class="text-muted mb-4">
+        Drop the worktree's database and re-clone from the configured <code class="text-accent-light">database.template</code>:
+      </p>
+      <div class="terminal mb-8">
+        <div class="terminal-body space-y-2">
+          <p><span class="prompt">$</span> <span class="command">gtl db reset</span></p>
+          <p class="output">Dropping <span class="highlight">myapp_dev_feature_auth</span></p>
+          <p class="output">Cloning from <span class="highlight">myapp_development</span></p>
+          <p class="output text-accent">Done.</p>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-mono text-white mb-4">Clone from a different source</h3>
+      <p class="text-muted mb-4">
+        Use <code class="text-accent-light">--from</code> to clone from a different database instead of the default template. Useful when a teammate has a clean database or you've pulled a sanitized staging dump:
+      </p>
+      <div class="terminal mb-8">
+        <div class="terminal-body">
+          <p><span class="prompt">$</span> <span class="command">gtl db reset --from staging_snapshot</span></p>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-mono text-white mb-4">Restore from a dump</h3>
+      <p class="text-muted mb-4">
+        Restore from a <code class="text-accent-light">pg_dump</code> file. Git Treeline auto-detects the format &mdash; custom format uses <code class="text-accent-light">pg_restore</code>, plain SQL uses <code class="text-accent-light">psql</code>:
+      </p>
+      <div class="terminal mb-8">
+        <div class="terminal-body space-y-4">
+          <div>
+            <p class="text-xs text-muted mb-1"># custom format (binary)</p>
+            <p><span class="prompt">$</span> <span class="command">gtl db restore dump.pgcustom</span></p>
+          </div>
+          <div>
+            <p class="text-xs text-muted mb-1"># plain SQL</p>
+            <p><span class="prompt">$</span> <span class="command">gtl db restore dump.sql</span></p>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-mono text-white mb-4">Other commands</h3>
+      <div class="grid sm:grid-cols-2 gap-6">
+        <div class="p-5 rounded-lg border border-surface-border">
+          <h4 class="text-sm font-mono text-accent mb-2">db name</h4>
+          <p class="text-muted text-sm">Print the worktree's allocated database name. Useful in scripts or to verify what's allocated.</p>
+        </div>
+        <div class="p-5 rounded-lg border border-surface-border">
+          <h4 class="text-sm font-mono text-accent mb-2">db drop</h4>
+          <p class="text-muted text-sm">Drop the database without re-cloning. Use when you want to free disk space without replacing the database.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process Supervisor -->
+  <section id="supervisor" class="px-4 sm:px-6 py-10 sm:py-16 bg-surface-raised">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading mb-4">Process supervisor</h2>
+      <p class="text-muted mb-8">
+        <code class="text-accent-light">gtl start</code> runs the <code class="text-accent-light">start_command</code> from your <code class="text-accent-light">.treeline.yml</code> under a Unix socket supervisor. The server logs stream to your terminal while other processes (AI agents, scripts, teammates) can send <code class="text-accent-light">stop</code>, <code class="text-accent-light">start</code>, and <code class="text-accent-light">restart</code> commands remotely.
+      </p>
+
+      <h3 class="text-xl font-mono text-white mb-4">How it works</h3>
+      <ol class="list-decimal list-inside text-muted space-y-2 mb-8 pl-2">
+        <li>You run <code class="text-accent-light">gtl start</code> in your terminal. The supervisor starts and launches your dev server.</li>
+        <li>Server output streams to your terminal. You see every log line.</li>
+        <li>An agent (or any process) calls <code class="text-accent-light">gtl restart</code> from another terminal. The supervisor bounces the server.</li>
+        <li>Logs resume in your original terminal. No detached sessions, no hidden processes.</li>
+        <li><kbd class="text-white">Ctrl+C</kbd> in your terminal fully exits the supervisor and the server.</li>
+      </ol>
+
+      <h3 class="text-xl font-mono text-white mb-4">Commands</h3>
+      <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
+        <table class="cli-table w-full text-sm text-left">
+          <thead>
+            <tr class="border-b border-surface-border bg-surface">
+              <th class="px-5 py-3 font-mono text-accent-light font-medium">Command</th>
+              <th class="px-5 py-3 text-accent-light font-medium">Behavior</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-border">
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">gtl start</td>
+              <td class="px-5 py-3 text-muted">Launches supervisor + server. If supervisor is already running, resumes the server process.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">gtl stop</td>
+              <td class="px-5 py-3 text-muted">Stops the server process. Supervisor stays alive so the server can be resumed.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">gtl restart</td>
+              <td class="px-5 py-3 text-muted">Atomic stop + start. Bounces the server in one step.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">Ctrl+C</td>
+              <td class="px-5 py-3 text-muted">Fully exits the supervisor and the server. The socket is cleaned up.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="text-xl font-mono text-white mb-4">Configuration</h3>
+      <p class="text-muted mb-4">
+        The supervisor uses the <code class="text-accent-light">start_command</code> field from your <code class="text-accent-light">.treeline.yml</code>:
+      </p>
+      <div class="terminal mb-8">
+        <div class="terminal-header">
+          <span class="text-xs text-muted">.treeline.yml</span>
+        </div>
+        <div class="terminal-body">
+          <pre class="text-sm"><span class="text-accent-light">start_command</span><span class="text-muted">:</span> <span class="text-white">bin/dev</span></pre>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-mono text-white mb-4">Security</h3>
+      <p class="text-muted">
+        The supervisor communicates over a Unix socket with <code class="text-accent-light">0600</code> permissions (owner-only). Read deadlines and client timeouts prevent hung connections. The socket path is derived from a SHA-256 hash of the worktree path.
+      </p>
+    </div>
+  </section>
+
   <!-- AI Agent Setup -->
-  <section id="ai-agents" class="px-4 sm:px-6 py-10 sm:py-16 bg-surface-raised">
+  <section id="ai-agents" class="px-4 sm:px-6 py-10 sm:py-16">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">AI agent setup</h2>
       <p class="text-muted mb-8">
