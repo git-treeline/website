@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html'],
+  content: ['./index.html', './docs/index.html'],
   theme: {
     extend: {
       colors: {
@@ -17,7 +17,7 @@ export default {
         muted: '#8b949e',
       },
       fontFamily: {
-        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        mono: ['"Source Code Pro"', 'ui-monospace', 'monospace'],
         sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
     },

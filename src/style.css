@@ -76,4 +76,38 @@
   .cli-table code {
     @apply bg-surface px-1.5 py-0.5 rounded text-accent-light;
   }
+
+  .faq-item {
+    @apply rounded-lg border border-surface-border overflow-hidden;
+  }
+
+  .faq-summary {
+    @apply px-6 py-5 text-lg font-mono text-white cursor-pointer select-none list-none flex items-center justify-between gap-4;
+    outline: none;
+  }
+
+  .faq-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item:focus-within {
+    @apply border-surface-border;
+  }
+
+  .faq-summary::after {
+    content: '+';
+    @apply text-muted text-xl font-mono shrink-0 transition-transform duration-200;
+  }
+
+  .faq-item[open] .faq-summary::after {
+    content: '−';
+  }
+
+  .faq-answer {
+    @apply px-5 pb-5 text-muted;
+  }
+
+  .nav-scrolled {
+    border-bottom: 1px solid #30363d;
+  }
 }
