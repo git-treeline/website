@@ -74,7 +74,7 @@
 
   <!-- Nav -->
   <nav id="site-nav" class="fixed top-0 left-0 right-0 z-50 bg-surface transition-colors duration-200">
-    <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
       <a href="/" class="flex items-center gap-3 text-white hover:text-accent-light transition-colors">
         <svg class="w-7 h-7" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
           <rect width="32" height="32" rx="6" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
@@ -82,10 +82,10 @@
         </svg>
         <span class="font-mono text-sm font-semibold hidden sm:inline">git-treeline</span>
       </a>
-      <div class="flex items-center gap-6">
+      <div class="flex items-center gap-3 sm:gap-6">
         <a href="/docs/" class="text-sm text-muted hover:text-white transition-colors">Docs</a>
-        <a href="https://github.com/git-treeline/git-treeline" class="text-sm text-muted hover:text-white transition-colors">GitHub</a>
-        <a href="#get-started" class="text-xs font-mono px-4 py-2 bg-accent text-surface rounded-md hover:bg-accent-light transition-colors">Install</a>
+        <a href="https://github.com/git-treeline/git-treeline" class="text-sm text-muted hover:text-white transition-colors hidden sm:inline">GitHub</a>
+        <a href="#get-started" class="text-xs font-mono px-3 sm:px-4 py-2 bg-accent text-surface rounded-md hover:bg-accent-light transition-colors">Install</a>
       </div>
     </div>
   </nav>
@@ -99,14 +99,14 @@
   </script>
 
   <!-- Hero -->
-  <section id="hero" class="min-h-[85vh] flex flex-col items-center justify-center text-center px-6 pt-32 pb-24">
+  <section id="hero" class="min-h-0 sm:min-h-[85vh] flex flex-col items-center justify-center text-center px-4 sm:px-6 pt-24 sm:pt-32 pb-12 sm:pb-24">
     <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-6">
       git-treeline
     </h1>
     <p class="text-xl md:text-2xl text-accent-light max-w-2xl mb-4">
       Review every branch at the same time
     </p>
-    <p class="text-base text-gray-400 max-w-2xl mb-12">
+    <p class="text-sm sm:text-base text-gray-400 max-w-2xl mb-8 sm:mb-12">
       Agents build features in worktrees faster than you can review them. Git Treeline allocates server ports, clones databases, isolates background job processes, and more so your team can run every branch, across every repo, with zero collisions.
     </p>
     <div class="flex flex-col sm:flex-row items-center gap-4 mb-8 w-full max-w-2xl">
@@ -136,7 +136,7 @@
   </section>
 
   <!-- The Problem -->
-  <section id="problem" class="px-6 py-24 max-w-4xl mx-auto">
+  <section id="problem" class="px-4 sm:px-6 py-12 sm:py-24 max-w-4xl mx-auto">
     <h2 class="section-heading">Worktrees are easy to create.<br class="hidden md:inline"> Hard&nbsp;to&nbsp;run.</h2>
     <p class="section-subtext mb-4">
       <code class="text-accent-light">git worktree add</code> gives you a second checkout in seconds. But that checkout isn't runnable. It needs its own port, its own database, its own env file, its own dependencies installed. Until all of that is in place, nobody can open it in a browser and see what was built.
@@ -169,7 +169,7 @@
   </section>
 
   <!-- The Solution -->
-  <section id="solution" class="px-6 py-24 bg-surface-raised">
+  <section id="solution" class="px-4 sm:px-6 py-12 sm:py-24 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading">One command. Fully isolated.</h2>
       <p class="section-subtext mb-12">
@@ -202,7 +202,7 @@
   </section>
 
   <!-- Resource Isolation -->
-  <section id="capabilities" class="px-6 py-24">
+  <section id="capabilities" class="px-4 sm:px-6 py-12 sm:py-24">
     <div class="max-w-5xl mx-auto">
       <h2 class="section-heading text-center mb-4">Everything a worktree needs to run</h2>
       <p class="section-subtext text-center mx-auto mb-16">
@@ -256,7 +256,7 @@
   </section>
 
   <!-- Workflow Commands -->
-  <section id="workflow" class="px-6 py-24 bg-surface-raised">
+  <section id="workflow" class="px-4 sm:px-6 py-12 sm:py-24 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading">From checkout to running app</h2>
       <p class="section-subtext mb-4">
@@ -306,10 +306,10 @@
           <span class="terminal-dot bg-green-500"></span>
           <span class="text-xs text-muted ml-2">monitor everything</span>
         </div>
-        <div class="terminal-body space-y-4">
-          <div>
+        <div class="terminal-body">
+          <div class="min-w-max">
             <p><span class="prompt">~ $</span> <span class="command">gtl status --check</span></p>
-            <p class="output">┌──────────────────────┬──────┬────────┬──────────────────────────┬───────────────────────┐</p>
+            <p class="output mt-4">┌──────────────────────┬──────┬────────┬──────────────────────────┬───────────────────────┐</p>
             <p class="output">│ <span class="text-white">Worktree</span>             │ <span class="text-white">Port</span> │ <span class="text-white">Status</span> │ <span class="text-white">Database</span>                  │ <span class="text-white">Redis</span>                 │</p>
             <p class="output">├──────────────────────┼──────┼────────┼──────────────────────────┼───────────────────────┤</p>
             <p class="output">│ myapp (main)         │ <span class="highlight">3000</span> │ <span class="text-accent">● up</span>   │ <span class="highlight">myapp_dev</span>                │ <span class="highlight">default</span>               │</p>
@@ -320,7 +320,7 @@
           </div>
         </div>
       </div>
-      <div class="grid md:grid-cols-3 gap-6">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div class="p-5 rounded-lg border border-surface-border">
           <h3 class="text-sm font-mono text-accent mb-2">release</h3>
           <p class="text-muted text-sm">Free ports, drop the cloned database, release Redis namespace. Batch with <code class="text-accent-light">--project</code> or <code class="text-accent-light">--all</code>.</p>
@@ -338,7 +338,7 @@
   </section>
 
   <!-- Built for AI Agents -->
-  <section id="agents" class="px-6 py-24">
+  <section id="agents" class="px-4 sm:px-6 py-12 sm:py-24">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading">Built for AI agents</h2>
       <p class="section-subtext mb-10">
@@ -402,7 +402,7 @@
           </div>
         </div>
       </div>
-      <div class="grid md:grid-cols-3 gap-6">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div class="p-5 rounded-lg border border-surface-border">
           <h3 class="text-sm font-mono text-accent mb-2">Lifecycle hooks</h3>
           <p class="text-muted text-sm">Two commands &mdash; <code class="text-accent-light">setup</code> and <code class="text-accent-light">release</code> &mdash; map directly to agent worktree creation and teardown.</p>
@@ -420,13 +420,13 @@
   </section>
 
   <!-- Get Started -->
-  <section id="get-started" class="px-6 py-24">
+  <section id="get-started" class="px-4 sm:px-6 py-12 sm:py-24">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading text-center mb-4">Get started in 60 seconds</h2>
       <p class="section-subtext text-center mx-auto mb-16">
         Install, initialize your project, and create your first isolated worktree.
       </p>
-      <div class="grid md:grid-cols-3 gap-8 mb-16">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-16">
         <div class="text-center">
           <div class="text-accent text-3xl font-mono font-bold mb-4">1</div>
           <h3 class="text-lg mb-3">Install</h3>
@@ -456,7 +456,7 @@
   </section>
 
   <!-- Configuration -->
-  <section id="configuration" class="px-6 py-24 bg-surface-raised">
+  <section id="configuration" class="px-4 sm:px-6 py-12 sm:py-24 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading">Declare what your project needs</h2>
       <p class="section-subtext mb-4">
@@ -465,7 +465,7 @@
       <p class="section-subtext mb-10">
         <code class="text-accent-light">gtl init</code> auto-detects your framework &mdash; Next.js, Rails, Express, Python, Rust, Go &mdash; and generates a tailored config.
       </p>
-      <div class="grid md:grid-cols-2 gap-6">
+      <div class="grid lg:grid-cols-2 gap-6">
         <div>
           <div class="terminal">
             <div class="terminal-header">
@@ -543,7 +543,7 @@
   </section>
 
   <!-- FAQ -->
-  <section id="faq" class="px-6 py-24 bg-surface-raised">
+  <section id="faq" class="px-4 sm:px-6 py-12 sm:py-24 bg-surface-raised">
     <div class="max-w-3xl mx-auto">
       <h2 class="section-heading text-center mb-12">Questions</h2>
       <div class="space-y-3" itemscope itemtype="https://schema.org/FAQPage">
@@ -612,15 +612,15 @@
   </section>
 
   <!-- Closing CTA -->
-  <section id="cta" class="px-6 py-24 text-center">
+  <section id="cta" class="px-4 sm:px-6 py-12 sm:py-24 text-center">
     <div class="max-w-2xl mx-auto">
       <h2 class="section-heading mb-4">Every branch, running</h2>
       <p class="section-subtext mx-auto mb-10">
         One config file. One CLI command. Your whole team sees the work, not just the diff.
       </p>
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-        <div class="install-cmd">
-          <code class="text-accent-light whitespace-nowrap">brew install git-treeline/tap/git-treeline</code>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 w-full">
+        <div class="install-cmd max-w-full overflow-x-auto">
+          <code class="text-accent-light whitespace-nowrap text-xs sm:text-sm">brew install git-treeline/tap/git-treeline</code>
           <button onclick="navigator.clipboard.writeText('brew install git-treeline/tap/git-treeline')" class="text-muted hover:text-white transition-colors" aria-label="Copy install command">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
@@ -637,8 +637,8 @@
   </section>
 
   <!-- Footer -->
-  <footer class="px-6 py-12 border-t border-surface-border">
-    <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-muted">
+  <footer class="px-4 sm:px-6 py-8 sm:py-12 border-t border-surface-border">
+    <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 text-sm text-muted">
       <div class="flex items-center gap-6">
         <a href="https://github.com/git-treeline/git-treeline" class="hover:text-white transition-colors">GitHub</a>
         <a href="/docs/" class="hover:text-white transition-colors">Docs</a>
