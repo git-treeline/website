@@ -3,7 +3,7 @@ project: website
 env:
   PORT: "{port}"
 
-setup_commands:
-  - npm install
-
-start_command: npx vite --port ${PORT:-5173}
+commands:
+  setup:
+    - npm install
+  start: npx vite --port ${PORT:-5173}
