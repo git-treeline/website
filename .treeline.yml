@@ -1,0 +1,7 @@
+project: website
+
+env:
+  PORT: "{port}"
+
+setup_commands:
+  - npm install

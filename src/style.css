@@ -56,4 +56,24 @@
   .section-subtext {
     @apply text-lg text-muted max-w-2xl;
   }
+
+  .cli-table {
+    @apply font-sans;
+  }
+
+  .cli-table thead {
+    @apply text-xs uppercase tracking-wider;
+  }
+
+  .cli-table tbody tr {
+    @apply bg-surface-raised transition-colors;
+  }
+
+  .cli-table tbody tr:hover {
+    @apply bg-surface;
+  }
+
+  .cli-table code {
+    @apply bg-surface px-1.5 py-0.5 rounded text-accent-light;
+  }
 }
