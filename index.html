@@ -3,16 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Git Treeline — Isolated environments for every worktree</title>
-  <meta name="description" content="Git Treeline allocates unique ports, databases, and Redis namespaces per git worktree so parallel development never collides.">
-  <meta property="og:title" content="Git Treeline">
-  <meta property="og:description" content="Isolated environments for every worktree. Unique ports, databases, and Redis per worktree.">
+  <title>Git Treeline — One command to make any git worktree runnable</title>
+  <meta name="description" content="Git Treeline sets up isolated development environments per git worktree — unique ports, cloned PostgreSQL databases, Redis namespaces, env files, and setup commands. One CLI command from checkout to bootable app.">
+  <meta name="keywords" content="git worktree, parallel development, AI coding agents, port allocation, database cloning, environment isolation, worktree management, dev environment, CLI tool">
+  <link rel="canonical" href="https://git-treeline.dev">
+
+  <meta property="og:title" content="Git Treeline — One command to make any git worktree runnable">
+  <meta property="og:description" content="Allocates ports, clones databases, writes env files, and runs setup commands per git worktree. Works with any stack. Built for AI agents and parallel development.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://git-treeline.dev">
+  <meta property="og:site_name" content="Git Treeline">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Git Treeline — One command to make any git worktree runnable">
+  <meta name="twitter:description" content="Allocates ports, clones databases, writes env files, and runs setup commands per git worktree.">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Git Treeline",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "macOS, Linux, Windows",
+    "description": "Worktree environment manager. Allocates ports, clones PostgreSQL databases, assigns Redis namespaces, writes env files, and runs setup commands — per git worktree. One command from checkout to bootable app.",
+    "url": "https://git-treeline.dev",
+    "downloadUrl": "https://github.com/git-treeline/git-treeline/releases",
+    "softwareVersion": "latest",
+    "license": "https://www.apache.org/licenses/LICENSE-2.0",
+    "author": {
+      "@type": "Organization",
+      "name": "Product Matter",
+      "url": "https://productmatter.co"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="dist/output.css">
+  <link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
 
@@ -21,13 +55,13 @@
     <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6">
       git-treeline
     </h1>
-    <p class="text-xl md:text-2xl text-muted max-w-2xl mb-4">
-      Isolated environments for every worktree
+    <p class="text-xl md:text-2xl text-accent-light max-w-2xl mb-4">
+      One command to make any worktree runnable
     </p>
-    <p class="text-base text-gray-400 max-w-xl mb-12">
-      Allocates unique ports, databases, and Redis namespaces per git worktree so parallel development &mdash; human or AI &mdash; never collides.
+    <p class="text-base text-gray-400 max-w-2xl mb-12">
+      Allocates ports, clones PostgreSQL databases, assigns Redis namespaces, writes env files, and runs your setup commands &mdash; per git worktree. From <code class="text-accent-light">git worktree add</code> to a bootable app in seconds.
     </p>
-    <div class="flex flex-col sm:flex-row items-center gap-4">
+    <div class="flex flex-col sm:flex-row items-center gap-4 mb-8">
       <div class="install-cmd">
         <code class="text-accent-light whitespace-nowrap">brew install git-treeline/tap/git-treeline</code>
         <button onclick="navigator.clipboard.writeText('brew install git-treeline/tap/git-treeline')" class="text-muted hover:text-white transition-colors" aria-label="Copy install command">
@@ -43,13 +77,24 @@
         View on GitHub
       </a>
     </div>
+    <div class="flex items-center gap-4">
+      <a href="https://github.com/git-treeline/git-treeline" class="inline-flex items-center gap-2 text-sm text-muted hover:text-white transition-colors">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568L24 9.306l-6 5.848 1.416 8.259L12 19.446l-7.416 3.967L6 15.154 0 9.306l8.332-1.151z"/></svg>
+        Star on GitHub
+      </a>
+      <span class="text-surface-border">|</span>
+      <span class="text-sm text-muted">Open source &middot; Apache 2.0 &middot; Free forever</span>
+    </div>
   </section>
 
   <!-- The Problem -->
   <section class="px-6 py-24 max-w-4xl mx-auto">
-    <h2 class="section-heading">The problem</h2>
+    <h2 class="section-heading">Worktrees are easy to create. Hard to run.</h2>
+    <p class="section-subtext mb-4">
+      <code class="text-accent-light">git worktree add</code> gives you a second checkout in seconds. But that checkout isn't runnable. It needs its own port, its own database, its own env file, its own dependencies installed. Do that by hand for three worktrees and you've burned an hour before writing any code.
+    </p>
     <p class="section-subtext mb-8">
-      AI agents and parallel development mean multiple worktrees running at the same time. They all fight over port 3000, the same database, the same Redis instance. One collision kills the whole flow.
+      Now multiply that by AI agents. Three agents building features in parallel, each in their own worktree &mdash; and you can't review their work until each one boots without colliding.
     </p>
     <div class="terminal">
       <div class="terminal-header">
@@ -58,167 +103,423 @@
         <span class="terminal-dot bg-green-500"></span>
         <span class="text-xs text-muted ml-2">without git-treeline</span>
       </div>
-      <div class="terminal-body">
-        <p><span class="prompt">~/feature-a $</span> <span class="command">rails server</span></p>
-        <p class="output">=> Booting Puma on http://localhost:3000</p>
-        <p class="mt-3"><span class="prompt">~/feature-b $</span> <span class="command">rails server</span></p>
-        <p class="text-red-400">Address already in use - bind(2) for "127.0.0.1" port 3000 (Errno::EADDRINUSE)</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- How It Works -->
-  <section class="px-6 py-24 bg-surface-raised">
-    <div class="max-w-5xl mx-auto">
-      <h2 class="section-heading text-center mb-16">How it works</h2>
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="p-6 rounded-lg border border-surface-border">
-          <div class="text-accent text-2xl font-mono font-bold mb-3">01</div>
-          <h3 class="text-xl mb-3">Allocate</h3>
-          <p class="text-muted">
-            Unique ports, database names, and Redis namespaces assigned per worktree. No manual coordination needed.
-          </p>
+      <div class="terminal-body space-y-3">
+        <div>
+          <p><span class="prompt">~/feature-a $</span> <span class="command">rails server</span></p>
+          <p class="output">=> Booting Puma on http://localhost:3000</p>
         </div>
-        <div class="p-6 rounded-lg border border-surface-border">
-          <div class="text-accent text-2xl font-mono font-bold mb-3">02</div>
-          <h3 class="text-xl mb-3">Configure</h3>
-          <p class="text-muted">
-            <code class="text-accent-light text-sm">.treeline.yml</code> describes what your project needs. <code class="text-accent-light text-sm">config.json</code> controls your machine.
-          </p>
+        <div>
+          <p><span class="prompt">~/feature-b $</span> <span class="command">rails server</span></p>
+          <p class="text-red-400">Address already in use - bind(2) for "127.0.0.1" port 3000 (Errno::EADDRINUSE)</p>
         </div>
-        <div class="p-6 rounded-lg border border-surface-border">
-          <div class="text-accent text-2xl font-mono font-bold mb-3">03</div>
-          <h3 class="text-xl mb-3">Manage</h3>
-          <p class="text-muted">
-            <code class="text-accent-light text-sm">status</code>, <code class="text-accent-light text-sm">release</code>, <code class="text-accent-light text-sm">prune</code> to inspect and clean up allocations across worktrees.
-          </p>
+        <div>
+          <p><span class="prompt">~/feature-b $</span> <span class="command">rails db:create</span></p>
+          <p class="text-red-400">database "myapp_development" already exists</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Terminal Demo -->
-  <section class="px-6 py-24 max-w-4xl mx-auto">
-    <h2 class="section-heading text-center mb-12">See it in action</h2>
-    <div class="terminal">
-      <div class="terminal-header">
-        <span class="terminal-dot bg-red-500"></span>
-        <span class="terminal-dot bg-yellow-500"></span>
-        <span class="terminal-dot bg-green-500"></span>
-        <span class="text-xs text-muted ml-2">terminal</span>
-      </div>
-      <div class="terminal-body space-y-4">
-        <div>
-          <p><span class="prompt">~/myapp $</span> <span class="command">git worktree add ../myapp-feature-auth</span></p>
-          <p class="output">Preparing worktree (new branch 'feature-auth')</p>
-        </div>
-        <div>
-          <p><span class="prompt">~/myapp-feature-auth $</span> <span class="command">git-treeline setup .</span></p>
-          <p class="output">Allocated resources for worktree <span class="highlight">myapp-feature-auth</span></p>
-          <p class="output">  PORT=<span class="highlight">3001</span>  DB=<span class="highlight">myapp_dev_wt1</span>  REDIS_NS=<span class="highlight">wt1</span></p>
-          <p class="output">  Wrote .env</p>
-        </div>
-        <div>
-          <p><span class="prompt">~/myapp-feature-auth $</span> <span class="command">git-treeline status</span></p>
-          <p class="output">┌──────────────────────┬──────┬─────────────────┬──────────┐</p>
-          <p class="output">│ <span class="text-white">Worktree</span>             │ <span class="text-white">Port</span> │ <span class="text-white">Database</span>         │ <span class="text-white">Redis</span>    │</p>
-          <p class="output">├──────────────────────┼──────┼─────────────────┼──────────┤</p>
-          <p class="output">│ myapp (main)         │ <span class="highlight">3000</span> │ <span class="highlight">myapp_dev</span>       │ <span class="highlight">default</span>  │</p>
-          <p class="output">│ myapp-feature-auth   │ <span class="highlight">3001</span> │ <span class="highlight">myapp_dev_wt1</span>   │ <span class="highlight">wt1</span>      │</p>
-          <p class="output">│ myapp-fix-payments   │ <span class="highlight">3002</span> │ <span class="highlight">myapp_dev_wt2</span>   │ <span class="highlight">wt2</span>      │</p>
-          <p class="output">└──────────────────────┴──────┴─────────────────┴──────────┘</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Framework Agnostic -->
+  <!-- The Solution -->
   <section class="px-6 py-24 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
-      <h2 class="section-heading">Works with any stack</h2>
-      <p class="section-subtext mb-10">
-        Anything that reads <code class="text-accent-light">PORT</code> from the environment works out of the box. Rails, Next.js, Express, FastAPI &mdash; whatever your team runs.
+      <h2 class="section-heading">One command. Fully isolated.</h2>
+      <p class="section-subtext mb-12">
+        <code class="text-accent-light">git-treeline setup</code> does everything needed to make a worktree bootable &mdash; and <code class="text-accent-light">git-treeline release</code> tears it all down when you're done.
       </p>
-      <div class="grid md:grid-cols-2 gap-6">
-        <div class="terminal">
-          <div class="terminal-header">
-            <span class="text-xs text-muted">.treeline.yml</span>
+      <div class="terminal">
+        <div class="terminal-header">
+          <span class="terminal-dot bg-red-500"></span>
+          <span class="terminal-dot bg-yellow-500"></span>
+          <span class="terminal-dot bg-green-500"></span>
+          <span class="text-xs text-muted ml-2">terminal</span>
+        </div>
+        <div class="terminal-body space-y-4">
+          <div>
+            <p><span class="prompt">~ $</span> <span class="command">git worktree add ../myapp-feature-auth</span></p>
+            <p class="output">Preparing worktree (new branch 'feature-auth')</p>
           </div>
-          <div class="terminal-body">
-            <pre class="text-sm"><span class="text-accent-light">resources</span><span class="text-muted">:</span>
-  <span class="text-accent-light">port</span><span class="text-muted">:</span>
-    <span class="text-accent-light">range</span><span class="text-muted">:</span> <span class="text-white">[3000, 3099]</span>
-  <span class="text-accent-light">database</span><span class="text-muted">:</span>
-    <span class="text-accent-light">template</span><span class="text-muted">:</span> <span class="text-white">"myapp_dev_{{.Suffix}}"</span>
-  <span class="text-accent-light">redis</span><span class="text-muted">:</span>
-    <span class="text-accent-light">namespace</span><span class="text-muted">:</span> <span class="text-white">true</span></pre>
+          <div>
+            <p><span class="prompt">~/myapp-feature-auth $</span> <span class="command">git-treeline setup .</span></p>
+            <p class="output">Allocated port <span class="highlight">3010</span></p>
+            <p class="output">Cloned database <span class="highlight">myapp_dev_feature_auth</span> from template myapp_development</p>
+            <p class="output">Assigned Redis namespace <span class="highlight">myapp:feature-auth</span></p>
+            <p class="output">Copied <span class="highlight">config/master.key</span></p>
+            <p class="output">Wrote <span class="highlight">.env.local</span></p>
+            <p class="output">Running setup commands...</p>
+            <p class="output">  <span class="text-white">bundle install --quiet</span></p>
+            <p class="output">  <span class="text-white">yarn install --silent</span></p>
+            <p class="output text-accent mt-1">Ready. Start your server in this worktree.</p>
           </div>
         </div>
-        <div class="p-6 rounded-lg border border-surface-border flex flex-col justify-center">
-          <h3 class="text-lg mb-3">Rails integration</h3>
-          <p class="text-muted text-sm mb-4">
-            The <code class="text-accent-light">git-treeline-rails</code> gem automatically injects allocated environment variables into your Rails app via a Railtie. Zero config.
+      </div>
+    </div>
+  </section>
+
+  <!-- What It Manages -->
+  <section class="px-6 py-24">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="section-heading text-center mb-4">Everything a worktree needs to run</h2>
+      <p class="section-subtext text-center mx-auto mb-16">
+        Each capability is opt-in. Use what your project needs, skip what it doesn't.
+      </p>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="p-6 rounded-lg border border-surface-border">
+          <h3 class="text-lg mb-2">Port allocation</h3>
+          <p class="text-muted text-sm mb-3">
+            Assigns a unique port per worktree from a configurable base. Multi-port support for apps that need it &mdash; like Rails with a separate esbuild port.
           </p>
-          <code class="install-cmd text-xs">
-            <span class="text-accent-light">gem "git-treeline-rails"</span>
-          </code>
+          <code class="text-xs text-accent-light">PORT=3010 ESBUILD_PORT=3011</code>
+        </div>
+        <div class="p-6 rounded-lg border border-surface-border">
+          <h3 class="text-lg mb-2">Database cloning</h3>
+          <p class="text-muted text-sm mb-3">
+            Clones your development database per worktree using <code class="text-accent-light">createdb&nbsp;--template</code>. Full schema and seed data, zero migration overhead.
+          </p>
+          <code class="text-xs text-accent-light">myapp_dev_feature_auth</code>
+        </div>
+        <div class="p-6 rounded-lg border border-surface-border">
+          <h3 class="text-lg mb-2">Redis namespacing</h3>
+          <p class="text-muted text-sm mb-3">
+            Prevents key collisions across worktrees. Choose key-prefix strategy (unlimited worktrees) or separate Redis databases (1&ndash;15).
+          </p>
+          <code class="text-xs text-accent-light">myapp:feature-auth:session:*</code>
+        </div>
+        <div class="p-6 rounded-lg border border-surface-border">
+          <h3 class="text-lg mb-2">Env file management</h3>
+          <p class="text-muted text-sm mb-3">
+            Copies your env template, interpolates allocated values (ports, database names, Redis URLs), and writes the result. Token-based &mdash; works with any <code class="text-accent-light">.env</code> format.
+          </p>
+          <code class="text-xs text-accent-light">.env.local &larr; .env.local + allocations</code>
+        </div>
+        <div class="p-6 rounded-lg border border-surface-border">
+          <h3 class="text-lg mb-2">Setup commands</h3>
+          <p class="text-muted text-sm mb-3">
+            Runs your install and migration commands after allocation. <code class="text-accent-light">bundle install</code>, <code class="text-accent-light">npm install</code>, <code class="text-accent-light">prisma migrate deploy</code> &mdash; whatever your stack needs.
+          </p>
+          <code class="text-xs text-accent-light">setup_commands: [...]</code>
+        </div>
+        <div class="p-6 rounded-lg border border-surface-border">
+          <h3 class="text-lg mb-2">File copying</h3>
+          <p class="text-muted text-sm mb-3">
+            Copies files from the main worktree that aren't in git &mdash; secrets, credentials, local config. No more "where's my master.key" after checkout.
+          </p>
+          <code class="text-xs text-accent-light">copy_files: [config/master.key]</code>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Configuration -->
+  <section class="px-6 py-24 bg-surface-raised">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading">Declare what your project needs</h2>
+      <p class="section-subtext mb-10">
+        Commit <code class="text-accent-light">.treeline.yml</code> to your repo. Every team member and every agent gets the same setup.
+      </p>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <div class="terminal">
+            <div class="terminal-header">
+              <span class="text-xs text-muted">.treeline.yml &mdash; Rails app</span>
+            </div>
+            <div class="terminal-body">
+              <pre class="text-sm"><span class="text-accent-light">project</span><span class="text-muted">:</span> <span class="text-white">myapp</span>
+<span class="text-accent-light">ports_needed</span><span class="text-muted">:</span> <span class="text-white">2</span>
+
+<span class="text-accent-light">env_file</span><span class="text-muted">:</span>
+  <span class="text-accent-light">target</span><span class="text-muted">:</span> <span class="text-white">.env.local</span>
+  <span class="text-accent-light">source</span><span class="text-muted">:</span> <span class="text-white">.env.local</span>
+
+<span class="text-accent-light">database</span><span class="text-muted">:</span>
+  <span class="text-accent-light">adapter</span><span class="text-muted">:</span> <span class="text-white">postgresql</span>
+  <span class="text-accent-light">template</span><span class="text-muted">:</span> <span class="text-white">myapp_development</span>
+  <span class="text-accent-light">pattern</span><span class="text-muted">:</span> <span class="text-white">"{template}_{worktree}"</span>
+
+<span class="text-accent-light">copy_files</span><span class="text-muted">:</span>
+  <span class="text-muted">-</span> <span class="text-white">config/master.key</span>
+
+<span class="text-accent-light">env</span><span class="text-muted">:</span>
+  <span class="text-accent-light">PORT</span><span class="text-muted">:</span> <span class="text-white">"{port}"</span>
+  <span class="text-accent-light">DATABASE_NAME</span><span class="text-muted">:</span> <span class="text-white">"{database}"</span>
+  <span class="text-accent-light">REDIS_URL</span><span class="text-muted">:</span> <span class="text-white">"{redis_url}"</span>
+  <span class="text-accent-light">ESBUILD_PORT</span><span class="text-muted">:</span> <span class="text-white">"{port_2}"</span>
+
+<span class="text-accent-light">setup_commands</span><span class="text-muted">:</span>
+  <span class="text-muted">-</span> <span class="text-white">bundle install --quiet</span>
+  <span class="text-muted">-</span> <span class="text-white">yarn install --silent</span></pre>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="terminal mb-6">
+            <div class="terminal-header">
+              <span class="text-xs text-muted">.treeline.yml &mdash; Next.js + Prisma</span>
+            </div>
+            <div class="terminal-body">
+              <pre class="text-sm"><span class="text-accent-light">project</span><span class="text-muted">:</span> <span class="text-white">frontend</span>
+
+<span class="text-accent-light">env_file</span><span class="text-muted">:</span>
+  <span class="text-accent-light">target</span><span class="text-muted">:</span> <span class="text-white">.env.local</span>
+  <span class="text-accent-light">source</span><span class="text-muted">:</span> <span class="text-white">.env.local</span>
+
+<span class="text-accent-light">database</span><span class="text-muted">:</span>
+  <span class="text-accent-light">adapter</span><span class="text-muted">:</span> <span class="text-white">postgresql</span>
+  <span class="text-accent-light">template</span><span class="text-muted">:</span> <span class="text-white">frontend_dev</span>
+  <span class="text-accent-light">pattern</span><span class="text-muted">:</span> <span class="text-white">"{template}_{worktree}"</span>
+
+<span class="text-accent-light">env</span><span class="text-muted">:</span>
+  <span class="text-accent-light">PORT</span><span class="text-muted">:</span> <span class="text-white">"{port}"</span>
+  <span class="text-accent-light">DATABASE_URL</span><span class="text-muted">:</span> <span class="text-white">"postgresql://localhost/{database}"</span>
+
+<span class="text-accent-light">setup_commands</span><span class="text-muted">:</span>
+  <span class="text-muted">-</span> <span class="text-white">npm install</span>
+  <span class="text-muted">-</span> <span class="text-white">npx prisma migrate deploy</span></pre>
+            </div>
+          </div>
+          <div class="p-5 rounded-lg border border-surface-border">
+            <h3 class="text-sm font-mono text-accent mb-2">Rails integration</h3>
+            <p class="text-muted text-sm mb-3">
+              The <code class="text-accent-light">git-treeline-rails</code> gem auto-injects allocated env vars at boot via a Railtie. Zero manual config.
+            </p>
+            <code class="text-xs text-accent-light">gem "git-treeline-rails"</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lifecycle Management -->
+  <section class="px-6 py-24">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading">Full lifecycle, not just setup</h2>
+      <p class="section-subtext mb-12">
+        Worktrees accumulate. Databases pile up. Ports stay reserved. Git Treeline tracks everything in a central registry and gives you commands to manage the full lifecycle.
+      </p>
+      <div class="terminal mb-8">
+        <div class="terminal-header">
+          <span class="terminal-dot bg-red-500"></span>
+          <span class="terminal-dot bg-yellow-500"></span>
+          <span class="terminal-dot bg-green-500"></span>
+          <span class="text-xs text-muted ml-2">terminal</span>
+        </div>
+        <div class="terminal-body space-y-4">
+          <div>
+            <p><span class="prompt">~ $</span> <span class="command">git-treeline status</span></p>
+            <p class="output">┌──────────────────────┬──────┬──────────────────────────┬───────────────────────┐</p>
+            <p class="output">│ <span class="text-white">Worktree</span>             │ <span class="text-white">Port</span> │ <span class="text-white">Database</span>                  │ <span class="text-white">Redis</span>                 │</p>
+            <p class="output">├──────────────────────┼──────┼──────────────────────────┼───────────────────────┤</p>
+            <p class="output">│ myapp (main)         │ <span class="highlight">3000</span> │ <span class="highlight">myapp_dev</span>                │ <span class="highlight">default</span>               │</p>
+            <p class="output">│ myapp-feature-auth   │ <span class="highlight">3010</span> │ <span class="highlight">myapp_dev_feature_auth</span>   │ <span class="highlight">myapp:feature-auth</span>   │</p>
+            <p class="output">│ myapp-fix-payments   │ <span class="highlight">3020</span> │ <span class="highlight">myapp_dev_fix_payments</span>   │ <span class="highlight">myapp:fix-payments</span>   │</p>
+            <p class="output">└──────────────────────┴──────┴──────────────────────────┴───────────────────────┘</p>
+          </div>
+          <div>
+            <p><span class="prompt">~ $</span> <span class="command">git-treeline release ../myapp-fix-payments --drop-db</span></p>
+            <p class="output">Released port <span class="highlight">3020</span></p>
+            <p class="output">Dropped database <span class="highlight">myapp_dev_fix_payments</span></p>
+            <p class="output">Released Redis namespace <span class="highlight">myapp:fix-payments</span></p>
+          </div>
+          <div>
+            <p><span class="prompt">~ $</span> <span class="command">git-treeline prune --stale</span></p>
+            <p class="output">Pruned 2 allocations for deleted worktrees</p>
+          </div>
+        </div>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="p-5 rounded-lg border border-surface-border">
+          <h3 class="text-sm font-mono text-accent mb-2">setup</h3>
+          <p class="text-muted text-sm">Allocate resources, write env files, run install commands. Idempotent &mdash; safe to re-run.</p>
+        </div>
+        <div class="p-5 rounded-lg border border-surface-border">
+          <h3 class="text-sm font-mono text-accent mb-2">release --drop-db</h3>
+          <p class="text-muted text-sm">Free ports, drop the cloned database, release Redis namespace. Clean teardown.</p>
+        </div>
+        <div class="p-5 rounded-lg border border-surface-border">
+          <h3 class="text-sm font-mono text-accent mb-2">prune --stale</h3>
+          <p class="text-muted text-sm">Find and remove allocations for worktrees that no longer exist. Garbage collection for your dev environment.</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Built for AI Agents -->
-  <section class="px-6 py-24 max-w-4xl mx-auto">
-    <h2 class="section-heading">Built for AI agents</h2>
-    <p class="section-subtext mb-10">
-      AI coding agents spin up worktrees to work in parallel. Git Treeline handles resource isolation so agents don't collide with each other or with your local dev server.
-    </p>
-    <div class="grid md:grid-cols-2 gap-6">
-      <div class="terminal">
-        <div class="terminal-header">
-          <span class="text-xs text-muted">agent lifecycle hook</span>
+  <section class="px-6 py-24 bg-surface-raised">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading">Built for AI agents</h2>
+      <p class="section-subtext mb-10">
+        AI coding agents create worktrees to work in parallel. Git Treeline plugs into their lifecycle &mdash; allocate on creation, tear down on completion. No human coordination needed.
+      </p>
+      <div class="grid md:grid-cols-2 gap-6 mb-8">
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="text-xs text-muted">agent lifecycle hooks</span>
+          </div>
+          <div class="terminal-body space-y-3">
+            <div>
+              <p class="text-xs text-muted mb-1"># on worktree creation</p>
+              <p><span class="prompt">$</span> <span class="command">git-treeline setup .</span></p>
+            </div>
+            <div>
+              <p class="text-xs text-muted mb-1"># on worktree teardown</p>
+              <p><span class="prompt">$</span> <span class="command">git-treeline release . --drop-db</span></p>
+            </div>
+          </div>
         </div>
-        <div class="terminal-body">
-          <p><span class="prompt">$</span> <span class="command">git-treeline setup .</span></p>
-          <p class="output mt-1">Allocated resources for worktree <span class="highlight">agent-task-42</span></p>
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="text-xs text-muted">programmatic access</span>
+          </div>
+          <div class="terminal-body">
+            <p><span class="prompt">$</span> <span class="command">git-treeline status --json</span></p>
+            <pre class="output mt-2">[{
+  "<span class="text-white">worktree</span>": "<span class="highlight">agent-task-42</span>",
+  "<span class="text-white">port</span>": <span class="highlight">3010</span>,
+  "<span class="text-white">database</span>": "<span class="highlight">myapp_dev_task_42</span>",
+  "<span class="text-white">redis_prefix</span>": "<span class="highlight">myapp:task-42</span>"
+}]</pre>
+          </div>
         </div>
       </div>
       <div class="terminal">
         <div class="terminal-header">
-          <span class="text-xs text-muted">programmatic access</span>
+          <span class="text-xs text-muted">conductor config</span>
         </div>
         <div class="terminal-body">
-          <p><span class="prompt">$</span> <span class="command">git-treeline status --json</span></p>
-          <pre class="output mt-1">{
-  "<span class="text-white">worktree</span>": "<span class="highlight">agent-task-42</span>",
-  "<span class="text-white">port</span>": <span class="highlight">3003</span>,
-  "<span class="text-white">database</span>": "<span class="highlight">myapp_dev_wt3</span>"
+          <pre class="text-sm">{
+  "<span class="text-accent-light">setup</span>": "<span class="text-white">git-treeline setup .</span>",
+  "<span class="text-accent-light">archive</span>": "<span class="text-white">git-treeline release . --drop-db</span>"
 }</pre>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Install -->
-  <section class="px-6 py-24 bg-surface-raised">
-    <div class="max-w-3xl mx-auto text-center">
-      <h2 class="section-heading mb-12">Install</h2>
-      <div class="grid md:grid-cols-3 gap-6 text-left">
-        <div class="p-6 rounded-lg border border-surface-border">
-          <h3 class="text-sm font-mono text-accent mb-3 uppercase tracking-wider">Homebrew</h3>
-          <code class="text-sm text-accent-light break-all">brew install git-treeline/tap/git-treeline</code>
+  <!-- Works With Any Stack -->
+  <section class="px-6 py-24">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="section-heading mb-4">Framework agnostic</h2>
+      <p class="section-subtext mx-auto mb-12">
+        If your app reads <code class="text-accent-light">PORT</code> from the environment, it works. Rails, Next.js, Express, FastAPI, Phoenix &mdash; whatever your team runs. The <code class="text-accent-light">.treeline.yml</code> config adapts to any stack.
+      </p>
+      <div class="grid md:grid-cols-4 gap-4">
+        <div class="p-4 rounded-lg border border-surface-border">
+          <p class="font-mono text-sm text-white mb-1">Rails</p>
+          <p class="text-xs text-muted">Ports, DB clone, Redis, env, Railtie gem</p>
         </div>
-        <div class="p-6 rounded-lg border border-surface-border">
-          <h3 class="text-sm font-mono text-accent mb-3 uppercase tracking-wider">Go</h3>
-          <code class="text-sm text-accent-light break-all">go install github.com/git-treeline/git-treeline@latest</code>
+        <div class="p-4 rounded-lg border border-surface-border">
+          <p class="font-mono text-sm text-white mb-1">Next.js</p>
+          <p class="text-xs text-muted">Ports, Prisma DB, .env.local</p>
         </div>
-        <div class="p-6 rounded-lg border border-surface-border">
-          <h3 class="text-sm font-mono text-accent mb-3 uppercase tracking-wider">Binary</h3>
-          <a href="https://github.com/git-treeline/git-treeline/releases" class="text-sm text-accent-light hover:text-accent underline underline-offset-4">
-            Download from GitHub Releases
-          </a>
+        <div class="p-4 rounded-lg border border-surface-border">
+          <p class="font-mono text-sm text-white mb-1">Express</p>
+          <p class="text-xs text-muted">Ports, env file, setup commands</p>
+        </div>
+        <div class="p-4 rounded-lg border border-surface-border">
+          <p class="font-mono text-sm text-white mb-1">Any stack</p>
+          <p class="text-xs text-muted">Reads PORT from env? It works.</p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Get Started -->
+  <section class="px-6 py-24 bg-surface-raised">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading text-center mb-4">Get started in 60 seconds</h2>
+      <p class="section-subtext text-center mx-auto mb-16">
+        Install, initialize your project, and set up your first worktree.
+      </p>
+      <div class="grid md:grid-cols-3 gap-8 mb-16">
+        <div class="text-center">
+          <div class="text-accent text-3xl font-mono font-bold mb-4">1</div>
+          <h3 class="text-lg mb-3">Install</h3>
+          <div class="install-cmd justify-center">
+            <code class="text-accent-light text-xs">brew install git-treeline/tap/git-treeline</code>
+          </div>
+          <p class="text-xs text-muted mt-3">Also available via <code class="text-accent-light">go install</code> or <a href="https://github.com/git-treeline/git-treeline/releases" class="text-accent-light underline underline-offset-2">binary download</a></p>
+        </div>
+        <div class="text-center">
+          <div class="text-accent text-3xl font-mono font-bold mb-4">2</div>
+          <h3 class="text-lg mb-3">Initialize</h3>
+          <div class="install-cmd justify-center">
+            <code class="text-accent-light text-xs">git-treeline init --project myapp</code>
+          </div>
+          <p class="text-xs text-muted mt-3">Creates <code class="text-accent-light">.treeline.yml</code> &mdash; commit it to your repo</p>
+        </div>
+        <div class="text-center">
+          <div class="text-accent text-3xl font-mono font-bold mb-4">3</div>
+          <h3 class="text-lg mb-3">Setup a worktree</h3>
+          <div class="install-cmd justify-center">
+            <code class="text-accent-light text-xs">git-treeline setup .</code>
+          </div>
+          <p class="text-xs text-muted mt-3">Allocates resources, writes env, runs your commands</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ (AEO) -->
+  <section class="px-6 py-24">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="section-heading text-center mb-12">Questions</h2>
+      <div class="space-y-8" itemscope itemtype="https://schema.org/FAQPage">
+        <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <h3 class="text-lg mb-2" itemprop="name">What does git-treeline do?</h3>
+          <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <p class="text-muted" itemprop="text">Git Treeline is a CLI tool that sets up isolated development environments per git worktree. It allocates unique ports, clones PostgreSQL databases, assigns Redis namespaces, writes env files with interpolated values, copies secret files, and runs setup commands. One command turns a bare worktree checkout into a bootable copy of your app.</p>
+          </div>
+        </div>
+        <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <h3 class="text-lg mb-2" itemprop="name">Do I need to use all the features?</h3>
+          <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <p class="text-muted" itemprop="text">No. Every capability is opt-in. If your app only needs port allocation and an env file, that's a three-line <code class="text-accent-light">.treeline.yml</code>. Database cloning, Redis namespacing, file copying, and setup commands are all configured only if you need them.</p>
+          </div>
+        </div>
+        <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <h3 class="text-lg mb-2" itemprop="name">How does database cloning work?</h3>
+          <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <p class="text-muted" itemprop="text">Git Treeline uses PostgreSQL's <code class="text-accent-light">createdb --template</code> to clone your development database per worktree. This copies the full schema and seed data without running migrations, so each worktree gets a complete database in seconds. Use <code class="text-accent-light">git-treeline release --drop-db</code> to clean up when you're done.</p>
+          </div>
+        </div>
+        <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <h3 class="text-lg mb-2" itemprop="name">Does it work with AI coding agents?</h3>
+          <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <p class="text-muted" itemprop="text">Yes. Git Treeline is designed for it. Add <code class="text-accent-light">git-treeline setup .</code> as a lifecycle hook when an agent creates a worktree, and <code class="text-accent-light">git-treeline release . --drop-db</code> on teardown. Use <code class="text-accent-light">--json</code> output for programmatic access to allocated resources.</p>
+          </div>
+        </div>
+        <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <h3 class="text-lg mb-2" itemprop="name">What happens if I forget to clean up?</h3>
+          <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <p class="text-muted" itemprop="text"><code class="text-accent-light">git-treeline prune --stale</code> scans for allocations whose worktree directories no longer exist and removes them. It's garbage collection for your dev environment.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA -->
+  <section class="px-6 py-24 bg-surface-raised text-center">
+    <div class="max-w-2xl mx-auto">
+      <h2 class="section-heading mb-4">Stop fighting over port 3000</h2>
+      <p class="section-subtext mx-auto mb-10">
+        One config file. One CLI command. Every worktree runs in isolation.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+        <div class="install-cmd">
+          <code class="text-accent-light whitespace-nowrap">brew install git-treeline/tap/git-treeline</code>
+          <button onclick="navigator.clipboard.writeText('brew install git-treeline/tap/git-treeline')" class="text-muted hover:text-white transition-colors" aria-label="Copy install command">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+          </button>
+        </div>
+        <a href="https://github.com/git-treeline/git-treeline" class="inline-flex items-center gap-2 px-6 py-3 border border-surface-border rounded-lg text-white hover:border-accent transition-colors">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568L24 9.306l-6 5.848 1.416 8.259L12 19.446l-7.416 3.967L6 15.154 0 9.306l8.332-1.151z"/></svg>
+          Star on GitHub
+        </a>
+      </div>
+      <p class="text-sm text-muted">Open source &middot; Apache 2.0 &middot; Free forever</p>
     </div>
   </section>
 

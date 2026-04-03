@@ -5,22 +5,33 @@ Thanks for your interest in improving the Git Treeline website.
 ## Getting started
 
 1. Fork and clone the repo
-2. Install the [Tailwind CSS standalone CLI](https://tailwindcss.com/blog/standalone-cli) or use npx
-3. Run the dev watcher:
+2. Install dependencies:
 
 ```bash
-npx @tailwindcss/cli -i src/input.css -o dist/output.css --watch
+npm install
 ```
 
-4. Open `index.html` in your browser
+3. Start the dev server:
+
+```bash
+npm run dev
+```
+
+4. Open http://localhost:5173 in your browser — changes hot-reload automatically
 
 ## Making changes
 
 - Edit `index.html` for content and structure
-- Edit `src/input.css` for custom styles
+- Edit `src/style.css` for custom Tailwind styles
 - Edit `tailwind.config.js` for theme tokens
 
-The GitHub Actions workflow builds CSS with the Tailwind standalone CLI — no Node.js runtime in production.
+## Building for production
+
+```bash
+npm run build
+```
+
+Output goes to `dist/`. The GitHub Actions workflow runs this on push to `main`.
 
 ## Pull requests
 
