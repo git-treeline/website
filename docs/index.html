@@ -62,7 +62,7 @@
         <a href="#configuration" class="text-accent-light hover:text-accent transition-colors">Configuration</a>
         <a href="#cli-reference" class="text-accent-light hover:text-accent transition-colors">CLI reference</a>
         <a href="#user-config" class="text-accent-light hover:text-accent transition-colors">User config</a>
-        <a href="#rails-integration" class="text-accent-light hover:text-accent transition-colors">Rails integration</a>
+        <a href="#rails-integration" class="text-accent-light hover:text-accent transition-colors">Framework integration</a>
         <a href="#ai-agents" class="text-accent-light hover:text-accent transition-colors">AI agent setup</a>
       </nav>
     </div>
@@ -340,9 +340,29 @@
               <td class="px-5 py-3 text-muted">Clean orphaned allocations. <code class="text-accent-light">--stale</code> targets missing directories. <code class="text-accent-light">--merged</code> targets branches merged to the merge target.</td>
             </tr>
             <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">config</td>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">config list</td>
               <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Show or initialize user-level allocation config (port base, increment, Redis strategy).</td>
+              <td class="px-5 py-3 text-muted">Dump all user-level settings.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">config get &lt;key&gt;</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
+              <td class="px-5 py-3 text-muted">Read a setting by dot-notation key (e.g. <code class="text-accent-light">port.base</code>, <code class="text-accent-light">redis.url</code>).</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">config set &lt;key&gt; &lt;value&gt;</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
+              <td class="px-5 py-3 text-muted">Write a setting and persist to disk.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">config path</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
+              <td class="px-5 py-3 text-muted">Print the config file location.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">config edit</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
+              <td class="px-5 py-3 text-muted">Open config in <code class="text-accent-light">$EDITOR</code>.</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">version</td>
@@ -360,7 +380,7 @@
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">User config</h2>
       <p class="text-muted mb-4">
-        User-level settings control allocation behavior across all projects on your machine. Run <code class="text-accent-light">gtl config</code> to view or initialize.
+        User-level settings control allocation behavior across all projects on your machine. Manage them with <code class="text-accent-light">gtl config list</code>, <code class="text-accent-light">gtl config get &lt;key&gt;</code>, and <code class="text-accent-light">gtl config set &lt;key&gt; &lt;value&gt;</code>. Use <code class="text-accent-light">gtl config path</code> to find the file and <code class="text-accent-light">gtl config edit</code> to open it in your editor.
       </p>
       <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
         <table class="cli-table w-full text-sm text-left">
@@ -397,19 +417,24 @@
           </thead>
           <tbody class="divide-y divide-surface-border">
             <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">port_base</td>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">port.base</td>
               <td class="px-5 py-3 text-muted">3000</td>
               <td class="px-5 py-3 text-muted">Starting port number for allocations.</td>
             </tr>
             <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">port_increment</td>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">port.increment</td>
               <td class="px-5 py-3 text-muted">10</td>
               <td class="px-5 py-3 text-muted">Gap between port allocations. Set to match your <code class="text-accent-light">ports_needed</code> or higher.</td>
             </tr>
             <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">redis_strategy</td>
-              <td class="px-5 py-3 text-muted">prefix</td>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">redis.strategy</td>
+              <td class="px-5 py-3 text-muted">prefixed</td>
               <td class="px-5 py-3 text-muted"><code class="text-accent-light">prefixed</code> for key namespacing (unlimited worktrees) or <code class="text-accent-light">database</code> for separate Redis DBs (1&ndash;15).</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">redis.url</td>
+              <td class="px-5 py-3 text-muted">redis://localhost:6379</td>
+              <td class="px-5 py-3 text-muted">Redis server URL used for namespace assignment.</td>
             </tr>
           </tbody>
         </table>
@@ -417,38 +442,43 @@
     </div>
   </section>
 
-  <!-- Rails Integration -->
+  <!-- Framework Integration -->
   <section id="rails-integration" class="px-6 py-16">
     <div class="max-w-4xl mx-auto">
-      <h2 class="section-heading mb-4">Rails integration</h2>
+      <h2 class="section-heading mb-4">Framework integration</h2>
       <p class="text-muted mb-8">
-        The <code class="text-accent-light">git-treeline-rails</code> gem provides a Railtie that automatically loads worktree-specific environment variables at boot. No manual <code class="text-accent-light">dotenv</code> config needed.
+        Git Treeline writes the env file your stack already loads. No extra dependencies. <code class="text-accent-light">gtl init</code> auto-detects your framework and generates the right config.
       </p>
 
-      <h3 class="text-xl font-mono text-white mb-4">Installation</h3>
-      <div class="terminal mb-6">
+      <h3 class="text-xl font-mono text-white mb-4">Rails</h3>
+      <p class="text-muted mb-4">
+        Rails apps using <code class="text-accent-light">dotenv-rails</code> (most do) load <code class="text-accent-light">.env.local</code> at boot automatically. Git Treeline writes allocated values to that file, so <code class="text-accent-light">ENV["PORT"]</code>, <code class="text-accent-light">ENV["DATABASE_NAME"]</code>, and <code class="text-accent-light">ENV["REDIS_URL"]</code> just work. No additional gems needed.
+      </p>
+      <p class="text-muted mb-4">
+        If your Rails app uses a JS bundler (jsbundling-rails, cssbundling-rails, or a multi-process <code class="text-accent-light">Procfile.dev</code>), <code class="text-accent-light">gtl init</code> detects it and sets <code class="text-accent-light">ports_needed: 2</code> with an <code class="text-accent-light">ESBUILD_PORT</code> env var for the asset process.
+      </p>
+
+      <h3 class="text-xl font-mono text-white mb-4 mt-8">Next.js</h3>
+      <p class="text-muted mb-4">
+        Next.js loads <code class="text-accent-light">.env.local</code> into <code class="text-accent-light">process.env</code> for your app code, but the dev server <strong class="text-white">does not</strong> use <code class="text-accent-light">PORT</code> for its listen port. Update your <code class="text-accent-light">package.json</code> dev script:
+      </p>
+      <div class="terminal mb-4">
         <div class="terminal-body">
-          <pre class="text-sm"><span class="text-muted"># Gemfile</span>
-<span class="text-white">gem</span> <span class="text-accent-light">"git-treeline-rails"</span></pre>
+          <pre class="text-sm"><span class="text-accent-light">"dev"</span>: <span class="text-white">"next dev --port ${PORT:-3000}"</span></pre>
         </div>
       </div>
-
-      <h3 class="text-xl font-mono text-white mb-4">How it works</h3>
-      <div class="space-y-4 text-muted mb-8">
-        <p>
-          In development, the Railtie reads your <code class="text-accent-light">.treeline.yml</code> and loads the CLI-written env file (typically <code class="text-accent-light">.env.local</code>) into <code class="text-accent-light">ENV</code>. This means allocated ports, database names, and Redis URLs are available to your Rails app without any extra setup.
-        </p>
-        <p>
-          The gem only activates in development &mdash; it's a no-op in production. It reads directly from the env file that <code class="text-accent-light">gtl setup</code> writes, so there's no separate configuration to maintain.
-        </p>
-      </div>
-
-      <h3 class="text-xl font-mono text-white mb-4">Why a gem?</h3>
       <p class="text-muted mb-4">
-        Most frameworks load <code class="text-accent-light">.env</code> files natively or via widely-used libraries. Rails doesn't. The gem bridges that gap so <code class="text-accent-light">ENV["PORT"]</code>, <code class="text-accent-light">ENV["DATABASE_NAME"]</code>, etc. just work when booting a worktree.
+        <code class="text-accent-light">gtl init</code> prints this guidance automatically for Next.js projects.
       </p>
+
+      <h3 class="text-xl font-mono text-white mb-4 mt-8">Express / Node</h3>
+      <p class="text-muted mb-4">
+        Most Express apps already read <code class="text-accent-light">process.env.PORT</code>. Point <code class="text-accent-light">env_file.target</code> at <code class="text-accent-light">.env</code> and your app picks up the allocated port at startup.
+      </p>
+
+      <h3 class="text-xl font-mono text-white mb-4 mt-8">Other frameworks</h3>
       <p class="text-muted">
-        <a href="https://github.com/git-treeline/git-treeline-rails" class="text-accent-light hover:text-accent underline underline-offset-2">View on GitHub &rarr;</a>
+        Any framework that reads environment variables from an env file works with Git Treeline. Set <code class="text-accent-light">env_file.target</code> to the file your framework loads and define your <code class="text-accent-light">env</code> map with the tokens your app needs.
       </p>
     </div>
   </section>

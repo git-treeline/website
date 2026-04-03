@@ -33,7 +33,7 @@
     "description": "Worktree environment manager. Allocates ports, clones PostgreSQL and SQLite databases, assigns Redis namespaces, writes env files, and runs setup commands per git worktree. Create worktrees, review GitHub PRs, and manage the full dev environment lifecycle from one CLI.",
     "url": "https://git-treeline.dev",
     "downloadUrl": "https://github.com/git-treeline/git-treeline/releases",
-    "softwareVersion": "0.13.0",
+    "softwareVersion": "0.14.0",
     "license": "https://opensource.org/licenses/MIT",
     "author": {
       "@type": "Organization",
@@ -531,11 +531,11 @@
             </div>
           </div>
           <div class="p-5 rounded-lg border border-surface-border">
-            <h3 class="text-sm font-mono text-accent mb-2">Rails integration</h3>
+            <h3 class="text-sm font-mono text-accent mb-2">Framework agnostic</h3>
             <p class="text-muted text-sm mb-3">
-              The <code class="text-accent-light">git-treeline-rails</code> gem auto-injects allocated env vars at boot via a Railtie. Zero manual config.
+              Rails reads <code class="text-accent-light">dotenv-rails</code>, Next.js reads <code class="text-accent-light">.env.local</code>, Express reads <code class="text-accent-light">.env</code>. Git Treeline writes the file your stack already loads. No extra dependencies.
             </p>
-            <code class="text-xs text-accent-light">gem "git-treeline-rails"</code>
+            <code class="text-xs text-accent-light">gtl init</code> <span class="text-xs text-muted">detects your framework</span>
           </div>
         </div>
       </div>
