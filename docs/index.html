@@ -138,8 +138,31 @@
           <p class="output text-accent mt-1">Starting server on port 3020...</p>
         </div>
       </div>
+      <p class="text-muted mb-4">
+        Requires the <a href="https://cli.github.com/" class="text-accent-light hover:text-accent underline underline-offset-2">GitHub CLI</a> (<code class="text-accent-light">gh</code>). Both <code class="text-accent-light">review</code> and <code class="text-accent-light">new</code> must be run from the main repo, not from inside a worktree.
+      </p>
+
+      <h3 class="text-xl font-mono text-white mb-4">Switch branches in a worktree</h3>
+      <div class="terminal mb-4">
+        <div class="terminal-body space-y-2">
+          <p><span class="prompt">$</span> <span class="command">gtl switch feature-payments</span></p>
+          <p class="output">Fetching from origin...</p>
+          <p class="output">Switched to <span class="highlight">feature-payments</span></p>
+          <p class="output">Refreshed <span class="highlight">.env.local</span></p>
+        </div>
+      </div>
+      <p class="text-muted mb-4">
+        Fetches from origin, checks out the branch, updates the registry, and refreshes the env file. Accepts PR numbers too &mdash; <code class="text-accent-light">gtl switch 42</code> resolves the branch via <code class="text-accent-light">gh</code>. Add <code class="text-accent-light">--setup</code> to re-run <code class="text-accent-light">commands.setup</code> after switching.
+      </p>
+
+      <h3 class="text-xl font-mono text-white mb-4">Check project health</h3>
+      <div class="terminal mb-4">
+        <div class="terminal-body space-y-2">
+          <p><span class="prompt">$</span> <span class="command">gtl doctor</span></p>
+        </div>
+      </div>
       <p class="text-muted">
-        Requires the <a href="https://cli.github.com/" class="text-accent-light hover:text-accent underline underline-offset-2">GitHub CLI</a> (<code class="text-accent-light">gh</code>).
+        Checks config presence, env file status, port allocation, supervisor state, and framework-specific guidance in one view. Run it when something seems off.
       </p>
     </div>
   </section>
@@ -179,14 +202,9 @@
               <td class="px-5 py-3 text-muted">Number of ports to allocate per worktree. Default <code class="text-accent-light">1</code>. Use <code class="text-accent-light">2</code> for apps with a separate asset build port.</td>
             </tr>
             <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">env_file.target</td>
-              <td class="px-5 py-3 text-muted">string</td>
-              <td class="px-5 py-3 text-muted">Output env file path. Where interpolated values are written.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">env_file.source</td>
-              <td class="px-5 py-3 text-muted">string</td>
-              <td class="px-5 py-3 text-muted">Source env template to copy and merge with allocated values.</td>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">env_file</td>
+              <td class="px-5 py-3 text-muted">string&nbsp;or&nbsp;map</td>
+              <td class="px-5 py-3 text-muted">Env file path as a string shorthand (e.g. <code class="text-accent-light">.env.local</code>). When the output file differs from the seed, use a map: <code class="text-accent-light">path:</code> (where values are written) and <code class="text-accent-light">seed_from:</code> (source template to copy first).</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">database.adapter</td>
@@ -313,12 +331,17 @@
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">new &lt;branch&gt;</td>
               <td class="px-5 py-3 font-mono text-muted text-xs"><code>--base</code> <code>--path</code> <code>--start</code> <code>--dry-run</code></td>
-              <td class="px-5 py-3 text-muted">Create worktree + allocate resources + run setup in one step. <code class="text-accent-light">--start</code> boots the app after setup. <code class="text-accent-light">--base</code> sets the starting branch.</td>
+              <td class="px-5 py-3 text-muted">Create worktree + allocate resources + run setup in one step. <code class="text-accent-light">--start</code> boots the app after setup. Must be run from the main repo.</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">review &lt;PR#&gt;</td>
               <td class="px-5 py-3 font-mono text-muted text-xs"><code>--path</code> <code>--start</code></td>
-              <td class="px-5 py-3 text-muted">Fetch a GitHub PR into a new worktree with full setup. Requires <code class="text-accent-light">gh</code> CLI.</td>
+              <td class="px-5 py-3 text-muted">Fetch a GitHub PR into a new worktree with full setup. Requires <code class="text-accent-light">gh</code> CLI. Must be run from the main repo.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">switch &lt;branch-or-PR#&gt;</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs"><code>--setup</code></td>
+              <td class="px-5 py-3 text-muted">Switch a worktree to a different branch or PR. Fetches from origin, checks out, updates registry, refreshes env. <code class="text-accent-light">--setup</code> re-runs <code class="text-accent-light">commands.setup</code>.</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">setup [path]</td>
@@ -334,6 +357,11 @@
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">release [path]</td>
               <td class="px-5 py-3 font-mono text-muted text-xs"><code>--drop-db</code> <code>--project</code> <code>--all</code> <code>--force</code> <code>--dry-run</code></td>
               <td class="px-5 py-3 text-muted">Free allocated resources. <code class="text-accent-light">--drop-db</code> removes the cloned database. <code class="text-accent-light">--all</code> releases everything across projects.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">doctor</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
+              <td class="px-5 py-3 text-muted">Check config, allocation, runtime, and framework-specific diagnostics in one view.</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">status</td>
@@ -539,12 +567,12 @@
 
       <h3 class="text-xl font-mono text-white mb-4 mt-8">Express / Node</h3>
       <p class="text-muted mb-4">
-        Most Express apps already read <code class="text-accent-light">process.env.PORT</code>. Point <code class="text-accent-light">env_file.target</code> at <code class="text-accent-light">.env</code> and your app picks up the allocated port at startup.
+        Most Express apps already read <code class="text-accent-light">process.env.PORT</code>. Set <code class="text-accent-light">env_file: .env</code> and your app picks up the allocated port at startup. If your app seeds from <code class="text-accent-light">.env.example</code>, use the extended form: <code class="text-accent-light">env_file: { path: .env, seed_from: .env.example }</code>.
       </p>
 
       <h3 class="text-xl font-mono text-white mb-4 mt-8">Other frameworks</h3>
       <p class="text-muted">
-        Any framework that reads environment variables from an env file works with Git Treeline. Set <code class="text-accent-light">env_file.target</code> to the file your framework loads and define your <code class="text-accent-light">env</code> map with the tokens your app needs.
+        Any framework that reads environment variables from an env file works with Git Treeline. Set <code class="text-accent-light">env_file</code> to the file your framework loads and define your <code class="text-accent-light">env</code> map with the tokens your app needs.
       </p>
     </div>
   </section>
