@@ -66,7 +66,8 @@
         <a href="#setup-commands" class="text-accent-light hover:text-accent transition-colors">Setup commands</a>
         <a href="#db-management" class="text-accent-light hover:text-accent transition-colors">Database management</a>
         <a href="#supervisor" class="text-accent-light hover:text-accent transition-colors">Process supervisor</a>
-        <a href="#ai-agents" class="text-accent-light hover:text-accent transition-colors">AI agent setup</a>
+        <a href="#editor" class="text-accent-light hover:text-accent transition-colors">Editor</a>
+        <a href="#ai-agents" class="text-accent-light hover:text-accent transition-colors">AI agents</a>
       </nav>
     </div>
   </header>
@@ -104,11 +105,11 @@
           <p><span class="prompt">$</span> <span class="command">gtl init --project myapp</span></p>
           <p class="output">Detected <span class="highlight">Rails</span> project</p>
           <p class="output">Wrote <span class="highlight">.treeline.yml</span></p>
-          <p class="output">Wrote <span class="highlight">.cursor/rules/treeline.mdc</span></p>
+          <p class="output">Wrote <span class="highlight">AGENTS.md</span> (treeline section)</p>
         </div>
       </div>
       <p class="text-muted mb-8">
-        <code class="text-accent-light">gtl init</code> auto-detects your framework (Rails, Next.js, Vite, Express, Python, Rust, Go) and generates a tailored <code class="text-accent-light">.treeline.yml</code>. After generating the config, it prints actionable diagnostics &mdash; for example, Vite projects get <code class="text-accent-light">vite.config.js</code> port wiring guidance, Node projects without <code class="text-accent-light">dotenv</code> get a warning. Pass <code class="text-accent-light">--skip-agent-config</code> to skip AI agent context files.
+        <code class="text-accent-light">gtl init</code> auto-detects your framework (Rails, Next.js, Vite, Express, Python, Rust, Go) and generates a tailored <code class="text-accent-light">.treeline.yml</code> with commented-out optional config so available features are discoverable. It also writes a treeline section to <code class="text-accent-light">AGENTS.md</code> (or appends to <code class="text-accent-light">CLAUDE.md</code>) so Cursor, Claude Code, and Codex agents know to use <code class="text-accent-light">gtl port</code>. After generating the config, it prints actionable diagnostics &mdash; for example, Vite projects get <code class="text-accent-light">vite.config.js</code> port wiring guidance, Node projects without <code class="text-accent-light">dotenv</code> get a warning. Pass <code class="text-accent-light">--skip-agent-config</code> to skip the agent context file.
       </p>
 
       <h3 class="text-xl font-mono text-white mb-4">Create your first worktree</h3>
@@ -247,9 +248,19 @@
               <td class="px-5 py-3 text-muted">Command to boot the app. Used by <code class="text-accent-light">gtl start</code> and the <code class="text-accent-light">--start</code> flag on <code class="text-accent-light">new</code> and <code class="text-accent-light">review</code>.</td>
             </tr>
             <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">editor.vscode_title</td>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">editor.title</td>
               <td class="px-5 py-3 text-muted">string</td>
-              <td class="px-5 py-3 text-muted">VS Code window title template. Supports interpolation tokens.</td>
+              <td class="px-5 py-3 text-muted">Window title template. Tokens: <code class="text-accent-light">{project}</code>, <code class="text-accent-light">{port}</code>, <code class="text-accent-light">{branch}</code>. Works with VS Code and Cursor.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">editor.color</td>
+              <td class="px-5 py-3 text-muted">string</td>
+              <td class="px-5 py-3 text-muted">Title/status bar color. <code class="text-accent-light">"auto"</code> generates a deterministic color from the branch name. Or set a hex value like <code class="text-accent-light">"#1a5276"</code>. VS Code, Cursor, JetBrains.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">editor.theme</td>
+              <td class="px-5 py-3 text-muted">string</td>
+              <td class="px-5 py-3 text-muted">Full IDE theme override (e.g. <code class="text-accent-light">"Monokai"</code>). Applied when entering the worktree.</td>
             </tr>
           </tbody>
         </table>
@@ -326,7 +337,7 @@
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">init</td>
               <td class="px-5 py-3 font-mono text-muted text-xs"><code>--project</code> <code>--template-db</code> <code>--skip-agent-config</code></td>
-              <td class="px-5 py-3 text-muted">Generate <code class="text-accent-light">.treeline.yml</code>. Auto-detects framework and generates agent context files.</td>
+              <td class="px-5 py-3 text-muted">Generate <code class="text-accent-light">.treeline.yml</code> with self-documenting template. Auto-detects framework, writes <code class="text-accent-light">AGENTS.md</code> section, detects editor.</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">new &lt;branch&gt;</td>
@@ -349,14 +360,19 @@
               <td class="px-5 py-3 text-muted">Allocate resources and configure a worktree. Idempotent &mdash; safe to re-run.</td>
             </tr>
             <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">refresh [path]</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Re-interpolate env file from existing allocation. No re-clone, no setup commands.</td>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">refresh</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs"><code>--dry-run</code> <code>--force</code></td>
+              <td class="px-5 py-3 text-muted">Re-allocate all worktrees with current config and reservations. Restarts supervised servers automatically; flags manually-started servers.</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">release [path]</td>
               <td class="px-5 py-3 font-mono text-muted text-xs"><code>--drop-db</code> <code>--project</code> <code>--all</code> <code>--force</code> <code>--dry-run</code></td>
               <td class="px-5 py-3 text-muted">Free allocated resources. <code class="text-accent-light">--drop-db</code> removes the cloned database. <code class="text-accent-light">--all</code> releases everything across projects.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">port</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
+              <td class="px-5 py-3 text-muted">Print the allocated port for the current worktree. Designed for agents and scripts.</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">doctor</td>
@@ -505,9 +521,43 @@
               <td class="px-5 py-3 text-muted">redis://localhost:6379</td>
               <td class="px-5 py-3 text-muted">Redis server URL used for namespace assignment.</td>
             </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">port.reservations</td>
+              <td class="px-5 py-3 text-muted">{}</td>
+              <td class="px-5 py-3 text-muted">Map of project (or <code class="text-accent-light">project/branch</code>) to pinned port number. Branch-specific keys take priority.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">editor.name</td>
+              <td class="px-5 py-3 text-muted">(auto)</td>
+              <td class="px-5 py-3 text-muted">Detected editor (Cursor, VS Code, Zed, JetBrains). Set by <code class="text-accent-light">gtl init</code>; used by the menulet.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">editor.themes</td>
+              <td class="px-5 py-3 text-muted">{}</td>
+              <td class="px-5 py-3 text-muted">Per-project or per-branch theme overrides. Keys are <code class="text-accent-light">project</code> or <code class="text-accent-light">project/branch</code>.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">editor.colors</td>
+              <td class="px-5 py-3 text-muted">{}</td>
+              <td class="px-5 py-3 text-muted">Per-project or per-branch color overrides. Same key format as themes.</td>
+            </tr>
           </tbody>
         </table>
       </div>
+
+      <h3 class="text-xl font-mono text-white mb-4 mt-8">Port reservations</h3>
+      <p class="text-muted mb-4">
+        Pin stable ports to specific projects or branches so they never change between allocations. A project-level key applies to the main repo. A <code class="text-accent-light">project/branch</code> key pins a specific worktree &mdash; useful for long-lived worktrees that need a known port.
+      </p>
+      <div class="terminal mb-4">
+        <div class="terminal-body space-y-2">
+          <p><span class="prompt">$</span> <span class="command">gtl config set port.reservations.myapp 3000</span></p>
+          <p><span class="prompt">$</span> <span class="command">gtl config set port.reservations.myapp/staging 3020</span></p>
+        </div>
+      </div>
+      <p class="text-muted mb-4">
+        Reserved ports block the full <code class="text-accent-light">port.increment</code> range and are excluded from the dynamic pool. After adding reservations, run <code class="text-accent-light">gtl refresh</code> to re-allocate existing worktrees.
+      </p>
     </div>
   </section>
 
@@ -777,8 +827,85 @@
     </div>
   </section>
 
+  <!-- Editor Customization -->
+  <section id="editor" class="px-4 sm:px-6 py-10 sm:py-16">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading mb-4">Editor customization</h2>
+      <p class="text-muted mb-8">
+        Git Treeline can set window titles, title bar colors, and themes per worktree so you always know which branch you're looking at. Works with VS Code, Cursor, Zed, and JetBrains IDEs.
+      </p>
+
+      <h3 class="text-xl font-mono text-white mb-4">Project config</h3>
+      <p class="text-muted mb-4">
+        Add <code class="text-accent-light">editor</code> settings to your <code class="text-accent-light">.treeline.yml</code>:
+      </p>
+      <div class="terminal mb-8">
+        <div class="terminal-header">
+          <span class="text-xs text-muted">.treeline.yml</span>
+        </div>
+        <div class="terminal-body">
+          <pre class="text-sm"><span class="text-accent-light">editor</span><span class="text-muted">:</span>
+  <span class="text-accent-light">title</span><span class="text-muted">:</span> <span class="text-white">"{project} ({branch}) :{port}"</span>
+  <span class="text-accent-light">color</span><span class="text-muted">:</span> <span class="text-white">"auto"</span>
+  <span class="text-accent-light">theme</span><span class="text-muted">:</span> <span class="text-white">"GitHub Dark"</span></pre>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
+        <table class="cli-table w-full text-sm text-left">
+          <thead>
+            <tr class="border-b border-surface-border bg-surface">
+              <th class="px-5 py-3 font-mono text-accent-light font-medium">Setting</th>
+              <th class="px-5 py-3 text-accent-light font-medium">Behavior</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-border">
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">title</td>
+              <td class="px-5 py-3 text-muted">Window title template. Tokens: <code class="text-accent-light">{project}</code>, <code class="text-accent-light">{port}</code>, <code class="text-accent-light">{branch}</code>.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">color</td>
+              <td class="px-5 py-3 text-muted"><code class="text-accent-light">"auto"</code> generates a deterministic color from the branch name so each worktree looks different. Or set a hex value like <code class="text-accent-light">"#1a5276"</code>.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">theme</td>
+              <td class="px-5 py-3 text-muted">Full IDE theme name (e.g. <code class="text-accent-light">"Monokai"</code>). Applied when the worktree is active.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="text-xl font-mono text-white mb-4">IDE support</h3>
+      <div class="grid sm:grid-cols-2 gap-6 mb-8">
+        <div class="p-5 rounded-lg border border-surface-border">
+          <h4 class="text-sm font-mono text-accent mb-2">VS Code / Cursor</h4>
+          <p class="text-muted text-sm">Writes to <code class="text-accent-light">.vscode/settings.json</code>. If a <code class="text-accent-light">.code-workspace</code> file references the worktree, settings are written there instead.</p>
+        </div>
+        <div class="p-5 rounded-lg border border-surface-border">
+          <h4 class="text-sm font-mono text-accent mb-2">JetBrains</h4>
+          <p class="text-muted text-sm">If <code class="text-accent-light">.idea/</code> exists, <code class="text-accent-light">editor.color</code> sets the project header color in <code class="text-accent-light">workspace.xml</code> (JetBrains 2023.2+).</p>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-mono text-white mb-4">Per-branch overrides</h3>
+      <p class="text-muted mb-4">
+        Override themes and colors for specific projects or branches via user config:
+      </p>
+      <div class="terminal mb-4">
+        <div class="terminal-body space-y-2">
+          <p><span class="prompt">$</span> <span class="command">gtl config set editor.themes.myapp "Monokai"</span></p>
+          <p><span class="prompt">$</span> <span class="command">gtl config set editor.colors.myapp/staging "#7b241c"</span></p>
+        </div>
+      </div>
+      <p class="text-muted">
+        User config overrides take priority over project config. Keys are <code class="text-accent-light">project</code> or <code class="text-accent-light">project/branch</code>.
+      </p>
+    </div>
+  </section>
+
   <!-- AI Agent Setup -->
-  <section id="ai-agents" class="px-4 sm:px-6 py-10 sm:py-16">
+  <section id="ai-agents" class="px-4 sm:px-6 py-10 sm:py-16 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">AI agent setup</h2>
       <p class="text-muted mb-8">
@@ -831,26 +958,26 @@
         </div>
       </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Context file generation</h3>
+      <h3 class="text-xl font-mono text-white mb-4">Agent context file</h3>
       <p class="text-muted mb-4">
-        <code class="text-accent-light">gtl init</code> generates context files that teach AI agents how to use Treeline in your project:
+        <code class="text-accent-light">gtl init</code> writes a treeline section to <code class="text-accent-light">AGENTS.md</code> (created if it doesn't exist, appended otherwise). If <code class="text-accent-light">CLAUDE.md</code> exists but <code class="text-accent-light">AGENTS.md</code> doesn't, it appends there instead. The section tells agents to use <code class="text-accent-light">gtl port</code> for port discovery and lists the allocated env vars.
       </p>
-      <div class="grid md:grid-cols-2 gap-6">
-        <div class="p-5 rounded-lg border border-surface-border">
-          <h4 class="text-sm font-mono text-accent mb-2">Cursor</h4>
-          <p class="text-muted text-sm mb-2">
-            Generates <code class="text-accent-light">.cursor/rules/treeline.mdc</code> with project-specific Treeline instructions.
-          </p>
-        </div>
-        <div class="p-5 rounded-lg border border-surface-border">
-          <h4 class="text-sm font-mono text-accent mb-2">Claude Code</h4>
-          <p class="text-muted text-sm mb-2">
-            Adds a Treeline section to <code class="text-accent-light">CLAUDE.md</code> with setup and teardown commands.
-          </p>
+      <p class="text-muted mb-4">
+        <code class="text-accent-light">AGENTS.md</code> is read by Cursor, Claude Code, and Codex &mdash; one file covers all three.
+      </p>
+
+      <h3 class="text-xl font-mono text-white mb-4">Port discovery</h3>
+      <p class="text-muted mb-4">
+        Agents can query the allocated port programmatically:
+      </p>
+      <div class="terminal mb-4">
+        <div class="terminal-body">
+          <pre class="text-sm"><span class="text-accent-light">PORT</span><span class="text-muted">=</span><span class="text-white">$(gtl port)</span>
+<span class="text-white">curl http://localhost:$PORT/health</span></pre>
         </div>
       </div>
       <p class="text-muted text-sm mt-4">
-        Use <code class="text-accent-light">--skip-agent-config</code> on <code class="text-accent-light">gtl init</code> to opt out.
+        Use <code class="text-accent-light">--skip-agent-config</code> on <code class="text-accent-light">gtl init</code> to opt out of context file generation.
       </p>
     </div>
   </section>

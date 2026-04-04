@@ -33,7 +33,7 @@
     "description": "Worktree environment manager. Allocates ports, clones PostgreSQL and SQLite databases, assigns Redis namespaces, writes env files, and runs setup commands per git worktree. Create worktrees, review GitHub PRs, and manage the full dev environment lifecycle from one CLI.",
     "url": "https://git-treeline.dev",
     "downloadUrl": "https://github.com/git-treeline/git-treeline/releases",
-    "softwareVersion": "0.19.0",
+    "softwareVersion": "0.21.0",
     "license": "https://opensource.org/licenses/MIT",
     "author": {
       "@type": "Organization",
@@ -61,6 +61,13 @@
       "Simplified env_file config with string shorthand and auto-migration",
       "Release confirmation prompt with --force bypass",
       "Worktree guard prevents creating worktrees from inside worktrees",
+      "Port reservations for stable ports per project or branch",
+      "Editor customization: auto-color title bars by branch, theme overrides, JetBrains support",
+      "gtl port for agent-friendly port discovery",
+      "gtl refresh to re-allocate all worktrees after config changes",
+      "AGENTS.md integration for Cursor, Claude Code, and Codex",
+      "Editor auto-detection (Cursor, VS Code, Zed, JetBrains)",
+      "Self-documenting templates with commented-out optional config",
       "Process supervisor with remote start/stop/restart",
       "AI agent lifecycle hooks and context generation",
       "JSON output for programmatic access",
@@ -344,7 +351,7 @@
         </div>
         <div class="p-5 rounded-lg border border-surface-border">
           <h3 class="text-sm font-mono text-accent mb-2">Agent context</h3>
-          <p class="text-muted text-sm"><code class="text-accent-light">gtl init</code> generates <code class="text-accent-light">.cursor/rules/treeline.mdc</code> or <code class="text-accent-light">CLAUDE.md</code> sections so agents know how to use Treeline.</p>
+          <p class="text-muted text-sm"><code class="text-accent-light">gtl init</code> writes an <code class="text-accent-light">AGENTS.md</code> section so Cursor, Claude Code, and Codex agents know to use <code class="text-accent-light">gtl port</code> for port discovery.</p>
         </div>
       </div>
     </div>
