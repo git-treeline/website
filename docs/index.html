@@ -158,7 +158,7 @@
   </header>
 
   <!-- Getting Started -->
-  <section id="getting-started" class="px-4 sm:px-6 lg:px-0 py-10 sm:py-16">
+  <section id="getting-started" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Getting started</h2>
       <p class="text-muted mb-4">
@@ -166,26 +166,29 @@
       </p>
       <p class="text-sm text-muted mb-8">New here? See <a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">how isolation works</a> for the full picture.</p>
 
-      <h3 class="text-xl font-mono text-white mb-4">Install</h3>
-      <p class="text-muted mb-4">Homebrew (macOS and Linux):</p>
-      <div class="terminal mb-4">
-        <div class="terminal-body">
-          <p><span class="prompt">$</span> <span class="command">brew install git-treeline/tap/git-treeline</span></p>
+      <div class="docs-subsection">
+        <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Install</h3>
+        <p class="text-muted mb-4">Homebrew (macOS and Linux):</p>
+        <div class="terminal mb-6">
+          <div class="terminal-body">
+            <p><span class="prompt">$</span> <span class="command">brew install git-treeline/tap/git-treeline</span></p>
+          </div>
         </div>
-      </div>
-      <p class="text-muted mb-4">Go install:</p>
-      <div class="terminal mb-4">
-        <div class="terminal-body">
-          <p><span class="prompt">$</span> <span class="command">go install github.com/git-treeline/git-treeline@latest</span></p>
+        <p class="text-muted mb-4">Go install:</p>
+        <div class="terminal mb-6">
+          <div class="terminal-body">
+            <p><span class="prompt">$</span> <span class="command">go install github.com/git-treeline/git-treeline@latest</span></p>
+          </div>
         </div>
+        <p class="text-muted">
+          Or download a binary from the <a href="https://github.com/git-treeline/git-treeline/releases" class="text-accent-light hover:text-accent underline underline-offset-2">releases page</a>.
+          The binary installs as <code class="text-accent-light">git-treeline</code> with a short alias <code class="text-accent-light">gtl</code>. It also works as <code class="text-accent-light">git treeline</code>.
+        </p>
       </div>
-      <p class="text-muted mb-8">
-        Or download a binary from the <a href="https://github.com/git-treeline/git-treeline/releases" class="text-accent-light hover:text-accent underline underline-offset-2">releases page</a>.
-        The binary installs as <code class="text-accent-light">git-treeline</code> with a short alias <code class="text-accent-light">gtl</code>. It also works as <code class="text-accent-light">git treeline</code>.
-      </p>
 
-      <h3 class="text-xl font-mono text-white mb-4">Initialize a project</h3>
-      <div class="terminal mb-4">
+      <div class="docs-subsection">
+        <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Initialize a project</h3>
+      <div class="terminal mb-6">
         <div class="terminal-body space-y-2">
           <p><span class="prompt">$</span> <span class="command">cd ~/myapp</span></p>
           <p><span class="prompt">$</span> <span class="command">gtl init --project myapp</span></p>
@@ -194,12 +197,14 @@
           <p class="output">Wrote <span class="highlight">AGENTS.md</span> (treeline section)</p>
         </div>
       </div>
-      <p class="text-muted mb-8">
+      <p class="text-muted">
         <code class="text-accent-light">gtl init</code> auto-detects your framework (Rails, Next.js, Vite, Express, Python, Rust, Go) and generates a tailored <code class="text-accent-light">.treeline.yml</code> with commented-out optional config so available features are discoverable. It also writes a treeline section to <code class="text-accent-light">AGENTS.md</code> (or appends to <code class="text-accent-light">CLAUDE.md</code>) so Cursor, Claude Code, and Codex agents know to use <code class="text-accent-light">gtl port</code>. After generating the config, it prints actionable diagnostics &mdash; for example, Vite projects get <code class="text-accent-light">vite.config.js</code> port wiring guidance, Node projects without <code class="text-accent-light">dotenv</code> get a warning. Pass <code class="text-accent-light">--skip-agent-config</code> to skip the agent context file.
       </p>
+      </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Create your first worktree</h3>
-      <div class="terminal mb-4">
+      <div class="docs-subsection">
+        <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Create your first worktree</h3>
+      <div class="terminal mb-6">
         <div class="terminal-body space-y-2">
           <p><span class="prompt">$</span> <span class="command">gtl new feature-auth</span></p>
           <p class="output">Creating worktree <span class="highlight">feature-auth</span></p>
@@ -210,12 +215,14 @@
           <p class="output text-accent mt-1">Ready. Start your server in this worktree.</p>
         </div>
       </div>
-      <p class="text-muted mb-4">
+      <p class="text-muted">
         Add <code class="text-accent-light">--start</code> to boot the app immediately after setup.
       </p>
+      </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Review a GitHub PR</h3>
-      <div class="terminal mb-4">
+      <div class="docs-subsection">
+        <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Review a GitHub PR</h3>
+      <div class="terminal mb-6">
         <div class="terminal-body space-y-2">
           <p><span class="prompt">$</span> <span class="command">gtl review 42 --start</span></p>
           <p class="output">Fetching PR <span class="highlight">#42</span> (Add OAuth login)</p>
@@ -225,12 +232,14 @@
           <p class="output text-accent mt-1">Starting server on port 3020...</p>
         </div>
       </div>
-      <p class="text-muted mb-4">
+      <p class="text-muted">
         Requires the <a href="https://cli.github.com/" class="text-accent-light hover:text-accent underline underline-offset-2">GitHub CLI</a> (<code class="text-accent-light">gh</code>). Both <code class="text-accent-light">review</code> and <code class="text-accent-light">new</code> must be run from the main repo, not from inside a worktree.
       </p>
+      </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Switch branches in a worktree</h3>
-      <div class="terminal mb-4">
+      <div class="docs-subsection">
+        <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Switch branches in a worktree</h3>
+      <div class="terminal mb-6">
         <div class="terminal-body space-y-2">
           <p><span class="prompt">$</span> <span class="command">gtl switch feature-payments</span></p>
           <p class="output">Fetching from origin...</p>
@@ -238,12 +247,14 @@
           <p class="output">Refreshed <span class="highlight">.env.local</span></p>
         </div>
       </div>
-      <p class="text-muted mb-4">
+      <p class="text-muted">
         Fetches from origin, checks out the branch, updates the registry, and refreshes the env file. Accepts PR numbers too &mdash; <code class="text-accent-light">gtl switch 42</code> resolves the branch via <code class="text-accent-light">gh</code>. Add <code class="text-accent-light">--setup</code> to re-run <code class="text-accent-light">commands.setup</code> after switching.
       </p>
+      </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Check project health</h3>
-      <div class="terminal mb-4">
+      <div class="docs-subsection">
+        <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Check project health</h3>
+      <div class="terminal mb-6">
         <div class="terminal-body space-y-2">
           <p><span class="prompt">$</span> <span class="command">gtl doctor</span></p>
         </div>
@@ -251,11 +262,12 @@
       <p class="text-muted">
         Checks config presence, env file status, port allocation, supervisor state, and framework-specific guidance in one view. Run it when something seems off.
       </p>
+      </div>
     </div>
   </section>
 
   <!-- Configuration -->
-  <section id="configuration" class="px-4 sm:px-6 lg:px-0 py-10 sm:py-16 border-t border-surface-border">
+  <section id="configuration" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Configuration</h2>
       <p class="text-muted mb-4">
@@ -263,7 +275,7 @@
       </p>
       <p class="text-sm text-muted mb-8">See <a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">Isolation</a> for what each field produces and why it matters.</p>
 
-      <h3 class="text-xl font-mono text-white mb-4">Full reference</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Full reference</h3>
       <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
         <table class="cli-table w-full text-sm text-left">
           <thead>
@@ -353,7 +365,7 @@
         </table>
       </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Interpolation tokens</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Interpolation tokens</h3>
       <p class="text-muted mb-4">
         Use these tokens in the <code class="text-accent-light">env</code> map. They're replaced with allocated values at setup time.
       </p>
@@ -405,7 +417,7 @@
   </section>
 
   <!-- CLI Reference -->
-  <section id="cli-reference" class="px-4 sm:px-6 lg:px-0 py-10 sm:py-16 border-t border-surface-border">
+  <section id="cli-reference" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">CLI reference</h2>
       <p class="text-muted mb-8">
@@ -577,7 +589,7 @@
   </section>
 
   <!-- User Config -->
-  <section id="user-config" class="px-4 sm:px-6 lg:px-0 py-10 sm:py-16 border-t border-surface-border">
+  <section id="user-config" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">User config</h2>
       <p class="text-muted mb-4">
@@ -661,11 +673,11 @@
         </table>
       </div>
 
-      <h3 class="text-xl font-mono text-white mb-4 mt-8">Port reservations</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4 mt-8">Port reservations</h3>
       <p class="text-muted mb-4">
         Pin stable ports to specific projects or branches so they never change between allocations. A project-level key applies to the main repo. A <code class="text-accent-light">project/branch</code> key pins a specific worktree &mdash; useful for long-lived worktrees that need a known port.
       </p>
-      <div class="terminal mb-4">
+      <div class="terminal mb-6">
         <div class="terminal-body space-y-2">
           <p><span class="prompt">$</span> <span class="command">gtl config set port.reservations.myapp 3000</span></p>
           <p><span class="prompt">$</span> <span class="command">gtl config set port.reservations.myapp/staging 3020</span></p>
@@ -678,14 +690,14 @@
   </section>
 
   <!-- Framework Integration -->
-  <section id="rails-integration" class="px-4 sm:px-6 lg:px-0 py-10 sm:py-16 border-t border-surface-border">
+  <section id="rails-integration" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Framework integration</h2>
       <p class="text-muted mb-8">
         Git Treeline writes the env file your stack already loads. No extra dependencies. <code class="text-accent-light">gtl init</code> auto-detects your framework and generates the right config.
       </p>
 
-      <h3 class="text-xl font-mono text-white mb-4">Rails</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Rails</h3>
       <p class="text-muted mb-4">
         Rails apps using <code class="text-accent-light">dotenv-rails</code> (most do) load <code class="text-accent-light">.env.local</code> at boot automatically. Git Treeline writes allocated values to that file, so <code class="text-accent-light">ENV["PORT"]</code>, <code class="text-accent-light">ENV["DATABASE_NAME"]</code>, and <code class="text-accent-light">ENV["REDIS_URL"]</code> just work. No additional gems needed.
       </p>
@@ -693,11 +705,11 @@
         If your Rails app uses a JS bundler (jsbundling-rails, cssbundling-rails, or a multi-process <code class="text-accent-light">Procfile.dev</code>), <code class="text-accent-light">gtl init</code> detects it and sets <code class="text-accent-light">port_count: 2</code> with an <code class="text-accent-light">ESBUILD_PORT</code> env var for the asset process.
       </p>
 
-      <h3 class="text-xl font-mono text-white mb-4 mt-8">Next.js</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4 mt-8">Next.js</h3>
       <p class="text-muted mb-4">
         Next.js loads <code class="text-accent-light">.env.local</code> into <code class="text-accent-light">process.env</code> for your app code, but the dev server <strong class="text-white">does not</strong> use <code class="text-accent-light">PORT</code> for its listen port. Update your <code class="text-accent-light">package.json</code> dev script:
       </p>
-      <div class="terminal mb-4">
+      <div class="terminal mb-6">
         <div class="terminal-body">
           <pre class="text-sm"><span class="text-accent-light">"dev"</span>: <span class="text-white">"next dev --port ${PORT:-3000}"</span></pre>
         </div>
@@ -706,14 +718,14 @@
         <code class="text-accent-light">gtl init</code> prints this guidance automatically for Next.js projects.
       </p>
 
-      <h3 class="text-xl font-mono text-white mb-4 mt-8">Vite (React, Vue, Svelte, etc.)</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4 mt-8">Vite (React, Vue, Svelte, etc.)</h3>
       <p class="text-muted mb-4">
         <code class="text-accent-light">gtl init</code> auto-detects Vite projects (<code class="text-accent-light">vite.config.js</code>, <code class="text-accent-light">vite.config.ts</code>, <code class="text-accent-light">vite.config.mjs</code>) and generates a tailored config with <code class="text-accent-light">.env.local</code> wiring and <code class="text-accent-light">npx vite</code> as the start command.
       </p>
       <p class="text-muted mb-4">
         Vite loads <code class="text-accent-light">.env.local</code> for <code class="text-accent-light">import.meta.env</code> in your app code, but <strong class="text-white">does not</strong> use <code class="text-accent-light">PORT</code> for the dev server port by default. Add this to your <code class="text-accent-light">vite.config.js</code>:
       </p>
-      <div class="terminal mb-4">
+      <div class="terminal mb-6">
         <div class="terminal-header">
           <span class="text-xs text-muted">vite.config.js</span>
         </div>
@@ -731,12 +743,12 @@
         <code class="text-accent-light">gtl init</code> prints this guidance automatically. Alternatively, if you use <code class="text-accent-light">gtl start</code>, the supervisor injects <code class="text-accent-light">PORT</code> directly into the process environment, so <code class="text-accent-light">npx vite --port $PORT</code> works without any <code class="text-accent-light">vite.config.js</code> changes.
       </p>
 
-      <h3 class="text-xl font-mono text-white mb-4 mt-8">Express / Node</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4 mt-8">Express / Node</h3>
       <p class="text-muted mb-4">
         Most Express apps already read <code class="text-accent-light">process.env.PORT</code>. Set <code class="text-accent-light">env_file: .env</code> and your app picks up the allocated port at startup. If your app seeds from <code class="text-accent-light">.env.example</code>, use the extended form: <code class="text-accent-light">env_file: { path: .env, seed_from: .env.example }</code>.
       </p>
 
-      <h3 class="text-xl font-mono text-white mb-4 mt-8">Other frameworks</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4 mt-8">Other frameworks</h3>
       <p class="text-muted">
         Any framework that reads environment variables from an env file works with Git Treeline. Set <code class="text-accent-light">env_file</code> to the file your framework loads and define your <code class="text-accent-light">env</code> map with the tokens your app needs.
       </p>
@@ -744,14 +756,14 @@
   </section>
 
   <!-- Setup Commands -->
-  <section id="setup-commands" class="px-4 sm:px-6 lg:px-0 py-10 sm:py-16 border-t border-surface-border">
+  <section id="setup-commands" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Setup commands</h2>
       <p class="text-muted mb-8">
         The <code class="text-accent-light">commands.setup</code> list runs after every resource allocation. Dependency installs, migrations, data fixups &mdash; anything your worktree needs before it's ready to boot.
       </p>
 
-      <h3 class="text-xl font-mono text-white mb-4">Execution order</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Execution order</h3>
       <p class="text-muted mb-4">
         When <code class="text-accent-light">gtl new</code> or <code class="text-accent-light">gtl setup</code> runs, Git Treeline processes resources in this order:
       </p>
@@ -767,7 +779,7 @@
         By the time your setup commands run, <code class="text-accent-light">$PORT</code>, <code class="text-accent-light">$DATABASE_NAME</code>, and every other key from your <code class="text-accent-light">env</code> map are available as environment variables. Setup commands always run &mdash; even on re-setup with a reused allocation.
       </p>
 
-      <h3 class="text-xl font-mono text-white mb-4">Port-dependent data</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Port-dependent data</h3>
       <p class="text-muted mb-4">
         Some apps store URLs that include the port &mdash; OAuth redirect URIs, webhook endpoints, CORS origins, API base URLs in database records. Those values go stale when Git Treeline allocates a new port. Use <code class="text-accent-light">commands.setup</code> to patch them.
       </p>
@@ -803,7 +815,7 @@
         The same pattern works for webhook URLs, CORS allowlists, asset host configs, or any record that embeds a port number. The script reads <code class="text-accent-light">$PORT</code> from the environment &mdash; already set by the time setup commands execute.
       </p>
 
-      <h3 class="text-xl font-mono text-white mb-4">Re-setup behavior</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Re-setup behavior</h3>
       <p class="text-muted mb-4">
         Running <code class="text-accent-light">gtl release</code> followed by <code class="text-accent-light">gtl setup</code> on the same worktree produces a fresh allocation: new port, new env file, new database clone. Setup commands run again with the new <code class="text-accent-light">$PORT</code> in the environment, so the fixup script patches data to match.
       </p>
@@ -814,14 +826,14 @@
   </section>
 
   <!-- Database Management -->
-  <section id="db-management" class="px-4 sm:px-6 lg:px-0 py-10 sm:py-16 border-t border-surface-border">
+  <section id="db-management" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Database management</h2>
       <p class="text-muted mb-8">
         The <code class="text-accent-light">gtl db</code> commands manage worktree databases after initial setup. Reset to a clean state, restore from a dump, or clone from a different source.
       </p>
 
-      <h3 class="text-xl font-mono text-white mb-4">Reset to template</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Reset to template</h3>
       <p class="text-muted mb-4">
         Drop the worktree's database and re-clone from the configured <code class="text-accent-light">database.template</code>:
       </p>
@@ -834,7 +846,7 @@
         </div>
       </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Clone from a different source</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Clone from a different source</h3>
       <p class="text-muted mb-4">
         Use <code class="text-accent-light">--from</code> to clone from a different database instead of the default template. Useful when a teammate has a clean database or you've pulled a sanitized staging dump:
       </p>
@@ -844,7 +856,7 @@
         </div>
       </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Restore from a dump</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Restore from a dump</h3>
       <p class="text-muted mb-4">
         Restore from a <code class="text-accent-light">pg_dump</code> file. Git Treeline auto-detects the format &mdash; custom format uses <code class="text-accent-light">pg_restore</code>, plain SQL uses <code class="text-accent-light">psql</code>:
       </p>
@@ -861,7 +873,7 @@
         </div>
       </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Other commands</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Other commands</h3>
       <div class="grid sm:grid-cols-2 gap-6">
         <div class="p-5 rounded-lg border border-surface-border">
           <h4 class="text-sm font-mono text-accent mb-2">db name</h4>
@@ -876,7 +888,7 @@
   </section>
 
   <!-- Process Supervisor -->
-  <section id="supervisor" class="px-4 sm:px-6 lg:px-0 py-10 sm:py-16 border-t border-surface-border">
+  <section id="supervisor" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Process supervisor</h2>
       <p class="text-muted mb-4">
@@ -884,7 +896,7 @@
       </p>
       <p class="text-sm text-muted mb-8">See <a href="/features/workflows/" class="text-accent-light hover:text-accent underline underline-offset-2">Workflows</a> for the full story on PR review and the supervisor.</p>
 
-      <h3 class="text-xl font-mono text-white mb-4">How it works</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">How it works</h3>
       <ol class="list-decimal list-inside text-muted space-y-2 mb-8 pl-2">
         <li>You run <code class="text-accent-light">gtl start</code> in your terminal. The supervisor starts and launches your dev server.</li>
         <li>Server output streams to your terminal. You see every log line.</li>
@@ -893,7 +905,7 @@
         <li><kbd class="text-white">Ctrl+C</kbd> in your terminal fully exits the supervisor and the server.</li>
       </ol>
 
-      <h3 class="text-xl font-mono text-white mb-4">Commands</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Commands</h3>
       <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
         <table class="cli-table w-full text-sm text-left">
           <thead>
@@ -923,7 +935,7 @@
         </table>
       </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Configuration</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Configuration</h3>
       <p class="text-muted mb-4">
         The supervisor uses the <code class="text-accent-light">commands.start</code> field from your <code class="text-accent-light">.treeline.yml</code>:
       </p>
@@ -937,7 +949,7 @@
         </div>
       </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Security</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Security</h3>
       <p class="text-muted">
         The supervisor communicates over a Unix socket with <code class="text-accent-light">0600</code> permissions (owner-only). Read deadlines and client timeouts prevent hung connections. The socket path is derived from a SHA-256 hash of the worktree path.
       </p>
@@ -945,14 +957,14 @@
   </section>
 
   <!-- Editor Customization -->
-  <section id="editor" class="px-4 sm:px-6 lg:px-0 py-10 sm:py-16 border-t border-surface-border">
+  <section id="editor" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Editor customization</h2>
       <p class="text-muted mb-8">
         Git Treeline can set window titles, title bar colors, and themes per worktree so you always know which branch you're looking at. Works with VS Code, Cursor, Zed, and JetBrains IDEs.
       </p>
 
-      <h3 class="text-xl font-mono text-white mb-4">Project config</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Project config</h3>
       <p class="text-muted mb-4">
         Add <code class="text-accent-light">editor</code> settings to your <code class="text-accent-light">.treeline.yml</code>:
       </p>
@@ -993,7 +1005,7 @@
         </table>
       </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">IDE support</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">IDE support</h3>
       <div class="grid sm:grid-cols-2 gap-6 mb-8">
         <div class="p-5 rounded-lg border border-surface-border">
           <h4 class="text-sm font-mono text-accent mb-2">VS Code / Cursor</h4>
@@ -1005,11 +1017,11 @@
         </div>
       </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Per-branch overrides</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Per-branch overrides</h3>
       <p class="text-muted mb-4">
         Override themes and colors for specific projects or branches via user config:
       </p>
-      <div class="terminal mb-4">
+      <div class="terminal mb-6">
         <div class="terminal-body space-y-2">
           <p><span class="prompt">$</span> <span class="command">gtl config set editor.themes.myapp "Monokai"</span></p>
           <p><span class="prompt">$</span> <span class="command">gtl config set editor.colors.myapp/staging "#7b241c"</span></p>
@@ -1022,7 +1034,7 @@
   </section>
 
   <!-- AI Agent Setup -->
-  <section id="ai-agents" class="px-4 sm:px-6 lg:px-0 py-10 sm:py-16 border-t border-surface-border">
+  <section id="ai-agents" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">AI agent setup</h2>
       <p class="text-muted mb-4">
@@ -1030,7 +1042,7 @@
       </p>
       <p class="text-sm text-muted mb-8">See <a href="/features/agents/" class="text-accent-light hover:text-accent underline underline-offset-2">AI Agents</a> for use cases and integration patterns.</p>
 
-      <h3 class="text-xl font-mono text-white mb-4">Lifecycle hooks</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Lifecycle hooks</h3>
       <p class="text-muted mb-4">
         Map these to your agent orchestrator's worktree creation and teardown events:
       </p>
@@ -1047,7 +1059,7 @@
         </div>
       </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Conductor / orchestrator config</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Conductor / orchestrator config</h3>
       <p class="text-muted mb-4">
         If your orchestrator uses a JSON config for lifecycle hooks:
       </p>
@@ -1060,7 +1072,7 @@
         </div>
       </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Structured output</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Structured output</h3>
       <p class="text-muted mb-4">
         Use <code class="text-accent-light">--json</code> on any read command for machine-parseable output:
       </p>
@@ -1076,7 +1088,7 @@
         </div>
       </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Agent context file</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Agent context file</h3>
       <p class="text-muted mb-4">
         <code class="text-accent-light">gtl init</code> writes a treeline section to <code class="text-accent-light">AGENTS.md</code> (created if it doesn't exist, appended otherwise). If <code class="text-accent-light">CLAUDE.md</code> exists but <code class="text-accent-light">AGENTS.md</code> doesn't, it appends there instead. The section tells agents to use <code class="text-accent-light">gtl port</code> for port discovery and lists the allocated env vars.
       </p>
@@ -1084,11 +1096,11 @@
         <code class="text-accent-light">AGENTS.md</code> is read by Cursor, Claude Code, and Codex &mdash; one file covers all three.
       </p>
 
-      <h3 class="text-xl font-mono text-white mb-4">Port discovery</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Port discovery</h3>
       <p class="text-muted mb-4">
         Agents can query the allocated port programmatically:
       </p>
-      <div class="terminal mb-4">
+      <div class="terminal mb-6">
         <div class="terminal-body">
           <pre class="text-sm"><span class="text-accent-light">PORT</span><span class="text-muted">=</span><span class="text-white">$(gtl port)</span>
 <span class="text-white">curl http://localhost:$PORT/health</span></pre>
@@ -1098,7 +1110,7 @@
         Use <code class="text-accent-light">--skip-agent-config</code> on <code class="text-accent-light">gtl init</code> to opt out of context file generation.
       </p>
 
-      <h3 id="mcp-server" class="text-xl font-mono text-white mb-4 mt-10">MCP server</h3>
+      <h3 id="mcp-server" class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4 mt-10">MCP server</h3>
       <p class="text-muted mb-4">
         Git Treeline ships a built-in <a href="https://modelcontextprotocol.io" class="text-accent-light hover:text-accent underline underline-offset-2">Model Context Protocol</a> server. Agents in Cursor, Claude Code, Windsurf, and other MCP-compatible editors get native tool access &mdash; no shell commands, no output parsing.
       </p>
@@ -1166,7 +1178,7 @@
   </section>
 
   <!-- Networking -->
-  <section id="networking" class="px-4 sm:px-6 lg:px-0 py-10 sm:py-16 border-t border-surface-border">
+  <section id="networking" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Networking</h2>
       <p class="text-muted mb-4">
@@ -1177,7 +1189,7 @@
   </section>
 
   <!-- gtl serve reference -->
-  <section id="net-serve" class="px-4 sm:px-6 lg:px-0 py-10 sm:py-16 border-t border-surface-border">
+  <section id="net-serve" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h3 class="subsection-heading">gtl serve</h3>
       <p class="subsection-label">Local HTTPS subdomain router</p>
@@ -1185,7 +1197,7 @@
         Maps <code class="text-accent-light">{project}-{branch}.localhost</code> to the correct worktree port. Runs as a <code class="text-accent-light">launchd</code> (macOS) or <code class="text-accent-light">systemd</code> (Linux) background service. Routes refresh every 5 seconds from the registry.
       </p>
 
-      <h3 class="text-xl font-mono text-white mb-4">Install (one-time)</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Install (one-time)</h3>
       <p class="text-muted mb-4">
         Generates trusted HTTPS certificates, adds port forwarding for clean URLs, and registers the background service. Your system password is needed twice &mdash; once to trust the CA, once to forward port 443.
       </p>
@@ -1209,7 +1221,7 @@
         </div>
       </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Check status and routes</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Check status and routes</h3>
       <div class="terminal mb-8">
         <div class="terminal-body space-y-2">
           <p><span class="prompt">$</span> <span class="command">gtl serve status</span></p>
@@ -1227,7 +1239,7 @@
         Navigating to bare <code class="text-accent-light">https://localhost</code> shows a clickable route table with direct links to every active worktree.
       </p>
 
-      <h3 class="text-xl font-mono text-white mb-4">How it works</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">How it works</h3>
       <ol class="list-decimal list-inside text-muted space-y-2 mb-8 pl-2">
         <li><code class="text-accent-light">gtl serve install</code> generates a local CA and wildcard <code class="text-accent-light">*.localhost</code> server certificate.</li>
         <li>The CA is trusted in your system keychain so browsers show a green lock.</li>
@@ -1237,8 +1249,8 @@
         <li>Incoming requests are matched by subdomain and reverse-proxied to the correct local port. The <code class="text-accent-light">Host</code> header is preserved.</li>
       </ol>
 
-      <h3 class="text-xl font-mono text-white mb-4">Uninstall</h3>
-      <div class="terminal mb-4">
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Uninstall</h3>
+      <div class="terminal mb-6">
         <div class="terminal-body space-y-2">
           <p><span class="prompt">$</span> <span class="command">gtl serve uninstall</span></p>
           <p class="output">Router service removed.</p>
@@ -1250,7 +1262,7 @@
   </section>
 
   <!-- gtl proxy reference -->
-  <section id="net-proxy" class="px-4 sm:px-6 lg:px-0 py-10 sm:py-16 border-t border-surface-border">
+  <section id="net-proxy" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h3 class="subsection-heading">gtl proxy</h3>
       <p class="subsection-label">Single-port reverse proxy</p>
@@ -1258,7 +1270,7 @@
         External services &mdash; OAuth providers, Stripe webhooks, CORS policies &mdash; often expect a fixed URL. <code class="text-accent-light">gtl proxy</code> binds a fixed listen port and forwards traffic to the current worktree's allocated port.
       </p>
 
-      <h3 class="text-xl font-mono text-white mb-4">Usage</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Usage</h3>
       <div class="terminal mb-8">
         <div class="terminal-body space-y-4">
           <div>
@@ -1278,12 +1290,12 @@
         </div>
       </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Auto-detection</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Auto-detection</h3>
       <p class="text-muted mb-8">
         When you omit the target port, <code class="text-accent-light">gtl proxy</code> reads the registry for the current directory and forwards to the first allocated port. Run from inside a worktree that has been set up with <code class="text-accent-light">gtl setup</code>.
       </p>
 
-      <h3 class="text-xl font-mono text-white mb-4">TLS certificates</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">TLS certificates</h3>
       <p class="text-muted mb-4">
         The <code class="text-accent-light">--tls</code> flag terminates HTTPS on the listen side and forwards plain HTTP to the backend. Certificate resolution order:
       </p>
@@ -1293,7 +1305,7 @@
         <li>Self-signed fallback (ECDSA P-256, 1 year)</li>
       </ol>
 
-      <h3 class="text-xl font-mono text-white mb-4">Protocol support</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Protocol support</h3>
       <p class="text-muted">
         Handles HTTP, WebSocket upgrades, and SSE streams transparently. The <code class="text-accent-light">Host</code> header is preserved.
       </p>
@@ -1301,7 +1313,7 @@
   </section>
 
   <!-- gtl tunnel reference -->
-  <section id="net-tunnel" class="px-4 sm:px-6 lg:px-0 py-10 sm:py-16 border-t border-surface-border">
+  <section id="net-tunnel" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h3 class="subsection-heading">gtl tunnel</h3>
       <p class="subsection-label">Public HTTPS via Cloudflare</p>
@@ -1309,7 +1321,7 @@
         Expose a running worktree to the public internet. Git Treeline manages <a href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/" class="text-accent-light hover:text-accent underline underline-offset-2">cloudflared</a> tunnels so you don't write config files or remember flags.
       </p>
 
-      <h3 class="text-xl font-mono text-white mb-4">Quick mode (no account needed)</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Quick mode (no account needed)</h3>
       <p class="text-muted mb-4">
         Disposable random URL in seconds. No Cloudflare account, no setup.
       </p>
@@ -1321,7 +1333,7 @@
         </div>
       </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Named mode (your domain)</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Named mode (your domain)</h3>
       <p class="text-muted mb-4">
         After one-time setup, <code class="text-accent-light">gtl tunnel</code> automatically maps your branch to a subdomain on your domain. Uses the same <a href="#route-keys" class="text-accent-light hover:text-accent underline underline-offset-2">route key</a> as <code class="text-accent-light">gtl serve</code>.
       </p>
@@ -1333,7 +1345,7 @@
         </div>
       </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">Setup walkthrough</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Setup walkthrough</h3>
       <p class="text-muted mb-4">
         <code class="text-accent-light">gtl tunnel setup</code> is a 5-step interactive wizard:
       </p>
@@ -1365,7 +1377,7 @@
         </div>
       </div>
 
-      <h3 class="text-xl font-mono text-white mb-4">How named tunnels work</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">How named tunnels work</h3>
       <ol class="list-decimal list-inside text-muted space-y-2 mb-8 pl-2">
         <li><code class="text-accent-light">gtl tunnel setup</code> creates a Cloudflare tunnel and a wildcard DNS record (<code class="text-accent-light">*.example.dev</code>).</li>
         <li>When you run <code class="text-accent-light">gtl tunnel</code>, it resolves the project name and branch, computes a <a href="#route-keys" class="text-accent-light hover:text-accent underline underline-offset-2">route key</a>, and writes a per-run cloudflared config.</li>
@@ -1374,7 +1386,7 @@
         <li>If project or branch can't be determined, it falls back to quick mode.</li>
       </ol>
 
-      <h3 class="text-xl font-mono text-white mb-4">Requirements</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Requirements</h3>
       <p class="text-muted">
         Quick mode needs <code class="text-accent-light">cloudflared</code> installed (no account). Named mode needs a Cloudflare account with a domain. On macOS, <code class="text-accent-light">gtl tunnel setup</code> offers to install cloudflared via Homebrew if missing.
       </p>
@@ -1382,7 +1394,7 @@
   </section>
 
   <!-- Route key convention -->
-  <section id="route-keys" class="px-4 sm:px-6 lg:px-0 py-10 sm:py-16 border-t border-surface-border">
+  <section id="route-keys" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h3 class="subsection-heading">Route key convention</h3>
       <p class="text-muted mb-8">
@@ -1397,7 +1409,7 @@
         <li>Result: <code class="text-accent-light">{project}-{branch}</code></li>
       </ol>
 
-      <h3 class="text-xl font-mono text-white mb-4">Examples</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Examples</h3>
       <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
         <table class="cli-table w-full text-sm text-left">
           <thead>

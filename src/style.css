@@ -65,6 +65,10 @@
     @apply text-sm text-muted mb-6;
   }
 
+  .docs-subsection {
+    @apply mb-10 sm:mb-12;
+  }
+
   .cli-table {
     @apply font-sans;
     min-width: 480px;
