@@ -1,6 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './docs/index.html'],
+  content: [
+    './index.html',
+    './docs/index.html',
+    './networking/index.html',
+    './src/**/*.{css,js}',
+  ],
   theme: {
     extend: {
       colors: {
@@ -12,13 +17,12 @@ export default {
         accent: {
           DEFAULT: '#22c55e',
           light: '#4ade80',
-          dim: '#166534',
         },
         muted: '#8b949e',
       },
       fontFamily: {
-        mono: ['"Source Code Pro"', 'ui-monospace', 'monospace'],
-        sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['"Source Code Pro"', 'monospace'],
+        sans: ['Inter', 'sans-serif'],
       },
     },
   },

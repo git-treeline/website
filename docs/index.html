@@ -51,10 +51,10 @@
   </script>
 
   <!-- Docs Header -->
-  <header class="pt-24 sm:pt-32 pb-8 sm:pb-12 px-4 sm:px-6">
+  <header class="pt-20 sm:pt-24 pb-6 sm:pb-8 px-4 sm:px-6">
     <div class="max-w-4xl mx-auto">
-      <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4">Documentation</h1>
-      <p class="text-lg text-muted max-w-2xl">
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-3">Documentation</h1>
+      <p class="text-base sm:text-lg text-muted max-w-2xl">
         Everything you need to configure, use, and integrate Git Treeline.
       </p>
       <!-- Mobile nav (scrollable, visible below lg where sidebar appears) -->
@@ -1219,7 +1219,7 @@
         <div class="terminal-body space-y-2">
           <p><span class="prompt">~/feature-auth $</span> <span class="command">gtl tunnel</span></p>
           <p class="output">Tunneling port <span class="highlight">3010</span> as <span class="highlight">myapp-feature-auth</span></p>
-          <p class="output text-accent">https://myapp-feature-auth.myteam.dev</p>
+          <p class="output text-accent">https://myapp-feature-auth.example.dev</p>
         </div>
       </div>
 
@@ -1242,22 +1242,22 @@
           <p class="output">    Tunnel created.</p>
           <p class="output"></p>
           <p class="output">  Step 4: Domain configuration</p>
-          <p class="output">    Domain (e.g. myteam.dev): <span class="text-white">myteam.dev</span></p>
-          <p class="output">    Routing *.myteam.dev &rarr; tunnel "gtl"...</p>
+          <p class="output">    Domain (e.g. example.dev): <span class="text-white">example.dev</span></p>
+          <p class="output">    Routing *.example.dev &rarr; tunnel "gtl"...</p>
           <p class="output">    DNS configured.</p>
           <p class="output"></p>
           <p class="output">  Step 5: Saving configuration</p>
-          <p class="output">    Saved tunnel.name=gtl, tunnel.domain=myteam.dev</p>
+          <p class="output">    Saved tunnel.name=gtl, tunnel.domain=example.dev</p>
           <p class="output"></p>
           <p class="output text-accent">Done! You can now run:</p>
           <p class="output">  gtl tunnel</p>
-          <p class="output">  Example: https://myapp-feature-auth.myteam.dev</p>
+          <p class="output">  Example: https://myapp-feature-auth.example.dev</p>
         </div>
       </div>
 
       <h3 class="text-xl font-mono text-white mb-4">How named tunnels work</h3>
       <ol class="list-decimal list-inside text-muted space-y-2 mb-8 pl-2">
-        <li><code class="text-accent-light">gtl tunnel setup</code> creates a Cloudflare tunnel and a wildcard DNS record (<code class="text-accent-light">*.myteam.dev</code>).</li>
+        <li><code class="text-accent-light">gtl tunnel setup</code> creates a Cloudflare tunnel and a wildcard DNS record (<code class="text-accent-light">*.example.dev</code>).</li>
         <li>When you run <code class="text-accent-light">gtl tunnel</code>, it resolves the project name and branch, computes a <a href="#route-keys" class="text-accent-light hover:text-accent underline underline-offset-2">route key</a>, and writes a per-run cloudflared config.</li>
         <li>The config routes <code class="text-accent-light">{routeKey}.{domain}</code> to <code class="text-accent-light">http://localhost:{port}</code>.</li>
         <li>Cloudflare terminates TLS at the edge. The local connection is plain HTTP.</li>
@@ -1303,19 +1303,19 @@
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">main</td>
               <td class="px-5 py-3 font-mono text-muted">myapp-main</td>
               <td class="px-5 py-3 text-muted text-xs">myapp-main.localhost</td>
-              <td class="px-5 py-3 text-muted text-xs">myapp-main.myteam.dev</td>
+              <td class="px-5 py-3 text-muted text-xs">myapp-main.example.dev</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">feature/auth-flow</td>
               <td class="px-5 py-3 font-mono text-muted">myapp-auth-flow</td>
               <td class="px-5 py-3 text-muted text-xs">myapp-auth-flow.localhost</td>
-              <td class="px-5 py-3 text-muted text-xs">myapp-auth-flow.myteam.dev</td>
+              <td class="px-5 py-3 text-muted text-xs">myapp-auth-flow.example.dev</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">bugfix/fix_login_crash</td>
               <td class="px-5 py-3 font-mono text-muted">myapp-fix-login-crash</td>
               <td class="px-5 py-3 text-muted text-xs">myapp-fix-login-crash.localhost</td>
-              <td class="px-5 py-3 text-muted text-xs">myapp-fix-login-crash.myteam.dev</td>
+              <td class="px-5 py-3 text-muted text-xs">myapp-fix-login-crash.example.dev</td>
             </tr>
           </tbody>
         </table>

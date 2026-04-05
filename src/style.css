@@ -205,6 +205,53 @@
     @apply h-1.5 rounded-full bg-surface-border;
   }
 
+  /* Step sequence — vertical checklist, not a terminal */
+  .step-sequence {
+    @apply space-y-0;
+  }
+
+  .step-item {
+    @apply flex items-start gap-3 py-2.5 border-l-2 border-surface-border pl-5 relative;
+  }
+
+  .step-item::before {
+    content: '';
+    @apply absolute left-[-1px] top-0 bottom-0 w-0.5;
+  }
+
+  .step-check {
+    @apply text-accent text-sm font-bold shrink-0 mt-0.5;
+  }
+
+  .step-text {
+    @apply text-sm text-muted;
+  }
+
+  .step-item-result {
+    @apply border-l-2 border-accent pl-5 pt-3;
+  }
+
+  .step-arrow {
+    @apply text-accent font-mono font-bold shrink-0 mt-0.5;
+  }
+
+  /* Stat strip — breather between content-heavy sections */
+  .stat-strip {
+    @apply flex flex-wrap items-center justify-center gap-x-8 sm:gap-x-12 gap-y-3 py-8 sm:py-10;
+  }
+
+  .stat-strip-item {
+    @apply text-center;
+  }
+
+  .stat-strip-value {
+    @apply font-mono text-2xl sm:text-3xl text-white font-bold block;
+  }
+
+  .stat-strip-label {
+    @apply text-xs text-muted uppercase tracking-wider mt-1 block;
+  }
+
   /* Framework pills */
   .framework-strip {
     @apply flex flex-wrap items-center justify-center gap-2 sm:gap-3;

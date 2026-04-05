@@ -51,19 +51,19 @@
   </script>
 
   <!-- Hero -->
-  <header class="pt-24 sm:pt-32 pb-8 sm:pb-12 px-4 sm:px-6">
+  <header class="pt-20 sm:pt-24 pb-6 sm:pb-8 px-4 sm:px-6">
     <div class="max-w-4xl mx-auto">
-      <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4">Every worktree gets a URL</h1>
-      <p class="text-lg text-muted max-w-2xl">
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-3">Every worktree gets a URL</h1>
+      <p class="text-base sm:text-lg text-muted max-w-2xl">
         Named URLs for every branch. No port numbers, no config per branch.
       </p>
     </div>
   </header>
 
   <!-- URL comparison -->
-  <section class="px-4 sm:px-6 pb-12 sm:pb-16">
+  <section class="px-4 sm:px-6 pb-8 sm:pb-12">
     <div class="max-w-4xl mx-auto">
-      <div class="grid sm:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="p-4 rounded-lg border border-surface-border text-center">
           <p class="text-xs uppercase tracking-wider text-muted mb-2">Without Treeline</p>
           <code class="text-sm text-red-400">localhost:5173</code>
@@ -74,7 +74,7 @@
         </div>
         <div class="p-4 rounded-lg border border-accent/30 text-center">
           <p class="text-xs uppercase tracking-wider text-muted mb-2">gtl tunnel</p>
-          <code class="text-sm text-accent-light">feature-auth.myteam.dev</code>
+          <code class="text-sm text-accent-light">feature-auth.example.dev</code>
         </div>
       </div>
     </div>
@@ -84,7 +84,7 @@
   <section id="when-to-use" class="px-4 sm:px-6 py-10 sm:py-16 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-8">When to use what</h2>
-      <div class="grid sm:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div class="p-5 rounded-lg border border-surface-border">
           <h3 class="text-sm font-mono text-accent mb-3">gtl serve</h3>
           <p class="text-muted text-sm">Every worktree at <code class="text-accent-light">{branch}.localhost</code> with HTTPS. Always-on background service, zero config per branch.</p>
@@ -153,7 +153,7 @@
           <div class="terminal-header"><span class="text-xs text-muted">Named mode (your domain)</span></div>
           <div class="terminal-body space-y-2">
             <p><span class="prompt">$</span> <span class="command">gtl tunnel</span></p>
-            <p class="output text-accent">https://myapp-feature-auth.myteam.dev</p>
+            <p class="output text-accent">https://myapp-feature-auth.example.dev</p>
           </div>
         </div>
       </div>
