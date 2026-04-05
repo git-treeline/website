@@ -522,7 +522,7 @@
           <div class="cmd-item">
             <span class="cmd-name">setup [path]</span>
             <div class="cmd-flags"><span class="cmd-flag">--main-repo</span><span class="cmd-flag">--dry-run</span></div>
-            <p class="cmd-desc">Allocate resources and configure a worktree. Idempotent &mdash; safe to re-run. When reusing an existing allocation, checks that allocated ports are still free; if another process took a port, re-allocates to a free block, updates the registry, and prints a warning.</p>
+            <p class="cmd-desc">Allocate resources and configure a worktree. Idempotent &mdash; safe to re-run. When reusing an existing allocation, verifies ports are still free and still valid for current config (including <code class="text-accent-light">port.reservations</code> and <code class="text-accent-light">port_count</code>); if not, re-allocates, updates the registry, and warns.</p>
           </div>
 
           <div class="cmd-item">
@@ -655,7 +655,7 @@
           <div class="cmd-item">
             <span class="cmd-name">start</span>
             <div class="cmd-flags"><span class="cmd-flag">--await</span><span class="cmd-flag">--await-timeout</span></div>
-            <p class="cmd-desc">Run <code class="text-accent-light">commands.start</code> under a Unix socket supervisor. Injects allocated env vars into the child process. Resumes the server if the supervisor is already running. <code class="text-accent-light">--await</code> blocks until TCP accepts on the allocated port (default timeout 60s).</p>
+            <p class="cmd-desc">Run <code class="text-accent-light">commands.start</code> under a Unix socket supervisor. Injects allocated env vars into the child process. Resumes the server if the supervisor is already running. <code class="text-accent-light">--await</code> blocks until TCP accepts on the allocated port (default timeout 60s), on both a fresh start and resume.</p>
           </div>
 
           <div class="cmd-item">
@@ -931,7 +931,7 @@
         On a reused allocation (e.g. running <code class="text-accent-light">gtl setup</code> without releasing first), Treeline skips the database clone but still runs setup commands. This makes <code class="text-accent-light">setup</code> safe to re-run &mdash; deps get installed, migrations run, and port-dependent data stays correct.
       </p>
       <p class="text-muted">
-        If a previously allocated port is occupied (another process bound it since last setup), Treeline re-allocates to a free port block, updates the registry and env file, and prints a warning. Treeline does not keep an allocation pointing at a port it cannot use.
+        If a previously allocated port is occupied, or the saved allocation no longer matches <code class="text-accent-light">port.reservations</code> or <code class="text-accent-light">port_count</code>, Treeline re-allocates, updates the registry and env file, and prints a warning. Treeline does not keep an allocation pointing at a port it cannot use.
       </p>
     </div>
   </section>
