@@ -59,6 +59,7 @@
 
   .cli-table {
     @apply font-sans;
+    min-width: 480px;
   }
 
   .cli-table thead {
@@ -75,6 +76,40 @@
 
   .cli-table code {
     @apply bg-surface px-1.5 py-0.5 rounded text-accent-light;
+  }
+
+  .cli-table td:first-child,
+  .cli-table th:first-child {
+    @apply whitespace-nowrap;
+  }
+
+  /* Definition-list style command reference */
+  .cmd-list {
+    @apply space-y-0;
+  }
+
+  .cmd-item {
+    @apply py-5 border-b border-surface-border;
+  }
+
+  .cmd-item:last-child {
+    @apply border-b-0;
+  }
+
+  .cmd-name {
+    @apply font-mono text-white text-base font-semibold;
+  }
+
+  .cmd-flags {
+    @apply flex flex-wrap gap-1.5 mt-2;
+  }
+
+  .cmd-flag {
+    @apply font-mono text-xs text-accent-light bg-surface px-2 py-0.5 rounded;
+  }
+
+  .cmd-desc {
+    @apply text-sm text-muted mt-2;
   }
 
   .faq-item {

@@ -389,163 +389,167 @@
       <p class="text-muted mb-8">
         Invoked as <code class="text-accent-light">git-treeline</code>, <code class="text-accent-light">git treeline</code>, or <code class="text-accent-light">gtl</code>. All three are equivalent.
       </p>
-      <div class="overflow-x-auto rounded-lg border border-surface-border">
-        <table class="cli-table w-full text-sm text-left">
-          <thead>
-            <tr class="border-b border-surface-border bg-surface">
-              <th class="px-5 py-3 font-mono text-accent-light font-medium">Command</th>
-              <th class="px-5 py-3 font-mono text-accent-light font-medium">Flags</th>
-              <th class="px-5 py-3 text-accent-light font-medium">Description</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-surface-border">
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">init</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"><code>--project</code> <code>--template-db</code> <code>--skip-agent-config</code></td>
-              <td class="px-5 py-3 text-muted">Generate <code class="text-accent-light">.treeline.yml</code> with self-documenting template. Auto-detects framework, writes <code class="text-accent-light">AGENTS.md</code> section, detects editor.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">new &lt;branch&gt;</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"><code>--base</code> <code>--path</code> <code>--start</code> <code>--dry-run</code></td>
-              <td class="px-5 py-3 text-muted">Create worktree + allocate resources + run setup in one step. <code class="text-accent-light">--start</code> boots the app after setup. Must be run from the main repo.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">review &lt;PR#&gt;</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"><code>--path</code> <code>--start</code></td>
-              <td class="px-5 py-3 text-muted">Fetch a GitHub PR into a new worktree with full setup. Requires <code class="text-accent-light">gh</code> CLI. Must be run from the main repo.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">switch &lt;branch-or-PR#&gt;</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"><code>--setup</code></td>
-              <td class="px-5 py-3 text-muted">Switch a worktree to a different branch or PR. Fetches from origin, checks out, updates registry, refreshes env. <code class="text-accent-light">--setup</code> re-runs <code class="text-accent-light">commands.setup</code>.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">setup [path]</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"><code>--main-repo</code> <code>--dry-run</code></td>
-              <td class="px-5 py-3 text-muted">Allocate resources and configure a worktree. Idempotent &mdash; safe to re-run.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">refresh</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"><code>--dry-run</code> <code>--force</code></td>
-              <td class="px-5 py-3 text-muted">Re-allocate all worktrees with current config and reservations. Restarts supervised servers automatically; flags manually-started servers.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">release [path]</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"><code>--drop-db</code> <code>--project</code> <code>--all</code> <code>--force</code> <code>--dry-run</code></td>
-              <td class="px-5 py-3 text-muted">Free allocated resources. <code class="text-accent-light">--drop-db</code> removes the cloned database. <code class="text-accent-light">--all</code> releases everything across projects.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">port</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Print the allocated port for the current worktree. Designed for agents and scripts.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">doctor</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Check config, allocation, runtime, and framework-specific diagnostics in one view.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">status</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"><code>--project</code> <code>--json</code> <code>--check</code> <code>--watch</code> <code>--interval</code></td>
-              <td class="px-5 py-3 text-muted">Show all allocations. <code class="text-accent-light">--check</code> probes ports to verify servers are responding. <code class="text-accent-light">--watch</code> auto-refreshes at <code class="text-accent-light">--interval</code> (default 2s) for live monitoring. <code class="text-accent-light">--json</code> for structured output.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">prune</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"><code>--stale</code> <code>--merged</code> <code>--drop-db</code> <code>--force</code></td>
-              <td class="px-5 py-3 text-muted">Clean orphaned allocations. <code class="text-accent-light">--stale</code> targets worktrees whose directory no longer exists on disk. <code class="text-accent-light">--merged</code> targets branches merged to the <code class="text-accent-light">merge_target</code> (from <code class="text-accent-light">.treeline.yml</code> or auto-detected). <code class="text-accent-light">--drop-db</code> also removes cloned databases.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">config list</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Dump all user-level settings.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">config get &lt;key&gt;</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Read a setting by dot-notation key (e.g. <code class="text-accent-light">port.base</code>, <code class="text-accent-light">redis.url</code>).</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">config set &lt;key&gt; &lt;value&gt;</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Write a setting and persist to disk.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">config path</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Print the config file location.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">config edit</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Open config in <code class="text-accent-light">$EDITOR</code>.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">db name</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Print the worktree's database name.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">db reset</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"><code>--from &lt;db&gt;</code></td>
-              <td class="px-5 py-3 text-muted">Drop and re-clone from template. <code class="text-accent-light">--from</code> overrides the source database.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">db restore &lt;file&gt;</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Drop and restore from a <code class="text-accent-light">pg_dump</code> file. Auto-detects custom format vs plain SQL.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">db drop</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Drop the worktree's database without re-cloning.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">start</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Run <code class="text-accent-light">commands.start</code> under a Unix socket supervisor. Injects allocated env vars into the child process. If the supervisor is already running, resumes the server.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">stop</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Pause the supervised server. The supervisor stays alive so the server can be resumed.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">restart</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Atomic stop + start. Bounces the supervised server in one step.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">editor refresh</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Re-apply editor title, color, and theme settings for the current worktree's branch.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">serve</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Local HTTPS subdomain router. <code class="text-accent-light">serve install</code> for one-time setup, <code class="text-accent-light">serve status</code> for routes. <a href="#net-serve" class="text-accent-light hover:text-accent underline underline-offset-2">Details</a></td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">proxy &lt;port&gt; [target]</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"><code>--tls</code></td>
-              <td class="px-5 py-3 text-muted">Single-port reverse proxy. Target defaults to current worktree. <a href="#net-proxy" class="text-accent-light hover:text-accent underline underline-offset-2">Details</a></td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">tunnel [port]</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"><code>--domain</code></td>
-              <td class="px-5 py-3 text-muted">Public HTTPS tunnel via Cloudflare. <code class="text-accent-light">tunnel setup</code> for one-time config. <a href="#net-tunnel" class="text-accent-light hover:text-accent underline underline-offset-2">Details</a></td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">mcp</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Start the MCP server (stdio transport). Used by editors, not invoked directly. <a href="#mcp-server" class="text-accent-light hover:text-accent underline underline-offset-2">Details</a></td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">version</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Print version.</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6">
+        <div class="cmd-list">
+
+          <div class="cmd-item">
+            <span class="cmd-name">init</span>
+            <div class="cmd-flags"><span class="cmd-flag">--project</span><span class="cmd-flag">--template-db</span><span class="cmd-flag">--skip-agent-config</span></div>
+            <p class="cmd-desc">Generate <code class="text-accent-light">.treeline.yml</code> with self-documenting template. Auto-detects framework, writes <code class="text-accent-light">AGENTS.md</code> section, detects editor.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">new &lt;branch&gt;</span>
+            <div class="cmd-flags"><span class="cmd-flag">--base</span><span class="cmd-flag">--path</span><span class="cmd-flag">--start</span><span class="cmd-flag">--dry-run</span></div>
+            <p class="cmd-desc">Create worktree + allocate resources + run setup in one step. <code class="text-accent-light">--start</code> boots the app after setup. Must be run from the main repo.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">review &lt;PR#&gt;</span>
+            <div class="cmd-flags"><span class="cmd-flag">--path</span><span class="cmd-flag">--start</span></div>
+            <p class="cmd-desc">Fetch a GitHub PR into a new worktree with full setup. Requires <code class="text-accent-light">gh</code> CLI. Must be run from the main repo.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">switch &lt;branch-or-PR#&gt;</span>
+            <div class="cmd-flags"><span class="cmd-flag">--setup</span></div>
+            <p class="cmd-desc">Switch a worktree to a different branch or PR. Fetches from origin, checks out, updates registry, refreshes env. <code class="text-accent-light">--setup</code> re-runs <code class="text-accent-light">commands.setup</code>.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">setup [path]</span>
+            <div class="cmd-flags"><span class="cmd-flag">--main-repo</span><span class="cmd-flag">--dry-run</span></div>
+            <p class="cmd-desc">Allocate resources and configure a worktree. Idempotent &mdash; safe to re-run.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">refresh</span>
+            <div class="cmd-flags"><span class="cmd-flag">--dry-run</span><span class="cmd-flag">--force</span></div>
+            <p class="cmd-desc">Re-allocate all worktrees with current config and reservations. Restarts supervised servers automatically; flags manually-started servers.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">release [path]</span>
+            <div class="cmd-flags"><span class="cmd-flag">--drop-db</span><span class="cmd-flag">--project</span><span class="cmd-flag">--all</span><span class="cmd-flag">--force</span><span class="cmd-flag">--dry-run</span></div>
+            <p class="cmd-desc">Free allocated resources. <code class="text-accent-light">--drop-db</code> removes the cloned database. <code class="text-accent-light">--all</code> releases everything across projects.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">port</span>
+            <p class="cmd-desc">Print the allocated port for the current worktree. Designed for agents and scripts.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">doctor</span>
+            <p class="cmd-desc">Check config, allocation, runtime, and framework-specific diagnostics in one view.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">status</span>
+            <div class="cmd-flags"><span class="cmd-flag">--project</span><span class="cmd-flag">--json</span><span class="cmd-flag">--check</span><span class="cmd-flag">--watch</span><span class="cmd-flag">--interval</span></div>
+            <p class="cmd-desc">Show all allocations. <code class="text-accent-light">--check</code> probes ports to verify servers are responding. <code class="text-accent-light">--watch</code> auto-refreshes at <code class="text-accent-light">--interval</code> (default 2s). <code class="text-accent-light">--json</code> for structured output.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">prune</span>
+            <div class="cmd-flags"><span class="cmd-flag">--stale</span><span class="cmd-flag">--merged</span><span class="cmd-flag">--drop-db</span><span class="cmd-flag">--force</span></div>
+            <p class="cmd-desc">Clean orphaned allocations. <code class="text-accent-light">--stale</code> targets worktrees whose directory no longer exists. <code class="text-accent-light">--merged</code> targets branches merged to <code class="text-accent-light">merge_target</code>. <code class="text-accent-light">--drop-db</code> also drops databases.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">config list</span>
+            <p class="cmd-desc">Dump all user-level settings.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">config get &lt;key&gt;</span>
+            <p class="cmd-desc">Read a setting by dot-notation key (e.g. <code class="text-accent-light">port.base</code>, <code class="text-accent-light">redis.url</code>).</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">config set &lt;key&gt; &lt;value&gt;</span>
+            <p class="cmd-desc">Write a setting and persist to disk.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">config path</span>
+            <p class="cmd-desc">Print the config file location.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">config edit</span>
+            <p class="cmd-desc">Open config in <code class="text-accent-light">$EDITOR</code>.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">db name</span>
+            <p class="cmd-desc">Print the worktree's database name.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">db reset</span>
+            <div class="cmd-flags"><span class="cmd-flag">--from &lt;db&gt;</span></div>
+            <p class="cmd-desc">Drop and re-clone from template. <code class="text-accent-light">--from</code> overrides the source database.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">db restore &lt;file&gt;</span>
+            <p class="cmd-desc">Drop and restore from a <code class="text-accent-light">pg_dump</code> file. Auto-detects custom format vs plain SQL.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">db drop</span>
+            <p class="cmd-desc">Drop the worktree's database without re-cloning.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">start</span>
+            <p class="cmd-desc">Run <code class="text-accent-light">commands.start</code> under a Unix socket supervisor. Injects allocated env vars into the child process. Resumes the server if the supervisor is already running.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">stop</span>
+            <p class="cmd-desc">Pause the supervised server. The supervisor stays alive so the server can be resumed.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">restart</span>
+            <p class="cmd-desc">Atomic stop + start. Bounces the supervised server in one step.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">editor refresh</span>
+            <p class="cmd-desc">Re-apply editor title, color, and theme settings for the current worktree's branch.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">serve</span>
+            <p class="cmd-desc">Local HTTPS subdomain router. <code class="text-accent-light">serve install</code> for one-time setup, <code class="text-accent-light">serve status</code> for routes. <a href="#net-serve" class="text-accent-light hover:text-accent underline underline-offset-2">Details &rarr;</a></p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">proxy &lt;port&gt; [target]</span>
+            <div class="cmd-flags"><span class="cmd-flag">--tls</span></div>
+            <p class="cmd-desc">Single-port reverse proxy. Target defaults to current worktree's allocated port. <a href="#net-proxy" class="text-accent-light hover:text-accent underline underline-offset-2">Details &rarr;</a></p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">tunnel [port]</span>
+            <div class="cmd-flags"><span class="cmd-flag">--domain</span></div>
+            <p class="cmd-desc">Public HTTPS tunnel via Cloudflare. <code class="text-accent-light">tunnel setup</code> for one-time config. <a href="#net-tunnel" class="text-accent-light hover:text-accent underline underline-offset-2">Details &rarr;</a></p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">mcp</span>
+            <p class="cmd-desc">Start the MCP server (stdio transport). Used by editors, not invoked directly. <a href="#mcp-server" class="text-accent-light hover:text-accent underline underline-offset-2">Details &rarr;</a></p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">version</span>
+            <p class="cmd-desc">Print version.</p>
+          </div>
+
+        </div>
       </div>
     </div>
   </section>
@@ -1147,9 +1151,6 @@
         Three tools give each worktree a named URL &mdash; locally, on your LAN, or publicly.
       </p>
       <p class="text-sm text-muted mb-8">See <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking</a> for the problem this solves and when to use each tool.</p>
-      <p class="text-muted mb-4">
-        See the <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">networking overview</a> for a quick comparison of when to use each tool.
-      </p>
     </div>
   </section>
 
@@ -1378,28 +1379,24 @@
             <tr class="border-b border-surface-border bg-surface">
               <th class="px-5 py-3 font-mono text-accent-light font-medium">Branch</th>
               <th class="px-5 py-3 font-mono text-accent-light font-medium">Route key</th>
-              <th class="px-5 py-3 text-accent-light font-medium">Local URL</th>
-              <th class="px-5 py-3 text-accent-light font-medium">Tunnel URL</th>
+              <th class="px-5 py-3 text-accent-light font-medium">URLs</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-surface-border">
             <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">main</td>
+              <td class="px-5 py-3 font-mono text-white">main</td>
               <td class="px-5 py-3 font-mono text-muted">myapp-main</td>
-              <td class="px-5 py-3 text-muted text-xs">myapp-main.localhost</td>
-              <td class="px-5 py-3 text-muted text-xs">myapp-main.example.dev</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs leading-relaxed">myapp-main.localhost<br>myapp-main.example.dev</td>
             </tr>
             <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">feature/auth-flow</td>
+              <td class="px-5 py-3 font-mono text-white">feature/auth-flow</td>
               <td class="px-5 py-3 font-mono text-muted">myapp-auth-flow</td>
-              <td class="px-5 py-3 text-muted text-xs">myapp-auth-flow.localhost</td>
-              <td class="px-5 py-3 text-muted text-xs">myapp-auth-flow.example.dev</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs leading-relaxed">myapp-auth-flow.localhost<br>myapp-auth-flow.example.dev</td>
             </tr>
             <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">bugfix/fix_login_crash</td>
+              <td class="px-5 py-3 font-mono text-white">bugfix/fix_login_crash</td>
               <td class="px-5 py-3 font-mono text-muted">myapp-fix-login-crash</td>
-              <td class="px-5 py-3 text-muted text-xs">myapp-fix-login-crash.localhost</td>
-              <td class="px-5 py-3 text-muted text-xs">myapp-fix-login-crash.example.dev</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs leading-relaxed">myapp-fix-login-crash.localhost<br>myapp-fix-login-crash.example.dev</td>
             </tr>
           </tbody>
         </table>
