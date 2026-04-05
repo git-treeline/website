@@ -12,7 +12,7 @@ export default {
       colors: {
         surface: {
           DEFAULT: '#0d1117',
-          raised: '#161b22',
+          raised: '#151d28',
           border: '#30363d',
         },
         accent: {

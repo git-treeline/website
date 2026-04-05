@@ -332,6 +332,10 @@
     @apply text-sm text-accent-light hover:text-accent underline underline-offset-2 inline-flex items-center gap-1;
   }
 
+  .benefit-card {
+    @apply border-l-2 border-accent/30 pl-5;
+  }
+
   /* Slot machine text rotation */
   .slot-wrapper {
     @apply inline-flex overflow-hidden align-bottom;
@@ -363,7 +367,7 @@
   }
 
   .trust-bar-item {
-    @apply flex items-center gap-2;
+    @apply flex items-center gap-2 border-l-2 border-accent/40 pl-4;
   }
 
   .trust-bar-item strong {
