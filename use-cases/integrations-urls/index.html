@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OAuth, webhooks, stable URLs — Git Treeline</title>
+  <meta name="description" content="When to use gtl serve, gtl proxy, gtl tunnel, or gtl share for redirects and callbacks.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://git-treeline.dev/use-cases/integrations-urls/">
+  <meta property="og:title" content="OAuth, webhooks, stable URLs — Git Treeline">
+  <meta property="og:description" content="Local subdomains, fixed ports, public tunnels, or ephemeral share links—matched to the integration.">
+  <meta property="og:image" content="https://git-treeline.dev/og-image.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <script src="https://cdn.usefathom.com/script.js" data-site="QPFTFHRS" defer></script>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav id="site-nav" class="fixed top-0 left-0 right-0 z-50 bg-surface transition-colors duration-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3 text-white hover:text-accent-light transition-colors">
+        <svg class="w-7 h-7" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="6" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+          <text x="16" y="22" font-family="monospace" font-weight="700" font-size="16" fill="#22c55e" text-anchor="middle">gt</text>
+        </svg>
+        <span class="font-mono text-sm font-semibold hidden sm:inline">git-treeline</span>
+      </a>
+      <div class="flex items-center gap-3 sm:gap-6">
+        <div class="relative group">
+          <button class="text-sm text-muted hover:text-white transition-colors flex items-center gap-1">Features <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+          <div class="absolute top-full left-0 mt-2 w-44 bg-surface-raised border border-surface-border rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 py-2 z-50">
+            <a href="/features/isolation/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Isolation</a>
+            <a href="/features/networking/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Networking</a>
+            <a href="/features/workflows/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Workflows</a>
+            <a href="/features/agents/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">AI Agents</a>
+          </div>
+        </div>
+        <a href="/docs/" class="text-sm text-muted hover:text-white transition-colors">Docs</a>
+        <a href="/use-cases/" class="text-sm text-white transition-colors">Use cases</a>
+        <a href="https://github.com/git-treeline/git-treeline" class="text-sm text-muted hover:text-white transition-colors hidden sm:inline">GitHub</a>
+        <a href="/#get-started" class="text-xs font-mono px-3 sm:px-4 py-2 bg-accent text-surface rounded-md hover:bg-accent-light transition-colors">Install</a>
+      </div>
+    </div>
+  </nav>
+  <script>
+    (function() {
+      var nav = document.getElementById('site-nav');
+      window.addEventListener('scroll', function() {
+        nav.classList.toggle('nav-scrolled', window.scrollY > 40);
+      });
+    })();
+  </script>
+
+  <article class="px-4 sm:px-6 pt-28 sm:pt-36 pb-16 max-w-3xl mx-auto">
+    <p class="text-sm text-muted mb-4"><a href="/use-cases/" class="text-accent-light hover:text-accent">Use cases</a> / Integrations</p>
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-6">Redirects and webhooks care about the URL, not your branch name</h1>
+    <p class="text-lg text-gray-400 mb-10">
+      OAuth providers, payment webhooks, and mobile deep links are configured with concrete hostnames—or sometimes a single fixed localhost port. Parallel worktrees fight that model because each branch gets its own allocated port. You choose the layer that matches the integration’s constraints.
+    </p>
+
+    <h2 class="text-xl font-semibold text-white mb-4">Pick a tool</h2>
+    <div class="overflow-x-auto rounded-lg border border-surface-border mb-10">
+      <table class="cli-table w-full text-sm text-left">
+        <thead>
+          <tr class="border-b border-surface-border bg-surface">
+            <th class="px-4 py-3 font-mono text-accent-light">Need</th>
+            <th class="px-4 py-3 text-accent-light">Command</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-border text-muted">
+          <tr>
+            <td class="px-4 py-3">Stable hostname per branch on your machine</td>
+            <td class="px-4 py-3 font-mono text-white"><code class="text-accent-light">gtl serve</code></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3">Provider only allows <code class="text-white">localhost:3000</code></td>
+            <td class="px-4 py-3 font-mono text-white"><code class="text-accent-light">gtl proxy</code></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3">Public HTTPS on your domain, same route shape as local</td>
+            <td class="px-4 py-3 font-mono text-white"><code class="text-accent-light">gtl tunnel</code></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3">Send someone a temporary link; tear down when done; URL not guessable from branch</td>
+            <td class="px-4 py-3 font-mono text-white"><code class="text-accent-light">gtl share</code> (or <code class="text-accent-light">--tailscale</code> for tailnet-only)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="text-muted mb-6">
+      <code class="text-accent-light">gtl tunnel</code> is for ongoing, routable access—think webhooks and OAuth redirect URIs you register once against your domain. <code class="text-accent-light">gtl share</code> is for a disposable session: token-gated in the default Cloudflare mode, cleaned up on Ctrl+C. Frameworks still need host allowlists; Treeline prints the exact change for Rails, Vite, and Django when you run tunnel.
+    </p>
+
+    <h2 class="text-xl font-semibold text-white mb-3 mt-10">Read next</h2>
+    <ul class="text-muted space-y-2 list-disc pl-5 mb-8">
+      <li><a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking feature page</a></li>
+      <li><a href="/docs/#networking" class="text-accent-light hover:text-accent underline underline-offset-2">Docs: networking overview</a></li>
+    </ul>
+
+    <p class="text-center">
+      <a href="/use-cases/" class="text-sm text-accent-light hover:text-accent">All use cases</a>
+    </p>
+  </article>
+
+  <footer class="site-footer">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-12 pb-10">
+      <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-10 lg:gap-14">
+        <nav class="site-footer-nav flex-1 min-w-0" aria-label="Footer">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-10 gap-y-8 max-w-lg">
+            <div>
+              <h3>Product</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="/features/isolation/">Isolation</a></li>
+                <li><a href="/features/networking/">Networking</a></li>
+                <li><a href="/features/workflows/">Workflows</a></li>
+                <li><a href="/features/agents/">AI Agents</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3>Resources</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="/docs/">Documentation</a></li>
+                <li><a href="/use-cases/">Use cases</a></li>
+              </ul>
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+              <h3>Open source</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="https://github.com/git-treeline/git-treeline">GitHub</a></li>
+                <li><a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg">Menu bar app</a></li>
+                <li><a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt">MIT License</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <div class="shrink-0 lg:max-w-[220px]">
+          <p class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Built by</p>
+          <a href="https://x.com/jonathansimmons" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-white hover:text-accent-light transition-colors">Jonathan Simmons</a>
+        </div>
+      </div>
+      <div class="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-surface-border pt-8 text-xs text-muted">
+        <a href="/" class="font-mono hover:text-white transition-colors">git-treeline.dev</a>
+        <span>Open source · <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a></span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -13,6 +13,11 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://git-treeline.dev/features/agents/">
   <meta property="og:site_name" content="Git Treeline">
+  <meta property="og:image" content="https://git-treeline.dev/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://git-treeline.dev/og-image.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,6 +48,7 @@
           </div>
         </div>
         <a href="/docs/" class="text-sm text-muted hover:text-white transition-colors">Docs</a>
+        <a href="/use-cases/" class="text-sm text-muted hover:text-white transition-colors">Use cases</a>
         <a href="https://github.com/git-treeline/git-treeline" class="text-sm text-muted hover:text-white transition-colors hidden sm:inline">GitHub</a>
         <a href="/#get-started" class="text-xs font-mono px-3 sm:px-4 py-2 bg-accent text-surface rounded-md hover:bg-accent-light transition-colors">Install</a>
       </div>
@@ -207,9 +213,9 @@
           <div class="md:order-2">
             <h3 class="text-white font-mono text-xl mb-2">Lifecycle hooks</h3>
             <p class="text-sm text-muted mb-4">
-              <code class="text-accent-light">gtl setup .</code> allocates resources and runs setup commands for the current directory — the worktree creation hook. <code class="text-accent-light">gtl release . --drop-db</code> is the teardown hook that drops the database and cleans up.
+              <code class="text-accent-light">gtl setup .</code> and <code class="text-accent-light">gtl release . --drop-db</code> are the boundaries agents call. Inside <code class="text-accent-light">.treeline.yml</code>, optional <code class="text-white">pre_setup</code>, <code class="text-white">post_setup</code>, <code class="text-white">pre_release</code>, and <code class="text-white">post_release</code> run project shell commands—pre-hooks abort on failure; post-hooks warn and continue.
             </p>
-            <p class="text-sm text-muted">Agents that create and destroy worktrees call these at the boundaries. Everything in between is their own code.</p>
+            <p class="text-sm text-muted">Cross-repo URLs use the same contracts as humans: <code class="text-accent-light">gtl resolve &lt;project&gt; --json</code> or <code class="text-accent-light">{resolve:…}</code> in env templates.</p>
           </div>
           <div class="md:order-1 terminal">
             <div class="terminal-header">
@@ -236,13 +242,15 @@
           <div>
             <h3 class="text-white font-mono text-xl mb-2">Structured output</h3>
             <p class="text-sm text-muted mb-3">
-              Four CLI commands support <code class="text-accent-light">--json</code> for machine-readable output:
+              Common commands with <code class="text-accent-light">--json</code> for scripts and agents that do not use MCP:
             </p>
             <ul class="text-sm text-muted space-y-1 mb-3">
               <li><code class="text-accent-light">gtl status --json</code> — allocations, runtime health, supervisor state</li>
               <li><code class="text-accent-light">gtl doctor --json</code> — config, allocation, and diagnostic checks</li>
               <li><code class="text-accent-light">gtl port --json</code> — allocated port(s) for the worktree</li>
               <li><code class="text-accent-light">gtl db name --json</code> — allocated database name</li>
+              <li><code class="text-accent-light">gtl env --json</code> — env file contents, structured</li>
+              <li><code class="text-accent-light">gtl resolve &lt;project&gt; --json</code> — another project’s base URL from the registry</li>
             </ul>
             <p class="text-sm text-muted mb-4">
               MCP is the preferred interface — native tool calls, no shell — but <code class="text-accent-light">--json</code> works for any agent that can run commands.
@@ -310,19 +318,46 @@
   </section>
 
   <!-- Footer -->
-  <footer class="px-4 sm:px-6 py-10 sm:py-16 border-t border-surface-border">
-    <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 text-sm text-muted">
-      <div class="flex flex-wrap items-center gap-6">
-        <a href="https://github.com/git-treeline/git-treeline" class="hover:text-white transition-colors">GitHub</a>
-        <a href="/docs/" class="hover:text-white transition-colors">Docs</a>
-        <a href="/features/isolation/" class="hover:text-white transition-colors">Isolation</a>
-        <a href="/features/networking/" class="hover:text-white transition-colors">Networking</a>
-        <a href="/features/workflows/" class="hover:text-white transition-colors">Workflows</a>
-        <a href="/features/agents/" class="hover:text-white transition-colors">AI Agents</a>
-        <a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg" class="hover:text-white transition-colors">Menu bar app</a>
-        <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a>
+  <footer class="site-footer">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-12 pb-10">
+      <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-10 lg:gap-14">
+        <nav class="site-footer-nav flex-1 min-w-0" aria-label="Footer">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-10 gap-y-8 max-w-lg">
+            <div>
+              <h3>Product</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="/features/isolation/">Isolation</a></li>
+                <li><a href="/features/networking/">Networking</a></li>
+                <li><a href="/features/workflows/">Workflows</a></li>
+                <li><a href="/features/agents/">AI Agents</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3>Resources</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="/docs/">Documentation</a></li>
+                <li><a href="/use-cases/">Use cases</a></li>
+              </ul>
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+              <h3>Open source</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="https://github.com/git-treeline/git-treeline">GitHub</a></li>
+                <li><a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg">Menu bar app</a></li>
+                <li><a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt">MIT License</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <div class="shrink-0 lg:max-w-[220px]">
+          <p class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Built by</p>
+          <a href="https://x.com/jonathansimmons" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-white hover:text-accent-light transition-colors">Jonathan Simmons</a>
+        </div>
       </div>
-      <p>Built by <a href="https://productmatter.co" class="text-accent-light hover:text-accent transition-colors">Product Matter</a></p>
+      <div class="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-surface-border pt-8 text-xs text-muted">
+        <a href="/" class="font-mono hover:text-white transition-colors">git-treeline.dev</a>
+        <span>Open source · <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a></span>
+      </div>
     </div>
   </footer>
 

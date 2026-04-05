@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agents, scripts, CI — Git Treeline</title>
+  <meta name="description" content="MCP, gtl env --json, gtl resolve --json, gtl start --await, shell completions, and structured status output.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://git-treeline.dev/use-cases/agents-automation/">
+  <meta property="og:title" content="Agents, scripts, CI — Git Treeline">
+  <meta property="og:description" content="Machine-readable ports, env, readiness, and teardown without parsing logs.">
+  <meta property="og:image" content="https://git-treeline.dev/og-image.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <script src="https://cdn.usefathom.com/script.js" data-site="QPFTFHRS" defer></script>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav id="site-nav" class="fixed top-0 left-0 right-0 z-50 bg-surface transition-colors duration-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3 text-white hover:text-accent-light transition-colors">
+        <svg class="w-7 h-7" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="6" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+          <text x="16" y="22" font-family="monospace" font-weight="700" font-size="16" fill="#22c55e" text-anchor="middle">gt</text>
+        </svg>
+        <span class="font-mono text-sm font-semibold hidden sm:inline">git-treeline</span>
+      </a>
+      <div class="flex items-center gap-3 sm:gap-6">
+        <div class="relative group">
+          <button class="text-sm text-muted hover:text-white transition-colors flex items-center gap-1">Features <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+          <div class="absolute top-full left-0 mt-2 w-44 bg-surface-raised border border-surface-border rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 py-2 z-50">
+            <a href="/features/isolation/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Isolation</a>
+            <a href="/features/networking/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Networking</a>
+            <a href="/features/workflows/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Workflows</a>
+            <a href="/features/agents/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">AI Agents</a>
+          </div>
+        </div>
+        <a href="/docs/" class="text-sm text-muted hover:text-white transition-colors">Docs</a>
+        <a href="/use-cases/" class="text-sm text-white transition-colors">Use cases</a>
+        <a href="https://github.com/git-treeline/git-treeline" class="text-sm text-muted hover:text-white transition-colors hidden sm:inline">GitHub</a>
+        <a href="/#get-started" class="text-xs font-mono px-3 sm:px-4 py-2 bg-accent text-surface rounded-md hover:bg-accent-light transition-colors">Install</a>
+      </div>
+    </div>
+  </nav>
+  <script>
+    (function() {
+      var nav = document.getElementById('site-nav');
+      window.addEventListener('scroll', function() {
+        nav.classList.toggle('nav-scrolled', window.scrollY > 40);
+      });
+    })();
+  </script>
+
+  <article class="px-4 sm:px-6 pt-28 sm:pt-36 pb-16 max-w-3xl mx-auto">
+    <p class="text-sm text-muted mb-4"><a href="/use-cases/" class="text-accent-light hover:text-accent">Use cases</a> / Automation</p>
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-6">Scripts and agents do not read your terminal theme</h1>
+    <p class="text-lg text-gray-400 mb-10">
+      Automation needs stable contracts: which port, which database name, whether the process is listening, and when it is safe to hit HTTP. Treeline exposes that as structured data and socket-controlled lifecycle—not string parsing of <code class="text-white">gtl status</code> output.
+    </p>
+
+    <h2 class="text-xl font-semibold text-white mb-3">Interfaces that scale</h2>
+    <ul class="text-muted space-y-3 mb-8">
+      <li><strong class="text-white">MCP</strong> — <code class="text-accent-light">gtl mcp</code> exposes start, stop, restart, port, status, and related tools to editors. Prefer this when the runtime speaks MCP.</li>
+      <li><strong class="text-white">JSON flags</strong> — <code class="text-accent-light">gtl status --json</code>, <code class="text-accent-light">gtl doctor --json</code>, <code class="text-accent-light">gtl port --json</code>, <code class="text-accent-light">gtl db name --json</code>, <code class="text-accent-light">gtl env --json</code>, <code class="text-accent-light">gtl resolve &lt;project&gt; --json</code> for anything that runs shell only.</li>
+      <li><strong class="text-white">Readiness</strong> — <code class="text-accent-light">gtl start --await</code> blocks until TCP accepts on the allocated port (with <code class="text-accent-light">--await-timeout</code>). Use after start in CI or agent loops.</li>
+      <li><strong class="text-white">Env inspection</strong> — <code class="text-accent-light">gtl env</code> prints the worktree env file; <code class="text-accent-light">--template</code> shows unresolved tokens.</li>
+      <li><strong class="text-white">Completions</strong> — <code class="text-accent-light">gtl completion bash|zsh|fish|powershell</code>; Homebrew installs completions on supported platforms.</li>
+    </ul>
+
+    <p class="text-muted mb-10">
+      <code class="text-accent-light">gtl init</code> writes an <code class="text-white">AGENTS.md</code> section so Cursor, Claude Code, and Codex know to call <code class="text-accent-light">gtl port</code>, setup, and release. Cross-repo service URLs for agents follow the same <code class="text-accent-light">gtl resolve</code> contract as humans.
+    </p>
+
+    <h2 class="text-xl font-semibold text-white mb-3">Read next</h2>
+    <ul class="text-muted space-y-2 list-disc pl-5 mb-8">
+      <li><a href="/features/agents/" class="text-accent-light hover:text-accent underline underline-offset-2">AI Agents</a></li>
+      <li><a href="/docs/#ai-agents" class="text-accent-light hover:text-accent underline underline-offset-2">Docs: agents and MCP</a></li>
+      <li><a href="/docs/#cross-worktree" class="text-accent-light hover:text-accent underline underline-offset-2">Docs: resolve</a></li>
+    </ul>
+
+    <p class="text-center">
+      <a href="/use-cases/" class="text-sm text-accent-light hover:text-accent">All use cases</a>
+    </p>
+  </article>
+
+  <footer class="site-footer">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-12 pb-10">
+      <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-10 lg:gap-14">
+        <nav class="site-footer-nav flex-1 min-w-0" aria-label="Footer">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-10 gap-y-8 max-w-lg">
+            <div>
+              <h3>Product</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="/features/isolation/">Isolation</a></li>
+                <li><a href="/features/networking/">Networking</a></li>
+                <li><a href="/features/workflows/">Workflows</a></li>
+                <li><a href="/features/agents/">AI Agents</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3>Resources</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="/docs/">Documentation</a></li>
+                <li><a href="/use-cases/">Use cases</a></li>
+              </ul>
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+              <h3>Open source</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="https://github.com/git-treeline/git-treeline">GitHub</a></li>
+                <li><a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg">Menu bar app</a></li>
+                <li><a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt">MIT License</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <div class="shrink-0 lg:max-w-[220px]">
+          <p class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Built by</p>
+          <a href="https://x.com/jonathansimmons" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-white hover:text-accent-light transition-colors">Jonathan Simmons</a>
+        </div>
+      </div>
+      <div class="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-surface-border pt-8 text-xs text-muted">
+        <a href="/" class="font-mono hover:text-white transition-colors">git-treeline.dev</a>
+        <span>Open source · <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a></span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

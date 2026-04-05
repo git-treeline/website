@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Git Treeline — Review every branch at the same time</title>
-  <meta name="description" content="Git Treeline gives every git worktree its own ports, databases, stable URLs, and env files. One CLI, one config file, every branch running in isolation.">
+  <meta name="description" content="Git Treeline allocates ports, databases, and env per worktree; resolves cross-repo URLs; and serves, tunnels, or shares named URLs. One CLI and a committed .treeline.yml.">
   <meta name="keywords" content="git worktree, parallel development, AI coding agents, port allocation, database cloning, environment isolation, worktree management, dev environment, CLI tool, PR review, localhost subdomain, reverse proxy">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="canonical" href="https://git-treeline.dev">
@@ -30,14 +30,14 @@
     "name": "Git Treeline",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "macOS, Linux, Windows",
-    "description": "Worktree environment manager. Allocates ports, clones databases, writes env files, provides branch-named localhost URLs, and manages the full dev environment lifecycle from one CLI.",
+    "description": "Worktree environment manager: registry-backed port and DB allocation, env templates including cross-project resolve, local HTTPS router, tunnels, optional ephemeral share links, MCP and JSON for automation.",
     "url": "https://git-treeline.dev",
     "downloadUrl": "https://github.com/git-treeline/git-treeline/releases",
     "license": "https://opensource.org/licenses/MIT",
     "author": {
-      "@type": "Organization",
-      "name": "Product Matter",
-      "url": "https://productmatter.co"
+      "@type": "Person",
+      "name": "Jonathan Simmons",
+      "url": "https://x.com/jonathansimmons"
     },
     "offers": {
       "@type": "Offer",
@@ -76,6 +76,7 @@
           </div>
         </div>
         <a href="/docs/" class="text-sm text-muted hover:text-white transition-colors">Docs</a>
+        <a href="/use-cases/" class="text-sm text-muted hover:text-white transition-colors">Use cases</a>
         <a href="https://github.com/git-treeline/git-treeline" class="text-sm text-muted hover:text-white transition-colors hidden sm:inline">GitHub</a>
         <a href="#get-started" class="text-xs font-mono px-3 sm:px-4 py-2 bg-accent text-surface rounded-md hover:bg-accent-light transition-colors">Install</a>
       </div>
@@ -95,7 +96,7 @@
     <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-6">git-treeline</h1>
     <p class="text-xl md:text-2xl text-accent-light max-w-2xl mb-4">Review every branch at the same time</p>
     <p class="text-sm sm:text-base text-gray-400 max-w-2xl mb-8 sm:mb-12">
-      Isolated ports, databases, and named URLs for every worktree. One config file, one&nbsp;command.
+      Isolated ports, databases, and env per worktree. Cross-repo <code class="text-accent-light">resolve</code> and <code class="text-accent-light">link</code> when the API lives in another checkout. One config file, one&nbsp;CLI.
     </p>
     <div class="flex flex-col sm:flex-row items-center gap-4 mb-8 w-full max-w-2xl">
       <div class="install-cmd max-w-full overflow-x-auto">
@@ -193,7 +194,7 @@
           <p class="text-xs uppercase tracking-wider text-accent-light mb-2">Isolation</p>
           <h3 class="feature-card-title">Two branches. Two apps. Zero&nbsp;conflicts.</h3>
           <p class="feature-card-desc">
-            Every worktree gets its own port, database, Redis namespace, and env file. Declare what your project needs in <code class="text-accent-light">.treeline.yml</code> and every branch runs in complete&nbsp;isolation.
+            Every worktree gets its own port, database, Redis namespace, and env file. Use <code class="text-accent-light">{resolve:other-project}</code> in env templates so a web checkout points at the API checkout—same-branch by default, <code class="text-accent-light">gtl link</code> when it is not.
           </p>
           <a href="/features/isolation/" class="feature-card-link">How isolation works &rarr;</a>
         </div>
@@ -219,7 +220,7 @@
           <p class="text-xs uppercase tracking-wider text-accent-light mb-2">Networking</p>
           <h3 class="feature-card-title"><span class="slot-wrapper text-accent-light"><span class="slot-reel"><span class="slot-item">OAuth redirects</span><span class="slot-item">Stripe webhooks</span><span class="slot-item">Mapbox tokens</span><span class="slot-item">API callbacks</span><span class="slot-item">OAuth redirects</span></span></span> just&nbsp;work.</h3>
           <p class="feature-card-desc">
-            OAuth redirects, Stripe webhooks, Mapbox tokens — anything pinned to a URL or port breaks when you switch worktrees. <code class="text-accent-light">gtl serve</code> gives every branch a stable <code class="text-white">{branch}.localhost</code> with HTTPS. <code class="text-accent-light">gtl proxy</code> forwards a fixed port to the current worktree's allocated&nbsp;port.
+            <code class="text-accent-light">gtl serve</code> names each branch on localhost; <code class="text-accent-light">gtl proxy</code> pins a port; <code class="text-accent-light">gtl tunnel</code> exposes a stable public hostname; <code class="text-accent-light">gtl share</code> sends a time-bounded link. Pick the layer that matches OAuth, webhooks, or a one-off demo.
           </p>
           <a href="/features/networking/" class="feature-card-link">Networking features &rarr;</a>
         </div>
@@ -256,7 +257,7 @@
           <p class="text-xs uppercase tracking-wider text-accent-light mb-2">Workflows</p>
           <h3 class="feature-card-title">Type a PR number. Get a running&nbsp;app.</h3>
           <p class="feature-card-desc">
-            <code class="text-accent-light">gtl review 42 --start</code> fetches the PR, creates an isolated worktree, boots the server, and gives you the URL. The built-in supervisor lets agents restart the server while you watch the&nbsp;logs.
+            <code class="text-accent-light">gtl review 42 --start</code> fetches the PR and boots the app. <code class="text-accent-light">gtl open</code> jumps to the right URL; <code class="text-accent-light">gtl start --await</code> blocks until the port listens. Optional hooks in <code class="text-accent-light">.treeline.yml</code> run before and after setup and release.
           </p>
           <a href="/features/workflows/" class="feature-card-link">Review and supervisor &rarr;</a>
         </div>
@@ -284,7 +285,7 @@
           <p class="text-xs uppercase tracking-wider text-accent-light mb-2">AI Agents</p>
           <h3 class="feature-card-title">Your agent gets the same tools you&nbsp;do.</h3>
           <p class="feature-card-desc">
-            The built-in MCP server gives AI agents native access to <code class="text-accent-light">start</code>, <code class="text-accent-light">stop</code>, <code class="text-accent-light">port</code>, and <code class="text-accent-light">status</code>. Lifecycle hooks, <code class="text-accent-light">--json</code> output, and auto-generated <code class="text-accent-light">AGENTS.md</code> for Cursor, Claude Code, and&nbsp;Codex.
+            MCP exposes <code class="text-accent-light">start</code>, <code class="text-accent-light">stop</code>, <code class="text-accent-light">port</code>, <code class="text-accent-light">status</code>, and more. <code class="text-accent-light">gtl env --json</code> and <code class="text-accent-light">gtl resolve --json</code> cover shell-only runners. <code class="text-accent-light">AGENTS.md</code> tells Cursor, Claude Code, and Codex the same commands.
           </p>
           <a href="/features/agents/" class="feature-card-link">Agent integration &rarr;</a>
         </div>
@@ -300,7 +301,7 @@
       <p class="section-subtext text-center mx-auto mb-12">
         Install, initialize your project, and create your first isolated worktree.
       </p>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-8">
+      <div class="grid lg:grid-cols-3 gap-6 sm:gap-8 mb-8 max-w-sm lg:max-w-none mx-auto">
         <div class="text-center">
           <div class="text-accent text-3xl font-mono font-bold mb-4">1</div>
           <h3 class="text-lg mb-3">Install</h3>
@@ -338,7 +339,11 @@
         <span class="framework-pill">Go</span>
       </div>
       <p class="text-xs text-muted text-center mt-3">Auto-detected at init with per-framework guidance</p>
-      <div class="mt-8 text-center">
+      <p class="text-sm text-muted text-center mt-10 mb-2">Scenario guides</p>
+      <p class="text-center mb-6">
+        <a href="/use-cases/" class="text-accent-light hover:text-accent underline underline-offset-2">Multi-repo, integrations, PR review, agents</a>
+      </p>
+      <div class="mt-2 text-center">
         <a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg" class="inline-flex items-center gap-2 text-sm text-muted hover:text-white transition-colors border border-surface-border rounded-lg px-4 py-2.5">
           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
           macOS menu bar app
@@ -380,19 +385,46 @@
   </section>
 
   <!-- Footer -->
-  <footer class="px-4 sm:px-6 py-10 sm:py-16 border-t border-surface-border">
-    <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 text-sm text-muted">
-      <div class="flex flex-wrap items-center gap-6">
-        <a href="https://github.com/git-treeline/git-treeline" class="hover:text-white transition-colors">GitHub</a>
-        <a href="/docs/" class="hover:text-white transition-colors">Docs</a>
-        <a href="/features/isolation/" class="hover:text-white transition-colors">Isolation</a>
-        <a href="/features/networking/" class="hover:text-white transition-colors">Networking</a>
-        <a href="/features/workflows/" class="hover:text-white transition-colors">Workflows</a>
-        <a href="/features/agents/" class="hover:text-white transition-colors">AI Agents</a>
-        <a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg" class="hover:text-white transition-colors">Menu bar app</a>
-        <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a>
+  <footer class="site-footer">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-12 pb-10">
+      <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-10 lg:gap-14">
+        <nav class="site-footer-nav flex-1 min-w-0" aria-label="Footer">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-10 gap-y-8 max-w-lg">
+            <div>
+              <h3>Product</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="/features/isolation/">Isolation</a></li>
+                <li><a href="/features/networking/">Networking</a></li>
+                <li><a href="/features/workflows/">Workflows</a></li>
+                <li><a href="/features/agents/">AI Agents</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3>Resources</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="/docs/">Documentation</a></li>
+                <li><a href="/use-cases/">Use cases</a></li>
+              </ul>
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+              <h3>Open source</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="https://github.com/git-treeline/git-treeline">GitHub</a></li>
+                <li><a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg">Menu bar app</a></li>
+                <li><a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt">MIT License</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <div class="shrink-0 lg:max-w-[220px]">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Built by</p>
+          <a href="https://x.com/jonathansimmons" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-white hover:text-accent-light transition-colors">Jonathan Simmons</a>
+        </div>
       </div>
-      <p>Built by <a href="https://productmatter.co" class="text-accent-light hover:text-accent transition-colors">Product Matter</a></p>
+      <div class="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-surface-border pt-8 text-xs text-muted">
+        <a href="/" class="font-mono hover:text-white transition-colors">git-treeline.dev</a>
+        <span>Open source · <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a></span>
+      </div>
     </div>
   </footer>
 

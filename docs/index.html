@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Docs — Git Treeline</title>
-  <meta name="description" content="Git Treeline documentation. CLI reference, configuration guide, Rails integration, and AI agent setup for worktree environment isolation.">
+  <meta name="description" content="Git Treeline documentation: .treeline.yml, cross-worktree resolve and link, networking (serve, proxy, tunnel, share), hooks, CLI reference, MCP.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="canonical" href="https://git-treeline.dev/docs/">
 
@@ -14,6 +14,10 @@
   <meta property="og:url" content="https://git-treeline.dev/docs/">
   <meta property="og:site_name" content="Git Treeline">
   <meta property="og:image" content="https://git-treeline.dev/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://git-treeline.dev/og-image.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,6 +48,7 @@
           </div>
         </div>
         <a href="/docs/" class="text-sm text-white transition-colors">Docs</a>
+        <a href="/use-cases/" class="text-sm text-muted hover:text-white transition-colors">Use cases</a>
         <a href="https://github.com/git-treeline/git-treeline" class="text-sm text-muted hover:text-white transition-colors hidden sm:inline">GitHub</a>
         <a href="/#get-started" class="text-xs font-mono px-3 sm:px-4 py-2 bg-accent text-surface rounded-md hover:bg-accent-light transition-colors">Install</a>
       </div>
@@ -69,6 +74,8 @@
           <ul class="space-y-1.5">
             <li><a href="#getting-started" class="docs-sidebar-link">Getting started</a></li>
             <li><a href="#configuration" class="docs-sidebar-link">Configuration</a></li>
+            <li><a href="#lifecycle-hooks" class="docs-sidebar-link">Lifecycle hooks</a></li>
+            <li><a href="#cross-worktree" class="docs-sidebar-link">Cross-worktree</a></li>
             <li><a href="#cli-reference" class="docs-sidebar-link">CLI reference</a></li>
             <li><a href="#user-config" class="docs-sidebar-link">User config</a></li>
           </ul>
@@ -97,6 +104,7 @@
             <li><a href="#net-serve" class="docs-sidebar-link">gtl serve</a></li>
             <li><a href="#net-proxy" class="docs-sidebar-link">gtl proxy</a></li>
             <li><a href="#net-tunnel" class="docs-sidebar-link">gtl tunnel</a></li>
+            <li><a href="#net-share" class="docs-sidebar-link">gtl share</a></li>
             <li><a href="#route-keys" class="docs-sidebar-link">Route keys</a></li>
           </ul>
         </div>
@@ -126,6 +134,8 @@
         <ul class="space-y-1.5">
           <li><a href="#getting-started" class="text-accent-light hover:text-accent transition-colors" onclick="document.getElementById('mobile-docs-nav').classList.add('hidden')">Getting started</a></li>
           <li><a href="#configuration" class="text-accent-light hover:text-accent transition-colors" onclick="document.getElementById('mobile-docs-nav').classList.add('hidden')">Configuration</a></li>
+          <li><a href="#lifecycle-hooks" class="text-accent-light hover:text-accent transition-colors" onclick="document.getElementById('mobile-docs-nav').classList.add('hidden')">Lifecycle hooks</a></li>
+          <li><a href="#cross-worktree" class="text-accent-light hover:text-accent transition-colors" onclick="document.getElementById('mobile-docs-nav').classList.add('hidden')">Cross-worktree</a></li>
           <li><a href="#cli-reference" class="text-accent-light hover:text-accent transition-colors" onclick="document.getElementById('mobile-docs-nav').classList.add('hidden')">CLI reference</a></li>
           <li><a href="#user-config" class="text-accent-light hover:text-accent transition-colors" onclick="document.getElementById('mobile-docs-nav').classList.add('hidden')">User config</a></li>
         </ul>
@@ -153,6 +163,7 @@
           <li><a href="#net-serve" class="text-accent-light hover:text-accent transition-colors" onclick="document.getElementById('mobile-docs-nav').classList.add('hidden')">gtl serve</a></li>
           <li><a href="#net-proxy" class="text-accent-light hover:text-accent transition-colors" onclick="document.getElementById('mobile-docs-nav').classList.add('hidden')">gtl proxy</a></li>
           <li><a href="#net-tunnel" class="text-accent-light hover:text-accent transition-colors" onclick="document.getElementById('mobile-docs-nav').classList.add('hidden')">gtl tunnel</a></li>
+          <li><a href="#net-share" class="text-accent-light hover:text-accent transition-colors" onclick="document.getElementById('mobile-docs-nav').classList.add('hidden')">gtl share</a></li>
         </ul>
       </div>
     </div>
@@ -354,6 +365,26 @@
             <div class="cmd-flags"><span class="cmd-flag">string</span></div>
             <p class="cmd-desc">Full IDE theme override (e.g. <code class="text-accent-light">"Monokai"</code>). Applied when entering the worktree.</p>
           </div>
+          <div class="cmd-item">
+            <div class="cmd-name">pre_setup</div>
+            <div class="cmd-flags"><span class="cmd-flag">list</span></div>
+            <p class="cmd-desc">Shell commands before <code class="text-accent-light">commands.setup</code>. On failure, setup aborts.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">post_setup</div>
+            <div class="cmd-flags"><span class="cmd-flag">list</span></div>
+            <p class="cmd-desc">Shell commands after <code class="text-accent-light">commands.setup</code> and editor. On failure, warns only.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">pre_release</div>
+            <div class="cmd-flags"><span class="cmd-flag">list</span></div>
+            <p class="cmd-desc">Shell commands after release confirmation, before freeing resources. On failure, release aborts.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">post_release</div>
+            <div class="cmd-flags"><span class="cmd-flag">list</span></div>
+            <p class="cmd-desc">Shell commands after free/drop. On failure, warns only.</p>
+          </div>
         </div>
       </div>
 
@@ -402,9 +433,55 @@
               <td class="px-5 py-3 font-mono text-white">{worktree}</td>
               <td class="px-5 py-3 text-muted">Worktree directory name</td>
             </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white">{resolve:project}</td>
+              <td class="px-5 py-3 text-muted">Base URL (<code class="text-accent-light">http://127.0.0.1:{port}</code>) for another registered project. Default branch matches current worktree; <code class="text-accent-light">gtl link</code> overrides. Fails setup if not allocated.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white">{resolve:project/branch}</td>
+              <td class="px-5 py-3 text-muted">Same, pinned to an explicit branch (link overrides do not apply).</td>
+            </tr>
           </tbody>
         </table>
       </div>
+    </div>
+  </section>
+
+  <!-- Lifecycle hooks -->
+  <section id="lifecycle-hooks" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading mb-4">Lifecycle hooks</h2>
+      <p class="text-muted mb-6">
+        Optional keys in <code class="text-accent-light">.treeline.yml</code>: <code class="text-white">pre_setup</code>, <code class="text-white">post_setup</code>, <code class="text-white">pre_release</code>, <code class="text-white">post_release</code>. Each is a list of shell commands.
+      </p>
+      <p class="text-muted text-sm mb-4">
+        <strong class="text-white">Setup order:</strong> allocate → env → database → <code class="text-accent-light">pre_setup</code> → <code class="text-accent-light">commands.setup</code> → editor → <code class="text-accent-light">post_setup</code>.
+        <strong class="text-white"> Release order:</strong> confirm → <code class="text-accent-light">pre_release</code> → free/drop → <code class="text-accent-light">post_release</code>.
+      </p>
+      <ul class="text-muted text-sm space-y-2 list-disc pl-5 mb-6">
+        <li><strong class="text-white">pre_setup</strong> runs after allocate, env, and database steps, before <code class="text-accent-light">commands.setup</code>. Failure aborts setup.</li>
+        <li><strong class="text-white">post_setup</strong> runs after <code class="text-accent-light">commands.setup</code> and editor writes. Failure logs a warning; setup continues.</li>
+        <li><strong class="text-white">pre_release</strong> runs after confirmation, before freeing resources. Failure aborts release.</li>
+        <li><strong class="text-white">post_release</strong> runs after free/drop. Failure logs a warning.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Cross-worktree -->
+  <section id="cross-worktree" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading mb-4">Cross-worktree resolve</h2>
+      <p class="text-muted mb-4">
+        When two Treeline projects live on the same machine (e.g. web and API repos), use the registry instead of hardcoded ports in env files.
+      </p>
+      <h3 class="text-lg font-mono text-white mb-3">Commands</h3>
+      <ul class="text-sm text-muted space-y-2 mb-6 list-disc pl-5">
+        <li><code class="text-accent-light">gtl resolve &lt;project&gt;</code> — URL for that project on the <strong class="text-white">same branch name</strong> as the current worktree (unless a link overrides it). Optional branch: <code class="text-accent-light">gtl resolve api staging</code>. <code class="text-accent-light">--json</code> for scripts.</li>
+        <li><code class="text-accent-light">gtl link &lt;project&gt; &lt;branch&gt;</code> — store an override so <code class="text-white">{resolve:project}</code> targets <code class="text-white">&lt;branch&gt;</code>. Persists across restart and <code class="text-accent-light">gtl refresh</code>. <code class="text-accent-light">--restart</code> bounces the supervised server. <code class="text-accent-light">gtl link</code> with no args lists links. <code class="text-accent-light">gtl unlink &lt;project&gt;</code> removes the override.</li>
+      </ul>
+      <p class="text-muted text-sm mb-4">
+        Overrides appear in <code class="text-accent-light">gtl status</code> and <code class="text-accent-light">gtl doctor</code>. See <a href="/use-cases/multi-repo/" class="text-accent-light hover:text-accent underline underline-offset-2">use case: multi-repo</a>.
+      </p>
     </div>
   </section>
 
@@ -445,7 +522,7 @@
           <div class="cmd-item">
             <span class="cmd-name">setup [path]</span>
             <div class="cmd-flags"><span class="cmd-flag">--main-repo</span><span class="cmd-flag">--dry-run</span></div>
-            <p class="cmd-desc">Allocate resources and configure a worktree. Idempotent &mdash; safe to re-run.</p>
+            <p class="cmd-desc">Allocate resources and configure a worktree. Idempotent &mdash; safe to re-run. When reusing an existing allocation, checks that allocated ports are still free; if another process took a port, re-allocates to a free block, updates the registry, and prints a warning.</p>
           </div>
 
           <div class="cmd-item">
@@ -462,11 +539,13 @@
 
           <div class="cmd-item">
             <span class="cmd-name">port</span>
+            <div class="cmd-flags"><span class="cmd-flag">--json</span></div>
             <p class="cmd-desc">Print the allocated port for the current worktree. Designed for agents and scripts.</p>
           </div>
 
           <div class="cmd-item">
             <span class="cmd-name">doctor</span>
+            <div class="cmd-flags"><span class="cmd-flag">--json</span></div>
             <p class="cmd-desc">Check config, allocation, runtime, and framework-specific diagnostics in one view.</p>
           </div>
 
@@ -480,6 +559,50 @@
             <span class="cmd-name">prune</span>
             <div class="cmd-flags"><span class="cmd-flag">--stale</span><span class="cmd-flag">--merged</span><span class="cmd-flag">--drop-db</span><span class="cmd-flag">--force</span></div>
             <p class="cmd-desc">Clean orphaned allocations. <code class="text-accent-light">--stale</code> targets worktrees whose directory no longer exists. <code class="text-accent-light">--merged</code> targets branches merged to <code class="text-accent-light">merge_target</code>. <code class="text-accent-light">--drop-db</code> also drops databases.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">resolve &lt;project&gt; [branch]</span>
+            <div class="cmd-flags"><span class="cmd-flag">--json</span></div>
+            <p class="cmd-desc">Look up another project&apos;s base URL from the registry. Same-branch default; optional explicit branch. <a href="#cross-worktree" class="text-accent-light hover:text-accent underline underline-offset-2">Details &rarr;</a></p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">link &lt;project&gt; &lt;branch&gt;</span>
+            <div class="cmd-flags"><span class="cmd-flag">--restart</span><span class="cmd-flag">--json</span></div>
+            <p class="cmd-desc">Override <code class="text-accent-light">{resolve:project}</code> to a fixed branch. <code class="text-accent-light">gtl link</code> lists links. <a href="#cross-worktree" class="text-accent-light hover:text-accent underline underline-offset-2">Details &rarr;</a></p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">unlink &lt;project&gt;</span>
+            <p class="cmd-desc">Remove a link override for <code class="text-accent-light">resolve</code>.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">env</span>
+            <div class="cmd-flags"><span class="cmd-flag">--json</span><span class="cmd-flag">--template</span></div>
+            <p class="cmd-desc">Print the current worktree&apos;s env file. Treeline-managed keys marked <code class="text-white">[treeline]</code>. <code class="text-accent-light">--template</code> shows unresolved tokens.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">clone &lt;repo&gt;</span>
+            <p class="cmd-desc">Run <code class="text-white">git clone</code> with passthrough flags, detect framework, generate <code class="text-accent-light">.treeline.yml</code> if missing, run <code class="text-accent-light">gtl setup</code>. Does not auto-start the dev server.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">open</span>
+            <p class="cmd-desc">Open the app in a browser: HTTPS <code class="text-white">{project}-{branch}.localhost</code> when <code class="text-accent-light">gtl serve</code> is running, else <code class="text-white">http://localhost:{port}</code>.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">share [port]</span>
+            <div class="cmd-flags"><span class="cmd-flag">--tunnel</span><span class="cmd-flag">--tailscale</span></div>
+            <p class="cmd-desc">Ephemeral share URL (token-gated Cloudflare mode, or <code class="text-accent-light">--tailscale</code> for tailnet-only). Torn down on Ctrl+C. <a href="#net-share" class="text-accent-light hover:text-accent underline underline-offset-2">Details &rarr;</a></p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">completion bash|zsh|fish|powershell</span>
+            <p class="cmd-desc">Print shell completion script. Homebrew installs completions where supported. Includes dynamic completions for <code class="text-accent-light">gtl config get</code>/<code class="text-accent-light">set</code> (common keys) and <code class="text-accent-light">gtl status --project</code> (project names).</p>
           </div>
 
           <div class="cmd-item">
@@ -509,6 +632,7 @@
 
           <div class="cmd-item">
             <span class="cmd-name">db name</span>
+            <div class="cmd-flags"><span class="cmd-flag">--json</span></div>
             <p class="cmd-desc">Print the worktree's database name.</p>
           </div>
 
@@ -530,7 +654,8 @@
 
           <div class="cmd-item">
             <span class="cmd-name">start</span>
-            <p class="cmd-desc">Run <code class="text-accent-light">commands.start</code> under a Unix socket supervisor. Injects allocated env vars into the child process. Resumes the server if the supervisor is already running.</p>
+            <div class="cmd-flags"><span class="cmd-flag">--await</span><span class="cmd-flag">--await-timeout</span></div>
+            <p class="cmd-desc">Run <code class="text-accent-light">commands.start</code> under a Unix socket supervisor. Injects allocated env vars into the child process. Resumes the server if the supervisor is already running. <code class="text-accent-light">--await</code> blocks until TCP accepts on the allocated port (default timeout 60s).</p>
           </div>
 
           <div class="cmd-item">
@@ -561,8 +686,8 @@
 
           <div class="cmd-item">
             <span class="cmd-name">tunnel [port]</span>
-            <div class="cmd-flags"><span class="cmd-flag">--domain</span></div>
-            <p class="cmd-desc">Public HTTPS tunnel via Cloudflare. <code class="text-accent-light">tunnel setup</code> for one-time config. <a href="#net-tunnel" class="text-accent-light hover:text-accent underline underline-offset-2">Details &rarr;</a></p>
+            <div class="cmd-flags"><span class="cmd-flag">--domain</span><span class="cmd-flag">--tunnel</span></div>
+            <p class="cmd-desc">Public HTTPS tunnel via Cloudflare. <code class="text-accent-light">tunnel setup</code> adds named configs; <code class="text-accent-light">gtl tunnel default &lt;name&gt;</code> sets default. <a href="#net-tunnel" class="text-accent-light hover:text-accent underline underline-offset-2">Details &rarr;</a></p>
           </div>
 
           <div class="cmd-item">
@@ -802,8 +927,11 @@
       <p class="text-muted mb-4">
         Running <code class="text-accent-light">gtl release</code> followed by <code class="text-accent-light">gtl setup</code> on the same worktree produces a fresh allocation: new port, new env file, new database clone. Setup commands run again with the new <code class="text-accent-light">$PORT</code> in the environment, so the fixup script patches data to match.
       </p>
-      <p class="text-muted">
+      <p class="text-muted mb-4">
         On a reused allocation (e.g. running <code class="text-accent-light">gtl setup</code> without releasing first), Treeline skips the database clone but still runs setup commands. This makes <code class="text-accent-light">setup</code> safe to re-run &mdash; deps get installed, migrations run, and port-dependent data stays correct.
+      </p>
+      <p class="text-muted">
+        If a previously allocated port is occupied (another process bound it since last setup), Treeline re-allocates to a free port block, updates the registry and env file, and prints a warning. Treeline does not keep an allocation pointing at a port it cannot use.
       </p>
     </div>
   </section>
@@ -1165,9 +1293,9 @@
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Networking</h2>
       <p class="text-muted mb-4">
-        Three tools give each worktree a named URL &mdash; locally, on your LAN, or publicly.
+        <code class="text-accent-light">gtl serve</code> gives local HTTPS names; <code class="text-accent-light">gtl proxy</code> pins a listen port; <code class="text-accent-light">gtl tunnel</code> exposes a stable public hostname on your domain; <code class="text-accent-light">gtl share</code> creates a short-lived share link. They are not interchangeable—see <a href="/use-cases/integrations-urls/" class="text-accent-light hover:text-accent underline underline-offset-2">integrations use case</a>.
       </p>
-      <p class="text-sm text-muted mb-8">See <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking</a> for the problem this solves and when to use each tool.</p>
+      <p class="text-sm text-muted mb-8">See <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking</a> for narrative and comparison.</p>
     </div>
   </section>
 
@@ -1376,6 +1504,23 @@
     </div>
   </section>
 
+  <!-- gtl share reference -->
+  <section id="net-share" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+    <div class="max-w-4xl mx-auto">
+      <h3 class="subsection-heading">gtl share</h3>
+      <p class="subsection-label">Ephemeral share URL</p>
+      <p class="text-muted mb-6">
+        Default mode runs a Cloudflare tunnel with a token-gated auth proxy: the recipient opens the link, authenticates with the token, then gets session cookies for clean URLs. Tokens and hostnames rotate every run; Ctrl+C tears down tunnel and proxy. If a named tunnel exists, the share uses your domain; otherwise the URL is under <code class="text-accent-light">*.trycloudflare.com</code>. Use <code class="text-accent-light">--tunnel &lt;name&gt;</code> to pick a tunnel config.
+      </p>
+      <p class="text-muted mb-6">
+        <code class="text-accent-light">gtl share --tailscale</code> uses Tailscale Serve instead: tailnet-only, identity-based access, mutually exclusive with <code class="text-accent-light">--tunnel</code>. Requires Tailscale installed and running.
+      </p>
+      <p class="text-muted text-sm">
+        For stable OAuth redirect URIs and webhooks, prefer <a href="#net-tunnel" class="text-accent-light hover:text-accent underline underline-offset-2"><code class="text-accent-light">gtl tunnel</code></a> on a known subdomain. Share URLs are not derived from branch names and are not meant for long-lived provider configuration.
+      </p>
+    </div>
+  </section>
+
   <!-- Route key convention -->
   <section id="route-keys" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
@@ -1480,19 +1625,46 @@
   </script>
 
   <!-- Footer -->
-  <footer class="px-4 sm:px-6 py-8 sm:py-12 border-t border-surface-border">
-    <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 text-sm text-muted">
-      <div class="flex flex-wrap items-center gap-6">
-        <a href="https://github.com/git-treeline/git-treeline" class="hover:text-white transition-colors">GitHub</a>
-        <a href="/docs/" class="hover:text-white transition-colors">Docs</a>
-        <a href="/features/isolation/" class="hover:text-white transition-colors">Isolation</a>
-        <a href="/features/networking/" class="hover:text-white transition-colors">Networking</a>
-        <a href="/features/workflows/" class="hover:text-white transition-colors">Workflows</a>
-        <a href="/features/agents/" class="hover:text-white transition-colors">AI Agents</a>
-        <a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg" class="hover:text-white transition-colors">Menu bar app</a>
-        <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a>
+  <footer class="site-footer">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-12 pb-10">
+      <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-10 lg:gap-14">
+        <nav class="site-footer-nav flex-1 min-w-0" aria-label="Footer">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-10 gap-y-8 max-w-lg">
+            <div>
+              <h3>Product</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="/features/isolation/">Isolation</a></li>
+                <li><a href="/features/networking/">Networking</a></li>
+                <li><a href="/features/workflows/">Workflows</a></li>
+                <li><a href="/features/agents/">AI Agents</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3>Resources</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="/docs/">Documentation</a></li>
+                <li><a href="/use-cases/">Use cases</a></li>
+              </ul>
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+              <h3>Open source</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="https://github.com/git-treeline/git-treeline">GitHub</a></li>
+                <li><a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg">Menu bar app</a></li>
+                <li><a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt">MIT License</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <div class="shrink-0 lg:max-w-[220px]">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Built by</p>
+          <a href="https://x.com/jonathansimmons" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-white hover:text-accent-light transition-colors">Jonathan Simmons</a>
+        </div>
       </div>
-      <p>Built by <a href="https://productmatter.co" class="text-accent-light hover:text-accent transition-colors">Product Matter</a></p>
+      <div class="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-surface-border pt-8 text-xs text-muted">
+        <a href="/" class="font-mono hover:text-white transition-colors">git-treeline.dev</a>
+        <span>Open source · <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a></span>
+      </div>
     </div>
   </footer>
 

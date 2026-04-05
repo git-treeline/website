@@ -3,6 +3,17 @@
 @tailwind utilities;
 
 @layer base {
+  /* Anchor targets clear the fixed site nav; pairs with smooth scroll on in-page links */
+  html {
+    scroll-padding-top: 5rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
   body {
     @apply bg-surface text-gray-300 font-sans antialiased;
   }
@@ -386,4 +397,18 @@
   .framework-pill {
     @apply text-xs font-mono text-muted px-2.5 py-1 rounded border border-surface-border;
   }
+
+  /* Site footer */
+  .site-footer {
+    @apply border-t border-surface-border bg-surface;
+  }
+
+  .site-footer h3 {
+    @apply text-xs font-semibold uppercase tracking-wider text-muted mb-3 font-sans font-normal;
+  }
+
+  .site-footer-nav a {
+    @apply text-muted hover:text-white transition-colors;
+  }
+
 }

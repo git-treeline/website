@@ -13,6 +13,11 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://git-treeline.dev/features/isolation/">
   <meta property="og:site_name" content="Git Treeline">
+  <meta property="og:image" content="https://git-treeline.dev/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://git-treeline.dev/og-image.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,6 +48,7 @@
           </div>
         </div>
         <a href="/docs/" class="text-sm text-muted hover:text-white transition-colors">Docs</a>
+        <a href="/use-cases/" class="text-sm text-muted hover:text-white transition-colors">Use cases</a>
         <a href="https://github.com/git-treeline/git-treeline" class="text-sm text-muted hover:text-white transition-colors hidden sm:inline">GitHub</a>
         <a href="/#get-started" class="text-xs font-mono px-3 sm:px-4 py-2 bg-accent text-surface rounded-md hover:bg-accent-light transition-colors">Install</a>
       </div>
@@ -248,6 +254,44 @@
     </div>
   </section>
 
+  <!-- Multi-repo -->
+  <section class="px-4 sm:px-6 py-16 sm:py-28">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading text-center mb-4">Multiple repositories, one&nbsp;machine</h2>
+      <p class="section-subtext text-center mx-auto mb-10 max-w-2xl">
+        Your web app and your API are different clones. Hardcoding <code class="text-white">localhost:3030</code> in the frontend env file breaks as soon as Treeline re-allocates the API. The registry already knows every project’s port—you need a way to reference it by name.
+      </p>
+      <div class="grid md:grid-cols-2 gap-8 items-start">
+        <div>
+          <h3 class="text-white font-mono text-lg mb-3"><code class="text-accent-light">gtl resolve</code> and <code class="text-accent-light">{resolve:…}</code></h3>
+          <p class="text-sm text-muted mb-4">
+            <code class="text-accent-light">gtl resolve api</code> prints the base URL for project <code class="text-white">api</code> on the <strong class="text-white">same branch name</strong> as your current worktree—no extra config when both repos track <code class="text-white">feature-auth</code>. In <code class="text-accent-light">.treeline.yml</code>, <code class="text-white">API_URL: "{resolve:api}"</code> resolves at setup time. Use <code class="text-white">{resolve:api/main}</code> to pin a branch explicitly.
+          </p>
+          <p class="text-sm text-muted">
+            If the frontend branch does not match the API branch you need, <code class="text-accent-light">gtl link api staging</code> stores an override in the registry (visible in <code class="text-accent-light">gtl status</code> and <code class="text-accent-light">gtl doctor</code>). <code class="text-accent-light">gtl unlink api</code> clears it. Setup fails with a clear error if the target is not allocated.
+          </p>
+        </div>
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="terminal-dot bg-red-500"></span>
+            <span class="terminal-dot bg-yellow-500"></span>
+            <span class="terminal-dot bg-green-500"></span>
+            <span class="text-xs text-muted ml-2">web repo</span>
+          </div>
+          <div class="terminal-body space-y-1 text-sm">
+            <p><span class="prompt">$</span> <span class="command">gtl resolve api --json</span></p>
+            <p class="output text-muted"># scripting / agents</p>
+            <p class="text-muted text-xs mt-3">env:</p>
+            <p class="text-white font-mono">API_URL: "{resolve:api}"</p>
+          </div>
+        </div>
+      </div>
+      <p class="text-sm text-muted text-center mt-10">
+        <a href="/use-cases/multi-repo/" class="text-accent-light hover:text-accent underline underline-offset-2">Scenario: frontend + API</a>
+      </p>
+    </div>
+  </section>
+
   <!-- 5. Get started -->
   <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised text-center">
     <div class="max-w-2xl mx-auto">
@@ -262,19 +306,46 @@
   </section>
 
   <!-- Footer -->
-  <footer class="px-4 sm:px-6 py-10 sm:py-16 border-t border-surface-border">
-    <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 text-sm text-muted">
-      <div class="flex flex-wrap items-center gap-6">
-        <a href="https://github.com/git-treeline/git-treeline" class="hover:text-white transition-colors">GitHub</a>
-        <a href="/docs/" class="hover:text-white transition-colors">Docs</a>
-        <a href="/features/isolation/" class="hover:text-white transition-colors">Isolation</a>
-        <a href="/features/networking/" class="hover:text-white transition-colors">Networking</a>
-        <a href="/features/workflows/" class="hover:text-white transition-colors">Workflows</a>
-        <a href="/features/agents/" class="hover:text-white transition-colors">AI Agents</a>
-        <a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg" class="hover:text-white transition-colors">Menu bar app</a>
-        <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a>
+  <footer class="site-footer">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-12 pb-10">
+      <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-10 lg:gap-14">
+        <nav class="site-footer-nav flex-1 min-w-0" aria-label="Footer">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-10 gap-y-8 max-w-lg">
+            <div>
+              <h3>Product</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="/features/isolation/">Isolation</a></li>
+                <li><a href="/features/networking/">Networking</a></li>
+                <li><a href="/features/workflows/">Workflows</a></li>
+                <li><a href="/features/agents/">AI Agents</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3>Resources</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="/docs/">Documentation</a></li>
+                <li><a href="/use-cases/">Use cases</a></li>
+              </ul>
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+              <h3>Open source</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="https://github.com/git-treeline/git-treeline">GitHub</a></li>
+                <li><a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg">Menu bar app</a></li>
+                <li><a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt">MIT License</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <div class="shrink-0 lg:max-w-[220px]">
+          <p class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Built by</p>
+          <a href="https://x.com/jonathansimmons" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-white hover:text-accent-light transition-colors">Jonathan Simmons</a>
+        </div>
       </div>
-      <p>Built by <a href="https://productmatter.co" class="text-accent-light hover:text-accent transition-colors">Product Matter</a></p>
+      <div class="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-surface-border pt-8 text-xs text-muted">
+        <a href="/" class="font-mono hover:text-white transition-colors">git-treeline.dev</a>
+        <span>Open source · <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a></span>
+      </div>
     </div>
   </footer>
 

@@ -13,6 +13,11 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://git-treeline.dev/features/workflows/">
   <meta property="og:site_name" content="Git Treeline">
+  <meta property="og:image" content="https://git-treeline.dev/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://git-treeline.dev/og-image.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,6 +48,7 @@
           </div>
         </div>
         <a href="/docs/" class="text-sm text-muted hover:text-white transition-colors">Docs</a>
+        <a href="/use-cases/" class="text-sm text-muted hover:text-white transition-colors">Use cases</a>
         <a href="https://github.com/git-treeline/git-treeline" class="text-sm text-muted hover:text-white transition-colors hidden sm:inline">GitHub</a>
         <a href="/#get-started" class="text-xs font-mono px-3 sm:px-4 py-2 bg-accent text-surface rounded-md hover:bg-accent-light transition-colors">Install</a>
       </div>
@@ -213,8 +219,32 @@
     </div>
   </section>
 
-  <!-- Review flags -->
+  <!-- Hooks and ergonomics -->
   <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="section-heading text-center mb-4">Hooks, clone, open, wait</h2>
+      <p class="section-subtext text-center mx-auto mb-10 max-w-xl">
+        Automation hooks live in <code class="text-accent-light">.treeline.yml</code>. Everything else is CLI for speed.
+      </p>
+      <div class="space-y-6 text-sm text-muted">
+        <div>
+          <h3 class="text-white font-mono text-base mb-2">Lifecycle hooks</h3>
+          <p><code class="text-accent-light">pre_setup</code>, <code class="text-accent-light">post_setup</code>, <code class="text-accent-light">pre_release</code>, and <code class="text-accent-light">post_release</code> run around allocation and teardown. Pre-hooks abort the operation on failure; post-hooks log and continue. Setup: allocate → env → database → <code class="text-white">pre_setup</code> → <code class="text-white">commands.setup</code> → editor → <code class="text-white">post_setup</code>. Release: confirm → <code class="text-white">pre_release</code> → free/drop → <code class="text-white">post_release</code>.</p>
+        </div>
+        <div>
+          <h3 class="text-white font-mono text-base mb-2">Clone and go</h3>
+          <p><code class="text-accent-light">gtl clone &lt;repo-url&gt;</code> runs <code class="text-white">git clone</code>, detects the framework, creates <code class="text-white">.treeline.yml</code> if missing, and runs <code class="text-white">gtl setup</code>. It does not start the dev server—cloning an untrusted repo and executing arbitrary start commands is a trust boundary.</p>
+        </div>
+        <div>
+          <h3 class="text-white font-mono text-base mb-2">Open and await</h3>
+          <p><code class="text-accent-light">gtl open</code> opens the app in a browser—HTTPS on <code class="text-white">{project}-{branch}.localhost</code> when <code class="text-white">gtl serve</code> is running, otherwise <code class="text-white">http://localhost:{port}</code>. <code class="text-accent-light">gtl start --await</code> blocks until something listens on the allocated port (use <code class="text-accent-light">--await-timeout</code> for scripts and CI).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Review flags -->
+  <section class="px-4 sm:px-6 py-16 sm:py-28">
     <div class="max-w-3xl mx-auto">
       <h2 class="section-heading text-center mb-10">Review commands</h2>
       <div class="space-y-5">
@@ -251,19 +281,46 @@
   </section>
 
   <!-- Footer -->
-  <footer class="px-4 sm:px-6 py-10 sm:py-16 border-t border-surface-border">
-    <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 text-sm text-muted">
-      <div class="flex flex-wrap items-center gap-6">
-        <a href="https://github.com/git-treeline/git-treeline" class="hover:text-white transition-colors">GitHub</a>
-        <a href="/docs/" class="hover:text-white transition-colors">Docs</a>
-        <a href="/features/isolation/" class="hover:text-white transition-colors">Isolation</a>
-        <a href="/features/networking/" class="hover:text-white transition-colors">Networking</a>
-        <a href="/features/workflows/" class="hover:text-white transition-colors">Workflows</a>
-        <a href="/features/agents/" class="hover:text-white transition-colors">AI Agents</a>
-        <a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg" class="hover:text-white transition-colors">Menu bar app</a>
-        <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a>
+  <footer class="site-footer">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-12 pb-10">
+      <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-10 lg:gap-14">
+        <nav class="site-footer-nav flex-1 min-w-0" aria-label="Footer">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-10 gap-y-8 max-w-lg">
+            <div>
+              <h3>Product</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="/features/isolation/">Isolation</a></li>
+                <li><a href="/features/networking/">Networking</a></li>
+                <li><a href="/features/workflows/">Workflows</a></li>
+                <li><a href="/features/agents/">AI Agents</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3>Resources</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="/docs/">Documentation</a></li>
+                <li><a href="/use-cases/">Use cases</a></li>
+              </ul>
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+              <h3>Open source</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="https://github.com/git-treeline/git-treeline">GitHub</a></li>
+                <li><a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg">Menu bar app</a></li>
+                <li><a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt">MIT License</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <div class="shrink-0 lg:max-w-[220px]">
+          <p class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Built by</p>
+          <a href="https://x.com/jonathansimmons" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-white hover:text-accent-light transition-colors">Jonathan Simmons</a>
+        </div>
       </div>
-      <p>Built by <a href="https://productmatter.co" class="text-accent-light hover:text-accent transition-colors">Product Matter</a></p>
+      <div class="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-surface-border pt-8 text-xs text-muted">
+        <a href="/" class="font-mono hover:text-white transition-colors">git-treeline.dev</a>
+        <span>Open source · <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a></span>
+      </div>
     </div>
   </footer>
 

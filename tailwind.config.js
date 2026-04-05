@@ -5,6 +5,7 @@ export default {
     './docs/index.html',
     './networking/index.html',
     './features/**/*.html',
+    './use-cases/**/*.html',
     './src/**/*.{css,js}',
   ],
   theme: {
