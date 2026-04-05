@@ -80,7 +80,13 @@
       "Auto-migration of legacy config keys (setup_commands → commands.setup, start_command → commands.start)",
       "Agent context file generation for Cursor and Claude",
       "Zero runtime dependency — CLI-only, nothing in your bundle or deploy",
-      "Opt-in per developer with no lock-in"
+      "Opt-in per developer with no lock-in",
+      "Local HTTPS subdomain router (gtl serve) — {branch}.localhost for every worktree",
+      "Single-port reverse proxy (gtl proxy) with optional TLS for OAuth and webhooks",
+      "Public Cloudflare tunnels (gtl tunnel) — branch-named subdomains on your own domain",
+      "Automatic route key derivation from project name and git branch",
+      "Background system service with launchd/systemd integration",
+      "One-time setup with trusted certificate generation and port 443 forwarding"
     ]
   }
   </script>
@@ -105,6 +111,7 @@
       </a>
       <div class="flex items-center gap-3 sm:gap-6">
         <a href="/docs/" class="text-sm text-muted hover:text-white transition-colors">Docs</a>
+        <a href="/networking/" class="text-sm text-muted hover:text-white transition-colors">Networking</a>
         <a href="https://github.com/git-treeline/git-treeline" class="text-sm text-muted hover:text-white transition-colors hidden sm:inline">GitHub</a>
         <a href="#get-started" class="text-xs font-mono px-3 sm:px-4 py-2 bg-accent text-surface rounded-md hover:bg-accent-light transition-colors">Install</a>
       </div>
@@ -297,6 +304,42 @@
     </div>
   </section>
 
+  <!-- Networking -->
+  <section id="networking" class="px-4 sm:px-6 py-12 sm:py-24">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="section-heading text-center mb-4">Every worktree gets a URL</h2>
+      <p class="section-subtext text-center mx-auto mb-12">
+        Stop remembering port numbers. Git Treeline maps branches to named URLs &mdash; locally with HTTPS, or publicly through Cloudflare tunnels.
+      </p>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="p-6 rounded-lg border border-surface-border">
+          <h3 class="text-lg mb-2">Local HTTPS router</h3>
+          <p class="text-muted text-sm mb-3">
+            <code class="text-accent-light">gtl serve</code> maps every worktree to <code class="text-accent-light">{branch}.localhost</code> with trusted certificates. Always-on background service, zero config per branch.
+          </p>
+          <code class="text-xs text-accent-light">https://feature-auth.localhost</code>
+        </div>
+        <div class="p-6 rounded-lg border border-surface-border">
+          <h3 class="text-lg mb-2">Port forwarding</h3>
+          <p class="text-muted text-sm mb-3">
+            <code class="text-accent-light">gtl proxy</code> binds a fixed port and forwards to the current worktree. OAuth callbacks, webhooks, and Stripe all point to <code class="text-accent-light">:3000</code> regardless of which branch you're running.
+          </p>
+          <code class="text-xs text-accent-light">gtl proxy 3000 --tls</code>
+        </div>
+        <div class="p-6 rounded-lg border border-surface-border">
+          <h3 class="text-lg mb-2">Public tunnels</h3>
+          <p class="text-muted text-sm mb-3">
+            <code class="text-accent-light">gtl tunnel</code> exposes a running branch at a public URL via Cloudflare. Branch-named subdomains on your own domain, or a quick random URL with no account.
+          </p>
+          <code class="text-xs text-accent-light">https://feature-auth.myteam.dev</code>
+        </div>
+      </div>
+      <p class="text-center mt-8">
+        <a href="/networking/" class="text-accent-light hover:text-accent underline underline-offset-2 text-sm">Full networking documentation &rarr;</a>
+      </p>
+    </div>
+  </section>
+
   <!-- Zero Footprint -->
   <section id="zero-footprint" class="px-4 sm:px-6 py-12 sm:py-24">
     <div class="max-w-4xl mx-auto">
@@ -472,6 +515,7 @@
       <div class="flex items-center gap-6">
         <a href="https://github.com/git-treeline/git-treeline" class="hover:text-white transition-colors">GitHub</a>
         <a href="/docs/" class="hover:text-white transition-colors">Docs</a>
+        <a href="/networking/" class="hover:text-white transition-colors">Networking</a>
         <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a>
       </div>
       <p>Built by <a href="https://productmatter.co" class="text-accent-light hover:text-accent transition-colors">Product Matter</a></p>

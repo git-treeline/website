@@ -10,6 +10,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         docs: resolve(__dirname, 'docs/index.html'),
+        networking: resolve(__dirname, 'networking/index.html'),
       },
     },
   },

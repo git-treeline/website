@@ -110,4 +110,12 @@
   .nav-scrolled {
     border-bottom: 1px solid #30363d;
   }
+
+  .docs-sidebar-link {
+    @apply text-sm text-muted hover:text-white transition-colors block py-1 pl-3 border-l-2 border-transparent;
+  }
+
+  .docs-sidebar-active {
+    @apply text-accent-light border-accent-light;
+  }
 }
