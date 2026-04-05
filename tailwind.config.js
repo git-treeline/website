@@ -4,6 +4,7 @@ export default {
     './index.html',
     './docs/index.html',
     './networking/index.html',
+    './features/**/*.html',
     './src/**/*.{css,js}',
   ],
   theme: {

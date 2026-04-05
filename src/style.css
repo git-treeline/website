@@ -252,6 +252,81 @@
     @apply text-xs text-muted uppercase tracking-wider mt-1 block;
   }
 
+  /* Feature highlight cards — alternating left/right */
+  .feature-card {
+    @apply grid md:grid-cols-2 gap-6 md:gap-10 items-center py-12 sm:py-16;
+  }
+
+  .feature-card + .feature-card {
+    @apply border-t border-surface-border;
+  }
+
+  .feature-card-visual {
+    @apply order-1;
+  }
+
+  .feature-card-copy {
+    @apply order-2;
+  }
+
+  .feature-card-reversed .feature-card-visual {
+    @apply md:order-2;
+  }
+
+  .feature-card-reversed .feature-card-copy {
+    @apply md:order-1;
+  }
+
+  .feature-card-title {
+    @apply text-xl sm:text-2xl font-mono font-bold text-white mb-3;
+  }
+
+  .feature-card-desc {
+    @apply text-sm sm:text-base text-muted mb-4;
+  }
+
+  .feature-card-link {
+    @apply text-sm text-accent-light hover:text-accent underline underline-offset-2 inline-flex items-center gap-1;
+  }
+
+  /* Slot machine text rotation */
+  .slot-wrapper {
+    @apply inline-flex overflow-hidden align-bottom;
+    height: 1.3em;
+  }
+
+  .slot-reel {
+    @apply flex flex-col;
+    animation: slot-spin 8s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+  }
+
+  .slot-item {
+    @apply block shrink-0;
+    height: 1.3em;
+    line-height: 1.3em;
+  }
+
+  @keyframes slot-spin {
+    0%, 20%   { transform: translateY(0); }
+    25%, 45%  { transform: translateY(-1.3em); }
+    50%, 70%  { transform: translateY(-2.6em); }
+    75%, 95%  { transform: translateY(-3.9em); }
+    100%      { transform: translateY(-5.2em); }
+  }
+
+  /* Trust bar */
+  .trust-bar {
+    @apply flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-10 gap-y-2 text-sm text-muted;
+  }
+
+  .trust-bar-item {
+    @apply flex items-center gap-2;
+  }
+
+  .trust-bar-item strong {
+    @apply text-white font-medium;
+  }
+
   /* Framework pills */
   .framework-strip {
     @apply flex flex-wrap items-center justify-center gap-2 sm:gap-3;

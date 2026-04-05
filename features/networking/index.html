@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Networking — Git Treeline</title>
+  <meta name="description" content="Stable branch-named URLs for every worktree. Local HTTPS subdomains, single-port reverse proxy, and public Cloudflare tunnels. OAuth, webhooks, and API callbacks just work.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://git-treeline.dev/features/networking/">
+
+  <meta property="og:title" content="Networking — Git Treeline">
+  <meta property="og:description" content="Stable branch-named URLs for every worktree. Local HTTPS subdomains, reverse proxy, and public tunnels.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://git-treeline.dev/features/networking/">
+  <meta property="og:site_name" content="Git Treeline">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <script src="https://cdn.usefathom.com/script.js" data-site="QPFTFHRS" defer></script>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav id="site-nav" class="fixed top-0 left-0 right-0 z-50 bg-surface transition-colors duration-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3 text-white hover:text-accent-light transition-colors">
+        <svg class="w-7 h-7" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="6" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+          <text x="16" y="22" font-family="monospace" font-weight="700" font-size="16" fill="#22c55e" text-anchor="middle">gt</text>
+        </svg>
+        <span class="font-mono text-sm font-semibold hidden sm:inline">git-treeline</span>
+      </a>
+      <div class="flex items-center gap-3 sm:gap-6">
+        <div class="relative group">
+          <button class="text-sm text-white flex items-center gap-1">Features <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+          <div class="absolute top-full left-0 mt-2 w-44 bg-surface-raised border border-surface-border rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 py-2 z-50">
+            <a href="/features/isolation/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Isolation</a>
+            <a href="/features/networking/" class="block px-4 py-2 text-sm text-accent-light hover:bg-surface transition-colors">Networking</a>
+            <a href="/features/workflows/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Workflows</a>
+            <a href="/features/agents/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">AI Agents</a>
+          </div>
+        </div>
+        <a href="/docs/" class="text-sm text-muted hover:text-white transition-colors">Docs</a>
+        <a href="https://github.com/git-treeline/git-treeline" class="text-sm text-muted hover:text-white transition-colors hidden sm:inline">GitHub</a>
+        <a href="/#get-started" class="text-xs font-mono px-3 sm:px-4 py-2 bg-accent text-surface rounded-md hover:bg-accent-light transition-colors">Install</a>
+      </div>
+    </div>
+  </nav>
+  <script>
+    (function() {
+      var nav = document.getElementById('site-nav');
+      window.addEventListener('scroll', function() {
+        nav.classList.toggle('nav-scrolled', window.scrollY > 40);
+      });
+    })();
+  </script>
+
+  <!-- Hero -->
+  <section class="px-4 sm:px-6 pt-28 sm:pt-36 pb-12 sm:pb-16 text-center">
+    <p class="text-sm uppercase tracking-wider text-muted mb-4">Networking</p>
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">Your OAuth redirect URI works<br>on every branch.</h1>
+    <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
+      Integrations expect stable URLs. Worktrees have ephemeral ports. Three features bridge the gap at different layers.
+    </p>
+  </section>
+
+  <!-- 1. The world without it -->
+  <section class="px-4 sm:px-6 py-12 sm:py-20 bg-surface-raised">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading text-center mb-4">Every integration breaks when you change ports</h2>
+      <p class="section-subtext text-center mx-auto mb-10">
+        You register <code class="text-white">localhost:3000</code> as your OAuth callback. You switch to a worktree on port 3010. Login breaks.
+      </p>
+      <div class="max-w-2xl mx-auto space-y-4">
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="terminal-dot bg-red-500"></span>
+            <span class="terminal-dot bg-yellow-500"></span>
+            <span class="terminal-dot bg-green-500"></span>
+            <span class="text-xs text-red-400 ml-2">feature-auth on :3010</span>
+          </div>
+          <div class="terminal-body space-y-2">
+            <p class="output">OAuth callback received at <span class="text-red-400">localhost:3000</span></p>
+            <p class="text-red-400">ERR: No server listening on port 3000</p>
+            <p class="text-muted text-xs mt-2"># Redirect URI was registered as localhost:3000.</p>
+            <p class="text-muted text-xs"># This worktree runs on :3010.</p>
+            <p class="text-muted text-xs"># Change the URI? Break the other worktree.</p>
+          </div>
+        </div>
+      </div>
+      <p class="text-sm text-muted text-center mt-8 max-w-lg mx-auto">
+        Stripe webhooks, Mapbox keys, CI callbacks, SSO redirects — all hardcoded to a port or hostname that keeps changing between worktrees.
+      </p>
+    </div>
+  </section>
+
+  <!-- 2. The moment it clicks -->
+  <section class="px-4 sm:px-6 py-12 sm:py-20">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-sm uppercase tracking-wider text-muted mb-6">The URL follows the branch, not the port</p>
+      <div class="pipeline mb-10">
+        <div class="pipeline-step">
+          <code class="pipeline-url text-muted">localhost:3010</code>
+          <p class="pipeline-label">Ephemeral port</p>
+        </div>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-arrow-mobile">&darr;</span>
+        <div class="pipeline-step">
+          <code class="pipeline-url text-accent-light">feature-auth.localhost</code>
+          <p class="pipeline-label">Stable local name</p>
+        </div>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-arrow-mobile">&darr;</span>
+        <div class="pipeline-step">
+          <code class="pipeline-url text-accent">feature-auth.example.dev</code>
+          <p class="pipeline-label">Public URL</p>
+        </div>
+      </div>
+      <p class="text-sm text-muted max-w-lg mx-auto">
+        Register your OAuth redirect as <code class="text-white">https://*.localhost/callback</code> once. It works on every branch, because the URL routes to the worktree automatically.
+      </p>
+    </div>
+  </section>
+
+  <!-- 3. What changes -->
+  <section class="px-4 sm:px-6 py-12 sm:py-20 bg-surface-raised">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading text-center mb-10">What this makes possible</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div>
+          <h3 class="text-white font-mono text-lg mb-3">Register once, works everywhere</h3>
+          <p class="text-sm text-muted">Set your OAuth redirect to <code class="text-accent-light">*.localhost</code> via <code class="text-accent-light">gtl serve</code>. For services hardcoded to a port, <code class="text-accent-light">gtl proxy</code> forwards it to the worktree you're working on.</p>
+        </div>
+        <div>
+          <h3 class="text-white font-mono text-lg mb-3">Share a running branch</h3>
+          <p class="text-sm text-muted">Send <code class="text-accent-light">feature-auth.example.dev</code> to a teammate. They see the running app from your worktree, no deploy required. QA tests from their phone.</p>
+        </div>
+        <div>
+          <h3 class="text-white font-mono text-lg mb-3">External services reach you</h3>
+          <p class="text-sm text-muted">Cloudflare tunnel gives your local worktree a public URL. Payment processors, CI callbacks, mobile app deep links — all routed to your branch.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. How it works -->
+  <section class="px-4 sm:px-6 py-12 sm:py-20">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading text-center mb-4">Same problem, three layers</h2>
+      <p class="section-subtext text-center mx-auto mb-12">
+        <code class="text-accent-light">serve</code> and <code class="text-accent-light">tunnel</code> route automatically. <code class="text-accent-light">proxy</code> is a manual escape hatch for port-pinned services. Use one, two, or all three.
+      </p>
+
+      <div class="space-y-12">
+        <!-- gtl serve -->
+        <div class="grid md:grid-cols-2 gap-6 md:gap-10 items-start">
+          <div>
+            <h3 class="text-white font-mono text-xl mb-2">gtl serve</h3>
+            <p class="text-xs uppercase tracking-wider text-muted mb-3">Local HTTPS subdomain router</p>
+            <p class="text-sm text-muted mb-4">
+              A background router that maps <code class="text-white">{branch}.localhost</code> to the right worktree port. HTTPS with a trusted local CA. Runs as a system service — install once, forget about it.
+            </p>
+            <p class="text-xs text-muted">
+              <strong class="text-white">Best for:</strong> OAuth redirects, API keys tied to a hostname, day-to-day development where you want named URLs instead of port numbers.
+            </p>
+          </div>
+          <div class="terminal">
+            <div class="terminal-header">
+              <span class="terminal-dot bg-red-500"></span>
+              <span class="terminal-dot bg-yellow-500"></span>
+              <span class="terminal-dot bg-green-500"></span>
+            </div>
+            <div class="terminal-body space-y-1">
+              <p><span class="prompt">$</span> <span class="command">gtl serve install</span></p>
+              <p class="output">Generated trusted CA certificate</p>
+              <p class="output">Installed system service</p>
+              <p class="output text-accent">Listening on https://*.localhost</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- gtl proxy -->
+        <div class="grid md:grid-cols-2 gap-6 md:gap-10 items-start border-t border-surface-border pt-12">
+          <div class="md:order-2">
+            <h3 class="text-white font-mono text-xl mb-2">gtl proxy</h3>
+            <p class="text-xs uppercase tracking-wider text-muted mb-3">Manual port forwarder</p>
+            <p class="text-sm text-muted mb-4">
+              Forwards all traffic from a fixed port (e.g. <code class="text-white">localhost:3000</code>) to a worktree's allocated port. You choose the target — run it from a worktree directory and it infers the port, or specify both explicitly. Optional TLS via mkcert.
+            </p>
+            <p class="text-xs text-muted">
+              <strong class="text-white">Best for:</strong> External services hardcoded to <code class="text-white">localhost:3000</code> that can't use subdomains — OAuth providers, webhook endpoints, API keys tied to a port number.
+            </p>
+          </div>
+          <div class="md:order-1 terminal">
+            <div class="terminal-header">
+              <span class="terminal-dot bg-red-500"></span>
+              <span class="terminal-dot bg-yellow-500"></span>
+              <span class="terminal-dot bg-green-500"></span>
+            </div>
+            <div class="terminal-body space-y-1">
+              <p><span class="prompt">$</span> <span class="command">gtl proxy 3000</span></p>
+              <p class="output">Proxying <span class="highlight">:3000</span> → <span class="highlight">:3050</span></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- gtl tunnel -->
+        <div class="grid md:grid-cols-2 gap-6 md:gap-10 items-start border-t border-surface-border pt-12">
+          <div>
+            <h3 class="text-white font-mono text-xl mb-2">gtl tunnel</h3>
+            <p class="text-xs uppercase tracking-wider text-muted mb-3">Public URLs via Cloudflare</p>
+            <p class="text-sm text-muted mb-4">
+              Makes your local worktree publicly accessible at <code class="text-white">{branch}.example.dev</code>. Uses Cloudflare tunnels under the hood — edge TLS, no port forwarding, no ngrok.
+            </p>
+            <p class="text-xs text-muted">
+              <strong class="text-white">Best for:</strong> Sharing a running branch with a teammate, mobile testing, external service integrations that need a public URL.
+            </p>
+          </div>
+          <div class="terminal">
+            <div class="terminal-header">
+              <span class="terminal-dot bg-red-500"></span>
+              <span class="terminal-dot bg-yellow-500"></span>
+              <span class="terminal-dot bg-green-500"></span>
+            </div>
+            <div class="terminal-body space-y-1">
+              <p><span class="prompt">$</span> <span class="command">gtl tunnel</span></p>
+              <p class="output">Tunnel active</p>
+              <p class="output text-accent">https://feature-auth.example.dev</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Get started -->
+  <section class="px-4 sm:px-6 py-12 sm:py-20 bg-surface-raised text-center">
+    <div class="max-w-2xl mx-auto">
+      <h2 class="section-heading mb-4">Start with local subdomains</h2>
+      <p class="text-sm text-muted mb-8">Most teams only need <code class="text-accent-light">gtl serve</code>. Install once, every branch gets a name.</p>
+      <div class="install-cmd justify-center max-w-md mx-auto mb-6">
+        <code class="text-accent-light text-sm">gtl serve install</code>
+      </div>
+      <a href="/docs/#networking" class="text-sm text-accent-light hover:text-accent underline underline-offset-2">Full networking reference &rarr;</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="px-4 sm:px-6 py-8 sm:py-12 border-t border-surface-border">
+    <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 text-sm text-muted">
+      <div class="flex flex-wrap items-center gap-6">
+        <a href="https://github.com/git-treeline/git-treeline" class="hover:text-white transition-colors">GitHub</a>
+        <a href="/docs/" class="hover:text-white transition-colors">Docs</a>
+        <a href="/features/isolation/" class="hover:text-white transition-colors">Isolation</a>
+        <a href="/features/networking/" class="hover:text-white transition-colors">Networking</a>
+        <a href="/features/workflows/" class="hover:text-white transition-colors">Workflows</a>
+        <a href="/features/agents/" class="hover:text-white transition-colors">AI Agents</a>
+        <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a>
+      </div>
+      <p>Built by <a href="https://productmatter.co" class="text-accent-light hover:text-accent transition-colors">Product Matter</a></p>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Git Treeline — Review every branch at the same time</title>
-  <meta name="description" content="Git Treeline gives every git worktree its own ports, databases, Redis namespaces, and env files. Create worktrees, review GitHub PRs, and boot apps with one CLI command. Built for AI agents and parallel development.">
-  <meta name="keywords" content="git worktree, parallel development, AI coding agents, port allocation, database cloning, environment isolation, worktree management, dev environment, CLI tool, PR review, SQLite, PostgreSQL, Redis namespacing">
+  <meta name="description" content="Git Treeline gives every git worktree its own ports, databases, stable URLs, and env files. One CLI, one config file, every branch running in isolation.">
+  <meta name="keywords" content="git worktree, parallel development, AI coding agents, port allocation, database cloning, environment isolation, worktree management, dev environment, CLI tool, PR review, localhost subdomain, reverse proxy">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="canonical" href="https://git-treeline.dev">
 
   <meta property="og:title" content="Git Treeline — Isolated dev environments for every git worktree">
-  <meta property="og:description" content="Git Treeline allocates ports, clones databases, and isolates processes per worktree so your team can run every branch with zero collisions.">
+  <meta property="og:description" content="Isolated ports, databases, and named URLs for every git worktree. One config file, one command.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://git-treeline.dev">
   <meta property="og:site_name" content="Git Treeline">
@@ -20,7 +20,7 @@
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Git Treeline — Isolated dev environments for every git worktree">
-  <meta name="twitter:description" content="Git Treeline allocates ports, clones databases, and isolates processes per worktree so your team can run every branch with zero collisions.">
+  <meta name="twitter:description" content="Isolated ports, databases, and named URLs for every git worktree. One config file, one command.">
   <meta name="twitter:image" content="https://git-treeline.dev/og-image.png">
 
   <script type="application/ld+json">
@@ -30,10 +30,9 @@
     "name": "Git Treeline",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "macOS, Linux, Windows",
-    "description": "Worktree environment manager. Allocates ports, clones PostgreSQL and SQLite databases, assigns Redis namespaces, writes env files, and runs setup commands per git worktree. Create worktrees, review GitHub PRs, and manage the full dev environment lifecycle from one CLI.",
+    "description": "Worktree environment manager. Allocates ports, clones databases, writes env files, provides branch-named localhost URLs, and manages the full dev environment lifecycle from one CLI.",
     "url": "https://git-treeline.dev",
     "downloadUrl": "https://github.com/git-treeline/git-treeline/releases",
-    "softwareVersion": "0.21.0",
     "license": "https://opensource.org/licenses/MIT",
     "author": {
       "@type": "Organization",
@@ -44,50 +43,7 @@
       "@type": "Offer",
       "price": "0",
       "priceCurrency": "USD"
-    },
-    "featureList": [
-      "Port allocation per worktree",
-      "PostgreSQL database cloning via createdb --template",
-      "SQLite database cloning via file copy",
-      "Redis namespacing with prefix or database strategy",
-      "Env file interpolation with allocated values",
-      "Post-allocation setup commands with full environment access",
-      "Secret file copying from main worktree",
-      "One-command worktree creation with gtl new",
-      "GitHub PR review with gtl review",
-      "Branch switching with gtl switch (accepts branch names or PR numbers)",
-      "Project health diagnostics with gtl doctor",
-      "Shell tab completion for branch names and PR numbers",
-      "Simplified env_file config with string shorthand and auto-migration",
-      "Release confirmation prompt with --force bypass",
-      "Worktree guard prevents creating worktrees from inside worktrees",
-      "Port reservations for stable ports per project or branch",
-      "Editor customization: auto-color title bars by branch, theme overrides, JetBrains support",
-      "gtl port for agent-friendly port discovery",
-      "gtl refresh to re-allocate all worktrees after config changes",
-      "AGENTS.md integration for Cursor, Claude Code, and Codex",
-      "Editor auto-detection (Cursor, VS Code, Zed, JetBrains)",
-      "Self-documenting templates with commented-out optional config",
-      "Process supervisor with remote start/stop/restart",
-      "AI agent lifecycle hooks and context generation",
-      "JSON output for programmatic access",
-      "Live status monitoring with health checks",
-      "Database management: reset, restore from pg_dump, clone from alternate source",
-      "Batch release and prune for merged branches",
-      "Smart init with framework auto-detection (Rails, Next.js, Vite, Express, Python, Rust, Go)",
-      "Post-init diagnostics with framework-specific port wiring and dotenv guidance",
-      "Supervisor injects allocated env vars directly into the child process",
-      "Auto-migration of legacy config keys (setup_commands → commands.setup, start_command → commands.start)",
-      "Agent context file generation for Cursor and Claude",
-      "Zero runtime dependency — CLI-only, nothing in your bundle or deploy",
-      "Opt-in per developer with no lock-in",
-      "Local HTTPS subdomain router (gtl serve) — {branch}.localhost for every worktree",
-      "Single-port reverse proxy (gtl proxy) with optional TLS for OAuth and webhooks",
-      "Public Cloudflare tunnels (gtl tunnel) — branch-named subdomains on your own domain",
-      "Automatic route key derivation from project name and git branch",
-      "Background system service with launchd/systemd integration",
-      "One-time setup with trusted certificate generation and port 443 forwarding"
-    ]
+    }
   }
   </script>
 
@@ -110,8 +66,16 @@
         <span class="font-mono text-sm font-semibold hidden sm:inline">git-treeline</span>
       </a>
       <div class="flex items-center gap-3 sm:gap-6">
+        <div class="relative group">
+          <button class="text-sm text-muted hover:text-white transition-colors flex items-center gap-1">Features <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+          <div class="absolute top-full left-0 mt-2 w-44 bg-surface-raised border border-surface-border rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 py-2 z-50">
+            <a href="/features/isolation/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Isolation</a>
+            <a href="/features/networking/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Networking</a>
+            <a href="/features/workflows/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Workflows</a>
+            <a href="/features/agents/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">AI Agents</a>
+          </div>
+        </div>
         <a href="/docs/" class="text-sm text-muted hover:text-white transition-colors">Docs</a>
-        <a href="/networking/" class="text-sm text-muted hover:text-white transition-colors">Networking</a>
         <a href="https://github.com/git-treeline/git-treeline" class="text-sm text-muted hover:text-white transition-colors hidden sm:inline">GitHub</a>
         <a href="#get-started" class="text-xs font-mono px-3 sm:px-4 py-2 bg-accent text-surface rounded-md hover:bg-accent-light transition-colors">Install</a>
       </div>
@@ -127,29 +91,21 @@
   </script>
 
   <!-- Hero -->
-  <section id="hero" class="flex flex-col items-center text-center px-4 sm:px-6 pt-32 sm:pt-40 md:pt-48 pb-16 sm:pb-28">
-    <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-6">
-      git-treeline
-    </h1>
-    <p class="text-xl md:text-2xl text-accent-light max-w-2xl mb-4">
-      Review every branch at the same time
-    </p>
+  <section id="hero" class="flex flex-col items-center text-center px-4 sm:px-6 pt-32 sm:pt-40 md:pt-48 pb-12 sm:pb-20">
+    <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-6">git-treeline</h1>
+    <p class="text-xl md:text-2xl text-accent-light max-w-2xl mb-4">Review every branch at the same time</p>
     <p class="text-sm sm:text-base text-gray-400 max-w-2xl mb-8 sm:mb-12">
-      One CLI gives every branch its own ports, databases, and config. Nothing shared, nothing broken.
+      Isolated ports, databases, and named URLs for every worktree. One config file, one&nbsp;command.
     </p>
     <div class="flex flex-col sm:flex-row items-center gap-4 mb-8 w-full max-w-2xl">
       <div class="install-cmd max-w-full overflow-x-auto">
         <code class="text-accent-light whitespace-nowrap text-xs sm:text-sm">brew install git-treeline/tap/git-treeline</code>
         <button onclick="navigator.clipboard.writeText('brew install git-treeline/tap/git-treeline')" class="text-muted hover:text-white transition-colors" aria-label="Copy install command">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-          </svg>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
         </button>
       </div>
       <a href="https://github.com/git-treeline/git-treeline" class="inline-flex items-center gap-2 px-6 py-3 border border-surface-border rounded-lg text-white hover:border-accent transition-colors">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-        </svg>
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
         View on GitHub
       </a>
     </div>
@@ -162,12 +118,12 @@
     </div>
   </section>
 
-  <!-- Problem + Solution (paired) -->
-  <section id="problem-solution" class="px-4 sm:px-6 py-12 sm:py-24 bg-surface-raised">
+  <!-- Problem / Solution -->
+  <section id="problem-solution" class="px-4 sm:px-6 py-12 sm:py-20 bg-surface-raised">
     <div class="max-w-5xl mx-auto">
       <h2 class="section-heading text-center mb-4">Worktrees are easy to create. Hard&nbsp;to&nbsp;run.</h2>
       <p class="section-subtext text-center mx-auto mb-12">
-        <code class="text-white">git worktree add</code> gives you a second checkout in seconds. But it shares ports, databases, and config with every other branch.
+        Git worktrees give you a second workspace in seconds. But every workspace shares the same ports, databases, and&nbsp;config.
       </p>
       <div class="grid md:grid-cols-2 gap-6">
         <div class="terminal">
@@ -205,10 +161,9 @@
               <p class="output">Creating worktree <span class="highlight">feature-auth</span></p>
               <p class="output">Allocated port <span class="highlight">3010</span></p>
               <p class="output">Cloned database <span class="highlight">myapp_dev_feature_auth</span></p>
-              <p class="output">Assigned Redis namespace <span class="highlight">myapp:feature-auth</span></p>
               <p class="output">Wrote <span class="highlight">.env.local</span></p>
               <p class="output">Running setup commands...</p>
-              <p class="output text-accent mt-1">Ready. Start your server in this worktree.</p>
+              <p class="output text-accent mt-1">==> https://feature-auth.localhost</p>
             </div>
           </div>
         </div>
@@ -216,262 +171,135 @@
     </div>
   </section>
 
-  <!-- What Treeline manages -->
-  <section id="capabilities" class="px-4 sm:px-6 py-12 sm:py-24">
+  <!-- Feature highlights -->
+  <section id="features" class="px-4 sm:px-6">
     <div class="max-w-5xl mx-auto">
-      <h2 class="section-heading text-center mb-4">Everything a worktree needs to run</h2>
-      <p class="section-subtext text-center mx-auto mb-12">
-        Each capability is opt-in. Declare what your project needs in <code class="text-accent-light">.treeline.yml</code>.
-      </p>
-      <div class="grid md:grid-cols-2 gap-8 items-start">
-        <!-- Config file -->
-        <div class="config-block rounded-lg border border-surface-border overflow-hidden">
-          <div class="px-4 py-2.5 border-b border-surface-border flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-accent/50"></span>
-            <span class="text-xs font-mono text-muted">.treeline.yml</span>
-          </div>
-          <pre class="px-4 py-4 text-sm leading-relaxed font-mono overflow-x-auto"><code><span class="text-muted"># Ports</span>
-<span class="text-blue-400">port</span>: <span class="text-accent-light">auto</span>
-<span class="text-blue-400">extra_ports</span>: <span class="text-accent-light">1</span>
 
-<span class="text-muted"># Database</span>
-<span class="text-blue-400">database</span>:
-  <span class="text-blue-400">engine</span>: <span class="text-accent-light">postgresql</span>
-  <span class="text-blue-400">name</span>: <span class="text-accent-light">myapp_dev</span>
-
-<span class="text-muted"># Environment</span>
-<span class="text-blue-400">env_file</span>: <span class="text-accent-light">.env.local</span>
-<span class="text-blue-400">copy_files</span>:
-  - <span class="text-accent-light">config/master.key</span>
-
-<span class="text-muted"># Lifecycle</span>
-<span class="text-blue-400">commands</span>:
-  <span class="text-blue-400">setup</span>: <span class="text-accent-light">bin/setup</span>
-  <span class="text-blue-400">start</span>: <span class="text-accent-light">bin/dev</span>
-
-<span class="text-muted"># Editor</span>
-<span class="text-blue-400">editor</span>: <span class="text-accent-light">auto</span></code></pre>
-        </div>
-        <!-- What it produces -->
-        <div class="space-y-5">
-          <div class="feature-strip border-b-0 py-4">
-            <div class="feature-strip-key sm:w-auto sm:text-left">PORT=3010</div>
-            <div class="feature-strip-desc">Unique port per worktree. Multi-port apps get sequential ports.</div>
-          </div>
-          <div class="feature-strip border-b-0 py-4">
-            <div class="feature-strip-key sm:w-auto sm:text-left">myapp_dev_feature_auth</div>
-            <div class="feature-strip-desc">PostgreSQL cloned via template. SQLite copied. Manage with <code class="text-accent-light">gtl db</code>.</div>
-          </div>
-          <div class="feature-strip border-b-0 py-4">
-            <div class="feature-strip-key sm:w-auto sm:text-left">.env.local</div>
-            <div class="feature-strip-desc">Interpolated ports, database names, Redis URLs. Secrets copied from main.</div>
-          </div>
-          <div class="editor-mockup mt-4">
-            <div class="editor-window">
-              <div class="editor-titlebar" style="background:#1a6b3c;">main</div>
-              <div class="editor-body-mock">
-                <div class="editor-line w-3/4"></div>
-                <div class="editor-line w-1/2"></div>
-                <div class="editor-line w-5/6"></div>
-              </div>
+      <!-- Isolation -->
+      <div class="feature-card">
+        <div class="feature-card-visual">
+          <div class="terminal">
+            <div class="terminal-header">
+              <span class="terminal-dot bg-red-500"></span>
+              <span class="terminal-dot bg-yellow-500"></span>
+              <span class="terminal-dot bg-green-500"></span>
             </div>
-            <div class="editor-window">
-              <div class="editor-titlebar" style="background:#1a5276;">auth</div>
-              <div class="editor-body-mock">
-                <div class="editor-line w-1/2"></div>
-                <div class="editor-line w-4/5"></div>
-                <div class="editor-line w-3/5"></div>
-              </div>
-            </div>
-            <div class="editor-window">
-              <div class="editor-titlebar" style="background:#7b241c;">pr-42</div>
-              <div class="editor-body-mock">
-                <div class="editor-line w-5/6"></div>
-                <div class="editor-line w-1/3"></div>
-                <div class="editor-line w-2/3"></div>
-              </div>
+            <div class="terminal-body space-y-1">
+              <p><span class="prompt">$</span> <span class="command">gtl new feature-auth</span></p>
+              <p class="output">Allocated port <span class="highlight">3010</span></p>
+              <p class="output">Cloned database <span class="highlight">myapp_dev_feature_auth</span></p>
+              <p class="output">Wrote <span class="highlight">.env.local</span></p>
+              <p class="output text-accent">==> https://feature-auth.localhost</p>
             </div>
           </div>
-          <p class="text-xs text-muted">Each worktree gets a unique title bar color. VS Code, Cursor, JetBrains.</p>
+        </div>
+        <div class="feature-card-copy">
+          <h3 class="feature-card-title">Two branches. Two apps. Zero conflicts.</h3>
+          <p class="feature-card-desc">
+            Every worktree gets its own port, database, Redis namespace, and env file. Declare what your project needs in <code class="text-accent-light">.treeline.yml</code> and every branch runs in complete isolation.
+          </p>
+          <a href="/features/isolation/" class="feature-card-link">How isolation works &rarr;</a>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- One Command Moment -->
-  <section id="one-command" class="px-4 sm:px-6 py-12 sm:py-24 bg-surface-raised">
-    <div class="max-w-3xl mx-auto text-center">
-      <p class="text-muted text-sm uppercase tracking-wider mb-4">Type a PR number. Get a running app.</p>
-      <div class="mono-callout mb-10">gtl review 42 --start</div>
-      <div class="step-sequence max-w-md mx-auto text-left mb-8">
-        <div class="step-item">
-          <span class="step-check">&#10003;</span>
-          <span class="step-text">Fetched PR <strong class="text-white">#42</strong> <span class="text-muted">(Add OAuth login)</span></span>
-        </div>
-        <div class="step-item">
-          <span class="step-check">&#10003;</span>
-          <span class="step-text">Created worktree <strong class="text-white">myapp-pr-42</strong></span>
-        </div>
-        <div class="step-item">
-          <span class="step-check">&#10003;</span>
-          <span class="step-text">Allocated port <strong class="text-white">3020</strong></span>
-        </div>
-        <div class="step-item">
-          <span class="step-check">&#10003;</span>
-          <span class="step-text">Cloned database <strong class="text-white">myapp_dev_pr_42</strong></span>
-        </div>
-        <div class="step-item">
-          <span class="step-check">&#10003;</span>
-          <span class="step-text">Wrote <strong class="text-white">.env.local</strong>, ran setup commands</span>
-        </div>
-        <div class="step-item">
-          <span class="step-check">&#10003;</span>
-          <span class="step-text">Server running on <strong class="text-white">:3020</strong></span>
-        </div>
-        <div class="step-item step-item-result">
-          <span class="step-arrow">&rarr;</span>
-          <span class="step-text font-mono text-accent">https://myapp-pr-42.localhost</span>
-        </div>
-      </div>
-      <p class="text-sm text-muted max-w-md mx-auto">
-        Done reviewing? <code class="text-accent-light">gtl release --drop-db</code> tears everything down.
-      </p>
-    </div>
-  </section>
-
-  <!-- Process Supervisor -->
-  <section id="supervisor" class="px-4 sm:px-6 py-12 sm:py-24">
-    <div class="max-w-3xl mx-auto">
-      <p class="text-sm uppercase tracking-wider text-muted text-center mb-3">Process supervisor</p>
-      <h2 class="section-heading text-center mb-10">You watch the logs. Agents control the server.</h2>
-      <div class="terminal">
-        <div class="terminal-header justify-between">
-          <div class="flex items-center gap-2">
-            <span class="terminal-dot bg-red-500"></span>
-            <span class="terminal-dot bg-yellow-500"></span>
-            <span class="terminal-dot bg-green-500"></span>
-          </div>
-          <span class="text-xs text-muted">feature-auth</span>
-        </div>
-        <div class="terminal-body">
-          <div class="space-y-1 pb-4 mb-4 border-b border-surface-border">
-            <p class="text-xs uppercase tracking-wider text-muted mb-2">Your terminal</p>
-            <p><span class="prompt">$</span> <span class="command">gtl start</span></p>
-            <p class="output">Starting server on port <span class="highlight">3010</span>...</p>
-            <p class="output text-muted">[HMR] Listening on ws://localhost:3010</p>
-            <p class="output text-muted">GET / 200 in 23ms</p>
-            <p class="output text-muted">GET /api/auth 200 in 8ms</p>
-            <p class="output text-yellow-400 mt-2">Restarting...</p>
-            <p class="output">Starting server on port <span class="highlight">3010</span>...</p>
-            <p class="output text-muted">GET / 200 in 12ms</p>
-          </div>
-          <div class="space-y-1">
-            <p class="text-xs uppercase tracking-wider text-muted mb-2">Meanwhile — agent or CI</p>
-            <p><span class="prompt">$</span> <span class="command">gtl restart</span></p>
-            <p class="output text-accent">Server restarted.</p>
-            <p class="mt-3"><span class="prompt">$</span> <span class="command">gtl stop</span></p>
-            <p class="output text-accent">Server stopped.</p>
-            <p class="mt-3"><span class="prompt">$</span> <span class="command">gtl start</span></p>
-            <p class="output text-accent">Server started.</p>
+      <!-- Networking -->
+      <div class="feature-card feature-card-reversed">
+        <div class="feature-card-visual">
+          <div class="pipeline">
+            <div class="pipeline-step">
+              <code class="pipeline-url text-muted text-base">localhost:3010</code>
+              <p class="pipeline-label">Ephemeral port</p>
+            </div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <span class="pipeline-arrow-mobile">&darr;</span>
+            <div class="pipeline-step">
+              <code class="pipeline-url text-accent-light text-base">feature-auth.localhost</code>
+              <p class="pipeline-label">Stable local name</p>
+            </div>
           </div>
         </div>
+        <div class="feature-card-copy">
+          <h3 class="feature-card-title"><span class="slot-wrapper text-accent-light"><span class="slot-reel"><span class="slot-item">OAuth redirects</span><span class="slot-item">Stripe webhooks</span><span class="slot-item">Mapbox tokens</span><span class="slot-item">API callbacks</span><span class="slot-item">OAuth redirects</span></span></span> just&nbsp;work.</h3>
+          <p class="feature-card-desc">
+            OAuth redirects, Stripe webhooks, Mapbox tokens — anything pinned to a URL or port breaks when you switch worktrees. <code class="text-accent-light">gtl serve</code> gives every branch a stable <code class="text-white">{branch}.localhost</code> with HTTPS. <code class="text-accent-light">gtl proxy</code> forwards a fixed port to whichever worktree you&nbsp;choose.
+          </p>
+          <a href="/features/networking/" class="feature-card-link">Networking features &rarr;</a>
+        </div>
       </div>
-      <p class="text-sm text-muted text-center mt-6">Logs stream to you. Commands come from anywhere. One socket, zero coordination.</p>
-    </div>
-  </section>
 
-  <!-- Stat breather -->
-  <div class="stat-strip border-y border-surface-border bg-surface-raised">
-    <div class="stat-strip-item">
-      <span class="stat-strip-value">1</span>
-      <span class="stat-strip-label">Config file</span>
-    </div>
-    <div class="stat-strip-item">
-      <span class="stat-strip-value font-mono text-accent">&infin;</span>
-      <span class="stat-strip-label">Worktrees</span>
-    </div>
-    <div class="stat-strip-item">
-      <span class="stat-strip-value">0</span>
-      <span class="stat-strip-label">Conflicts</span>
-    </div>
-  </div>
+      <!-- Workflows -->
+      <div class="feature-card">
+        <div class="feature-card-visual">
+          <div class="step-sequence max-w-sm">
+            <div class="step-item">
+              <span class="step-check">&#10003;</span>
+              <span class="step-text">Fetched PR <strong class="text-white">#42</strong></span>
+            </div>
+            <div class="step-item">
+              <span class="step-check">&#10003;</span>
+              <span class="step-text">Created worktree, allocated port <strong class="text-white">3020</strong></span>
+            </div>
+            <div class="step-item">
+              <span class="step-check">&#10003;</span>
+              <span class="step-text">Cloned database, ran setup</span>
+            </div>
+            <div class="step-item">
+              <span class="step-check">&#10003;</span>
+              <span class="step-text">Server running</span>
+            </div>
+            <div class="step-item step-item-result">
+              <span class="step-arrow">&rarr;</span>
+              <span class="step-text font-mono text-accent">https://myapp-pr-42.localhost</span>
+            </div>
+          </div>
+        </div>
+        <div class="feature-card-copy">
+          <h3 class="feature-card-title">Type a PR number. Get a running app.</h3>
+          <p class="feature-card-desc">
+            <code class="text-accent-light">gtl review 42 --start</code> fetches the PR, creates an isolated worktree, boots the server, and gives you the URL. The built-in supervisor lets agents restart the server while you watch the logs.
+          </p>
+          <a href="/features/workflows/" class="feature-card-link">Review and supervisor &rarr;</a>
+        </div>
+      </div>
 
-  <!-- Networking -->
-  <section id="networking" class="px-4 sm:px-6 py-12 sm:py-24">
-    <div class="max-w-5xl mx-auto">
-      <!-- Lead with the visual, heading underneath -->
-      <div class="pipeline mb-6">
-        <div class="pipeline-step">
-          <code class="pipeline-url text-muted">localhost:3010</code>
-          <p class="pipeline-label">Bare port</p>
+      <!-- AI Agents -->
+      <div class="feature-card feature-card-reversed">
+        <div class="feature-card-visual">
+          <div class="config-block rounded-lg border border-surface-border overflow-hidden">
+            <div class="px-4 py-2.5 border-b border-surface-border flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-accent/50"></span>
+              <span class="text-xs font-mono text-muted">MCP config</span>
+            </div>
+            <pre class="px-4 py-4 text-sm leading-relaxed font-mono overflow-x-auto"><code>{
+  "<span class="text-accent-light">mcpServers</span>": {
+    "<span class="text-white">gtl</span>": {
+      "<span class="text-accent-light">command</span>": "<span class="text-white">gtl</span>",
+      "<span class="text-accent-light">args</span>": ["<span class="text-white">mcp</span>"]
+    }
+  }
+}</code></pre>
+          </div>
         </div>
-        <span class="pipeline-arrow">&rarr;</span>
-        <span class="pipeline-arrow-mobile">&darr;</span>
-        <div class="pipeline-step">
-          <code class="pipeline-url text-accent-light">feature-auth.localhost</code>
-          <p class="pipeline-label">gtl serve</p>
-        </div>
-        <span class="pipeline-arrow">&rarr;</span>
-        <span class="pipeline-arrow-mobile">&darr;</span>
-        <div class="pipeline-step">
-          <code class="pipeline-url text-accent">feature-auth.example.dev</code>
-          <p class="pipeline-label">gtl tunnel</p>
-        </div>
-      </div>
-      <h2 class="text-xl sm:text-2xl font-mono font-bold text-white text-center mb-6">Every worktree gets a URL</h2>
-      <div class="grid sm:grid-cols-3 gap-6 max-w-3xl mx-auto text-center mb-8">
-        <div>
-          <p class="text-sm font-mono text-accent-light mb-1">gtl serve</p>
-          <p class="text-xs text-muted"><code class="text-white">{branch}.localhost</code> with HTTPS. Always-on background service.</p>
-        </div>
-        <div>
-          <p class="text-sm font-mono text-accent-light mb-1">gtl proxy</p>
-          <p class="text-xs text-muted">Fixed port for OAuth callbacks, webhooks, and third-party integrations.</p>
-        </div>
-        <div>
-          <p class="text-sm font-mono text-accent-light mb-1">gtl tunnel</p>
-          <p class="text-xs text-muted">Public URLs via Cloudflare. Branch-named subdomains on your domain.</p>
+        <div class="feature-card-copy">
+          <h3 class="feature-card-title">Your agent gets the same tools you do.</h3>
+          <p class="feature-card-desc">
+            The built-in MCP server gives AI agents native access to <code class="text-accent-light">start</code>, <code class="text-accent-light">stop</code>, <code class="text-accent-light">port</code>, and <code class="text-accent-light">status</code>. Lifecycle hooks, <code class="text-accent-light">--json</code> output, and auto-generated <code class="text-accent-light">AGENTS.md</code> for Cursor, Claude Code, and Codex.
+          </p>
+          <a href="/features/agents/" class="feature-card-link">Agent integration &rarr;</a>
         </div>
       </div>
-      <p class="text-center">
-        <a href="/networking/" class="text-accent-light hover:text-accent underline underline-offset-2 text-sm">Full networking documentation &rarr;</a>
-      </p>
-    </div>
-  </section>
 
-  <!-- Fits Your Workflow -->
-  <section id="workflow" class="px-4 sm:px-6 py-10 sm:py-16 bg-surface-raised">
-    <div class="max-w-4xl mx-auto">
-      <div class="grid md:grid-cols-2 gap-8 md:gap-12">
-        <div>
-          <h3 class="text-sm uppercase tracking-wider text-muted font-medium mb-5">Zero footprint</h3>
-          <ul class="tight-list">
-            <li><strong>No runtime dependency.</strong> CLI tool, not a library. Writes a <code class="text-accent-light">.env</code> file and walks away.</li>
-            <li><strong>No lock-in.</strong> <code class="text-accent-light">.treeline.yml</code> is declarative config. Non-users just ignore it.</li>
-            <li><strong>No magic.</strong> No git hooks, no daemons, no implicit behavior.</li>
-            <li><strong>Opt-in per developer.</strong> Commit the config, let the team decide.</li>
-          </ul>
-        </div>
-        <div>
-          <h3 class="text-sm uppercase tracking-wider text-muted font-medium mb-5">Built for AI agents</h3>
-          <ul class="tight-list">
-            <li><strong>Lifecycle hooks.</strong> <code class="text-accent-light">gtl setup .</code> on creation, <code class="text-accent-light">gtl release . --drop-db</code> on teardown.</li>
-            <li><strong>Machine output.</strong> <code class="text-accent-light">--json</code> on read commands. Structured data, no parsing.</li>
-            <li><strong>Agent context.</strong> <code class="text-accent-light">gtl init</code> writes <code class="text-accent-light">AGENTS.md</code> for Cursor, Claude Code, and Codex.</li>
-          </ul>
-        </div>
-      </div>
     </div>
   </section>
 
   <!-- Get Started -->
-  <section id="get-started" class="px-4 sm:px-6 py-12 sm:py-24">
+  <section id="get-started" class="px-4 sm:px-6 py-12 sm:py-20 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading text-center mb-4">Get started in 60 seconds</h2>
-      <p class="section-subtext text-center mx-auto mb-16">
+      <p class="section-subtext text-center mx-auto mb-12">
         Install, initialize your project, and create your first isolated worktree.
       </p>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-10">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-8">
         <div class="text-center">
           <div class="text-accent text-3xl font-mono font-bold mb-4">1</div>
           <h3 class="text-lg mb-3">Install</h3>
@@ -510,56 +338,18 @@
     </div>
   </section>
 
-  <!-- FAQ -->
-  <section id="faq" class="px-4 sm:px-6 py-12 sm:py-24 bg-surface-raised">
-    <div class="max-w-3xl mx-auto">
-      <h2 class="section-heading text-center mb-12">Questions</h2>
-      <div class="space-y-3" itemscope itemtype="https://schema.org/FAQPage">
-        <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-          <summary class="faq-summary" itemprop="name">What does git-treeline do?</summary>
-          <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">Git Treeline is a CLI that sets up isolated development environments per git worktree &mdash; unique ports, cloned databases, Redis namespaces, env files, and setup commands. One command turns a bare checkout into a bootable copy of your app.</p>
-          </div>
-        </details>
-        <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-          <summary class="faq-summary" itemprop="name">Do I need to use all the features?</summary>
-          <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">No. Every capability is opt-in. If your app only needs port allocation and an env file, that's a three-line <code class="text-accent-light">.treeline.yml</code>.</p>
-          </div>
-        </details>
-        <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-          <summary class="faq-summary" itemprop="name">How do I review a GitHub PR with git-treeline?</summary>
-          <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">Run <code class="text-accent-light">gtl review &lt;PR-number&gt;</code>. Treeline uses the <code class="text-accent-light">gh</code> CLI to fetch the PR, creates a worktree for it, allocates isolated resources, and runs setup. Add <code class="text-accent-light">--start</code> to boot the app immediately. When you're done, <code class="text-accent-light">gtl release --drop-db</code> cleans everything up.</p>
-          </div>
-        </details>
-        <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-          <summary class="faq-summary" itemprop="name">Does it work with AI coding agents?</summary>
-          <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">Yes. Add <code class="text-accent-light">gtl setup .</code> on worktree creation and <code class="text-accent-light">gtl release . --drop-db</code> on teardown. <code class="text-accent-light">--json</code> output for programmatic access, and <code class="text-accent-light">gtl init</code> generates agent context files for Cursor, Claude Code, and Codex.</p>
-          </div>
-        </details>
-        <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-          <summary class="faq-summary" itemprop="name">Does git-treeline add runtime dependencies to my app?</summary>
-          <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">No. It's a standalone CLI binary that writes an <code class="text-accent-light">.env</code> file at setup time. Nothing ships in your bundle, Docker image, or deploy.</p>
-          </div>
-        </details>
-        <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-          <summary class="faq-summary" itemprop="name">What if some team members don't use git-treeline?</summary>
-          <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">Nothing changes for them. <code class="text-accent-light">.treeline.yml</code> is a config file they can ignore. The app boots on default ports with the default database.</p>
-          </div>
-        </details>
-      </div>
-      <p class="text-sm text-muted text-center mt-8">
-        More questions answered in the <a href="/docs/" class="text-accent-light hover:text-accent underline underline-offset-2">documentation</a>.
-      </p>
+  <!-- Trust -->
+  <div class="px-4 sm:px-6 py-8 sm:py-10 border-y border-surface-border">
+    <div class="trust-bar max-w-3xl mx-auto">
+      <div class="trust-bar-item"><strong>No runtime dependency.</strong> CLI only.</div>
+      <div class="trust-bar-item"><strong>No lock-in.</strong> Config file, not a library.</div>
+      <div class="trust-bar-item"><strong>Nothing ships in your bundle.</strong></div>
+      <div class="trust-bar-item"><strong>Opt-in per developer.</strong></div>
     </div>
-  </section>
+  </div>
 
-  <!-- Closing CTA -->
-  <section id="cta" class="px-4 sm:px-6 py-12 sm:py-24 text-center">
+  <!-- CTA -->
+  <section id="cta" class="px-4 sm:px-6 py-12 sm:py-20 text-center">
     <div class="max-w-2xl mx-auto">
       <h2 class="section-heading mb-4">Every branch, running</h2>
       <p class="section-subtext mx-auto mb-10">Your whole team sees the work, not just the diff.</p>
@@ -567,9 +357,7 @@
         <div class="install-cmd max-w-full overflow-x-auto">
           <code class="text-accent-light whitespace-nowrap text-xs sm:text-sm">brew install git-treeline/tap/git-treeline</code>
           <button onclick="navigator.clipboard.writeText('brew install git-treeline/tap/git-treeline')" class="text-muted hover:text-white transition-colors" aria-label="Copy install command">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-            </svg>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
           </button>
         </div>
         <a href="https://github.com/git-treeline/git-treeline" class="inline-flex items-center gap-2 px-6 py-3 border border-surface-border rounded-lg text-white hover:border-accent transition-colors">
@@ -584,10 +372,13 @@
   <!-- Footer -->
   <footer class="px-4 sm:px-6 py-8 sm:py-12 border-t border-surface-border">
     <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 text-sm text-muted">
-      <div class="flex items-center gap-6">
+      <div class="flex flex-wrap items-center gap-6">
         <a href="https://github.com/git-treeline/git-treeline" class="hover:text-white transition-colors">GitHub</a>
         <a href="/docs/" class="hover:text-white transition-colors">Docs</a>
-        <a href="/networking/" class="hover:text-white transition-colors">Networking</a>
+        <a href="/features/isolation/" class="hover:text-white transition-colors">Isolation</a>
+        <a href="/features/networking/" class="hover:text-white transition-colors">Networking</a>
+        <a href="/features/workflows/" class="hover:text-white transition-colors">Workflows</a>
+        <a href="/features/agents/" class="hover:text-white transition-colors">AI Agents</a>
         <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a>
       </div>
       <p>Built by <a href="https://productmatter.co" class="text-accent-light hover:text-accent transition-colors">Product Matter</a></p>

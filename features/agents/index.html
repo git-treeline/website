@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Agents — Git Treeline</title>
+  <meta name="description" content="Give AI coding agents native tool access to worktree management. MCP server, lifecycle hooks, JSON output, and auto-generated agent context files for Cursor, Claude Code, and Codex.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://git-treeline.dev/features/agents/">
+
+  <meta property="og:title" content="AI Agents — Git Treeline">
+  <meta property="og:description" content="Give AI coding agents native tool access to worktree management. MCP server, lifecycle hooks, and structured output.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://git-treeline.dev/features/agents/">
+  <meta property="og:site_name" content="Git Treeline">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <script src="https://cdn.usefathom.com/script.js" data-site="QPFTFHRS" defer></script>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav id="site-nav" class="fixed top-0 left-0 right-0 z-50 bg-surface transition-colors duration-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3 text-white hover:text-accent-light transition-colors">
+        <svg class="w-7 h-7" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="6" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+          <text x="16" y="22" font-family="monospace" font-weight="700" font-size="16" fill="#22c55e" text-anchor="middle">gt</text>
+        </svg>
+        <span class="font-mono text-sm font-semibold hidden sm:inline">git-treeline</span>
+      </a>
+      <div class="flex items-center gap-3 sm:gap-6">
+        <div class="relative group">
+          <button class="text-sm text-white flex items-center gap-1">Features <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+          <div class="absolute top-full left-0 mt-2 w-44 bg-surface-raised border border-surface-border rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 py-2 z-50">
+            <a href="/features/isolation/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Isolation</a>
+            <a href="/features/networking/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Networking</a>
+            <a href="/features/workflows/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Workflows</a>
+            <a href="/features/agents/" class="block px-4 py-2 text-sm text-accent-light hover:bg-surface transition-colors">AI Agents</a>
+          </div>
+        </div>
+        <a href="/docs/" class="text-sm text-muted hover:text-white transition-colors">Docs</a>
+        <a href="https://github.com/git-treeline/git-treeline" class="text-sm text-muted hover:text-white transition-colors hidden sm:inline">GitHub</a>
+        <a href="/#get-started" class="text-xs font-mono px-3 sm:px-4 py-2 bg-accent text-surface rounded-md hover:bg-accent-light transition-colors">Install</a>
+      </div>
+    </div>
+  </nav>
+  <script>
+    (function() {
+      var nav = document.getElementById('site-nav');
+      window.addEventListener('scroll', function() {
+        nav.classList.toggle('nav-scrolled', window.scrollY > 40);
+      });
+    })();
+  </script>
+
+  <!-- Hero -->
+  <section class="px-4 sm:px-6 pt-28 sm:pt-36 pb-12 sm:pb-16 text-center">
+    <p class="text-sm uppercase tracking-wider text-muted mb-4">AI Agents</p>
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">Your agent gets the<br>same tools you do.</h1>
+    <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
+      A built-in MCP server gives agents native access to worktree management. Lifecycle hooks, structured output, and auto-generated context files make every agent environment-aware.
+    </p>
+  </section>
+
+  <!-- 1. The world without it -->
+  <section class="px-4 sm:px-6 py-12 sm:py-20 bg-surface-raised">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading text-center mb-4">Agents don't know about your environment</h2>
+      <p class="section-subtext text-center mx-auto mb-10">
+        Your AI agent creates a worktree and tries to start the server. It doesn't know about port allocation, database cloning, or env files.
+      </p>
+      <div class="max-w-2xl mx-auto">
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="terminal-dot bg-red-500"></span>
+            <span class="terminal-dot bg-yellow-500"></span>
+            <span class="terminal-dot bg-green-500"></span>
+            <span class="text-xs text-red-400 ml-2">agent without treeline</span>
+          </div>
+          <div class="terminal-body space-y-2">
+            <p><span class="prompt">agent $</span> <span class="command">git worktree add ../fix-bug fix-bug</span></p>
+            <p><span class="prompt">agent $</span> <span class="command">cd ../fix-bug && npm start</span></p>
+            <p class="text-red-400">Error: EADDRINUSE :::3000</p>
+            <p class="text-muted text-xs mt-1"># Agent tries a random port...</p>
+            <p><span class="prompt">agent $</span> <span class="command">PORT=4567 npm start</span></p>
+            <p class="text-yellow-400">Warning: DATABASE_URL not set</p>
+            <p class="text-muted text-xs mt-1"># Agent guesses at database names...</p>
+            <p><span class="prompt">agent $</span> <span class="command">createdb fix_bug_dev</span></p>
+            <p class="text-muted text-xs"># Works sometimes. Breaks often.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. The moment it clicks -->
+  <section class="px-4 sm:px-6 py-12 sm:py-20">
+    <div class="max-w-4xl mx-auto">
+      <p class="text-sm uppercase tracking-wider text-muted text-center mb-6">Three lines in your editor config</p>
+      <div class="max-w-lg mx-auto mb-10">
+        <div class="config-block rounded-lg border border-surface-border overflow-hidden">
+          <div class="px-4 py-2.5 border-b border-surface-border flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-accent/50"></span>
+            <span class="text-xs font-mono text-muted">MCP config (Cursor / Claude Code / Codex)</span>
+          </div>
+          <pre class="px-4 py-4 text-sm leading-relaxed font-mono overflow-x-auto"><code>{
+  "<span class="text-accent-light">mcpServers</span>": {
+    "<span class="text-white">gtl</span>": {
+      "<span class="text-accent-light">command</span>": "<span class="text-white">gtl</span>",
+      "<span class="text-accent-light">args</span>": ["<span class="text-white">mcp</span>"]
+    }
+  }
+}</code></pre>
+        </div>
+      </div>
+      <p class="text-sm text-muted text-center max-w-lg mx-auto">
+        Now the agent calls <code class="text-accent-light">gtl.start</code>, <code class="text-accent-light">gtl.port</code>, <code class="text-accent-light">gtl.status</code> as native tools. No shell parsing, no guessing, no string manipulation.
+      </p>
+    </div>
+  </section>
+
+  <!-- 3. What changes -->
+  <section class="px-4 sm:px-6 py-12 sm:py-20 bg-surface-raised">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading text-center mb-10">What this makes possible</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div>
+          <h3 class="text-white font-mono text-lg mb-3">Cursor restarts your server</h3>
+          <p class="text-sm text-muted">Agent edits a file, calls <code class="text-accent-light">gtl.restart</code>, confirms the server is healthy via <code class="text-accent-light">gtl.status</code>. No shell, no PID hunting.</p>
+        </div>
+        <div>
+          <h3 class="text-white font-mono text-lg mb-3">Full lifecycle automation</h3>
+          <p class="text-sm text-muted">Claude Code creates a worktree with <code class="text-accent-light">gtl setup .</code>, modifies code, runs tests, tears down with <code class="text-accent-light">gtl release . --drop-db</code>. Clean sandbox every time.</p>
+        </div>
+        <div>
+          <h3 class="text-white font-mono text-lg mb-3">Multi-agent orchestration</h3>
+          <p class="text-sm text-muted">An orchestrator spins up five agents in five worktrees. Each has isolated ports, databases, and a controllable server. All managed via structured API.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. How it works -->
+  <section class="px-4 sm:px-6 py-12 sm:py-20">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading text-center mb-4">Four integration surfaces</h2>
+      <p class="section-subtext text-center mx-auto mb-12">
+        Different agents need different interfaces. Treeline supports all of them.
+      </p>
+
+      <div class="space-y-10">
+        <!-- MCP -->
+        <div class="grid md:grid-cols-2 gap-6 md:gap-10 items-start">
+          <div>
+            <h3 class="text-white font-mono text-xl mb-2">MCP server</h3>
+            <p class="text-sm text-muted mb-4">
+              <code class="text-accent-light">gtl mcp</code> starts a Model Context Protocol server that exposes worktree tools and resources. Agents call <code class="text-white">start</code>, <code class="text-white">stop</code>, <code class="text-white">restart</code>, <code class="text-white">port</code>, <code class="text-white">status</code> as native tool calls — no shell required.
+            </p>
+            <p class="text-sm text-muted">Resources expose <code class="text-white">worktree://status</code> and <code class="text-white">worktree://config</code> for read access to the current allocation.</p>
+          </div>
+          <div class="space-y-3">
+            <div class="feature-strip border-b-0 py-2">
+              <div class="feature-strip-key sm:w-auto sm:text-left text-sm">gtl.start</div>
+              <div class="feature-strip-desc text-xs">Boot the server via the supervisor</div>
+            </div>
+            <div class="feature-strip border-b-0 py-2">
+              <div class="feature-strip-key sm:w-auto sm:text-left text-sm">gtl.stop</div>
+              <div class="feature-strip-desc text-xs">Stop the running server</div>
+            </div>
+            <div class="feature-strip border-b-0 py-2">
+              <div class="feature-strip-key sm:w-auto sm:text-left text-sm">gtl.restart</div>
+              <div class="feature-strip-desc text-xs">Restart the server</div>
+            </div>
+            <div class="feature-strip border-b-0 py-2">
+              <div class="feature-strip-key sm:w-auto sm:text-left text-sm">gtl.port</div>
+              <div class="feature-strip-desc text-xs">Get the allocated port for this worktree</div>
+            </div>
+            <div class="feature-strip border-b-0 py-2">
+              <div class="feature-strip-key sm:w-auto sm:text-left text-sm">gtl.status</div>
+              <div class="feature-strip-desc text-xs">Server health + allocation details</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lifecycle hooks -->
+        <div class="grid md:grid-cols-2 gap-6 md:gap-10 items-start border-t border-surface-border pt-10">
+          <div class="md:order-2">
+            <h3 class="text-white font-mono text-xl mb-2">Lifecycle hooks</h3>
+            <p class="text-sm text-muted mb-4">
+              <code class="text-accent-light">gtl setup .</code> allocates resources and runs setup commands for the current directory — the worktree creation hook. <code class="text-accent-light">gtl release . --drop-db</code> is the teardown hook that drops the database and cleans up.
+            </p>
+            <p class="text-sm text-muted">Agents that create and destroy worktrees call these at the boundaries. Everything in between is their own code.</p>
+          </div>
+          <div class="md:order-1 terminal">
+            <div class="terminal-header">
+              <span class="terminal-dot bg-red-500"></span>
+              <span class="terminal-dot bg-yellow-500"></span>
+              <span class="terminal-dot bg-green-500"></span>
+              <span class="text-xs text-muted ml-2">agent lifecycle</span>
+            </div>
+            <div class="terminal-body space-y-1">
+              <p class="text-muted text-xs"># Create + setup</p>
+              <p><span class="prompt">$</span> <span class="command">git worktree add ../fix fix-branch</span></p>
+              <p><span class="prompt">$</span> <span class="command">cd ../fix && gtl setup .</span></p>
+              <p class="output text-accent">Resources allocated. Ready.</p>
+              <p class="text-muted text-xs mt-3"># ... agent does its work ...</p>
+              <p class="text-muted text-xs mt-3"># Teardown</p>
+              <p><span class="prompt">$</span> <span class="command">gtl release . --drop-db</span></p>
+              <p class="output text-accent">Released. Database dropped.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- JSON output -->
+        <div class="grid md:grid-cols-2 gap-6 md:gap-10 items-start border-t border-surface-border pt-10">
+          <div>
+            <h3 class="text-white font-mono text-xl mb-2">Structured output</h3>
+            <p class="text-sm text-muted mb-4">
+              Every read command supports <code class="text-accent-light">--json</code>. Agents parse structured data instead of scraping terminal output. Port numbers, database names, server state — all machine-readable.
+            </p>
+          </div>
+          <div class="terminal">
+            <div class="terminal-header">
+              <span class="terminal-dot bg-red-500"></span>
+              <span class="terminal-dot bg-yellow-500"></span>
+              <span class="terminal-dot bg-green-500"></span>
+            </div>
+            <div class="terminal-body space-y-1">
+              <p><span class="prompt">$</span> <span class="command">gtl status --json</span></p>
+              <p class="output">{</p>
+              <p class="output">&nbsp;&nbsp;"<span class="text-accent-light">port</span>": <span class="text-white">3010</span>,</p>
+              <p class="output">&nbsp;&nbsp;"<span class="text-accent-light">database</span>": "<span class="text-white">myapp_dev_feature_auth</span>",</p>
+              <p class="output">&nbsp;&nbsp;"<span class="text-accent-light">server</span>": "<span class="text-accent">running</span>",</p>
+              <p class="output">&nbsp;&nbsp;"<span class="text-accent-light">pid</span>": <span class="text-white">42891</span></p>
+              <p class="output">}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- AGENTS.md -->
+        <div class="grid md:grid-cols-2 gap-6 md:gap-10 items-start border-t border-surface-border pt-10">
+          <div class="md:order-2">
+            <h3 class="text-white font-mono text-xl mb-2">Agent context files</h3>
+            <p class="text-sm text-muted mb-4">
+              <code class="text-accent-light">gtl init</code> generates an <code class="text-white">AGENTS.md</code> file that tells Cursor, Claude Code, and Codex how to use Treeline. The agent reads it on startup and knows exactly which commands to run for setup, teardown, and server management.
+            </p>
+          </div>
+          <div class="md:order-1 terminal">
+            <div class="terminal-header">
+              <span class="terminal-dot bg-red-500"></span>
+              <span class="terminal-dot bg-yellow-500"></span>
+              <span class="terminal-dot bg-green-500"></span>
+            </div>
+            <div class="terminal-body space-y-1">
+              <p><span class="prompt">$</span> <span class="command">gtl init</span></p>
+              <p class="output">Created <span class="highlight">.treeline.yml</span></p>
+              <p class="output">Created <span class="highlight">AGENTS.md</span></p>
+              <p class="text-muted text-xs mt-2"># AGENTS.md includes:</p>
+              <p class="text-muted text-xs"># - Setup: gtl setup .</p>
+              <p class="text-muted text-xs"># - Teardown: gtl release . --drop-db</p>
+              <p class="text-muted text-xs"># - Port: gtl port</p>
+              <p class="text-muted text-xs"># - Server: gtl start / stop / restart</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Get started -->
+  <section class="px-4 sm:px-6 py-12 sm:py-20 bg-surface-raised text-center">
+    <div class="max-w-2xl mx-auto">
+      <h2 class="section-heading mb-4">Connect your agent</h2>
+      <p class="text-sm text-muted mb-8">Add the MCP config to your editor. The agent discovers everything else automatically.</p>
+      <div class="config-block rounded-lg border border-surface-border overflow-hidden max-w-sm mx-auto mb-6">
+        <pre class="px-4 py-3 text-sm leading-relaxed font-mono overflow-x-auto"><code>{ "<span class="text-accent-light">mcpServers</span>": { "<span class="text-white">gtl</span>": { "<span class="text-accent-light">command</span>": "<span class="text-white">gtl</span>", "<span class="text-accent-light">args</span>": ["<span class="text-white">mcp</span>"] } } }</code></pre>
+      </div>
+      <a href="/docs/#agents" class="text-sm text-accent-light hover:text-accent underline underline-offset-2">Full agent setup reference &rarr;</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="px-4 sm:px-6 py-8 sm:py-12 border-t border-surface-border">
+    <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 text-sm text-muted">
+      <div class="flex flex-wrap items-center gap-6">
+        <a href="https://github.com/git-treeline/git-treeline" class="hover:text-white transition-colors">GitHub</a>
+        <a href="/docs/" class="hover:text-white transition-colors">Docs</a>
+        <a href="/features/isolation/" class="hover:text-white transition-colors">Isolation</a>
+        <a href="/features/networking/" class="hover:text-white transition-colors">Networking</a>
+        <a href="/features/workflows/" class="hover:text-white transition-colors">Workflows</a>
+        <a href="/features/agents/" class="hover:text-white transition-colors">AI Agents</a>
+        <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a>
+      </div>
+      <p>Built by <a href="https://productmatter.co" class="text-accent-light hover:text-accent transition-colors">Product Matter</a></p>
+    </div>
+  </footer>
+
+</body>
+</html>

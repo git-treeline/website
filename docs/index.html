@@ -34,8 +34,16 @@
         <span class="font-mono text-sm font-semibold hidden sm:inline">git-treeline</span>
       </a>
       <div class="flex items-center gap-3 sm:gap-6">
+        <div class="relative group">
+          <button class="text-sm text-muted hover:text-white transition-colors flex items-center gap-1">Features <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+          <div class="absolute top-full left-0 mt-2 w-44 bg-surface-raised border border-surface-border rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 py-2 z-50">
+            <a href="/features/isolation/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Isolation</a>
+            <a href="/features/networking/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Networking</a>
+            <a href="/features/workflows/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Workflows</a>
+            <a href="/features/agents/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">AI Agents</a>
+          </div>
+        </div>
         <a href="/docs/" class="text-sm text-white transition-colors">Docs</a>
-        <a href="/networking/" class="text-sm text-muted hover:text-white transition-colors">Networking</a>
         <a href="https://github.com/git-treeline/git-treeline" class="text-sm text-muted hover:text-white transition-colors hidden sm:inline">GitHub</a>
         <a href="/#get-started" class="text-xs font-mono px-3 sm:px-4 py-2 bg-accent text-surface rounded-md hover:bg-accent-light transition-colors">Install</a>
       </div>
@@ -108,6 +116,7 @@
           <ul class="space-y-1.5">
             <li><a href="#supervisor" class="docs-sidebar-link">Process supervisor</a></li>
             <li><a href="#ai-agents" class="docs-sidebar-link">AI agents</a></li>
+            <li><a href="#mcp-server" class="docs-sidebar-link pl-6">MCP server</a></li>
           </ul>
         </div>
         <div class="mb-6">
@@ -130,9 +139,10 @@
   <section id="getting-started" class="px-4 sm:px-6 py-10 sm:py-16">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Getting started</h2>
-      <p class="text-muted mb-8">
-        Git Treeline is a standalone CLI binary &mdash; no runtime dependency, no git hooks, no background processes. It writes an env file at setup time and gets out of the way. Team members who don't use it just ignore the config file.
+      <p class="text-muted mb-4">
+        Git Treeline is a standalone CLI binary &mdash; no runtime dependency, no git hooks, no background processes. It writes an env file at setup time and gets out of the way.
       </p>
+      <p class="text-sm text-muted mb-8">New here? See <a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">how isolation works</a> for the full picture.</p>
 
       <h3 class="text-xl font-mono text-white mb-4">Install</h3>
       <p class="text-muted mb-4">Homebrew (macOS and Linux):</p>
@@ -226,9 +236,10 @@
   <section id="configuration" class="px-4 sm:px-6 py-10 sm:py-16 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Configuration</h2>
-      <p class="text-muted mb-8">
-        <code class="text-accent-light">.treeline.yml</code> lives in your project root and is committed to the repo. Every team member and every agent gets the same setup.
+      <p class="text-muted mb-4">
+        <code class="text-accent-light">.treeline.yml</code> lives in your project root and is committed to the repo.
       </p>
+      <p class="text-sm text-muted mb-8">See <a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">Isolation</a> for what each field produces and why it matters.</p>
 
       <h3 class="text-xl font-mono text-white mb-4">Full reference</h3>
       <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
@@ -522,6 +533,11 @@
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">tunnel [port]</td>
               <td class="px-5 py-3 font-mono text-muted text-xs"><code>--domain</code></td>
               <td class="px-5 py-3 text-muted">Public HTTPS tunnel via Cloudflare. <code class="text-accent-light">tunnel setup</code> for one-time config. <a href="#net-tunnel" class="text-accent-light hover:text-accent underline underline-offset-2">Details</a></td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">mcp</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
+              <td class="px-5 py-3 text-muted">Start the MCP server (stdio transport). Used by editors, not invoked directly. <a href="#mcp-server" class="text-accent-light hover:text-accent underline underline-offset-2">Details</a></td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">version</td>
@@ -837,9 +853,10 @@
   <section id="supervisor" class="px-4 sm:px-6 py-10 sm:py-16 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Process supervisor</h2>
-      <p class="text-muted mb-8">
-        <code class="text-accent-light">gtl start</code> runs the <code class="text-accent-light">commands.start</code> from your <code class="text-accent-light">.treeline.yml</code> under a Unix socket supervisor. The supervisor reads the worktree's allocation, resolves env templates, and injects them as real environment variables into the child process &mdash; <code class="text-accent-light">PORT</code>, <code class="text-accent-light">DATABASE_URL</code>, etc. are available without requiring the app to read <code class="text-accent-light">.env</code> files. Server logs stream to your terminal while other processes can send <code class="text-accent-light">stop</code>, <code class="text-accent-light">start</code>, and <code class="text-accent-light">restart</code> commands remotely.
+      <p class="text-muted mb-4">
+        <code class="text-accent-light">gtl start</code> runs <code class="text-accent-light">commands.start</code> under a Unix socket supervisor. The supervisor injects allocated env vars directly into the child process. Logs stream to your terminal; other processes send <code class="text-accent-light">stop</code>/<code class="text-accent-light">restart</code> remotely.
       </p>
+      <p class="text-sm text-muted mb-8">See <a href="/features/workflows/" class="text-accent-light hover:text-accent underline underline-offset-2">Workflows</a> for the full story on PR review and the supervisor.</p>
 
       <h3 class="text-xl font-mono text-white mb-4">How it works</h3>
       <ol class="list-decimal list-inside text-muted space-y-2 mb-8 pl-2">
@@ -982,9 +999,10 @@
   <section id="ai-agents" class="px-4 sm:px-6 py-10 sm:py-16 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">AI agent setup</h2>
-      <p class="text-muted mb-8">
-        Git Treeline integrates with AI coding agents that work in worktrees. Two hooks, structured output, and auto-generated context files.
+      <p class="text-muted mb-4">
+        Lifecycle hooks, structured output, MCP server, and auto-generated context files.
       </p>
+      <p class="text-sm text-muted mb-8">See <a href="/features/agents/" class="text-accent-light hover:text-accent underline underline-offset-2">AI Agents</a> for use cases and integration patterns.</p>
 
       <h3 class="text-xl font-mono text-white mb-4">Lifecycle hooks</h3>
       <p class="text-muted mb-4">
@@ -1053,6 +1071,71 @@
       <p class="text-muted text-sm mt-4">
         Use <code class="text-accent-light">--skip-agent-config</code> on <code class="text-accent-light">gtl init</code> to opt out of context file generation.
       </p>
+
+      <h3 id="mcp-server" class="text-xl font-mono text-white mb-4 mt-10">MCP server</h3>
+      <p class="text-muted mb-4">
+        Git Treeline ships a built-in <a href="https://modelcontextprotocol.io" class="text-accent-light hover:text-accent underline underline-offset-2">Model Context Protocol</a> server. Agents in Cursor, Claude Code, Windsurf, and other MCP-compatible editors get native tool access &mdash; no shell commands, no output parsing.
+      </p>
+      <p class="text-muted mb-6">
+        Add it to your editor's MCP configuration:
+      </p>
+      <div class="terminal mb-6">
+        <div class="terminal-body">
+          <pre class="text-sm">{
+  "<span class="text-accent-light">mcpServers</span>": {
+    "<span class="text-white">gtl</span>": {
+      "<span class="text-accent-light">command</span>": "<span class="text-white">gtl</span>",
+      "<span class="text-accent-light">args</span>": ["<span class="text-white">mcp</span>"]
+    }
+  }
+}</pre>
+        </div>
+      </div>
+
+      <h4 class="text-base font-mono text-white mb-3">Available tools</h4>
+      <div class="overflow-x-auto mb-6">
+        <table class="cli-table w-full text-sm border border-surface-border rounded-lg overflow-hidden">
+          <thead>
+            <tr class="border-b border-surface-border">
+              <th class="text-left px-5 py-3 text-muted">Tool</th>
+              <th class="text-left px-5 py-3 text-muted">Description</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-border">
+            <tr><td class="px-5 py-3 font-mono text-xs"><code>status</code></td><td class="px-5 py-3 text-muted">Allocation for a worktree: port, database, branch, supervisor state</td></tr>
+            <tr><td class="px-5 py-3 font-mono text-xs"><code>list</code></td><td class="px-5 py-3 text-muted">All active allocations across all projects</td></tr>
+            <tr><td class="px-5 py-3 font-mono text-xs"><code>start</code></td><td class="px-5 py-3 text-muted">Start or resume the supervised dev server</td></tr>
+            <tr><td class="px-5 py-3 font-mono text-xs"><code>stop</code></td><td class="px-5 py-3 text-muted">Stop the dev server (supervisor stays alive for resume)</td></tr>
+            <tr><td class="px-5 py-3 font-mono text-xs"><code>restart</code></td><td class="px-5 py-3 text-muted">Restart the dev server</td></tr>
+            <tr><td class="px-5 py-3 font-mono text-xs"><code>port</code></td><td class="px-5 py-3 text-muted">Get the allocated port for a worktree</td></tr>
+            <tr><td class="px-5 py-3 font-mono text-xs"><code>db_name</code></td><td class="px-5 py-3 text-muted">Get the database name for a worktree</td></tr>
+            <tr><td class="px-5 py-3 font-mono text-xs"><code>doctor</code></td><td class="px-5 py-3 text-muted">Run project health diagnostics</td></tr>
+            <tr><td class="px-5 py-3 font-mono text-xs"><code>config_get</code></td><td class="px-5 py-3 text-muted">Read a configuration value by dotted key path</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4 class="text-base font-mono text-white mb-3">Resources</h4>
+      <p class="text-muted mb-4">
+        The MCP server also exposes read-only resources that agents can inspect:
+      </p>
+      <div class="overflow-x-auto mb-4">
+        <table class="cli-table w-full text-sm border border-surface-border rounded-lg overflow-hidden">
+          <thead>
+            <tr class="border-b border-surface-border">
+              <th class="text-left px-5 py-3 text-muted">URI</th>
+              <th class="text-left px-5 py-3 text-muted">Description</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-border">
+            <tr><td class="px-5 py-3 font-mono text-xs"><code>gtl://config/user</code></td><td class="px-5 py-3 text-muted">User-level git-treeline configuration</td></tr>
+            <tr><td class="px-5 py-3 font-mono text-xs"><code>gtl://allocations</code></td><td class="px-5 py-3 text-muted">Full allocation registry across all projects</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-muted text-sm">
+        Every tool accepts an optional <code class="text-accent-light">path</code> argument. When omitted, the server uses the agent's current working directory.
+      </p>
     </div>
   </section>
 
@@ -1060,11 +1143,12 @@
   <section id="networking" class="px-4 sm:px-6 py-10 sm:py-16">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Networking</h2>
-      <p class="text-muted mb-8">
-        Git Treeline's networking layer gives each worktree a named URL &mdash; locally, on your LAN, or publicly. Three tools, one naming convention.
-      </p>
       <p class="text-muted mb-4">
-        See the <a href="/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">networking overview</a> for a quick comparison of when to use each tool.
+        Three tools give each worktree a named URL &mdash; locally, on your LAN, or publicly.
+      </p>
+      <p class="text-sm text-muted mb-8">See <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking</a> for the problem this solves and when to use each tool.</p>
+      <p class="text-muted mb-4">
+        See the <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">networking overview</a> for a quick comparison of when to use each tool.
       </p>
     </div>
   </section>
@@ -1390,10 +1474,13 @@
   <!-- Footer -->
   <footer class="px-4 sm:px-6 py-8 sm:py-12 border-t border-surface-border">
     <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 text-sm text-muted">
-      <div class="flex items-center gap-6">
+      <div class="flex flex-wrap items-center gap-6">
         <a href="https://github.com/git-treeline/git-treeline" class="hover:text-white transition-colors">GitHub</a>
         <a href="/docs/" class="hover:text-white transition-colors">Docs</a>
-        <a href="/networking/" class="hover:text-white transition-colors">Networking</a>
+        <a href="/features/isolation/" class="hover:text-white transition-colors">Isolation</a>
+        <a href="/features/networking/" class="hover:text-white transition-colors">Networking</a>
+        <a href="/features/workflows/" class="hover:text-white transition-colors">Workflows</a>
+        <a href="/features/agents/" class="hover:text-white transition-colors">AI Agents</a>
         <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a>
       </div>
       <p>Built by <a href="https://productmatter.co" class="text-accent-light hover:text-accent transition-colors">Product Matter</a></p>
