@@ -127,7 +127,7 @@
   </script>
 
   <!-- Hero -->
-  <section id="hero" class="flex flex-col items-center text-center px-4 sm:px-6 pt-28 sm:pt-40 pb-16 sm:pb-28">
+  <section id="hero" class="flex flex-col items-center text-center px-4 sm:px-6 pt-32 sm:pt-40 md:pt-48 pb-16 sm:pb-28">
     <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-6">
       git-treeline
     </h1>
@@ -135,7 +135,7 @@
       Review every branch at the same time
     </p>
     <p class="text-sm sm:text-base text-gray-400 max-w-2xl mb-8 sm:mb-12">
-      Agents build features in worktrees faster than you can review them. Git Treeline allocates server ports, clones databases, isolates background job processes, and more so your team can run every branch, across every repo, with zero collisions.
+      One CLI gives every branch its own ports, databases, and config. Nothing shared, nothing broken.
     </p>
     <div class="flex flex-col sm:flex-row items-center gap-4 mb-8 w-full max-w-2xl">
       <div class="install-cmd max-w-full overflow-x-auto">
@@ -167,7 +167,7 @@
     <div class="max-w-5xl mx-auto">
       <h2 class="section-heading text-center mb-4">Worktrees are easy to create. Hard&nbsp;to&nbsp;run.</h2>
       <p class="section-subtext text-center mx-auto mb-12">
-        <code class="text-accent-light">git worktree add</code> gives you a second checkout in seconds. But that checkout shares ports, databases, and config with every other branch. Three features ready for review, zero running.
+        <code class="text-white">git worktree add</code> gives you a second checkout in seconds. But it shares ports, databases, and config with every other branch.
       </p>
       <div class="grid md:grid-cols-2 gap-6">
         <div class="terminal">
@@ -221,40 +221,93 @@
     <div class="max-w-5xl mx-auto">
       <h2 class="section-heading text-center mb-4">Everything a worktree needs to run</h2>
       <p class="section-subtext text-center mx-auto mb-12">
-        Each capability is opt-in. Declare what your project needs in <code class="text-accent-light">.treeline.yml</code>, skip what it doesn't.
+        Each capability is opt-in. Declare what your project needs in <code class="text-accent-light">.treeline.yml</code>.
       </p>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="p-6 rounded-lg border border-surface-border">
-          <h3 class="text-lg mb-2">Port allocation</h3>
-          <p class="text-muted text-sm mb-3">
-            Assigns a unique port per worktree from a configurable base. Multi-port support for apps with separate asset build processes.
-          </p>
-          <code class="text-xs text-accent-light">PORT=3010 ESBUILD_PORT=3011</code>
+      <div class="max-w-3xl mx-auto">
+        <div class="feature-strip">
+          <div class="feature-strip-key">PORT=3010</div>
+          <div class="feature-strip-desc">Every worktree gets a unique port. Multi-port apps get sequential ports for asset servers.</div>
         </div>
-        <div class="p-6 rounded-lg border border-surface-border">
-          <h3 class="text-lg mb-2">Database cloning</h3>
-          <p class="text-muted text-sm mb-3">
-            Clones your development database per worktree. PostgreSQL via <code class="text-accent-light">createdb&nbsp;--template</code>, SQLite via file copy. Reset, restore from a dump, or clone from a different source with <code class="text-accent-light">gtl&nbsp;db</code>.
-          </p>
-          <code class="text-xs text-accent-light">gtl db reset &middot; gtl db restore dump.sql</code>
+        <div class="feature-strip">
+          <div class="feature-strip-key">myapp_dev_feature_auth</div>
+          <div class="feature-strip-desc">PostgreSQL cloned via <code class="text-accent-light">createdb --template</code>. SQLite copied. Reset, restore, or clone from any source with <code class="text-accent-light">gtl db</code>.</div>
         </div>
-        <div class="p-6 rounded-lg border border-surface-border">
-          <h3 class="text-lg mb-2">Environment isolation</h3>
-          <p class="text-muted text-sm mb-3">
-            Writes your <code class="text-accent-light">.env</code> file with interpolated ports, database names, and Redis URLs. Copies secrets from the main worktree. Runs setup commands with all allocated values available.
-          </p>
-          <code class="text-xs text-accent-light">.env.local &larr; allocated values</code>
+        <div class="feature-strip">
+          <div class="feature-strip-key">.env.local</div>
+          <div class="feature-strip-desc">Env file written with interpolated ports, database names, and Redis URLs. Secrets copied from the main worktree.</div>
+        </div>
+        <div class="feature-strip border-b-0">
+          <div class="feature-strip-key">editor: auto</div>
+          <div class="feature-strip-desc">Each worktree gets a unique title bar color generated from the branch name. VS Code, Cursor, JetBrains.</div>
+        </div>
+      </div>
+      <div class="mt-8 editor-mockup">
+        <div class="editor-window">
+          <div class="editor-titlebar" style="background:#1a6b3c;">main :3000</div>
+          <div class="editor-body-mock">
+            <div class="editor-line w-3/4"></div>
+            <div class="editor-line w-1/2"></div>
+            <div class="editor-line w-5/6"></div>
+            <div class="editor-line w-2/3"></div>
+          </div>
+        </div>
+        <div class="editor-window">
+          <div class="editor-titlebar" style="background:#1a5276;">feature-auth :3010</div>
+          <div class="editor-body-mock">
+            <div class="editor-line w-1/2"></div>
+            <div class="editor-line w-4/5"></div>
+            <div class="editor-line w-3/5"></div>
+            <div class="editor-line w-2/3"></div>
+          </div>
+        </div>
+        <div class="editor-window">
+          <div class="editor-titlebar" style="background:#7b241c;">pr-42 :3020</div>
+          <div class="editor-body-mock">
+            <div class="editor-line w-5/6"></div>
+            <div class="editor-line w-1/3"></div>
+            <div class="editor-line w-2/3"></div>
+            <div class="editor-line w-1/2"></div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- One Command Moment -->
+  <section id="one-command" class="px-4 sm:px-6 py-12 sm:py-24 bg-surface-raised">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-muted text-sm uppercase tracking-wider mb-4">Type a PR number. Get a running app.</p>
+      <div class="mono-callout mb-8">gtl review 42 --start</div>
+      <div class="terminal max-w-2xl mx-auto text-left">
+        <div class="terminal-header">
+          <span class="terminal-dot bg-red-500"></span>
+          <span class="terminal-dot bg-yellow-500"></span>
+          <span class="terminal-dot bg-green-500"></span>
+        </div>
+        <div class="terminal-body space-y-2">
+          <p class="output">Fetching PR <span class="highlight">#42</span> (Add OAuth login)</p>
+          <p class="output">Creating worktree <span class="highlight">myapp-pr-42</span></p>
+          <p class="output">Allocated port <span class="highlight">3020</span></p>
+          <p class="output">Cloned database <span class="highlight">myapp_dev_pr_42</span></p>
+          <p class="output">Wrote <span class="highlight">.env.local</span></p>
+          <p class="output">Running setup commands...</p>
+          <p class="output">Starting server on port <span class="highlight">3020</span>...</p>
+          <p class="output text-accent mt-1">==> Router: https://myapp-pr-42.localhost</p>
+          <p class="output text-accent">==> Tunnel: gtl tunnel &rarr; https://myapp-pr-42.myteam.dev</p>
+        </div>
+      </div>
+      <p class="text-sm text-muted mt-6 max-w-lg mx-auto">
+        One command fetches the PR, creates a worktree, allocates ports and databases, boots the server, and shows the URL. <code class="text-accent-light">gtl release --drop-db</code> cleans everything up when you're done.
+      </p>
+    </div>
+  </section>
+
   <!-- Process Supervisor -->
-  <section id="supervisor" class="px-4 sm:px-6 py-12 sm:py-24 bg-surface-raised">
+  <section id="supervisor" class="px-4 sm:px-6 py-12 sm:py-24">
     <div class="max-w-5xl mx-auto">
       <h2 class="section-heading text-center mb-4">Human-visible, agent-controllable</h2>
       <p class="section-subtext text-center mx-auto mb-12">
-        <code class="text-accent-light">gtl start</code> runs your dev server under a supervisor with allocated env vars injected directly into the process &mdash; no <code class="text-accent-light">.env</code> file reading required. Agents can stop and restart it remotely while you watch the logs in your own terminal. No hidden processes, no detached sessions.
+        You watch the logs. Agents control the server.
       </p>
       <div class="grid md:grid-cols-2 gap-6">
         <div class="terminal">
@@ -308,93 +361,59 @@
   <section id="networking" class="px-4 sm:px-6 py-12 sm:py-24">
     <div class="max-w-5xl mx-auto">
       <h2 class="section-heading text-center mb-4">Every worktree gets a URL</h2>
-      <p class="section-subtext text-center mx-auto mb-12">
-        Stop remembering port numbers. Git Treeline maps branches to named URLs &mdash; locally with HTTPS, or publicly through Cloudflare tunnels.
+      <p class="section-subtext text-center mx-auto mb-10">
+        Stop remembering port numbers.
       </p>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="p-6 rounded-lg border border-surface-border">
-          <h3 class="text-lg mb-2">Local HTTPS router</h3>
-          <p class="text-muted text-sm mb-3">
-            <code class="text-accent-light">gtl serve</code> maps every worktree to <code class="text-accent-light">{branch}.localhost</code> with trusted certificates. Always-on background service, zero config per branch.
-          </p>
-          <code class="text-xs text-accent-light">https://feature-auth.localhost</code>
+      <div class="pipeline mb-10">
+        <div class="pipeline-step">
+          <code class="pipeline-url text-muted">localhost:3010</code>
+          <p class="pipeline-label">Bare port</p>
         </div>
-        <div class="p-6 rounded-lg border border-surface-border">
-          <h3 class="text-lg mb-2">Port forwarding</h3>
-          <p class="text-muted text-sm mb-3">
-            <code class="text-accent-light">gtl proxy</code> binds a fixed port and forwards to the current worktree. OAuth callbacks, webhooks, and Stripe all point to <code class="text-accent-light">:3000</code> regardless of which branch you're running.
-          </p>
-          <code class="text-xs text-accent-light">gtl proxy 3000 --tls</code>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-arrow-mobile">&darr;</span>
+        <div class="pipeline-step">
+          <code class="pipeline-url text-accent-light">feature-auth.localhost</code>
+          <p class="pipeline-label">gtl serve</p>
         </div>
-        <div class="p-6 rounded-lg border border-surface-border">
-          <h3 class="text-lg mb-2">Public tunnels</h3>
-          <p class="text-muted text-sm mb-3">
-            <code class="text-accent-light">gtl tunnel</code> exposes a running branch at a public URL via Cloudflare. Branch-named subdomains on your own domain, or a quick random URL with no account.
-          </p>
-          <code class="text-xs text-accent-light">https://feature-auth.myteam.dev</code>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-arrow-mobile">&darr;</span>
+        <div class="pipeline-step">
+          <code class="pipeline-url text-accent">feature-auth.myteam.dev</code>
+          <p class="pipeline-label">gtl tunnel</p>
         </div>
       </div>
-      <p class="text-center mt-8">
+      <div class="max-w-2xl mx-auto text-sm text-muted space-y-2 text-center mb-8">
+        <p><code class="text-accent-light">gtl serve</code> maps every branch to <code class="text-accent-light">{branch}.localhost</code> with HTTPS. Always-on background service.</p>
+        <p><code class="text-accent-light">gtl proxy</code> binds a fixed port for OAuth callbacks and webhooks.</p>
+        <p><code class="text-accent-light">gtl tunnel</code> exposes any branch publicly via Cloudflare. Branch-named subdomains on your domain.</p>
+      </div>
+      <p class="text-center">
         <a href="/networking/" class="text-accent-light hover:text-accent underline underline-offset-2 text-sm">Full networking documentation &rarr;</a>
       </p>
     </div>
   </section>
 
-  <!-- Zero Footprint -->
-  <section id="zero-footprint" class="px-4 sm:px-6 py-12 sm:py-24">
+  <!-- Fits Your Workflow -->
+  <section id="workflow" class="px-4 sm:px-6 py-12 sm:py-24 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
-      <h2 class="section-heading text-center mb-4">Zero footprint until you need it</h2>
-      <p class="section-subtext text-center mx-auto mb-12">
-        Git Treeline is invisible until you need it, and out of the way once it's done.
-      </p>
-      <div class="grid sm:grid-cols-2 gap-6">
-        <div class="p-6 rounded-lg border border-surface-border">
-          <h3 class="text-lg mb-2">No runtime dependency</h3>
-          <p class="text-muted text-sm">
-            Git Treeline is a CLI tool, not a library. It doesn't ship in your bundle, your Docker image, or your production deploy. It writes a <code class="text-accent-light">.env</code> file and walks away.
-          </p>
+      <h2 class="section-heading text-center mb-10">Fits your workflow</h2>
+      <div class="grid md:grid-cols-2 gap-8 md:gap-12">
+        <div>
+          <h3 class="text-sm uppercase tracking-wider text-muted font-medium mb-5">Zero footprint</h3>
+          <ul class="tight-list">
+            <li><strong>No runtime dependency.</strong> CLI tool, not a library. Writes a <code class="text-accent-light">.env</code> file and walks away.</li>
+            <li><strong>No lock-in.</strong> <code class="text-accent-light">.treeline.yml</code> is declarative config. Non-users just ignore it.</li>
+            <li><strong>No magic.</strong> No git hooks, no daemons, no implicit behavior.</li>
+            <li><strong>Opt-in per developer.</strong> Commit the config, let the team decide.</li>
+          </ul>
         </div>
-        <div class="p-6 rounded-lg border border-surface-border">
-          <h3 class="text-lg mb-2">No lock-in</h3>
-          <p class="text-muted text-sm">
-            <code class="text-accent-light">.treeline.yml</code> is declarative config that sits in your repo. Developers who don't have <code class="text-accent-light">gtl</code> installed just ignore it. The app works exactly as before.
-          </p>
-        </div>
-        <div class="p-6 rounded-lg border border-surface-border">
-          <h3 class="text-lg mb-2">No magic</h3>
-          <p class="text-muted text-sm">
-            No git hooks. No background daemons. No shell integrations. No implicit behavior. You run <code class="text-accent-light">gtl setup</code>, it allocates resources and writes your env file. That's it.
-          </p>
-        </div>
-        <div class="p-6 rounded-lg border border-surface-border">
-          <h3 class="text-lg mb-2">Opt-in per developer</h3>
-          <p class="text-muted text-sm">
-            Commit the config, let the team decide. Developers who work in worktrees install <code class="text-accent-light">gtl</code> and get isolated environments. Everyone else doesn't notice it exists.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Built for AI Agents -->
-  <section id="agents" class="px-4 sm:px-6 py-12 sm:py-24 bg-surface-raised">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="section-heading text-center mb-4">Built for AI agents</h2>
-      <p class="section-subtext text-center mx-auto mb-12">
-        Two commands plug Git Treeline into any agent orchestrator. Allocate on worktree creation, tear down on completion. Structured output and auto-generated context files keep agents informed.
-      </p>
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="p-5 rounded-lg border border-surface-border">
-          <h3 class="text-sm font-mono text-accent mb-2">Lifecycle hooks</h3>
-          <p class="text-muted text-sm"><code class="text-accent-light">gtl setup</code> and <code class="text-accent-light">gtl release --drop-db</code> map directly to agent worktree creation and teardown.</p>
-        </div>
-        <div class="p-5 rounded-lg border border-surface-border">
-          <h3 class="text-sm font-mono text-accent mb-2">Machine output</h3>
-          <p class="text-muted text-sm"><code class="text-accent-light">--json</code> on any read command. Orchestrators get structured data &mdash; ports, databases, paths &mdash; without parsing.</p>
-        </div>
-        <div class="p-5 rounded-lg border border-surface-border">
-          <h3 class="text-sm font-mono text-accent mb-2">Agent context</h3>
-          <p class="text-muted text-sm"><code class="text-accent-light">gtl init</code> writes an <code class="text-accent-light">AGENTS.md</code> section so Cursor, Claude Code, and Codex agents know to use <code class="text-accent-light">gtl port</code> for port discovery.</p>
+        <div>
+          <h3 class="text-sm uppercase tracking-wider text-muted font-medium mb-5">Built for AI agents</h3>
+          <ul class="tight-list">
+            <li><strong>Lifecycle hooks.</strong> <code class="text-accent-light">gtl setup .</code> on creation, <code class="text-accent-light">gtl release . --drop-db</code> on teardown.</li>
+            <li><strong>Machine output.</strong> <code class="text-accent-light">--json</code> on read commands. Structured data, no parsing.</li>
+            <li><strong>Agent context.</strong> <code class="text-accent-light">gtl init</code> writes <code class="text-accent-light">AGENTS.md</code> for Cursor, Claude Code, and Codex.</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -407,14 +426,14 @@
       <p class="section-subtext text-center mx-auto mb-16">
         Install, initialize your project, and create your first isolated worktree.
       </p>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-16">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-10">
         <div class="text-center">
           <div class="text-accent text-3xl font-mono font-bold mb-4">1</div>
           <h3 class="text-lg mb-3">Install</h3>
           <div class="install-cmd justify-center">
             <code class="text-accent-light text-xs">brew install git-treeline/tap/git-treeline</code>
           </div>
-          <p class="text-xs text-muted mt-3">Also available via <code class="text-accent-light">go install</code> or <a href="https://github.com/git-treeline/git-treeline/releases" class="text-accent-light underline underline-offset-2">binary download</a></p>
+          <p class="text-xs text-muted mt-3">Also via <code class="text-accent-light">go install</code> or <a href="https://github.com/git-treeline/git-treeline/releases" class="text-accent-light underline underline-offset-2">binary download</a></p>
         </div>
         <div class="text-center">
           <div class="text-accent text-3xl font-mono font-bold mb-4">2</div>
@@ -422,7 +441,7 @@
           <div class="install-cmd justify-center">
             <code class="text-accent-light text-xs">gtl init</code>
           </div>
-          <p class="text-xs text-muted mt-3">Auto-detects your framework, creates <code class="text-accent-light">.treeline.yml</code>, prints setup guidance</p>
+          <p class="text-xs text-muted mt-3">Auto-detects your framework, creates <code class="text-accent-light">.treeline.yml</code></p>
         </div>
         <div class="text-center">
           <div class="text-accent text-3xl font-mono font-bold mb-4">3</div>
@@ -433,6 +452,16 @@
           <p class="text-xs text-muted mt-3">Worktree created, resources allocated, ready to boot</p>
         </div>
       </div>
+      <div class="framework-strip">
+        <span class="framework-pill">Rails</span>
+        <span class="framework-pill">Next.js</span>
+        <span class="framework-pill">Vite</span>
+        <span class="framework-pill">Express</span>
+        <span class="framework-pill">Python</span>
+        <span class="framework-pill">Rust</span>
+        <span class="framework-pill">Go</span>
+      </div>
+      <p class="text-xs text-muted text-center mt-3">Auto-detected at init with per-framework guidance</p>
     </div>
   </section>
 
@@ -444,13 +473,13 @@
         <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
           <summary class="faq-summary" itemprop="name">What does git-treeline do?</summary>
           <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">Git Treeline is a CLI tool that sets up isolated development environments per git worktree. It allocates unique ports, clones PostgreSQL or SQLite databases, assigns Redis namespaces, writes env files with interpolated values, copies secret files, and runs setup commands. One command turns a bare worktree checkout into a bootable copy of your app.</p>
+            <p itemprop="text">Git Treeline is a CLI that sets up isolated development environments per git worktree &mdash; unique ports, cloned databases, Redis namespaces, env files, and setup commands. One command turns a bare checkout into a bootable copy of your app.</p>
           </div>
         </details>
         <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
           <summary class="faq-summary" itemprop="name">Do I need to use all the features?</summary>
           <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">No. Every capability is opt-in. If your app only needs port allocation and an env file, that's a three-line <code class="text-accent-light">.treeline.yml</code>. Database cloning, Redis namespacing, file copying, and setup commands are all configured only if you need them.</p>
+            <p itemprop="text">No. Every capability is opt-in. If your app only needs port allocation and an env file, that's a three-line <code class="text-accent-light">.treeline.yml</code>.</p>
           </div>
         </details>
         <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
@@ -462,19 +491,19 @@
         <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
           <summary class="faq-summary" itemprop="name">Does it work with AI coding agents?</summary>
           <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">Yes. Git Treeline is designed for it. Add <code class="text-accent-light">gtl setup .</code> as a lifecycle hook when an agent creates a worktree, and <code class="text-accent-light">gtl release . --drop-db</code> on teardown. Use <code class="text-accent-light">--json</code> output for programmatic access. <code class="text-accent-light">gtl init</code> generates agent context files for Cursor and Claude so agents understand the environment.</p>
+            <p itemprop="text">Yes. Add <code class="text-accent-light">gtl setup .</code> on worktree creation and <code class="text-accent-light">gtl release . --drop-db</code> on teardown. <code class="text-accent-light">--json</code> output for programmatic access, and <code class="text-accent-light">gtl init</code> generates agent context files for Cursor, Claude Code, and Codex.</p>
           </div>
         </details>
         <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
           <summary class="faq-summary" itemprop="name">Does git-treeline add runtime dependencies to my app?</summary>
           <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">No. Git Treeline is a standalone CLI binary. It doesn't ship in your bundle, your Docker image, or your production deploy. It writes a <code class="text-accent-light">.env</code> file at setup time and nothing else. Your app has zero awareness that Treeline exists.</p>
+            <p itemprop="text">No. It's a standalone CLI binary that writes an <code class="text-accent-light">.env</code> file at setup time. Nothing ships in your bundle, Docker image, or deploy.</p>
           </div>
         </details>
         <details class="faq-item group" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
           <summary class="faq-summary" itemprop="name">What if some team members don't use git-treeline?</summary>
           <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <p itemprop="text">Nothing changes for them. <code class="text-accent-light">.treeline.yml</code> is a config file in your repo that they can ignore. The app still boots on default ports with the default database. Developers who work in worktrees install <code class="text-accent-light">gtl</code> and get isolated environments. Everyone else keeps their existing workflow.</p>
+            <p itemprop="text">Nothing changes for them. <code class="text-accent-light">.treeline.yml</code> is a config file they can ignore. The app boots on default ports with the default database.</p>
           </div>
         </details>
       </div>
@@ -488,9 +517,7 @@
   <section id="cta" class="px-4 sm:px-6 py-12 sm:py-24 text-center">
     <div class="max-w-2xl mx-auto">
       <h2 class="section-heading mb-4">Every branch, running</h2>
-      <p class="section-subtext mx-auto mb-10">
-        One config file. One CLI command. Your whole team sees the work, not just the diff.
-      </p>
+      <p class="section-subtext mx-auto mb-10">Your whole team sees the work, not just the diff.</p>
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 w-full">
         <div class="install-cmd max-w-full overflow-x-auto">
           <code class="text-accent-light whitespace-nowrap text-xs sm:text-sm">brew install git-treeline/tap/git-treeline</code>

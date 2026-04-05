@@ -73,7 +73,7 @@
           <a href="#supervisor" class="text-accent-light hover:text-accent transition-colors">Supervisor</a>
           <a href="#ai-agents" class="text-accent-light hover:text-accent transition-colors">AI agents</a>
           <span class="text-surface-border select-none">&middot;</span>
-          <a href="/networking/" class="text-accent-light hover:text-accent transition-colors">Networking &nearr;</a>
+          <a href="#networking" class="text-accent-light hover:text-accent transition-colors">Networking</a>
         </div>
       </nav>
     </div>
@@ -110,11 +110,15 @@
             <li><a href="#ai-agents" class="docs-sidebar-link">AI agents</a></li>
           </ul>
         </div>
-        <div class="pt-4 border-t border-surface-border">
-          <a href="/networking/" class="docs-sidebar-link flex items-center gap-1.5 text-accent-light">
-            Networking
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-          </a>
+        <div class="mb-6">
+          <h4 class="text-xs uppercase tracking-wider text-muted font-medium mb-3">Networking</h4>
+          <ul class="space-y-1.5">
+            <li><a href="#networking" class="docs-sidebar-link">Overview</a></li>
+            <li><a href="#net-serve" class="docs-sidebar-link">gtl serve</a></li>
+            <li><a href="#net-proxy" class="docs-sidebar-link">gtl proxy</a></li>
+            <li><a href="#net-tunnel" class="docs-sidebar-link">gtl tunnel</a></li>
+            <li><a href="#route-keys" class="docs-sidebar-link">Route keys</a></li>
+          </ul>
         </div>
       </nav>
     </aside>
@@ -432,12 +436,12 @@
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">status</td>
               <td class="px-5 py-3 font-mono text-muted text-xs"><code>--project</code> <code>--json</code> <code>--check</code> <code>--watch</code> <code>--interval</code></td>
-              <td class="px-5 py-3 text-muted">Show all allocations. <code class="text-accent-light">--project</code> filters by project. <code class="text-accent-light">--check</code> probes ports. <code class="text-accent-light">--watch</code> auto-refreshes.</td>
+              <td class="px-5 py-3 text-muted">Show all allocations. <code class="text-accent-light">--check</code> probes ports to verify servers are responding. <code class="text-accent-light">--watch</code> auto-refreshes at <code class="text-accent-light">--interval</code> (default 2s) for live monitoring. <code class="text-accent-light">--json</code> for structured output.</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">prune</td>
               <td class="px-5 py-3 font-mono text-muted text-xs"><code>--stale</code> <code>--merged</code> <code>--drop-db</code> <code>--force</code></td>
-              <td class="px-5 py-3 text-muted">Clean orphaned allocations. <code class="text-accent-light">--stale</code> targets missing directories. <code class="text-accent-light">--merged</code> targets branches merged to the merge target.</td>
+              <td class="px-5 py-3 text-muted">Clean orphaned allocations. <code class="text-accent-light">--stale</code> targets worktrees whose directory no longer exists on disk. <code class="text-accent-light">--merged</code> targets branches merged to the <code class="text-accent-light">merge_target</code> (from <code class="text-accent-light">.treeline.yml</code> or auto-detected). <code class="text-accent-light">--drop-db</code> also removes cloned databases.</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">config list</td>
@@ -500,19 +504,24 @@
               <td class="px-5 py-3 text-muted">Atomic stop + start. Bounces the supervised server in one step.</td>
             </tr>
             <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">editor refresh</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs"></td>
+              <td class="px-5 py-3 text-muted">Re-apply editor title, color, and theme settings for the current worktree's branch.</td>
+            </tr>
+            <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">serve</td>
               <td class="px-5 py-3 font-mono text-muted text-xs"></td>
-              <td class="px-5 py-3 text-muted">Local HTTPS subdomain router. <code class="text-accent-light">serve install</code> for one-time setup, <code class="text-accent-light">serve status</code> for routes. <a href="/networking/#serve" class="text-accent-light hover:text-accent underline underline-offset-2">Details</a></td>
+              <td class="px-5 py-3 text-muted">Local HTTPS subdomain router. <code class="text-accent-light">serve install</code> for one-time setup, <code class="text-accent-light">serve status</code> for routes. <a href="#net-serve" class="text-accent-light hover:text-accent underline underline-offset-2">Details</a></td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">proxy &lt;port&gt; [target]</td>
               <td class="px-5 py-3 font-mono text-muted text-xs"><code>--tls</code></td>
-              <td class="px-5 py-3 text-muted">Single-port reverse proxy. Target defaults to current worktree. <a href="/networking/#proxy" class="text-accent-light hover:text-accent underline underline-offset-2">Details</a></td>
+              <td class="px-5 py-3 text-muted">Single-port reverse proxy. Target defaults to current worktree. <a href="#net-proxy" class="text-accent-light hover:text-accent underline underline-offset-2">Details</a></td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">tunnel [port]</td>
               <td class="px-5 py-3 font-mono text-muted text-xs"><code>--domain</code></td>
-              <td class="px-5 py-3 text-muted">Public HTTPS tunnel via Cloudflare. <code class="text-accent-light">tunnel setup</code> for one-time config. <a href="/networking/#tunnel" class="text-accent-light hover:text-accent underline underline-offset-2">Details</a></td>
+              <td class="px-5 py-3 text-muted">Public HTTPS tunnel via Cloudflare. <code class="text-accent-light">tunnel setup</code> for one-time config. <a href="#net-tunnel" class="text-accent-light hover:text-accent underline underline-offset-2">Details</a></td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">version</td>
@@ -1044,6 +1053,309 @@
       <p class="text-muted text-sm mt-4">
         Use <code class="text-accent-light">--skip-agent-config</code> on <code class="text-accent-light">gtl init</code> to opt out of context file generation.
       </p>
+    </div>
+  </section>
+
+  <!-- Networking -->
+  <section id="networking" class="px-4 sm:px-6 py-10 sm:py-16">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading mb-4">Networking</h2>
+      <p class="text-muted mb-8">
+        Git Treeline's networking layer gives each worktree a named URL &mdash; locally, on your LAN, or publicly. Three tools, one naming convention.
+      </p>
+      <p class="text-muted mb-4">
+        See the <a href="/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">networking overview</a> for a quick comparison of when to use each tool.
+      </p>
+    </div>
+  </section>
+
+  <!-- gtl serve reference -->
+  <section id="net-serve" class="px-4 sm:px-6 py-10 sm:py-16 bg-surface-raised">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading mb-4">gtl serve &mdash; Local HTTPS subdomain router</h2>
+      <p class="text-muted mb-8">
+        Maps <code class="text-accent-light">{project}-{branch}.localhost</code> to the correct worktree port. Runs as a <code class="text-accent-light">launchd</code> (macOS) or <code class="text-accent-light">systemd</code> (Linux) background service. Routes refresh every 5 seconds from the registry.
+      </p>
+
+      <h3 class="text-xl font-mono text-white mb-4">Install (one-time)</h3>
+      <p class="text-muted mb-4">
+        Generates trusted HTTPS certificates, adds port forwarding for clean URLs, and registers the background service. Your system password is needed twice &mdash; once to trust the CA, once to forward port 443.
+      </p>
+      <div class="terminal mb-8">
+        <div class="terminal-header">
+          <span class="terminal-dot bg-red-500"></span>
+          <span class="terminal-dot bg-yellow-500"></span>
+          <span class="terminal-dot bg-green-500"></span>
+        </div>
+        <div class="terminal-body space-y-2">
+          <p><span class="prompt">$</span> <span class="command">gtl serve install</span></p>
+          <p class="output">gtl serve is a local HTTPS router that gives every worktree a URL:</p>
+          <p class="output">  https://{project}-{branch}.localhost</p>
+          <p class="output"></p>
+          <p class="output">To set this up, your system password will be needed twice:</p>
+          <p class="output">  1. To trust a certificate authority so browsers accept *.localhost</p>
+          <p class="output">  2. To forward port 443 &rarr; 3001 so URLs don't need a port number</p>
+          <p class="output"></p>
+          <p class="output text-accent">All set! Router is running in the background.</p>
+          <p class="output">  https://{project}-{branch}.localhost</p>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-mono text-white mb-4">Check status and routes</h3>
+      <div class="terminal mb-8">
+        <div class="terminal-body space-y-2">
+          <p><span class="prompt">$</span> <span class="command">gtl serve status</span></p>
+          <p class="output">Router: running on port 3001 (HTTPS)</p>
+          <p class="output">CA: installed</p>
+          <p class="output">Port forwarding: active (443 &rarr; router)</p>
+          <p class="output"></p>
+          <p class="output">Routes (3):</p>
+          <p class="output">  https://<span class="highlight">myapp-main</span>.localhost &rarr; :3000</p>
+          <p class="output">  https://<span class="highlight">myapp-feature-auth</span>.localhost &rarr; :3010</p>
+          <p class="output">  https://<span class="highlight">myapp-pr-42</span>.localhost &rarr; :3020</p>
+        </div>
+      </div>
+      <p class="text-muted mb-8">
+        Navigating to bare <code class="text-accent-light">https://localhost</code> shows a clickable route table with direct links to every active worktree.
+      </p>
+
+      <h3 class="text-xl font-mono text-white mb-4">How it works</h3>
+      <ol class="list-decimal list-inside text-muted space-y-2 mb-8 pl-2">
+        <li><code class="text-accent-light">gtl serve install</code> generates a local CA and wildcard <code class="text-accent-light">*.localhost</code> server certificate.</li>
+        <li>The CA is trusted in your system keychain so browsers show a green lock.</li>
+        <li>Port 443 is forwarded to the router (default port 3001) so URLs don't need a port number.</li>
+        <li>A background service starts the router automatically on boot.</li>
+        <li>The router reads the git-treeline registry every 5 seconds and updates its route table.</li>
+        <li>Incoming requests are matched by subdomain and reverse-proxied to the correct local port. The <code class="text-accent-light">Host</code> header is preserved.</li>
+      </ol>
+
+      <h3 class="text-xl font-mono text-white mb-4">Uninstall</h3>
+      <div class="terminal mb-4">
+        <div class="terminal-body space-y-2">
+          <p><span class="prompt">$</span> <span class="command">gtl serve uninstall</span></p>
+          <p class="output">Router service removed.</p>
+          <p class="output">Port forwarding removed.</p>
+          <p class="output">CA trust removed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- gtl proxy reference -->
+  <section id="net-proxy" class="px-4 sm:px-6 py-10 sm:py-16">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading mb-4">gtl proxy &mdash; Single-port reverse proxy</h2>
+      <p class="text-muted mb-8">
+        External services &mdash; OAuth providers, Stripe webhooks, CORS policies &mdash; often expect a fixed URL. <code class="text-accent-light">gtl proxy</code> binds a fixed listen port and forwards traffic to the current worktree's allocated port.
+      </p>
+
+      <h3 class="text-xl font-mono text-white mb-4">Usage</h3>
+      <div class="terminal mb-8">
+        <div class="terminal-body space-y-4">
+          <div>
+            <p class="text-xs text-muted mb-1"># Forward :3000 to the current worktree's allocated port</p>
+            <p><span class="prompt">$</span> <span class="command">gtl proxy 3000</span></p>
+            <p class="output">Proxying :3000 &rarr; :3010</p>
+          </div>
+          <div>
+            <p class="text-xs text-muted mb-1"># Explicit target port</p>
+            <p><span class="prompt">$</span> <span class="command">gtl proxy 3000 3010</span></p>
+          </div>
+          <div>
+            <p class="text-xs text-muted mb-1"># With local HTTPS</p>
+            <p><span class="prompt">$</span> <span class="command">gtl proxy 443 --tls</span></p>
+            <p class="output">Proxying https://localhost:443 &rarr; :3010</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-mono text-white mb-4">Auto-detection</h3>
+      <p class="text-muted mb-8">
+        When you omit the target port, <code class="text-accent-light">gtl proxy</code> reads the registry for the current directory and forwards to the first allocated port. Run from inside a worktree that has been set up with <code class="text-accent-light">gtl setup</code>.
+      </p>
+
+      <h3 class="text-xl font-mono text-white mb-4">TLS certificates</h3>
+      <p class="text-muted mb-4">
+        The <code class="text-accent-light">--tls</code> flag terminates HTTPS on the listen side and forwards plain HTTP to the backend. Certificate resolution order:
+      </p>
+      <ol class="list-decimal list-inside text-muted space-y-2 mb-8 pl-2">
+        <li>Cached cert in <code class="text-accent-light">~/.config/git-treeline/certs/</code></li>
+        <li><a href="https://github.com/FiloSottile/mkcert" class="text-accent-light hover:text-accent underline underline-offset-2">mkcert</a> if installed &mdash; generates browser-trusted localhost certs</li>
+        <li>Self-signed fallback (ECDSA P-256, 1 year)</li>
+      </ol>
+
+      <h3 class="text-xl font-mono text-white mb-4">Protocol support</h3>
+      <p class="text-muted">
+        Handles HTTP, WebSocket upgrades, and SSE streams transparently. The <code class="text-accent-light">Host</code> header is preserved.
+      </p>
+    </div>
+  </section>
+
+  <!-- gtl tunnel reference -->
+  <section id="net-tunnel" class="px-4 sm:px-6 py-10 sm:py-16 bg-surface-raised">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading mb-4">gtl tunnel &mdash; Public HTTPS via Cloudflare</h2>
+      <p class="text-muted mb-8">
+        Expose a running worktree to the public internet. Git Treeline manages <a href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/" class="text-accent-light hover:text-accent underline underline-offset-2">cloudflared</a> tunnels so you don't write config files or remember flags.
+      </p>
+
+      <h3 class="text-xl font-mono text-white mb-4">Quick mode (no account needed)</h3>
+      <p class="text-muted mb-4">
+        Disposable random URL in seconds. No Cloudflare account, no setup.
+      </p>
+      <div class="terminal mb-8">
+        <div class="terminal-body space-y-2">
+          <p><span class="prompt">~/feature-auth $</span> <span class="command">gtl tunnel</span></p>
+          <p class="output">Tunneling port <span class="highlight">3010</span></p>
+          <p class="output text-accent">https://random-slug-here.trycloudflare.com</p>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-mono text-white mb-4">Named mode (your domain)</h3>
+      <p class="text-muted mb-4">
+        After one-time setup, <code class="text-accent-light">gtl tunnel</code> automatically maps your branch to a subdomain on your domain. Uses the same <a href="#route-keys" class="text-accent-light hover:text-accent underline underline-offset-2">route key</a> as <code class="text-accent-light">gtl serve</code>.
+      </p>
+      <div class="terminal mb-8">
+        <div class="terminal-body space-y-2">
+          <p><span class="prompt">~/feature-auth $</span> <span class="command">gtl tunnel</span></p>
+          <p class="output">Tunneling port <span class="highlight">3010</span> as <span class="highlight">myapp-feature-auth</span></p>
+          <p class="output text-accent">https://myapp-feature-auth.myteam.dev</p>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-mono text-white mb-4">Setup walkthrough</h3>
+      <p class="text-muted mb-4">
+        <code class="text-accent-light">gtl tunnel setup</code> is a 5-step interactive wizard:
+      </p>
+      <div class="terminal mb-8">
+        <div class="terminal-body space-y-2">
+          <p><span class="prompt">$</span> <span class="command">gtl tunnel setup</span></p>
+          <p class="output">  Step 1: Checking cloudflared</p>
+          <p class="output">    cloudflared found.</p>
+          <p class="output"></p>
+          <p class="output">  Step 2: Cloudflare authentication</p>
+          <p class="output">    Opening Cloudflare login in your browser...</p>
+          <p class="output">    Authenticated.</p>
+          <p class="output"></p>
+          <p class="output">  Step 3: Create tunnel</p>
+          <p class="output">    Tunnel name [gtl]: <span class="text-white">gtl</span></p>
+          <p class="output">    Tunnel created.</p>
+          <p class="output"></p>
+          <p class="output">  Step 4: Domain configuration</p>
+          <p class="output">    Domain (e.g. myteam.dev): <span class="text-white">myteam.dev</span></p>
+          <p class="output">    Routing *.myteam.dev &rarr; tunnel "gtl"...</p>
+          <p class="output">    DNS configured.</p>
+          <p class="output"></p>
+          <p class="output">  Step 5: Saving configuration</p>
+          <p class="output">    Saved tunnel.name=gtl, tunnel.domain=myteam.dev</p>
+          <p class="output"></p>
+          <p class="output text-accent">Done! You can now run:</p>
+          <p class="output">  gtl tunnel</p>
+          <p class="output">  Example: https://myapp-feature-auth.myteam.dev</p>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-mono text-white mb-4">How named tunnels work</h3>
+      <ol class="list-decimal list-inside text-muted space-y-2 mb-8 pl-2">
+        <li><code class="text-accent-light">gtl tunnel setup</code> creates a Cloudflare tunnel and a wildcard DNS record (<code class="text-accent-light">*.myteam.dev</code>).</li>
+        <li>When you run <code class="text-accent-light">gtl tunnel</code>, it resolves the project name and branch, computes a <a href="#route-keys" class="text-accent-light hover:text-accent underline underline-offset-2">route key</a>, and writes a per-run cloudflared config.</li>
+        <li>The config routes <code class="text-accent-light">{routeKey}.{domain}</code> to <code class="text-accent-light">http://localhost:{port}</code>.</li>
+        <li>Cloudflare terminates TLS at the edge. The local connection is plain HTTP.</li>
+        <li>If project or branch can't be determined, it falls back to quick mode.</li>
+      </ol>
+
+      <h3 class="text-xl font-mono text-white mb-4">Requirements</h3>
+      <p class="text-muted">
+        Quick mode needs <code class="text-accent-light">cloudflared</code> installed (no account). Named mode needs a Cloudflare account with a domain. On macOS, <code class="text-accent-light">gtl tunnel setup</code> offers to install cloudflared via Homebrew if missing.
+      </p>
+    </div>
+  </section>
+
+  <!-- Route key convention -->
+  <section id="route-keys" class="px-4 sm:px-6 py-10 sm:py-16">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading mb-4">Route key convention</h2>
+      <p class="text-muted mb-8">
+        Both <code class="text-accent-light">gtl serve</code> and <code class="text-accent-light">gtl tunnel</code> derive URLs from the same route key. Computed from your project name (from <code class="text-accent-light">.treeline.yml</code>) and the current git branch:
+      </p>
+      <ol class="list-decimal list-inside text-muted space-y-2 mb-8 pl-2">
+        <li>Project and branch names are lowercased</li>
+        <li>Common branch prefixes stripped: <code class="text-accent-light">feature/</code>, <code class="text-accent-light">chore/</code>, <code class="text-accent-light">bugfix/</code>, <code class="text-accent-light">hotfix/</code></li>
+        <li>Slashes and underscores become dashes</li>
+        <li>Non-alphanumeric characters (except dashes) removed</li>
+        <li>Consecutive dashes collapsed</li>
+        <li>Result: <code class="text-accent-light">{project}-{branch}</code></li>
+      </ol>
+
+      <h3 class="text-xl font-mono text-white mb-4">Examples</h3>
+      <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
+        <table class="cli-table w-full text-sm text-left">
+          <thead>
+            <tr class="border-b border-surface-border bg-surface">
+              <th class="px-5 py-3 font-mono text-accent-light font-medium">Branch</th>
+              <th class="px-5 py-3 font-mono text-accent-light font-medium">Route key</th>
+              <th class="px-5 py-3 text-accent-light font-medium">Local URL</th>
+              <th class="px-5 py-3 text-accent-light font-medium">Tunnel URL</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-border">
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">main</td>
+              <td class="px-5 py-3 font-mono text-muted">myapp-main</td>
+              <td class="px-5 py-3 text-muted text-xs">myapp-main.localhost</td>
+              <td class="px-5 py-3 text-muted text-xs">myapp-main.myteam.dev</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">feature/auth-flow</td>
+              <td class="px-5 py-3 font-mono text-muted">myapp-auth-flow</td>
+              <td class="px-5 py-3 text-muted text-xs">myapp-auth-flow.localhost</td>
+              <td class="px-5 py-3 text-muted text-xs">myapp-auth-flow.myteam.dev</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">bugfix/fix_login_crash</td>
+              <td class="px-5 py-3 font-mono text-muted">myapp-fix-login-crash</td>
+              <td class="px-5 py-3 text-muted text-xs">myapp-fix-login-crash.localhost</td>
+              <td class="px-5 py-3 text-muted text-xs">myapp-fix-login-crash.myteam.dev</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-muted text-sm">
+        The route key is also shown in <code class="text-accent-light">gtl setup</code> output when the router or tunnel is configured.
+      </p>
+
+      <h3 class="text-xl font-mono text-white mb-4 mt-8">Networking config reference</h3>
+      <p class="text-muted mb-4">
+        Networking settings live in user config (<code class="text-accent-light">gtl config</code>), not in <code class="text-accent-light">.treeline.yml</code>. Per-machine, not per-project.
+      </p>
+      <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
+        <table class="cli-table w-full text-sm text-left">
+          <thead>
+            <tr class="border-b border-surface-border bg-surface">
+              <th class="px-5 py-3 font-mono text-accent-light font-medium">Setting</th>
+              <th class="px-5 py-3 text-accent-light font-medium">Default</th>
+              <th class="px-5 py-3 text-accent-light font-medium">Description</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-border">
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">router.port</td>
+              <td class="px-5 py-3 text-muted">3001</td>
+              <td class="px-5 py-3 text-muted">Port the local router listens on (before port forwarding from 443).</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">tunnel.name</td>
+              <td class="px-5 py-3 text-muted">&mdash;</td>
+              <td class="px-5 py-3 text-muted">Cloudflare tunnel name. Set by <code class="text-accent-light">gtl tunnel setup</code>.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">tunnel.domain</td>
+              <td class="px-5 py-3 text-muted">&mdash;</td>
+              <td class="px-5 py-3 text-muted">Domain for named tunnel subdomains. Set by <code class="text-accent-light">gtl tunnel setup</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </section>
 
