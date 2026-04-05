@@ -263,7 +263,7 @@
               <td class="px-5 py-3 text-muted">Branch that <code class="text-accent-light">prune --merged</code> checks against. Auto-detected from remote if omitted.</td>
             </tr>
             <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">ports_needed</td>
+              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">port_count</td>
               <td class="px-5 py-3 text-muted">int</td>
               <td class="px-5 py-3 text-muted">Number of ports to allocate per worktree. Default <code class="text-accent-light">1</code>. Use <code class="text-accent-light">2</code> for apps with a separate asset build port.</td>
             </tr>
@@ -350,7 +350,7 @@
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white">{port_2}, {port_3}, ...</td>
-              <td class="px-5 py-3 text-muted">Additional allocated ports (when <code class="text-accent-light">ports_needed</code> &gt; 1)</td>
+              <td class="px-5 py-3 text-muted">Additional allocated ports (when <code class="text-accent-light">port_count</code> &gt; 1)</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white">{database}</td>
@@ -603,7 +603,7 @@
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">port.increment</td>
               <td class="px-5 py-3 text-muted">10</td>
-              <td class="px-5 py-3 text-muted">Gap between port allocations. Set to match your <code class="text-accent-light">ports_needed</code> or higher.</td>
+              <td class="px-5 py-3 text-muted">Gap between port allocations. Set to match your <code class="text-accent-light">port_count</code> or higher.</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">redis.strategy</td>
@@ -668,7 +668,7 @@
         Rails apps using <code class="text-accent-light">dotenv-rails</code> (most do) load <code class="text-accent-light">.env.local</code> at boot automatically. Git Treeline writes allocated values to that file, so <code class="text-accent-light">ENV["PORT"]</code>, <code class="text-accent-light">ENV["DATABASE_NAME"]</code>, and <code class="text-accent-light">ENV["REDIS_URL"]</code> just work. No additional gems needed.
       </p>
       <p class="text-muted mb-4">
-        If your Rails app uses a JS bundler (jsbundling-rails, cssbundling-rails, or a multi-process <code class="text-accent-light">Procfile.dev</code>), <code class="text-accent-light">gtl init</code> detects it and sets <code class="text-accent-light">ports_needed: 2</code> with an <code class="text-accent-light">ESBUILD_PORT</code> env var for the asset process.
+        If your Rails app uses a JS bundler (jsbundling-rails, cssbundling-rails, or a multi-process <code class="text-accent-light">Procfile.dev</code>), <code class="text-accent-light">gtl init</code> detects it and sets <code class="text-accent-light">port_count: 2</code> with an <code class="text-accent-light">ESBUILD_PORT</code> env var for the asset process.
       </p>
 
       <h3 class="text-xl font-mono text-white mb-4 mt-8">Next.js</h3>
@@ -1114,7 +1114,7 @@
             <tr><td class="px-5 py-3 font-mono text-xs"><code>port</code></td><td class="px-5 py-3 text-muted">Get the allocated port for a worktree</td></tr>
             <tr><td class="px-5 py-3 font-mono text-xs"><code>db_name</code></td><td class="px-5 py-3 text-muted">Get the database name for a worktree</td></tr>
             <tr><td class="px-5 py-3 font-mono text-xs"><code>doctor</code></td><td class="px-5 py-3 text-muted">Run project health diagnostics</td></tr>
-            <tr><td class="px-5 py-3 font-mono text-xs"><code>config_get</code></td><td class="px-5 py-3 text-muted">Read a configuration value by dotted key path</td></tr>
+            <tr><td class="px-5 py-3 font-mono text-xs"><code>config_get</code></td><td class="px-5 py-3 text-muted">Read a configuration value by dotted key path (project or user scope)</td></tr>
           </tbody>
         </table>
       </div>

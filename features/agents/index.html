@@ -197,7 +197,7 @@
             </div>
             <div class="feature-strip border-b-0 py-2">
               <div class="feature-strip-key sm:w-auto sm:text-left text-sm">config_get</div>
-              <div class="feature-strip-desc text-xs">Read a config key from .treeline.yml</div>
+              <div class="feature-strip-desc text-xs">Read a config key (project or user scope)</div>
             </div>
           </div>
         </div>
@@ -235,8 +235,17 @@
         <div class="grid md:grid-cols-2 gap-6 md:gap-10 items-start border-t border-surface-border pt-10">
           <div>
             <h3 class="text-white font-mono text-xl mb-2">Structured output</h3>
+            <p class="text-sm text-muted mb-3">
+              Four CLI commands support <code class="text-accent-light">--json</code> for machine-readable output:
+            </p>
+            <ul class="text-sm text-muted space-y-1 mb-3">
+              <li><code class="text-accent-light">gtl status --json</code> — allocations, runtime health, supervisor state</li>
+              <li><code class="text-accent-light">gtl doctor --json</code> — config, allocation, and diagnostic checks</li>
+              <li><code class="text-accent-light">gtl port --json</code> — allocated port(s) for the worktree</li>
+              <li><code class="text-accent-light">gtl db name --json</code> — allocated database name</li>
+            </ul>
             <p class="text-sm text-muted mb-4">
-              <code class="text-accent-light">gtl status --json</code> returns the full allocation registry as JSON. For richer structured access — ports, database names, config — agents use the MCP tools and resources directly.
+              MCP is the preferred interface — native tool calls, no shell — but <code class="text-accent-light">--json</code> works for any agent that can run commands.
             </p>
           </div>
           <div class="terminal">
@@ -249,10 +258,10 @@
               <p><span class="prompt">$</span> <span class="command">gtl status --json</span></p>
               <p class="output">[{</p>
               <p class="output">&nbsp;&nbsp;"<span class="text-accent-light">branch</span>": "<span class="text-white">feature-auth</span>",</p>
-              <p class="output">&nbsp;&nbsp;"<span class="text-accent-light">port</span>": <span class="text-white">3010</span>,</p>
+              <p class="output">&nbsp;&nbsp;"<span class="text-accent-light">ports</span>": [<span class="text-white">3010</span>],</p>
               <p class="output">&nbsp;&nbsp;"<span class="text-accent-light">database</span>": "<span class="text-white">myapp_dev_feature_auth</span>",</p>
-              <p class="output">&nbsp;&nbsp;"<span class="text-accent-light">project</span>": "<span class="text-white">myapp</span>",</p>
-              <p class="output">&nbsp;&nbsp;"<span class="text-accent-light">worktree_name</span>": "<span class="text-white">feature-auth</span>"</p>
+              <p class="output">&nbsp;&nbsp;"<span class="text-accent-light">listening</span>": <span class="text-accent">true</span>,</p>
+              <p class="output">&nbsp;&nbsp;"<span class="text-accent-light">supervisor</span>": "<span class="text-accent">running</span>"</p>
               <p class="output">}]</p>
             </div>
           </div>

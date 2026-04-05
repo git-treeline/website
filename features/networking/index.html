@@ -60,7 +60,7 @@
   <!-- Hero -->
   <section class="px-4 sm:px-6 pt-28 sm:pt-36 pb-16 sm:pb-20 text-center">
     <p class="text-sm uppercase tracking-wider text-muted mb-4">Networking</p>
-    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">Your OAuth redirect URI works<br>on every branch.</h1>
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">One redirect URI per branch,<br>not per&nbsp;port.</h1>
     <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
       Integrations expect stable URLs. Worktrees have ephemeral ports. Three features bridge the gap at different layers.
     </p>
@@ -131,7 +131,7 @@
       <div class="grid md:grid-cols-3 gap-8">
         <div>
           <h3 class="text-white font-mono text-lg mb-3">Stable URLs per branch</h3>
-          <p class="text-sm text-muted">Each branch gets a named URL like <code class="text-accent-light">feature-auth.localhost</code>. Register the specific redirect URI, or use <code class="text-accent-light">gtl proxy</code> to forward a fixed port to whichever worktree you choose.</p>
+          <p class="text-sm text-muted">Each branch gets a named URL like <code class="text-accent-light">feature-auth.localhost</code>. Register the specific redirect URI, or use <code class="text-accent-light">gtl proxy</code> to forward a fixed port to the current worktree's allocated port.</p>
         </div>
         <div>
           <h3 class="text-white font-mono text-lg mb-3">Share a running branch</h3>
