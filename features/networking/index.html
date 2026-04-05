@@ -58,7 +58,7 @@
   </script>
 
   <!-- Hero -->
-  <section class="px-4 sm:px-6 pt-28 sm:pt-36 pb-12 sm:pb-16 text-center">
+  <section class="px-4 sm:px-6 pt-28 sm:pt-36 pb-16 sm:pb-20 text-center">
     <p class="text-sm uppercase tracking-wider text-muted mb-4">Networking</p>
     <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">Your OAuth redirect URI works<br>on every branch.</h1>
     <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
@@ -67,7 +67,7 @@
   </section>
 
   <!-- 1. The world without it -->
-  <section class="px-4 sm:px-6 py-12 sm:py-20 bg-surface-raised">
+  <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading text-center mb-4">Every integration breaks when you change ports</h2>
       <p class="section-subtext text-center mx-auto mb-10">
@@ -97,7 +97,7 @@
   </section>
 
   <!-- 2. The moment it clicks -->
-  <section class="px-4 sm:px-6 py-12 sm:py-20">
+  <section class="px-4 sm:px-6 py-16 sm:py-28">
     <div class="max-w-4xl mx-auto text-center">
       <p class="text-sm uppercase tracking-wider text-muted mb-6">The URL follows the branch, not the port</p>
       <div class="pipeline mb-10">
@@ -119,19 +119,19 @@
         </div>
       </div>
       <p class="text-sm text-muted max-w-lg mx-auto">
-        Register your OAuth redirect as <code class="text-white">https://*.localhost/callback</code> once. It works on every branch, because the URL routes to the worktree automatically.
+        Each branch gets a stable URL like <code class="text-white">https://feature-auth.localhost/callback</code>. Register specific redirect URIs per branch, or point them at a fixed port with <code class="text-accent-light">gtl proxy</code>. No more port-swapping between worktrees.
       </p>
     </div>
   </section>
 
   <!-- 3. What changes -->
-  <section class="px-4 sm:px-6 py-12 sm:py-20 bg-surface-raised">
+  <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading text-center mb-10">What this makes possible</h2>
       <div class="grid md:grid-cols-3 gap-8">
         <div>
-          <h3 class="text-white font-mono text-lg mb-3">Register once, works everywhere</h3>
-          <p class="text-sm text-muted">Set your OAuth redirect to <code class="text-accent-light">*.localhost</code> via <code class="text-accent-light">gtl serve</code>. For services hardcoded to a port, <code class="text-accent-light">gtl proxy</code> forwards it to the worktree you're working on.</p>
+          <h3 class="text-white font-mono text-lg mb-3">Stable URLs per branch</h3>
+          <p class="text-sm text-muted">Each branch gets a named URL like <code class="text-accent-light">feature-auth.localhost</code>. Register the specific redirect URI, or use <code class="text-accent-light">gtl proxy</code> to forward a fixed port to whichever worktree you choose.</p>
         </div>
         <div>
           <h3 class="text-white font-mono text-lg mb-3">Share a running branch</h3>
@@ -146,7 +146,7 @@
   </section>
 
   <!-- 4. How it works -->
-  <section class="px-4 sm:px-6 py-12 sm:py-20">
+  <section class="px-4 sm:px-6 py-16 sm:py-28">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading text-center mb-4">Same problem, three layers</h2>
       <p class="section-subtext text-center mx-auto mb-12">
@@ -236,7 +236,7 @@
   </section>
 
   <!-- 5. Get started -->
-  <section class="px-4 sm:px-6 py-12 sm:py-20 bg-surface-raised text-center">
+  <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised text-center">
     <div class="max-w-2xl mx-auto">
       <h2 class="section-heading mb-4">Start with local subdomains</h2>
       <p class="text-sm text-muted mb-8">Most teams only need <code class="text-accent-light">gtl serve</code>. Install once, every branch gets a name.</p>
@@ -248,7 +248,7 @@
   </section>
 
   <!-- Footer -->
-  <footer class="px-4 sm:px-6 py-8 sm:py-12 border-t border-surface-border">
+  <footer class="px-4 sm:px-6 py-10 sm:py-16 border-t border-surface-border">
     <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 text-sm text-muted">
       <div class="flex flex-wrap items-center gap-6">
         <a href="https://github.com/git-treeline/git-treeline" class="hover:text-white transition-colors">GitHub</a>
@@ -257,6 +257,7 @@
         <a href="/features/networking/" class="hover:text-white transition-colors">Networking</a>
         <a href="/features/workflows/" class="hover:text-white transition-colors">Workflows</a>
         <a href="/features/agents/" class="hover:text-white transition-colors">AI Agents</a>
+        <a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg" class="hover:text-white transition-colors">Menu bar app</a>
         <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a>
       </div>
       <p>Built by <a href="https://productmatter.co" class="text-accent-light hover:text-accent transition-colors">Product Matter</a></p>

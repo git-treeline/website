@@ -254,7 +254,7 @@
 
   /* Feature highlight cards — alternating left/right */
   .feature-card {
-    @apply grid md:grid-cols-2 gap-6 md:gap-10 items-center py-12 sm:py-16;
+    @apply grid md:grid-cols-2 gap-6 md:gap-10 items-center py-16 sm:py-24;
   }
 
   .feature-card + .feature-card {

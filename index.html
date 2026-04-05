@@ -91,7 +91,7 @@
   </script>
 
   <!-- Hero -->
-  <section id="hero" class="flex flex-col items-center text-center px-4 sm:px-6 pt-32 sm:pt-40 md:pt-48 pb-12 sm:pb-20">
+  <section id="hero" class="flex flex-col items-center text-center px-4 sm:px-6 pt-32 sm:pt-40 md:pt-48 pb-16 sm:pb-24">
     <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-6">git-treeline</h1>
     <p class="text-xl md:text-2xl text-accent-light max-w-2xl mb-4">Review every branch at the same time</p>
     <p class="text-sm sm:text-base text-gray-400 max-w-2xl mb-8 sm:mb-12">
@@ -109,17 +109,11 @@
         View on GitHub
       </a>
     </div>
-    <div class="flex flex-wrap items-center justify-center gap-4">
-      <a href="https://github.com/git-treeline/git-treeline" class="inline-flex items-center">
-        <img src="https://img.shields.io/github/stars/git-treeline/git-treeline?style=social" alt="GitHub stars" class="h-5" loading="lazy">
-      </a>
-      <span class="text-surface-border hidden sm:inline">|</span>
-      <span class="text-sm text-muted">Open source &middot; MIT License &middot; Free forever</span>
-    </div>
+    <p class="text-sm text-muted">Open source &middot; MIT License &middot; Free forever</p>
   </section>
 
   <!-- Problem / Solution -->
-  <section id="problem-solution" class="px-4 sm:px-6 py-12 sm:py-20 bg-surface-raised">
+  <section id="problem-solution" class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised">
     <div class="max-w-5xl mx-auto">
       <h2 class="section-heading text-center mb-4">Worktrees are easy to create. Hard&nbsp;to&nbsp;run.</h2>
       <p class="section-subtext text-center mx-auto mb-12">
@@ -164,6 +158,7 @@
               <p class="output">Wrote <span class="highlight">.env.local</span></p>
               <p class="output">Running setup commands...</p>
               <p class="output text-accent mt-1">==> https://feature-auth.localhost</p>
+              <p class="output text-muted text-xs mt-1">named URL via gtl serve</p>
             </div>
           </div>
         </div>
@@ -190,13 +185,15 @@
               <p class="output">Cloned database <span class="highlight">myapp_dev_feature_auth</span></p>
               <p class="output">Wrote <span class="highlight">.env.local</span></p>
               <p class="output text-accent">==> https://feature-auth.localhost</p>
+              <p class="output text-muted text-xs">named URL via gtl serve</p>
             </div>
           </div>
         </div>
         <div class="feature-card-copy">
-          <h3 class="feature-card-title">Two branches. Two apps. Zero conflicts.</h3>
+          <p class="text-xs uppercase tracking-wider text-accent-light mb-2">Isolation</p>
+          <h3 class="feature-card-title">Two branches. Two apps. Zero&nbsp;conflicts.</h3>
           <p class="feature-card-desc">
-            Every worktree gets its own port, database, Redis namespace, and env file. Declare what your project needs in <code class="text-accent-light">.treeline.yml</code> and every branch runs in complete isolation.
+            Every worktree gets its own port, database, Redis namespace, and env file. Declare what your project needs in <code class="text-accent-light">.treeline.yml</code> and every branch runs in complete&nbsp;isolation.
           </p>
           <a href="/features/isolation/" class="feature-card-link">How isolation works &rarr;</a>
         </div>
@@ -219,6 +216,7 @@
           </div>
         </div>
         <div class="feature-card-copy">
+          <p class="text-xs uppercase tracking-wider text-accent-light mb-2">Networking</p>
           <h3 class="feature-card-title"><span class="slot-wrapper text-accent-light"><span class="slot-reel"><span class="slot-item">OAuth redirects</span><span class="slot-item">Stripe webhooks</span><span class="slot-item">Mapbox tokens</span><span class="slot-item">API callbacks</span><span class="slot-item">OAuth redirects</span></span></span> just&nbsp;work.</h3>
           <p class="feature-card-desc">
             OAuth redirects, Stripe webhooks, Mapbox tokens — anything pinned to a URL or port breaks when you switch worktrees. <code class="text-accent-light">gtl serve</code> gives every branch a stable <code class="text-white">{branch}.localhost</code> with HTTPS. <code class="text-accent-light">gtl proxy</code> forwards a fixed port to whichever worktree you&nbsp;choose.
@@ -251,12 +249,14 @@
               <span class="step-arrow">&rarr;</span>
               <span class="step-text font-mono text-accent">https://myapp-pr-42.localhost</span>
             </div>
+            <p class="text-muted text-xs mt-2 pl-7">named URL via gtl serve</p>
           </div>
         </div>
         <div class="feature-card-copy">
-          <h3 class="feature-card-title">Type a PR number. Get a running app.</h3>
+          <p class="text-xs uppercase tracking-wider text-accent-light mb-2">Workflows</p>
+          <h3 class="feature-card-title">Type a PR number. Get a running&nbsp;app.</h3>
           <p class="feature-card-desc">
-            <code class="text-accent-light">gtl review 42 --start</code> fetches the PR, creates an isolated worktree, boots the server, and gives you the URL. The built-in supervisor lets agents restart the server while you watch the logs.
+            <code class="text-accent-light">gtl review 42 --start</code> fetches the PR, creates an isolated worktree, boots the server, and gives you the URL. The built-in supervisor lets agents restart the server while you watch the&nbsp;logs.
           </p>
           <a href="/features/workflows/" class="feature-card-link">Review and supervisor &rarr;</a>
         </div>
@@ -281,9 +281,10 @@
           </div>
         </div>
         <div class="feature-card-copy">
-          <h3 class="feature-card-title">Your agent gets the same tools you do.</h3>
+          <p class="text-xs uppercase tracking-wider text-accent-light mb-2">AI Agents</p>
+          <h3 class="feature-card-title">Your agent gets the same tools you&nbsp;do.</h3>
           <p class="feature-card-desc">
-            The built-in MCP server gives AI agents native access to <code class="text-accent-light">start</code>, <code class="text-accent-light">stop</code>, <code class="text-accent-light">port</code>, and <code class="text-accent-light">status</code>. Lifecycle hooks, <code class="text-accent-light">--json</code> output, and auto-generated <code class="text-accent-light">AGENTS.md</code> for Cursor, Claude Code, and Codex.
+            The built-in MCP server gives AI agents native access to <code class="text-accent-light">start</code>, <code class="text-accent-light">stop</code>, <code class="text-accent-light">port</code>, and <code class="text-accent-light">status</code>. Lifecycle hooks, <code class="text-accent-light">--json</code> output, and auto-generated <code class="text-accent-light">AGENTS.md</code> for Cursor, Claude Code, and&nbsp;Codex.
           </p>
           <a href="/features/agents/" class="feature-card-link">Agent integration &rarr;</a>
         </div>
@@ -293,7 +294,7 @@
   </section>
 
   <!-- Get Started -->
-  <section id="get-started" class="px-4 sm:px-6 py-12 sm:py-20 bg-surface-raised">
+  <section id="get-started" class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading text-center mb-4">Get started in 60 seconds</h2>
       <p class="section-subtext text-center mx-auto mb-12">
@@ -335,11 +336,18 @@
         <span class="framework-pill">Go</span>
       </div>
       <p class="text-xs text-muted text-center mt-3">Auto-detected at init with per-framework guidance</p>
+      <div class="mt-8 text-center">
+        <a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg" class="inline-flex items-center gap-2 text-sm text-muted hover:text-white transition-colors border border-surface-border rounded-lg px-4 py-2.5">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          macOS menu bar app
+          <span class="text-xs text-muted">(v0.1.0)</span>
+        </a>
+      </div>
     </div>
   </section>
 
   <!-- Trust -->
-  <div class="px-4 sm:px-6 py-8 sm:py-10 border-y border-surface-border">
+  <div class="px-4 sm:px-6 py-10 sm:py-14 border-y border-surface-border">
     <div class="trust-bar max-w-3xl mx-auto">
       <div class="trust-bar-item"><strong>No runtime dependency.</strong> CLI only.</div>
       <div class="trust-bar-item"><strong>No lock-in.</strong> Config file, not a library.</div>
@@ -349,7 +357,7 @@
   </div>
 
   <!-- CTA -->
-  <section id="cta" class="px-4 sm:px-6 py-12 sm:py-20 text-center">
+  <section id="cta" class="px-4 sm:px-6 py-16 sm:py-28 text-center">
     <div class="max-w-2xl mx-auto">
       <h2 class="section-heading mb-4">Every branch, running</h2>
       <p class="section-subtext mx-auto mb-10">Your whole team sees the work, not just the diff.</p>
@@ -370,7 +378,7 @@
   </section>
 
   <!-- Footer -->
-  <footer class="px-4 sm:px-6 py-8 sm:py-12 border-t border-surface-border">
+  <footer class="px-4 sm:px-6 py-10 sm:py-16 border-t border-surface-border">
     <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 text-sm text-muted">
       <div class="flex flex-wrap items-center gap-6">
         <a href="https://github.com/git-treeline/git-treeline" class="hover:text-white transition-colors">GitHub</a>
@@ -379,6 +387,7 @@
         <a href="/features/networking/" class="hover:text-white transition-colors">Networking</a>
         <a href="/features/workflows/" class="hover:text-white transition-colors">Workflows</a>
         <a href="/features/agents/" class="hover:text-white transition-colors">AI Agents</a>
+        <a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg" class="hover:text-white transition-colors">Menu bar app</a>
         <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a>
       </div>
       <p>Built by <a href="https://productmatter.co" class="text-accent-light hover:text-accent transition-colors">Product Matter</a></p>

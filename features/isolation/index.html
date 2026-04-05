@@ -58,7 +58,7 @@
   </script>
 
   <!-- Hero -->
-  <section class="px-4 sm:px-6 pt-28 sm:pt-36 pb-12 sm:pb-16 text-center">
+  <section class="px-4 sm:px-6 pt-28 sm:pt-36 pb-16 sm:pb-20 text-center">
     <p class="text-sm uppercase tracking-wider text-muted mb-4">Isolation</p>
     <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">Two branches. Two apps.<br>Zero conflicts.</h1>
     <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
@@ -67,7 +67,7 @@
   </section>
 
   <!-- 1. The world without it -->
-  <section class="px-4 sm:px-6 py-12 sm:py-20 bg-surface-raised">
+  <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading text-center mb-4">The second worktree is always broken</h2>
       <p class="section-subtext text-center mx-auto mb-10">
@@ -106,7 +106,7 @@
   </section>
 
   <!-- 2. The moment it clicks -->
-  <section class="px-4 sm:px-6 py-12 sm:py-20">
+  <section class="px-4 sm:px-6 py-16 sm:py-28">
     <div class="max-w-4xl mx-auto">
       <p class="text-sm uppercase tracking-wider text-muted text-center mb-4">One command changes everything</p>
       <div class="mono-callout text-center mb-10">gtl new feature-auth</div>
@@ -137,7 +137,7 @@
   </section>
 
   <!-- 3. What changes -->
-  <section class="px-4 sm:px-6 py-12 sm:py-20 bg-surface-raised">
+  <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading text-center mb-10">What this makes possible</h2>
       <div class="grid md:grid-cols-3 gap-8">
@@ -158,7 +158,7 @@
   </section>
 
   <!-- 4. How it works -->
-  <section class="px-4 sm:px-6 py-12 sm:py-20">
+  <section class="px-4 sm:px-6 py-16 sm:py-28">
     <div class="max-w-5xl mx-auto">
       <h2 class="section-heading text-center mb-4">Declare it once. Treeline handles the rest.</h2>
       <p class="section-subtext text-center mx-auto mb-12">
@@ -170,14 +170,13 @@
             <span class="w-2 h-2 rounded-full bg-accent/50"></span>
             <span class="text-xs font-mono text-muted">.treeline.yml</span>
           </div>
-          <pre class="px-4 py-4 text-sm leading-relaxed font-mono overflow-x-auto"><code><span class="text-muted"># Ports</span>
-<span class="text-blue-400">port</span>: <span class="text-accent-light">auto</span>
-<span class="text-blue-400">extra_ports</span>: <span class="text-accent-light">1</span>
+          <pre class="px-4 py-4 text-sm leading-relaxed font-mono overflow-x-auto"><code><span class="text-blue-400">project</span>: <span class="text-accent-light">myapp</span>
+<span class="text-blue-400">ports_needed</span>: <span class="text-accent-light">2</span>
 
 <span class="text-muted"># Database</span>
 <span class="text-blue-400">database</span>:
-  <span class="text-blue-400">engine</span>: <span class="text-accent-light">postgresql</span>
-  <span class="text-blue-400">name</span>: <span class="text-accent-light">myapp_dev</span>
+  <span class="text-blue-400">adapter</span>: <span class="text-accent-light">postgresql</span>
+  <span class="text-blue-400">template</span>: <span class="text-accent-light">myapp_dev</span>
 
 <span class="text-muted"># Environment</span>
 <span class="text-blue-400">env_file</span>: <span class="text-accent-light">.env.local</span>
@@ -186,28 +185,30 @@
 
 <span class="text-muted"># Lifecycle</span>
 <span class="text-blue-400">commands</span>:
-  <span class="text-blue-400">setup</span>: <span class="text-accent-light">bin/setup</span>
+  <span class="text-blue-400">setup</span>:
+    - <span class="text-accent-light">bin/setup</span>
   <span class="text-blue-400">start</span>: <span class="text-accent-light">bin/dev</span>
 
 <span class="text-muted"># Editor</span>
-<span class="text-blue-400">editor</span>: <span class="text-accent-light">auto</span></code></pre>
+<span class="text-blue-400">editor</span>:
+  <span class="text-blue-400">color</span>: <span class="text-accent-light">auto</span></code></pre>
         </div>
         <div class="space-y-6">
           <div>
             <h3 class="text-white font-mono text-base mb-2">Ports</h3>
-            <p class="text-sm text-muted"><code class="text-accent-light">port: auto</code> allocates a unique port per worktree. <code class="text-accent-light">extra_ports</code> adds sequential ports for multi-process apps (Vite + API, for example). The allocated port is written to your env file as <code class="text-white">$PORT</code> and passed to setup/start commands.</p>
+            <p class="text-sm text-muted">Every worktree gets a unique port automatically. <code class="text-accent-light">ports_needed: 2</code> reserves sequential ports for multi-process apps (Vite + API, for example). Allocated ports are written to your env file via <code class="text-white">{port}</code> tokens and available as <code class="text-white">$PORT</code> in setup/start commands.</p>
           </div>
           <div>
             <h3 class="text-white font-mono text-base mb-2">Database</h3>
-            <p class="text-sm text-muted">PostgreSQL databases are cloned via <code class="text-accent-light">createdb --template</code> — fast and includes your seed data. SQLite databases are file-copied. Manage with <code class="text-accent-light">gtl db reset</code>, <code class="text-accent-light">gtl db restore</code>, <code class="text-accent-light">gtl db clone-from</code>.</p>
+            <p class="text-sm text-muted"><code class="text-accent-light">database.adapter</code> picks the cloning strategy. PostgreSQL uses <code class="text-accent-light">createdb --template</code> for instant clones with seed data. SQLite is file-copied. Manage with <code class="text-accent-light">gtl db reset</code>, <code class="text-accent-light">gtl db restore</code>, or <code class="text-accent-light">gtl db reset --from &lt;source&gt;</code>.</p>
           </div>
           <div>
             <h3 class="text-white font-mono text-base mb-2">Environment</h3>
-            <p class="text-sm text-muted">Your env file template is interpolated with allocated values — <code class="text-white">$PORT</code>, <code class="text-white">$DATABASE_NAME</code>, <code class="text-white">$REDIS_URL</code>. Secrets like <code class="text-accent-light">master.key</code> are copied from your main worktree.</p>
+            <p class="text-sm text-muted">Your env file is interpolated with allocated values — <code class="text-white">{port}</code>, <code class="text-white">{database}</code>, <code class="text-white">{redis_url}</code>. Secrets like <code class="text-accent-light">master.key</code> are copied from your main worktree via <code class="text-accent-light">copy_files</code>.</p>
           </div>
           <div>
             <h3 class="text-white font-mono text-base mb-2">Editor</h3>
-            <p class="text-sm text-muted">Each worktree gets a unique title bar color so you always know which branch you're looking at. Works in VS Code, Cursor, Zed, and JetBrains. Override with <code class="text-accent-light">editor.color</code>, <code class="text-accent-light">editor.theme</code>.</p>
+            <p class="text-sm text-muted"><code class="text-accent-light">editor.color: auto</code> gives each worktree a deterministic title bar color so you always know which branch you're looking at. Works in VS Code, Cursor, Zed, and JetBrains. Override with a hex value or set <code class="text-accent-light">editor.theme</code> for full theme switching.</p>
           </div>
           <div>
             <h3 class="text-white font-mono text-base mb-2">Setup commands</h3>
@@ -248,7 +249,7 @@
   </section>
 
   <!-- 5. Get started -->
-  <section class="px-4 sm:px-6 py-12 sm:py-20 bg-surface-raised text-center">
+  <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised text-center">
     <div class="max-w-2xl mx-auto">
       <h2 class="section-heading mb-4">Add isolation to your project</h2>
       <p class="text-sm text-muted mb-8">One file, committed to your repo. Non-users just ignore it.</p>
@@ -261,7 +262,7 @@
   </section>
 
   <!-- Footer -->
-  <footer class="px-4 sm:px-6 py-8 sm:py-12 border-t border-surface-border">
+  <footer class="px-4 sm:px-6 py-10 sm:py-16 border-t border-surface-border">
     <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 text-sm text-muted">
       <div class="flex flex-wrap items-center gap-6">
         <a href="https://github.com/git-treeline/git-treeline" class="hover:text-white transition-colors">GitHub</a>
@@ -270,6 +271,7 @@
         <a href="/features/networking/" class="hover:text-white transition-colors">Networking</a>
         <a href="/features/workflows/" class="hover:text-white transition-colors">Workflows</a>
         <a href="/features/agents/" class="hover:text-white transition-colors">AI Agents</a>
+        <a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg" class="hover:text-white transition-colors">Menu bar app</a>
         <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a>
       </div>
       <p>Built by <a href="https://productmatter.co" class="text-accent-light hover:text-accent transition-colors">Product Matter</a></p>
