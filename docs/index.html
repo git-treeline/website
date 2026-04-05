@@ -277,93 +277,84 @@
       <p class="text-sm text-muted mb-8">See <a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">Isolation</a> for what each field produces and why it matters.</p>
 
       <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Full reference</h3>
-      <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
-        <table class="cli-table w-full text-sm text-left">
-          <thead>
-            <tr class="border-b border-surface-border bg-surface">
-              <th class="px-5 py-3 font-mono text-accent-light font-medium">Field</th>
-              <th class="px-5 py-3 text-accent-light font-medium">Type</th>
-              <th class="px-5 py-3 text-accent-light font-medium">Description</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-surface-border">
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">project</td>
-              <td class="px-5 py-3 text-muted">string</td>
-              <td class="px-5 py-3 text-muted">Project name. Used as a namespace for allocations and database naming.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">merge_target</td>
-              <td class="px-5 py-3 text-muted">string</td>
-              <td class="px-5 py-3 text-muted">Branch that <code class="text-accent-light">prune --merged</code> checks against. Auto-detected from remote if omitted.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">port_count</td>
-              <td class="px-5 py-3 text-muted">int</td>
-              <td class="px-5 py-3 text-muted">Number of ports to allocate per worktree. Default <code class="text-accent-light">1</code>. Use <code class="text-accent-light">2</code> for apps with a separate asset build port.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">env_file</td>
-              <td class="px-5 py-3 text-muted">string&nbsp;or&nbsp;map</td>
-              <td class="px-5 py-3 text-muted">Env file path as a string shorthand (e.g. <code class="text-accent-light">.env.local</code>). When the output file differs from the seed, use a map: <code class="text-accent-light">path:</code> (where values are written) and <code class="text-accent-light">seed_from:</code> (source template to copy first).</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">database.adapter</td>
-              <td class="px-5 py-3 text-muted">string</td>
-              <td class="px-5 py-3 text-muted"><code class="text-accent-light">postgresql</code> or <code class="text-accent-light">sqlite</code>. Determines cloning strategy.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">database.template</td>
-              <td class="px-5 py-3 text-muted">string</td>
-              <td class="px-5 py-3 text-muted">Source database to clone from. For PostgreSQL, used with <code class="text-accent-light">createdb --template</code>.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">database.pattern</td>
-              <td class="px-5 py-3 text-muted">string</td>
-              <td class="px-5 py-3 text-muted">Naming pattern for cloned databases. Tokens: <code class="text-accent-light">{template}</code>, <code class="text-accent-light">{worktree}</code>.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">redis.strategy</td>
-              <td class="px-5 py-3 text-muted">string</td>
-              <td class="px-5 py-3 text-muted"><code class="text-accent-light">prefixed</code> (key namespacing, unlimited) or <code class="text-accent-light">database</code> (separate Redis DBs 1&ndash;15).</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">copy_files</td>
-              <td class="px-5 py-3 text-muted">list</td>
-              <td class="px-5 py-3 text-muted">Files to copy from the main worktree. Secrets, credentials, local config that aren't in git.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">env</td>
-              <td class="px-5 py-3 text-muted">map</td>
-              <td class="px-5 py-3 text-muted">Key-value pairs written to the env file. Supports interpolation tokens.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">commands.setup</td>
-              <td class="px-5 py-3 text-muted">list</td>
-              <td class="px-5 py-3 text-muted">Commands to run after env file is written. Allocated values like <code class="text-accent-light">$PORT</code> are available. See <a href="#setup-commands" class="text-accent-light hover:text-accent underline underline-offset-2">setup commands</a>.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">commands.start</td>
-              <td class="px-5 py-3 text-muted">string</td>
-              <td class="px-5 py-3 text-muted">Command to boot the app. Used by <code class="text-accent-light">gtl start</code> and the <code class="text-accent-light">--start</code> flag on <code class="text-accent-light">new</code> and <code class="text-accent-light">review</code>.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">editor.title</td>
-              <td class="px-5 py-3 text-muted">string</td>
-              <td class="px-5 py-3 text-muted">Window title template. Tokens: <code class="text-accent-light">{project}</code>, <code class="text-accent-light">{port}</code>, <code class="text-accent-light">{branch}</code>. Works with VS Code and Cursor.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">editor.color</td>
-              <td class="px-5 py-3 text-muted">string</td>
-              <td class="px-5 py-3 text-muted">Title/status bar color. <code class="text-accent-light">"auto"</code> generates a deterministic color from the branch name. Or set a hex value like <code class="text-accent-light">"#1a5276"</code>. VS Code, Cursor, JetBrains.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">editor.theme</td>
-              <td class="px-5 py-3 text-muted">string</td>
-              <td class="px-5 py-3 text-muted">Full IDE theme override (e.g. <code class="text-accent-light">"Monokai"</code>). Applied when entering the worktree.</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="rounded-lg border border-surface-border mb-8">
+        <div class="cmd-list px-4 sm:px-5">
+          <div class="cmd-item">
+            <div class="cmd-name">project</div>
+            <div class="cmd-flags"><span class="cmd-flag">string</span></div>
+            <p class="cmd-desc">Project name. Used as a namespace for allocations and database naming.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">merge_target</div>
+            <div class="cmd-flags"><span class="cmd-flag">string</span></div>
+            <p class="cmd-desc">Branch that <code class="text-accent-light">prune --merged</code> checks against. Auto-detected from remote if omitted.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">port_count</div>
+            <div class="cmd-flags"><span class="cmd-flag">int</span></div>
+            <p class="cmd-desc">Number of ports to allocate per worktree. Default <code class="text-accent-light">1</code>. Use <code class="text-accent-light">2</code> for apps with a separate asset build port.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">env_file</div>
+            <div class="cmd-flags"><span class="cmd-flag">string or map</span></div>
+            <p class="cmd-desc">Env file path as a string shorthand (e.g. <code class="text-accent-light">.env.local</code>). When the output file differs from the seed, use a map: <code class="text-accent-light">path:</code> (where values are written) and <code class="text-accent-light">seed_from:</code> (source template to copy first).</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">database.adapter</div>
+            <div class="cmd-flags"><span class="cmd-flag">string</span></div>
+            <p class="cmd-desc"><code class="text-accent-light">postgresql</code> or <code class="text-accent-light">sqlite</code>. Determines cloning strategy.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">database.template</div>
+            <div class="cmd-flags"><span class="cmd-flag">string</span></div>
+            <p class="cmd-desc">Source database to clone from. For PostgreSQL, used with <code class="text-accent-light">createdb --template</code>.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">database.pattern</div>
+            <div class="cmd-flags"><span class="cmd-flag">string</span></div>
+            <p class="cmd-desc">Naming pattern for cloned databases. Tokens: <code class="text-accent-light">{template}</code>, <code class="text-accent-light">{worktree}</code>.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">redis.strategy</div>
+            <div class="cmd-flags"><span class="cmd-flag">string</span></div>
+            <p class="cmd-desc"><code class="text-accent-light">prefixed</code> (key namespacing, unlimited) or <code class="text-accent-light">database</code> (separate Redis DBs 1&ndash;15).</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">copy_files</div>
+            <div class="cmd-flags"><span class="cmd-flag">list</span></div>
+            <p class="cmd-desc">Files to copy from the main worktree. Secrets, credentials, local config that aren't in git.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">env</div>
+            <div class="cmd-flags"><span class="cmd-flag">map</span></div>
+            <p class="cmd-desc">Key-value pairs written to the env file. Supports interpolation tokens.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">commands.setup</div>
+            <div class="cmd-flags"><span class="cmd-flag">list</span></div>
+            <p class="cmd-desc">Commands to run after env file is written. Allocated values like <code class="text-accent-light">$PORT</code> are available. See <a href="#setup-commands" class="text-accent-light hover:text-accent underline underline-offset-2">setup commands</a>.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">commands.start</div>
+            <div class="cmd-flags"><span class="cmd-flag">string</span></div>
+            <p class="cmd-desc">Command to boot the app. Used by <code class="text-accent-light">gtl start</code> and the <code class="text-accent-light">--start</code> flag on <code class="text-accent-light">new</code> and <code class="text-accent-light">review</code>.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">editor.title</div>
+            <div class="cmd-flags"><span class="cmd-flag">string</span></div>
+            <p class="cmd-desc">Window title template. Tokens: <code class="text-accent-light">{project}</code>, <code class="text-accent-light">{port}</code>, <code class="text-accent-light">{branch}</code>. Works with VS Code and Cursor.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">editor.color</div>
+            <div class="cmd-flags"><span class="cmd-flag">string</span></div>
+            <p class="cmd-desc">Title/status bar color. <code class="text-accent-light">"auto"</code> generates a deterministic color from the branch name. Or set a hex value like <code class="text-accent-light">"#1a5276"</code>. VS Code, Cursor, JetBrains.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">editor.theme</div>
+            <div class="cmd-flags"><span class="cmd-flag">string</span></div>
+            <p class="cmd-desc">Full IDE theme override (e.g. <code class="text-accent-light">"Monokai"</code>). Applied when entering the worktree.</p>
+          </div>
+        </div>
       </div>
 
       <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Interpolation tokens</h3>
@@ -620,58 +611,49 @@
           </tbody>
         </table>
       </div>
-      <div class="overflow-x-auto rounded-lg border border-surface-border">
-        <table class="cli-table w-full text-sm text-left">
-          <thead>
-            <tr class="border-b border-surface-border bg-surface">
-              <th class="px-5 py-3 font-mono text-accent-light font-medium">Setting</th>
-              <th class="px-5 py-3 text-accent-light font-medium">Default</th>
-              <th class="px-5 py-3 text-accent-light font-medium">Description</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-surface-border">
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">port.base</td>
-              <td class="px-5 py-3 text-muted">3000</td>
-              <td class="px-5 py-3 text-muted">Starting port number for allocations.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">port.increment</td>
-              <td class="px-5 py-3 text-muted">10</td>
-              <td class="px-5 py-3 text-muted">Gap between port allocations. Set to match your <code class="text-accent-light">port_count</code> or higher.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">redis.strategy</td>
-              <td class="px-5 py-3 text-muted">prefixed</td>
-              <td class="px-5 py-3 text-muted"><code class="text-accent-light">prefixed</code> for key namespacing (unlimited worktrees) or <code class="text-accent-light">database</code> for separate Redis DBs (1&ndash;15).</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">redis.url</td>
-              <td class="px-5 py-3 text-muted">redis://localhost:6379</td>
-              <td class="px-5 py-3 text-muted">Redis server URL used for namespace assignment.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">port.reservations</td>
-              <td class="px-5 py-3 text-muted">{}</td>
-              <td class="px-5 py-3 text-muted">Map of project (or <code class="text-accent-light">project/branch</code>) to pinned port number. Branch-specific keys take priority.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">editor.name</td>
-              <td class="px-5 py-3 text-muted">(auto)</td>
-              <td class="px-5 py-3 text-muted">Detected editor (Cursor, VS Code, Zed, JetBrains). Set by <code class="text-accent-light">gtl init</code>; used by the menulet.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">editor.themes</td>
-              <td class="px-5 py-3 text-muted">{}</td>
-              <td class="px-5 py-3 text-muted">Per-project or per-branch theme overrides. Keys are <code class="text-accent-light">project</code> or <code class="text-accent-light">project/branch</code>.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">editor.colors</td>
-              <td class="px-5 py-3 text-muted">{}</td>
-              <td class="px-5 py-3 text-muted">Per-project or per-branch color overrides. Same key format as themes.</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="rounded-lg border border-surface-border">
+        <div class="cmd-list px-4 sm:px-5">
+          <div class="cmd-item">
+            <div class="cmd-name">port.base</div>
+            <div class="cmd-flags"><span class="cmd-flag">default: 3000</span></div>
+            <p class="cmd-desc">Starting port number for allocations.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">port.increment</div>
+            <div class="cmd-flags"><span class="cmd-flag">default: 10</span></div>
+            <p class="cmd-desc">Gap between port allocations. Set to match your <code class="text-accent-light">port_count</code> or higher.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">redis.strategy</div>
+            <div class="cmd-flags"><span class="cmd-flag">default: prefixed</span></div>
+            <p class="cmd-desc"><code class="text-accent-light">prefixed</code> for key namespacing (unlimited worktrees) or <code class="text-accent-light">database</code> for separate Redis DBs (1&ndash;15).</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">redis.url</div>
+            <div class="cmd-flags"><span class="cmd-flag">default: redis://localhost:6379</span></div>
+            <p class="cmd-desc">Redis server URL used for namespace assignment.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">port.reservations</div>
+            <div class="cmd-flags"><span class="cmd-flag">default: {}</span></div>
+            <p class="cmd-desc">Map of project (or <code class="text-accent-light">project/branch</code>) to pinned port number. Branch-specific keys take priority.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">editor.name</div>
+            <div class="cmd-flags"><span class="cmd-flag">auto-detected</span></div>
+            <p class="cmd-desc">Detected editor (Cursor, VS Code, Zed, JetBrains). Set by <code class="text-accent-light">gtl init</code>; used by the menulet.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">editor.themes</div>
+            <div class="cmd-flags"><span class="cmd-flag">default: {}</span></div>
+            <p class="cmd-desc">Per-project or per-branch theme overrides. Keys are <code class="text-accent-light">project</code> or <code class="text-accent-light">project/branch</code>.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">editor.colors</div>
+            <div class="cmd-flags"><span class="cmd-flag">default: {}</span></div>
+            <p class="cmd-desc">Per-project or per-branch color overrides. Same key format as themes.</p>
+          </div>
+        </div>
       </div>
 
       <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4 mt-8">Port reservations</h3>
@@ -1447,33 +1429,24 @@
       <p class="text-muted mb-4">
         Networking settings live in user config (<code class="text-accent-light">gtl config</code>), not in <code class="text-accent-light">.treeline.yml</code>. Per-machine, not per-project.
       </p>
-      <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
-        <table class="cli-table w-full text-sm text-left">
-          <thead>
-            <tr class="border-b border-surface-border bg-surface">
-              <th class="px-5 py-3 font-mono text-accent-light font-medium">Setting</th>
-              <th class="px-5 py-3 text-accent-light font-medium">Default</th>
-              <th class="px-5 py-3 text-accent-light font-medium">Description</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-surface-border">
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">router.port</td>
-              <td class="px-5 py-3 text-muted">3001</td>
-              <td class="px-5 py-3 text-muted">Port the local router listens on (before port forwarding from 443).</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">tunnel.name</td>
-              <td class="px-5 py-3 text-muted">&mdash;</td>
-              <td class="px-5 py-3 text-muted">Cloudflare tunnel name. Set by <code class="text-accent-light">gtl tunnel setup</code>.</td>
-            </tr>
-            <tr>
-              <td class="px-5 py-3 font-mono text-white whitespace-nowrap">tunnel.domain</td>
-              <td class="px-5 py-3 text-muted">&mdash;</td>
-              <td class="px-5 py-3 text-muted">Domain for named tunnel subdomains. Set by <code class="text-accent-light">gtl tunnel setup</code>.</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="rounded-lg border border-surface-border mb-8">
+        <div class="cmd-list px-4 sm:px-5">
+          <div class="cmd-item">
+            <div class="cmd-name">router.port</div>
+            <div class="cmd-flags"><span class="cmd-flag">default: 3001</span></div>
+            <p class="cmd-desc">Port the local router listens on (before port forwarding from 443).</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">tunnel.name</div>
+            <div class="cmd-flags"><span class="cmd-flag">set by gtl tunnel setup</span></div>
+            <p class="cmd-desc">Cloudflare tunnel name.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">tunnel.domain</div>
+            <div class="cmd-flags"><span class="cmd-flag">set by gtl tunnel setup</span></div>
+            <p class="cmd-desc">Domain for named tunnel subdomains.</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
