@@ -57,6 +57,14 @@
     @apply text-base sm:text-lg text-muted max-w-2xl;
   }
 
+  .subsection-heading {
+    @apply text-xl sm:text-2xl font-mono font-bold text-white mb-2;
+  }
+
+  .subsection-label {
+    @apply text-sm text-muted mb-6;
+  }
+
   .cli-table {
     @apply font-sans;
     min-width: 480px;

@@ -1157,7 +1157,8 @@
   <!-- gtl serve reference -->
   <section id="net-serve" class="px-4 sm:px-6 py-10 sm:py-16 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
-      <h2 class="section-heading mb-4">gtl serve &mdash; Local HTTPS subdomain router</h2>
+      <h3 class="subsection-heading">gtl serve</h3>
+      <p class="subsection-label">Local HTTPS subdomain router</p>
       <p class="text-muted mb-8">
         Maps <code class="text-accent-light">{project}-{branch}.localhost</code> to the correct worktree port. Runs as a <code class="text-accent-light">launchd</code> (macOS) or <code class="text-accent-light">systemd</code> (Linux) background service. Routes refresh every 5 seconds from the registry.
       </p>
@@ -1229,7 +1230,8 @@
   <!-- gtl proxy reference -->
   <section id="net-proxy" class="px-4 sm:px-6 py-10 sm:py-16">
     <div class="max-w-4xl mx-auto">
-      <h2 class="section-heading mb-4">gtl proxy &mdash; Single-port reverse proxy</h2>
+      <h3 class="subsection-heading">gtl proxy</h3>
+      <p class="subsection-label">Single-port reverse proxy</p>
       <p class="text-muted mb-8">
         External services &mdash; OAuth providers, Stripe webhooks, CORS policies &mdash; often expect a fixed URL. <code class="text-accent-light">gtl proxy</code> binds a fixed listen port and forwards traffic to the current worktree's allocated port.
       </p>
@@ -1279,7 +1281,8 @@
   <!-- gtl tunnel reference -->
   <section id="net-tunnel" class="px-4 sm:px-6 py-10 sm:py-16 bg-surface-raised">
     <div class="max-w-4xl mx-auto">
-      <h2 class="section-heading mb-4">gtl tunnel &mdash; Public HTTPS via Cloudflare</h2>
+      <h3 class="subsection-heading">gtl tunnel</h3>
+      <p class="subsection-label">Public HTTPS via Cloudflare</p>
       <p class="text-muted mb-8">
         Expose a running worktree to the public internet. Git Treeline manages <a href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/" class="text-accent-light hover:text-accent underline underline-offset-2">cloudflared</a> tunnels so you don't write config files or remember flags.
       </p>
@@ -1359,7 +1362,7 @@
   <!-- Route key convention -->
   <section id="route-keys" class="px-4 sm:px-6 py-10 sm:py-16">
     <div class="max-w-4xl mx-auto">
-      <h2 class="section-heading mb-4">Route key convention</h2>
+      <h3 class="subsection-heading">Route key convention</h3>
       <p class="text-muted mb-8">
         Both <code class="text-accent-light">gtl serve</code> and <code class="text-accent-light">gtl tunnel</code> derive URLs from the same route key. Computed from your project name (from <code class="text-accent-light">.treeline.yml</code>) and the current git branch:
       </p>
@@ -1405,7 +1408,7 @@
         The route key is also shown in <code class="text-accent-light">gtl setup</code> output when the router or tunnel is configured.
       </p>
 
-      <h3 class="text-xl font-mono text-white mb-4 mt-8">Networking config reference</h3>
+      <h4 class="text-lg font-mono text-white mb-4 mt-8">Networking config reference</h4>
       <p class="text-muted mb-4">
         Networking settings live in user config (<code class="text-accent-light">gtl config</code>), not in <code class="text-accent-light">.treeline.yml</code>. Per-machine, not per-project.
       </p>
