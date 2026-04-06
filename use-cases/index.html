@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Use cases — Git Treeline</title>
+  <title>Use cases &mdash; Git Treeline</title>
   <meta name="description" content="How teams use Git Treeline: multi-repo frontends and APIs, OAuth and webhooks, PR review with stakeholders, and agent-driven automation.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="canonical" href="https://git-treeline.dev/use-cases/">
-  <meta property="og:title" content="Use cases — Git Treeline">
+  <meta property="og:title" content="Use cases &mdash; Git Treeline">
   <meta property="og:description" content="Scenario guides: multi-repo dev, integrations, platform review, agents and CI.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://git-treeline.dev/use-cases/">
@@ -59,9 +59,9 @@
 
   <section class="px-4 sm:px-6 pt-28 sm:pt-36 pb-12 sm:pb-16 text-center">
     <p class="text-sm uppercase tracking-wider text-muted mb-4">Use cases</p>
-    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6 text-balance">Problems worth solving on purpose</h1>
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6 text-balance">Scenario guides by&nbsp;problem</h1>
     <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto mb-4 leading-relaxed">
-      These are scenario guides—not a second feature tour. Each page names a concrete failure mode (ports, URLs, humans who do not use git, machines that need JSON), then points to the Git Treeline commands and config that address it.
+      Each page starts with a concrete failure mode &mdash; ports colliding, URLs breaking, agents guessing config &mdash; then walks through the commands and config that fix it.
     </p>
     <p class="text-sm text-muted max-w-2xl mx-auto leading-relaxed">
       For full depth on each pillar, start with <a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">Isolation</a>, <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking</a>, <a href="/features/workflows/" class="text-accent-light hover:text-accent underline underline-offset-2">Workflows</a>, or <a href="/features/agents/" class="text-accent-light hover:text-accent underline underline-offset-2">AI Agents</a>; use this page when you already know <em>which</em> problem you are solving.
@@ -70,30 +70,69 @@
 
   <section class="px-4 sm:px-6 pb-24 sm:pb-32">
     <div class="max-w-5xl mx-auto grid sm:grid-cols-2 gap-6 sm:gap-8">
+
       <a href="/use-cases/multi-repo/" class="group use-case-hub-card">
-        <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Frontend + API, different repos</h2>
-        <p>Your SPA and your API are different clones. Hardcoded <code class="text-accent-light">localhost</code> ports in the frontend env rot the moment allocations change. The registry and <code class="text-accent-light">{resolve:…}</code> exist so URLs track branch intent—not last week’s guess.</p>
-        <p class="text-xs text-muted font-mono uppercase tracking-wider">Touches · Isolation · <span class="text-accent-light/90">resolve / link</span></p>
-        <span class="text-sm text-accent-light">Read the scenario &rarr;</span>
+        <div class="use-case-hub-body">
+          <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Frontend + API, different repos</h2>
+          <p>Your frontend hardcodes a port for the API. Someone re-runs setup, the API moves to a different port, and every frontend worktree breaks. <code class="text-accent-light">{resolve:&hellip;}</code> tracks the right branch automatically.</p>
+        </div>
+        <div class="use-case-hub-meta">
+          <span class="use-case-hub-label">Touches</span>
+          <div class="use-case-hub-tags">
+            <span class="use-case-tag">Isolation</span>
+            <span class="use-case-tag">resolve / link</span>
+          </div>
+          <span class="use-case-hub-cta">Read the scenario &rarr;</span>
+        </div>
       </a>
+
       <a href="/use-cases/integrations-urls/" class="group use-case-hub-card">
-        <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">OAuth, webhooks, stable URLs</h2>
-        <p>Providers register redirect URIs and webhooks against concrete hostnames. Worktrees move ports. You pick <code class="text-accent-light">gtl serve</code>, <code class="text-accent-light">gtl proxy</code>, <code class="text-accent-light">gtl tunnel</code>, or <code class="text-accent-light">gtl share</code> based on whether the integration needs local HTTPS, a fixed port, a public route, or a disposable link.</p>
-        <p class="text-xs text-muted font-mono uppercase tracking-wider">Touches · Networking (<code class="text-accent-light">serve / proxy / tunnel / share</code>)</p>
-        <span class="text-sm text-accent-light">Read the scenario &rarr;</span>
+        <div class="use-case-hub-body">
+          <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Why port 3000 stays free</h2>
+          <p>OAuth, Stripe, Mapbox, and CORS are all registered to <code class="text-accent-light">localhost:3000</code>. A second branch takes that port and every integration breaks. Treeline reserves common ports for <code class="text-accent-light">gtl proxy</code>.</p>
+        </div>
+        <div class="use-case-hub-meta">
+          <span class="use-case-hub-label">Touches</span>
+          <div class="use-case-hub-tags">
+            <span class="use-case-tag">Networking</span>
+            <span class="use-case-tag">proxy</span>
+            <span class="use-case-tag">serve</span>
+            <span class="use-case-tag">tunnel</span>
+          </div>
+          <span class="use-case-hub-cta">Read the scenario &rarr;</span>
+        </div>
       </a>
+
       <a href="/use-cases/platform-pr/" class="group use-case-hub-card">
-        <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Product and QA on a PR branch</h2>
-        <p>Stakeholders need a running app without cloning the repo or waiting on staging. <code class="text-accent-light">gtl review</code> stands up an isolated worktree; <code class="text-accent-light">gtl open</code> and branch URLs give them a path; <code class="text-accent-light">gtl release</code> tears it down when review ends.</p>
-        <p class="text-xs text-muted font-mono uppercase tracking-wider">Touches · Workflows · Networking</p>
-        <span class="text-sm text-accent-light">Read the scenario &rarr;</span>
+        <div class="use-case-hub-body">
+          <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Product and QA on a PR branch</h2>
+          <p>Stakeholders need a running app without cloning the repo or waiting on staging. <code class="text-accent-light">gtl review</code> stands up an isolated worktree with a branch URL. <code class="text-accent-light">gtl release</code> frees resources when review ends.</p>
+        </div>
+        <div class="use-case-hub-meta">
+          <span class="use-case-hub-label">Touches</span>
+          <div class="use-case-hub-tags">
+            <span class="use-case-tag">Workflows</span>
+            <span class="use-case-tag">Networking</span>
+          </div>
+          <span class="use-case-hub-cta">Read the scenario &rarr;</span>
+        </div>
       </a>
+
       <a href="/use-cases/agents-automation/" class="group use-case-hub-card">
-        <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Agents, scripts, CI</h2>
-        <p>Automation should not scrape <code class="text-white">gtl status</code> output. MCP, <code class="text-accent-light">--json</code> flags, and <code class="text-accent-light">gtl start --await</code> expose ports, env, readiness, and teardown as contracts—same allocation model as humans.</p>
-        <p class="text-xs text-muted font-mono uppercase tracking-wider">Touches · AI Agents · Isolation</p>
-        <span class="text-sm text-accent-light">Read the scenario &rarr;</span>
+        <div class="use-case-hub-body">
+          <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Agents, scripts, CI</h2>
+          <p>Automation should not scrape <code class="text-white">gtl status</code> output. MCP, <code class="text-accent-light">--json</code> flags, and <code class="text-accent-light">gtl start --await</code> expose ports, env, and teardown as structured contracts.</p>
+        </div>
+        <div class="use-case-hub-meta">
+          <span class="use-case-hub-label">Touches</span>
+          <div class="use-case-hub-tags">
+            <span class="use-case-tag">AI Agents</span>
+            <span class="use-case-tag">Isolation</span>
+          </div>
+          <span class="use-case-hub-cta">Read the scenario &rarr;</span>
+        </div>
       </a>
+
     </div>
   </section>
 
@@ -129,13 +168,13 @@
           </div>
         </nav>
         <div class="shrink-0 lg:max-w-[220px]">
-                    <p class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Built by</p>
+          <p class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Built by</p>
           <a href="https://x.com/jonathansimmons" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-white hover:text-accent-light transition-colors">Jonathan Simmons</a>
         </div>
       </div>
       <div class="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-surface-border pt-8 text-xs text-muted">
         <a href="/" class="font-mono hover:text-white transition-colors">git-treeline.dev</a>
-        <span>Open source · <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a></span>
+        <span>Open source &middot; <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a></span>
       </div>
     </div>
   </footer>

@@ -68,7 +68,7 @@
     <p class="text-sm uppercase tracking-wider text-muted mb-4">Workflows</p>
     <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">Type a PR number.<br>Get a running app.</h1>
     <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
-      One command creates an isolated worktree, allocates resources, runs setup, and boots the server. A built-in supervisor lets agents control it while you watch the logs. Prefer a bird&apos;s-eye view? <code class="text-accent-light">gtl dashboard</code> is a full-screen TUI over every allocation.
+      <code class="text-accent-light">gtl review</code> creates an isolated worktree, allocates resources, runs setup, and boots the server—all from a PR number. Requires the <code class="text-accent-light">gh</code> CLI for PR fetching; everything else is built in.
     </p>
   </section>
 
@@ -144,7 +144,7 @@
         <p class="text-muted text-xs mt-2 pl-7">named URL via gtl serve</p>
       </div>
       <p class="text-sm text-muted max-w-md mx-auto">
-        Done reviewing? <code class="text-accent-light">gtl release --drop-db</code> tears down the worktree, drops the database, and removes the env file.
+        Done reviewing? <code class="text-accent-light">gtl release --drop-db</code> frees the allocated port, drops the cloned database, and cleans up the env file. Remove the worktree directory separately with <code class="text-accent-light">git worktree remove</code>.
       </p>
     </div>
   </section>
@@ -176,7 +176,7 @@
   <!-- 4. How it works -->
   <section class="px-4 sm:px-6 py-16 sm:py-28">
     <div class="max-w-4xl mx-auto">
-      <h2 class="section-heading text-center mb-12">The supervisor: two interfaces, one&nbsp;process</h2>
+      <h2 class="section-heading text-center mb-12">Start, stop, restart — no PID&nbsp;files</h2>
       <div class="max-w-3xl mx-auto">
         <div class="terminal">
           <div class="terminal-header justify-between">
@@ -225,7 +225,7 @@
   <!-- Hooks and ergonomics -->
   <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised">
     <div class="max-w-3xl mx-auto">
-      <h2 class="section-heading text-center mb-4">Hooks, clone, open, wait</h2>
+      <h2 class="section-heading text-center mb-4">Automation hooks and shortcuts</h2>
       <p class="section-subtext text-center mx-auto mb-10 max-w-xl">
         Automation hooks live in <code class="text-accent-light">.treeline.yml</code>. Everything else is CLI for speed.
       </p>
@@ -251,7 +251,7 @@
     <div class="max-w-3xl mx-auto">
       <h2 class="section-heading text-center mb-4">Interactive terminal dashboard</h2>
       <p class="section-subtext text-center mx-auto mb-10 max-w-xl">
-        Run <code class="text-accent-light">gtl dashboard</code> (or <code class="text-accent-light">gtl dash</code> / <code class="text-accent-light">gtl ui</code>) for a Bubble Tea TUI: all projects and worktrees in one place, refreshed every couple of seconds. Move with <kbd class="text-white font-mono text-sm">j</kbd>/<kbd class="text-white font-mono text-sm">k</kbd>; <kbd class="text-white font-mono text-sm">s</kbd> start/stop, <kbd class="text-white font-mono text-sm">o</kbd> open browser, <kbd class="text-white font-mono text-sm">d</kbd> release (confirm), <kbd class="text-white font-mono text-sm">/</kbd> filter.
+        Run <code class="text-accent-light">gtl dashboard</code> (or <code class="text-accent-light">gtl dash</code> / <code class="text-accent-light">gtl ui</code>) for a full-screen terminal dashboard: all projects and worktrees in one place, refreshed every couple of seconds. Move with <kbd class="text-white font-mono text-sm">j</kbd>/<kbd class="text-white font-mono text-sm">k</kbd>; <kbd class="text-white font-mono text-sm">s</kbd> start/stop, <kbd class="text-white font-mono text-sm">o</kbd> open browser, <kbd class="text-white font-mono text-sm">d</kbd> release (confirm), <kbd class="text-white font-mono text-sm">/</kbd> filter.
       </p>
       <p class="text-center text-sm text-muted">
         <a href="/docs/#tui-dashboard" class="text-accent-light hover:text-accent underline underline-offset-2">TUI reference in the docs &rarr;</a>
@@ -274,7 +274,7 @@
         </div>
         <div class="feature-strip border-b-0 py-3">
           <div class="feature-strip-key sm:w-auto sm:text-left text-base">gtl release --drop-db</div>
-          <div class="feature-strip-desc">Remove worktree, drop the cloned database, clean up env files.</div>
+          <div class="feature-strip-desc">Free allocated resources, drop the cloned database, clean up env files.</div>
         </div>
         <div class="feature-strip border-b-0 py-3">
           <div class="feature-strip-key sm:w-auto sm:text-left text-base">gtl prune --merged</div>

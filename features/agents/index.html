@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Agents — Git Treeline</title>
-  <meta name="description" content="Give AI coding agents native tool access to worktree management. MCP server, lifecycle hooks, JSON output, and auto-generated agent context files for Cursor, Claude Code, and Codex.">
+  <meta name="description" content="AI coding agents guess ports and break. A built-in MCP server lets agents query real allocations, control the dev server, and inspect config — no shell parsing.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="canonical" href="https://git-treeline.dev/features/agents/">
 
   <meta property="og:title" content="AI Agents — Git Treeline">
-  <meta property="og:description" content="Give AI coding agents native tool access to worktree management. MCP server, lifecycle hooks, and structured output.">
+  <meta property="og:description" content="AI coding agents guess ports and break. A built-in MCP server gives agents structured access to allocations, the dev server, and config.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://git-treeline.dev/features/agents/">
   <meta property="og:site_name" content="Git Treeline">
@@ -66,9 +66,9 @@
   <!-- Hero -->
   <section class="px-4 sm:px-6 pt-28 sm:pt-36 pb-16 sm:pb-20 text-center">
     <p class="text-sm uppercase tracking-wider text-muted mb-4">AI Agents</p>
-    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">Your agent gets the<br>same tools you do.</h1>
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">Agents guess ports and config.<br>They don't have&nbsp;to.</h1>
     <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
-      A built-in MCP server gives agents native access to worktree management. Lifecycle hooks, structured output, and auto-generated context files make every agent environment-aware.
+      A built-in MCP server — Model Context Protocol, the way AI coding agents call tools directly instead of running shell commands — lets agents query real port allocations, control the dev server, and inspect config. Works with any MCP-compatible editor.
     </p>
   </section>
 
@@ -111,7 +111,7 @@
         <div class="config-block rounded-lg border border-surface-border overflow-hidden">
           <div class="px-4 py-2.5 border-b border-surface-border flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-accent/50"></span>
-            <span class="text-xs font-mono text-muted">MCP config (Cursor / Claude Code / Codex)</span>
+            <span class="text-xs font-mono text-muted">MCP config (any MCP-compatible editor)</span>
           </div>
           <pre class="px-4 py-4 text-sm leading-relaxed font-mono overflow-x-auto"><code>{
   "<span class="text-accent-light">mcpServers</span>": {
@@ -124,7 +124,7 @@
         </div>
       </div>
       <p class="text-sm text-muted text-center max-w-lg mx-auto">
-        Now the agent calls <code class="text-accent-light">start</code>, <code class="text-accent-light">port</code>, <code class="text-accent-light">status</code> as native tools under the <code class="text-white">gtl</code> server namespace. No shell parsing, no guessing, no string manipulation.
+        The agent can call <code class="text-accent-light">start</code>, <code class="text-accent-light">stop</code>, <code class="text-accent-light">port</code>, and <code class="text-accent-light">status</code> as structured tool calls — no shell commands, no output parsing. Setup examples for Cursor and Claude Code are in the <a href="/docs/#ai-agents" class="text-accent-light hover:text-accent underline underline-offset-2">docs</a>.
       </p>
     </div>
   </section>
@@ -134,20 +134,20 @@
     <div class="max-w-5xl mx-auto">
       <h2 class="section-heading text-center mb-4 text-balance">What this makes&nbsp;possible</h2>
       <p class="section-subtext text-center mx-auto mb-12 max-w-2xl text-balance">
-        Agents fail when they guess ports, databases, and env files. Git Treeline treats agents as first-class callers: MCP tools for the supervisor, <code class="text-accent-light">--json</code> for shell runners, and the same <code class="text-white">.treeline.yml</code> hooks as humans. <a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">Isolation</a> covers allocation; this page covers how agents invoke it.
+        AI coding agents are the reason you end up with nine worktrees — three repos, three branches each, all running at the same time. The declarative config and a git hook (installed by <code class="text-accent-light">gtl init</code>) do the heavy lifting. MCP is how agents stay informed about what's running. If you're evaluating agent integration and haven't used MCP before, start here — it's simpler than it looks.
       </p>
       <div class="grid gap-10 lg:grid-cols-3 lg:gap-12">
         <div class="benefit-card">
-          <h3 class="text-white font-mono text-lg mb-3 text-balance">IDE-integrated agents control the stack</h3>
-          <p class="text-base text-muted leading-relaxed">With <code class="text-accent-light">gtl mcp</code> registered in Cursor, Claude Code, or Codex, an agent calls <code class="text-accent-light">start</code>, <code class="text-accent-light">restart</code>, <code class="text-accent-light">stop</code>, <code class="text-accent-light">port</code>, and <code class="text-accent-light">status</code> as structured tools—no brittle shell parsing. <code class="text-accent-light">doctor</code> and <code class="text-accent-light">list</code> surface the same registry data the CLI uses.</p>
+          <h3 class="text-white font-mono text-lg mb-3 text-balance">Agents query real ports, not guesses</h3>
+          <p class="text-base text-muted leading-relaxed">With the MCP server registered in your editor, an agent calls <code class="text-accent-light">port</code>, <code class="text-accent-light">status</code>, and <code class="text-accent-light">list</code> as structured tools — no shell parsing. <code class="text-accent-light">doctor</code> surfaces the same diagnostic data the CLI uses.</p>
         </div>
         <div class="benefit-card">
-          <h3 class="text-white font-mono text-lg mb-3 text-balance">Setup and teardown match the human workflow</h3>
-          <p class="text-base text-muted leading-relaxed"><code class="text-accent-light">gtl setup .</code> runs the full allocation path (ports, DB, env, <code class="text-white">commands.setup</code>, hooks). <code class="text-accent-light">gtl release . --drop-db</code> tears down with <code class="text-white">pre_release</code> / <code class="text-white">post_release</code> semantics—so agents do not invent a parallel cleanup story.</p>
+          <h3 class="text-white font-mono text-lg mb-3 text-balance">Agents set up and tear down the same way you do</h3>
+          <p class="text-base text-muted leading-relaxed"><code class="text-accent-light">gtl setup .</code> runs the full allocation path (ports, DB, env, <code class="text-white">commands.setup</code>, hooks). <code class="text-accent-light">gtl release . --drop-db</code> frees resources with the same lifecycle hooks — so agents don't invent a parallel cleanup path.</p>
         </div>
         <div class="benefit-card">
-          <h3 class="text-white font-mono text-lg mb-3 text-balance">Orchestrators can run many sandboxes safely</h3>
-          <p class="text-base text-muted leading-relaxed">Each worktree stays isolated: its own ports, database name, and supervisor socket. An orchestrator that launches multiple agents still reads deterministic state via <code class="text-accent-light">status --json</code> or MCP <code class="text-white">list</code>, instead of scraping stdout.</p>
+          <h3 class="text-white font-mono text-lg mb-3 text-balance">Multiple agents, multiple sandboxes, no collisions</h3>
+          <p class="text-base text-muted leading-relaxed">Each worktree stays isolated: its own ports, database name, and supervisor socket. An orchestrator running three agents in parallel reads deterministic state via <code class="text-accent-light">status --json</code> or MCP <code class="text-white">list</code> instead of scraping stdout.</p>
         </div>
       </div>
     </div>
@@ -156,9 +156,9 @@
   <!-- 4. How it works -->
   <section class="px-4 sm:px-6 py-16 sm:py-28">
     <div class="max-w-4xl mx-auto">
-      <h2 class="section-heading text-center mb-4">Four integration&nbsp;surfaces</h2>
+      <h2 class="section-heading text-center mb-4">How agents&nbsp;connect</h2>
       <p class="section-subtext text-center mx-auto mb-12 max-w-2xl">
-        Different agents need different interfaces—MCP for editor-native tools, JSON flags for shell-only runners, and committed <code class="text-accent-light">AGENTS.md</code> for static context. Git Treeline supports all three.
+        Different agents need different interfaces — MCP for editor-native tools, JSON flags for shell-only runners, and committed <code class="text-accent-light">AGENTS.md</code> for static context.
       </p>
 
       <div class="space-y-10">
@@ -283,7 +283,7 @@
           <div class="md:order-2">
             <h3 class="text-white font-mono text-xl mb-2">Agent context files</h3>
             <p class="text-sm text-muted mb-4">
-              <code class="text-accent-light">gtl init</code> generates an <code class="text-white">AGENTS.md</code> file that tells Cursor, Claude Code, and Codex how to use Git Treeline. The agent reads it on startup and knows which commands to run for setup, teardown, and server management.
+              <code class="text-accent-light">gtl init</code> generates an <code class="text-white">AGENTS.md</code> file that provides agents with instructions for setup, teardown, and server management. Any MCP-compatible editor reads it as context — how closely agents follow it depends on the model.
             </p>
           </div>
           <div class="md:order-1 terminal">
@@ -312,9 +312,16 @@
   <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised text-center">
     <div class="max-w-2xl mx-auto">
       <h2 class="section-heading mb-4">Connect your&nbsp;agent</h2>
-      <p class="text-sm text-muted mb-8">Add the MCP config to your editor. The agent discovers everything else automatically.</p>
+      <p class="text-sm text-muted mb-8">Add the MCP config to your editor. Agents can then query ports, control the dev server, and inspect allocations — no shell parsing required.</p>
       <div class="config-block rounded-lg border border-surface-border overflow-hidden max-w-sm mx-auto mb-6">
-        <pre class="px-4 py-3 text-sm leading-relaxed font-mono overflow-x-auto"><code>{ "<span class="text-accent-light">mcpServers</span>": { "<span class="text-white">gtl</span>": { "<span class="text-accent-light">command</span>": "<span class="text-white">gtl</span>", "<span class="text-accent-light">args</span>": ["<span class="text-white">mcp</span>"] } } }</code></pre>
+        <pre class="px-4 py-3 text-sm leading-relaxed font-mono overflow-x-auto"><code>{
+  "<span class="text-accent-light">mcpServers</span>": {
+    "<span class="text-white">gtl</span>": {
+      "<span class="text-accent-light">command</span>": "<span class="text-white">gtl</span>",
+      "<span class="text-accent-light">args</span>": ["<span class="text-white">mcp</span>"]
+    }
+  }
+}</code></pre>
       </div>
       <a href="/docs/#ai-agents" class="text-sm text-accent-light hover:text-accent underline underline-offset-2">Full agent setup reference &rarr;</a>
     </div>

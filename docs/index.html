@@ -9,7 +9,7 @@
   <link rel="canonical" href="https://git-treeline.dev/docs/">
 
   <meta property="og:title" content="Docs — Git Treeline">
-  <meta property="og:description" content="CLI reference, configuration guide, Rails integration, and AI agent setup for Git Treeline.">
+  <meta property="og:description" content="Configuration guide, CLI reference, networking, AI agent setup, and framework integration for Git Treeline.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://git-treeline.dev/docs/">
   <meta property="og:site_name" content="Git Treeline">
@@ -113,7 +113,7 @@
     </aside>
 
     <!-- Main content -->
-    <main class="flex-1 min-w-0">
+    <main class="flex-1 min-w-0 docs-body">
 
   <!-- Docs Header -->
   <header class="pt-20 sm:pt-24 pb-6 sm:pb-8 px-4 sm:px-6 lg:px-0">
@@ -172,13 +172,16 @@
   </nav>
 
   <!-- Getting Started -->
-  <section id="getting-started" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16">
+  <section id="getting-started" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20">
     <!-- Stable anchor for marketing CTAs (“first-time setup”) — same section as Getting started -->
     <div id="first-time-setup" class="scroll-mt-20"></div>
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Getting started</h2>
       <p class="text-muted mb-4">
-        Git Treeline ships as a single CLI binary &mdash; nothing from Treeline runs inside your app&rsquo;s process or bundle. It writes per-worktree env at setup time. Most flows that create or use worktrees (<code class="text-accent-light">gtl new</code>, <code class="text-accent-light">gtl review</code>, <code class="text-accent-light">gtl setup</code>, <code class="text-accent-light">gtl clone</code>) expect a <strong class="text-white">local HTTPS router</strong> so URLs like <code class="text-white">https://{project}-{branch}.localhost</code> resolve without a port number. That router is optional in principle but <strong class="text-white">required for those commands</strong> until you run the one-time install below.
+        Git Treeline ships as a single CLI binary &mdash; nothing from Treeline runs inside your app&rsquo;s process or bundle. It writes per-worktree env at setup time.
+      </p>
+      <p class="text-muted mb-4">
+        Most commands (<code class="text-accent-light">gtl new</code>, <code class="text-accent-light">gtl review</code>, <code class="text-accent-light">gtl setup</code>, <code class="text-accent-light">gtl clone</code>) expect a <strong class="text-white">local HTTPS router</strong> so URLs like <code class="text-white">https://{project}-{branch}.localhost</code> resolve without a port number. That router is <strong class="text-white">required for those commands</strong> until you run the one-time install below.
       </p>
       <p class="text-sm text-muted mb-8">New here? See <a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">how isolation works</a> and the <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">networking page</a> for how <code class="text-accent-light">gtl serve</code> fits with proxy, tunnel, and share.</p>
 
@@ -242,7 +245,7 @@
         </div>
       </div>
       <p class="text-muted">
-        <code class="text-accent-light">gtl init</code> auto-detects your framework (Rails, Next.js, Vite, Express, Python, Rust, Go) and generates a tailored <code class="text-accent-light">.treeline.yml</code> with commented-out optional config so available features are discoverable. It also writes a treeline section to <code class="text-accent-light">AGENTS.md</code> (or appends to <code class="text-accent-light">CLAUDE.md</code>) so Cursor, Claude Code, and Codex agents know to use <code class="text-accent-light">gtl port</code>. After generating the config, it prints actionable diagnostics &mdash; for example, Vite projects get <code class="text-accent-light">vite.config.js</code> port wiring guidance, Node projects without <code class="text-accent-light">dotenv</code> get a warning. Pass <code class="text-accent-light">--skip-agent-config</code> to skip the agent context file.
+        <code class="text-accent-light">gtl init</code> auto-detects your framework (Rails, Next.js, Vite, Express, Python, Rust, Go) and generates a tailored <code class="text-accent-light">.treeline.yml</code> with commented-out optional config so available features are discoverable. It also writes a treeline section to <code class="text-accent-light">AGENTS.md</code> (or appends to <code class="text-accent-light">CLAUDE.md</code>) so MCP-compatible editors (Cursor, Claude Code, and others) know to use <code class="text-accent-light">gtl port</code>. After generating the config, it prints actionable diagnostics &mdash; for example, Vite projects get <code class="text-accent-light">vite.config.js</code> port wiring guidance, Node projects without <code class="text-accent-light">dotenv</code> get a warning. Pass <code class="text-accent-light">--skip-agent-config</code> to skip the agent context file.
       </p>
       </div>
 
@@ -311,7 +314,7 @@
   </section>
 
   <!-- Configuration -->
-  <section id="configuration" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+  <section id="configuration" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Configuration</h2>
       <p class="text-muted mb-4">
@@ -356,11 +359,6 @@
             <div class="cmd-name">database.pattern</div>
             <div class="cmd-flags"><span class="cmd-flag">string</span></div>
             <p class="cmd-desc">Naming pattern for cloned databases. Tokens: <code class="text-accent-light">{template}</code>, <code class="text-accent-light">{worktree}</code>.</p>
-          </div>
-          <div class="cmd-item">
-            <div class="cmd-name">redis.strategy</div>
-            <div class="cmd-flags"><span class="cmd-flag">string</span></div>
-            <p class="cmd-desc"><code class="text-accent-light">prefixed</code> (key namespacing, unlimited) or <code class="text-accent-light">database</code> (separate Redis DBs 1&ndash;15).</p>
           </div>
           <div class="cmd-item">
             <div class="cmd-name">copy_files</div>
@@ -480,7 +478,7 @@
   </section>
 
   <!-- Lifecycle hooks -->
-  <section id="lifecycle-hooks" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+  <section id="lifecycle-hooks" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Lifecycle hooks</h2>
       <p class="text-muted mb-6">
@@ -500,7 +498,7 @@
   </section>
 
   <!-- Cross-worktree -->
-  <section id="cross-worktree" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+  <section id="cross-worktree" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Cross-worktree resolve</h2>
       <p class="text-muted mb-4">
@@ -518,7 +516,7 @@
   </section>
 
   <!-- CLI Reference -->
-  <section id="cli-reference" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+  <section id="cli-reference" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">CLI reference</h2>
       <p class="text-muted mb-8">
@@ -743,7 +741,7 @@
   </section>
 
   <!-- User Config -->
-  <section id="user-config" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+  <section id="user-config" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">User config</h2>
       <p class="text-muted mb-4">
@@ -835,7 +833,7 @@
   </section>
 
   <!-- Framework Integration -->
-  <section id="rails-integration" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+  <section id="rails-integration" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Framework integration</h2>
       <p class="text-muted mb-8">
@@ -901,7 +899,7 @@
   </section>
 
   <!-- Setup Commands -->
-  <section id="setup-commands" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+  <section id="setup-commands" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Setup commands</h2>
       <p class="text-muted mb-8">
@@ -974,7 +972,7 @@
   </section>
 
   <!-- Database Management -->
-  <section id="db-management" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+  <section id="db-management" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Database management</h2>
       <p class="text-muted mb-8">
@@ -1036,7 +1034,7 @@
   </section>
 
   <!-- Process Supervisor -->
-  <section id="supervisor" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+  <section id="supervisor" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Process supervisor</h2>
       <p class="text-muted mb-4">
@@ -1105,7 +1103,7 @@
   </section>
 
   <!-- TUI dashboard -->
-  <section id="tui-dashboard" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+  <section id="tui-dashboard" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">TUI dashboard</h2>
       <p class="text-muted mb-4">
@@ -1130,7 +1128,7 @@
   </section>
 
   <!-- Editor Customization -->
-  <section id="editor" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+  <section id="editor" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Editor customization</h2>
       <p class="text-muted mb-8">
@@ -1207,7 +1205,7 @@
   </section>
 
   <!-- AI Agent Setup -->
-  <section id="ai-agents" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+  <section id="ai-agents" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">AI agent setup</h2>
       <p class="text-muted mb-4">
@@ -1266,7 +1264,7 @@
         <code class="text-accent-light">gtl init</code> writes a treeline section to <code class="text-accent-light">AGENTS.md</code> (created if it doesn't exist, appended otherwise). If <code class="text-accent-light">CLAUDE.md</code> exists but <code class="text-accent-light">AGENTS.md</code> doesn't, it appends there instead. The section tells agents to use <code class="text-accent-light">gtl port</code> for port discovery and lists the allocated env vars.
       </p>
       <p class="text-muted mb-4">
-        <code class="text-accent-light">AGENTS.md</code> is read by Cursor, Claude Code, and Codex &mdash; one file covers all three.
+        <code class="text-accent-light">AGENTS.md</code> is read by any MCP-compatible editor &mdash; one file covers them all.
       </p>
 
       <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Port discovery</h3>
@@ -1351,18 +1349,40 @@
   </section>
 
   <!-- Networking -->
-  <section id="networking" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+  <section id="networking" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Networking</h2>
-      <p class="text-muted mb-4">
-        <code class="text-accent-light">gtl serve</code> gives local HTTPS names; <code class="text-accent-light">gtl proxy</code> pins a listen port; <code class="text-accent-light">gtl tunnel</code> exposes a stable public hostname on your domain; <code class="text-accent-light">gtl share</code> creates a short-lived share link. They are not interchangeable—see <a href="/use-cases/integrations-urls/" class="text-accent-light hover:text-accent underline underline-offset-2">integrations use case</a>.
-      </p>
-      <p class="text-sm text-muted mb-8">See <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking</a> for narrative and comparison.</p>
+
+      <div class="docs-subsection">
+        <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Design rationale</h3>
+        <p class="text-muted mb-4">
+          Treeline&rsquo;s networking is built around one principle: <strong class="text-white">common ports stay free so the developer controls what listens on them.</strong>
+        </p>
+        <p class="text-muted mb-4">
+          Worktree servers never bind to ports like 3000, 4000, 5000, or 8080. Instead, Treeline allocates from a managed range starting at <strong class="text-white">3002</strong>. This is deliberate:
+        </p>
+        <ul class="text-muted space-y-2 mb-6 list-disc pl-5">
+          <li><strong class="text-white">Port 3000</strong> stays free for <code class="text-accent-light">gtl proxy</code> &mdash; a facade that lets OAuth providers, Stripe webhooks, Mapbox, and CORS policies keep pointing at <code class="text-white">localhost:3000</code> regardless of which worktree is active.</li>
+          <li><strong class="text-white">Port 3001</strong> is used by <code class="text-accent-light">gtl serve</code> &mdash; the background HTTPS router that maps <code class="text-white">{project}-{branch}.localhost</code> to the right worktree.</li>
+          <li><strong class="text-white">Port 3002+</strong> are allocated to worktrees. The developer never types these &mdash; branch-named URLs and the proxy abstract them away.</li>
+        </ul>
+        <p class="text-muted mb-4">
+          This creates two layers of access: <strong class="text-white">branch URLs</strong> (<code class="text-accent-light">myapp-feature.localhost</code>) for your browser and inter-service resolution, and the <strong class="text-white">proxy</strong> (<code class="text-accent-light">localhost:3000</code>) for anything external that expects a fixed origin. Both work at the same time. See <a href="/use-cases/integrations-urls/" class="text-accent-light hover:text-accent underline underline-offset-2">why port 3000 stays free</a> for the full story.
+        </p>
+      </div>
+
+      <div class="docs-subsection">
+        <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Four commands</h3>
+        <p class="text-muted mb-4">
+          <code class="text-accent-light">gtl serve</code> gives local HTTPS names. <code class="text-accent-light">gtl proxy</code> pins a listen port. <code class="text-accent-light">gtl tunnel</code> exposes a stable public hostname on your domain. <code class="text-accent-light">gtl share</code> creates a short-lived share link. They serve different trust boundaries and are not interchangeable.
+        </p>
+        <p class="text-sm text-muted mb-4">See <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking</a> for narrative and comparison.</p>
+      </div>
     </div>
   </section>
 
   <!-- gtl serve reference -->
-  <section id="net-serve" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+  <section id="net-serve" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h3 class="subsection-heading">gtl serve</h3>
       <p class="subsection-label">Local HTTPS subdomain router</p>
@@ -1435,12 +1455,15 @@
   </section>
 
   <!-- gtl proxy reference -->
-  <section id="net-proxy" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+  <section id="net-proxy" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h3 class="subsection-heading">gtl proxy</h3>
-      <p class="subsection-label">Single-port reverse proxy</p>
+      <p class="subsection-label">Port facade for third-party services</p>
+      <p class="text-muted mb-4">
+        OAuth providers, Stripe webhooks, Mapbox, and CORS policies are all registered to a fixed origin like <code class="text-white">localhost:3000</code>. Because Treeline <a href="#networking" class="text-accent-light hover:text-accent underline underline-offset-2">never allocates common ports</a>, that port is always available for the proxy to claim.
+      </p>
       <p class="text-muted mb-8">
-        External services &mdash; OAuth providers, Stripe webhooks, CORS policies &mdash; often expect a fixed URL. <code class="text-accent-light">gtl proxy</code> binds a fixed listen port and forwards traffic to the current worktree's allocated port.
+        <code class="text-accent-light">gtl proxy &lt;port&gt;</code> binds the specified port and forwards traffic to the current worktree&rsquo;s allocated port. Configure your third-party dashboards once against <code class="text-white">localhost:3000</code> and rotate which worktree sits behind it.
       </p>
 
       <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Usage</h3>
@@ -1486,7 +1509,7 @@
   </section>
 
   <!-- gtl tunnel reference -->
-  <section id="net-tunnel" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+  <section id="net-tunnel" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h3 class="subsection-heading">gtl tunnel</h3>
       <p class="subsection-label">Public HTTPS via Cloudflare</p>
@@ -1567,7 +1590,7 @@
   </section>
 
   <!-- gtl share reference -->
-  <section id="net-share" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+  <section id="net-share" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h3 class="subsection-heading">gtl share</h3>
       <p class="subsection-label">Ephemeral share URL</p>
@@ -1584,7 +1607,7 @@
   </section>
 
   <!-- Route key convention -->
-  <section id="route-keys" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+  <section id="route-keys" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h3 class="subsection-heading">Route key convention</h3>
       <p class="text-muted mb-8">

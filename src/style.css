@@ -65,7 +65,7 @@
   }
 
   .section-heading {
-    @apply text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-4;
+    @apply text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-6 sm:mb-4;
     text-wrap: balance;
   }
 
@@ -75,15 +75,27 @@
   }
 
   .subsection-heading {
-    @apply text-xl sm:text-2xl font-mono font-bold text-white mb-2;
+    @apply text-lg sm:text-2xl font-mono font-bold text-white mb-2 mt-2;
   }
 
   .subsection-label {
-    @apply text-base text-muted mb-6;
+    @apply text-sm sm:text-base text-muted mb-6;
   }
 
   .docs-subsection {
-    @apply mb-10 sm:mb-12;
+    @apply mb-14 sm:mb-14 pt-8 sm:pt-0;
+    border-top: 1px solid rgba(48, 54, 61, 0.5);
+  }
+
+  @media (min-width: 640px) {
+    .docs-subsection {
+      border-top: none;
+    }
+  }
+
+  .docs-subsection:first-child {
+    border-top: none;
+    padding-top: 0;
   }
 
   .cli-table {
@@ -118,7 +130,7 @@
   }
 
   .cmd-item {
-    @apply py-5 border-b border-surface-border;
+    @apply py-6 sm:py-5 border-b border-surface-border;
   }
 
   .cmd-item:last-child {
@@ -138,7 +150,36 @@
   }
 
   .cmd-desc {
-    @apply text-base text-muted mt-2;
+    @apply text-sm sm:text-base text-muted mt-2;
+  }
+
+  /* Docs mobile: tighter text, bigger heading contrast, quieter inline code */
+  @media (max-width: 639px) {
+    .docs-body p,
+    .docs-body li,
+    .docs-body .cmd-desc,
+    .docs-body .text-muted {
+      font-size: 0.875rem;
+      line-height: 1.7;
+    }
+
+    .docs-body h3 {
+      font-size: 1.125rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      padding-top: 1.5rem;
+    }
+
+    .docs-body code:not(pre code) {
+      font-size: 0.8125rem;
+      padding: 0.125rem 0.3rem;
+      border-radius: 0.25rem;
+      background: rgba(22, 27, 34, 0.6);
+    }
+
+    .docs-body .terminal {
+      font-size: 0.8125rem;
+    }
   }
 
   .faq-item {
@@ -176,7 +217,7 @@
   }
 
   .docs-sidebar-link {
-    @apply text-base text-muted hover:text-white transition-colors block py-1 pl-3 border-l-2 border-transparent;
+    @apply text-base text-muted hover:text-white transition-colors block py-1.5 sm:py-1 pl-3 border-l-2 border-transparent;
   }
 
   .docs-sidebar-active {
@@ -185,7 +226,7 @@
 
   /* Feature strips — horizontal layout: large mono key + sentence */
   .feature-strip {
-    @apply flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-8 py-6 border-b border-surface-border;
+    @apply flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-8 py-7 sm:py-6 border-b border-surface-border;
   }
 
   .feature-strip:last-child {
@@ -197,7 +238,7 @@
   }
 
   .feature-strip-desc {
-    @apply text-muted text-base sm:text-lg;
+    @apply text-muted text-sm sm:text-lg;
   }
 
   /* Pipeline / flow visual — stack until lg so narrow columns (feature cards) never clip */
@@ -359,7 +400,28 @@
 
   /* Feature highlight cards — alternating left/right */
   .feature-card {
-    @apply grid md:grid-cols-2 gap-8 md:gap-12 lg:gap-14 items-center py-20 sm:py-28;
+    @apply md:grid md:grid-cols-2 md:gap-12 lg:gap-14 items-center py-20 sm:py-28;
+  }
+
+  /* Mobile: horizontal scroll-snap with peek — copy leads, demo edge visible */
+  @media (max-width: 767px) {
+    .feature-card {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      gap: 0.75rem;
+    }
+    .feature-card::-webkit-scrollbar { display: none; }
+
+    .feature-card-visual,
+    .feature-card-copy {
+      flex: 0 0 calc(100% - 2.5rem);
+      scroll-snap-align: start;
+      min-width: 0;
+      box-sizing: border-box;
+    }
   }
 
   .feature-card + .feature-card {
@@ -367,11 +429,11 @@
   }
 
   .feature-card-visual {
-    @apply order-1 min-w-0;
+    @apply order-2 md:order-1 min-w-0;
   }
 
   .feature-card-copy {
-    @apply order-2 min-w-0 max-w-xl md:max-w-none;
+    @apply order-1 md:order-2 min-w-0 max-w-xl md:max-w-none;
   }
 
   .feature-card-reversed .feature-card-visual {
@@ -392,7 +454,7 @@
   }
 
   .feature-card-link {
-    @apply text-base text-accent-light hover:text-accent underline underline-offset-2 inline-flex items-center gap-1;
+    @apply inline-block text-sm font-mono font-semibold px-5 py-2.5 rounded-md border border-accent/40 text-accent-light hover:bg-accent/10 hover:border-accent transition-colors;
   }
 
   .benefit-card {
@@ -457,24 +519,48 @@
   }
 
   .use-case-hub-card {
-    @apply block rounded-lg border border-surface-border bg-surface-raised p-6 sm:p-8 hover:border-accent/40 transition-colors text-left;
+    @apply flex flex-col rounded-lg border border-surface-border bg-surface-raised p-6 sm:p-8 hover:border-accent/40 transition-colors text-left h-full;
   }
 
   .use-case-hub-card p {
-    @apply text-base text-muted leading-relaxed mb-4 last:mb-0;
+    @apply text-sm sm:text-base text-muted leading-relaxed mb-4;
+  }
+
+  .use-case-hub-card .use-case-hub-body {
+    @apply flex-1;
+  }
+
+  .use-case-hub-card .use-case-hub-meta {
+    @apply mt-auto pt-5 border-t border-surface-border;
+  }
+
+  .use-case-hub-label {
+    @apply block text-xs text-muted uppercase tracking-wider mb-2;
+  }
+
+  .use-case-hub-tags {
+    @apply flex flex-wrap gap-1.5 mb-4;
+  }
+
+  .use-case-tag {
+    @apply text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light;
+  }
+
+  .use-case-hub-cta {
+    @apply text-sm font-mono text-accent-light group-hover:text-accent transition-colors;
   }
 
   /* Trust bar */
   .trust-bar {
-    @apply flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-10 gap-y-5 sm:gap-y-6 text-base text-muted;
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 text-sm text-muted;
   }
 
   .trust-bar-item {
-    @apply flex items-center gap-2 border-l-2 border-accent/40 pl-4;
+    @apply border-l-2 border-accent/40 pl-4 py-1;
   }
 
   .trust-bar-item strong {
-    @apply text-white font-medium;
+    @apply text-white font-medium block;
   }
 
   /* Framework pills */

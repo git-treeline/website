@@ -65,10 +65,10 @@
 
   <!-- Hero -->
   <section class="px-4 sm:px-6 pt-28 sm:pt-36 pb-16 sm:pb-20 text-center">
-    <p class="text-sm uppercase tracking-wider text-muted mb-4">Isolation</p>
+    <p class="text-sm uppercase tracking-wider text-muted mb-4">Environment isolation</p>
     <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">Two branches. Two apps.<br>Zero conflicts.</h1>
     <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
-      Every worktree gets its own port, database, Redis namespace, and env file. Declare what your project needs once in <code class="text-accent-light">.treeline.yml</code>. Git Treeline allocates resources and runs your hooks on every branch.
+      Not containers — separate ports, databases, Redis namespaces, and env files for every worktree. Declare what your project needs once in <code class="text-accent-light">.treeline.yml</code> and a git hook installed by <code class="text-accent-light">gtl init</code> allocates resources on every checkout.
     </p>
   </section>
 
@@ -155,12 +155,12 @@
           <p class="text-base text-muted leading-relaxed">Main, a feature branch, and a PR review can run side by side with different ports and databases. You switch browser tabs—or editor windows with distinct title-bar colors—not terminal sessions, and you are not sharing one <code class="text-white">.env.local</code> between checkouts.</p>
         </div>
         <div class="benefit-card">
-          <h3 class="text-white font-mono text-lg mb-3 text-balance">Agents and automation get a real sandbox</h3>
-          <p class="text-base text-muted leading-relaxed">A worktree created for an agent or script gets the same allocation rules as yours: isolated DB, env, and supervisor-controlled start/stop. Teardown via <code class="text-accent-light">gtl release</code> drops resources when the branch is done—see <a href="/features/agents/" class="text-accent-light hover:text-accent underline underline-offset-2">AI Agents</a> for MCP and JSON surfaces.</p>
+          <h3 class="text-white font-mono text-lg mb-3 text-balance">Onboarding tracks the repo, not a wiki</h3>
+          <p class="text-base text-muted leading-relaxed">New developers clone the repo and run <code class="text-accent-light">gtl setup</code> in a worktree. Database clone, env interpolation, <code class="text-accent-light">commands.setup</code>, and hooks run in a predictable order—no one-off “change these three env vars” instructions that drift from reality.</p>
         </div>
         <div class="benefit-card">
-          <h3 class="text-white font-mono text-lg mb-3 text-balance">Onboarding tracks the repo, not a wiki</h3>
-          <p class="text-base text-muted leading-relaxed">New developers clone, run <code class="text-accent-light">gtl init</code> if the project uses Git Treeline, then <code class="text-accent-light">gtl setup</code> in a worktree. Database clone, env interpolation, <code class="text-accent-light">commands.setup</code>, and hooks run in a documented order—no one-off “change these three env vars” instructions that drift from reality.</p>
+          <h3 class="text-white font-mono text-lg mb-3 text-balance">Agents and automation get a real sandbox</h3>
+          <p class="text-base text-muted leading-relaxed">A worktree created for an agent or script gets the same allocation rules as yours: isolated DB, env, and supervisor-controlled start/stop. Teardown via <code class="text-accent-light">gtl release</code> frees resources when the branch is done—see <a href="/features/agents/" class="text-accent-light hover:text-accent underline underline-offset-2">AI Agents</a> for MCP and JSON surfaces.</p>
         </div>
       </div>
     </div>
@@ -235,7 +235,7 @@
           </div>
           <div>
             <h3 class="text-white font-mono text-base mb-2">Lifecycle hooks</h3>
-            <p class="text-sm text-muted leading-relaxed"><code class="text-accent-light">hooks.pre_setup</code> and <code class="text-accent-light">hooks.post_setup</code> wrap <code class="text-white">commands.setup</code>; <code class="text-accent-light">hooks.pre_release</code> and <code class="text-accent-light">hooks.post_release</code> wrap freeing ports and dropping databases on <code class="text-accent-light">gtl release</code>. Pre-hooks <strong class="text-white">abort</strong> the operation on non-zero exit; post-hooks <strong class="text-white">warn</strong> and continue—matching the CLI behavior in the repo. Full ordering and examples: <a href="/docs/#lifecycle-hooks" class="text-accent-light hover:text-accent underline underline-offset-2">Lifecycle hooks in the docs</a>.</p>
+            <p class="text-sm text-muted leading-relaxed"><code class="text-accent-light">hooks.pre_setup</code> and <code class="text-accent-light">hooks.post_setup</code> wrap <code class="text-white">commands.setup</code>; <code class="text-accent-light">hooks.pre_release</code> and <code class="text-accent-light">hooks.post_release</code> wrap freeing ports and dropping databases on <code class="text-accent-light">gtl release</code>. Pre-hooks <strong class="text-white">abort</strong> the operation on non-zero exit; post-hooks <strong class="text-white">warn</strong> and continue. Full ordering and examples: <a href="/docs/#lifecycle-hooks" class="text-accent-light hover:text-accent underline underline-offset-2">Lifecycle hooks in the docs</a>.</p>
           </div>
         </div>
       </div>
@@ -313,7 +313,7 @@
   <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised text-center">
     <div class="max-w-2xl mx-auto">
       <h2 class="section-heading mb-4">Add isolation to your&nbsp;project</h2>
-      <p class="text-sm text-muted mb-8">One file, committed to your repo. Non-users just ignore it.</p>
+      <p class="text-sm text-muted mb-8">One file, committed to your repo. Teammates without gtl installed are unaffected—the config file has no effect on builds or deployments.</p>
       <div class="install-cmd justify-center max-w-md mx-auto mb-6">
         <code class="text-accent-light text-sm">gtl init</code>
       </div>

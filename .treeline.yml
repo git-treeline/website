@@ -1,9 +1,5 @@
 project: website
-
-env:
-  PORT: "{port}"
+port_count: 1
 
 commands:
-  setup:
-    - npm install
-  start: npx vite --port ${PORT:-5173}
+  start: npx vite --port {port}
