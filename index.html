@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Git Treeline — Review every branch at the same time</title>
-  <meta name="description" content="Git Treeline allocates ports, databases, and env per worktree; resolves cross-repo URLs; and serves, tunnels, or shares named URLs. One CLI and a committed .treeline.yml.">
+  <meta name="description" content="Git Treeline allocates ports, databases, and env per worktree; resolves cross-repo URLs; and serves, tunnels, or shares named URLs. Interactive TUI dashboard (gtl dashboard). One CLI and a committed .treeline.yml.">
   <meta name="keywords" content="git worktree, parallel development, AI coding agents, port allocation, database cloning, environment isolation, worktree management, dev environment, CLI tool, PR review, localhost subdomain, reverse proxy">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="canonical" href="https://git-treeline.dev">
@@ -257,7 +257,7 @@
           <p class="text-xs uppercase tracking-wider text-accent-light mb-2">Workflows</p>
           <h3 class="feature-card-title">Type a PR number. Get a running&nbsp;app.</h3>
           <p class="feature-card-desc">
-            <code class="text-accent-light">gtl review 42 --start</code> fetches the PR and boots the app. <code class="text-accent-light">gtl open</code> jumps to the right URL; <code class="text-accent-light">gtl start --await</code> blocks until the port listens. Optional hooks in <code class="text-accent-light">.treeline.yml</code> run before and after setup and release.
+            <code class="text-accent-light">gtl review 42 --start</code> fetches the PR and boots the app. <code class="text-accent-light">gtl open</code> jumps to the right URL; <code class="text-accent-light">gtl start --await</code> blocks until the port listens. <code class="text-accent-light">gtl dashboard</code> is a live TUI across all worktrees—start, open, release, filter. Optional hooks in <code class="text-accent-light">.treeline.yml</code> run before and after setup and release.
           </p>
           <a href="/features/workflows/" class="feature-card-link">Review and supervisor &rarr;</a>
         </div>

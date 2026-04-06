@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Workflows — Git Treeline</title>
-  <meta name="description" content="Type a PR number, get a running app. One-command PR review, process supervisor, and automated teardown for git worktree workflows.">
+  <meta name="description" content="Type a PR number, get a running app. One-command PR review, process supervisor, interactive TUI dashboard, and automated teardown for git worktree workflows.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="canonical" href="https://git-treeline.dev/features/workflows/">
 
   <meta property="og:title" content="Workflows — Git Treeline">
-  <meta property="og:description" content="Type a PR number, get a running app. One-command PR review, process supervisor, and automated teardown.">
+  <meta property="og:description" content="Type a PR number, get a running app. One-command PR review, process supervisor, TUI dashboard, and automated teardown.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://git-treeline.dev/features/workflows/">
   <meta property="og:site_name" content="Git Treeline">
@@ -68,7 +68,7 @@
     <p class="text-sm uppercase tracking-wider text-muted mb-4">Workflows</p>
     <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">Type a PR number.<br>Get a running app.</h1>
     <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
-      One command creates an isolated worktree, allocates resources, runs setup, and boots the server. A built-in supervisor lets agents control it while you watch the logs.
+      One command creates an isolated worktree, allocates resources, runs setup, and boots the server. A built-in supervisor lets agents control it while you watch the logs. Prefer a bird&apos;s-eye view? <code class="text-accent-light">gtl dashboard</code> is a full-screen TUI over every allocation.
     </p>
   </section>
 
@@ -243,8 +243,21 @@
     </div>
   </section>
 
-  <!-- Review flags -->
+  <!-- TUI dashboard -->
   <section class="px-4 sm:px-6 py-16 sm:py-28">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="section-heading text-center mb-4">Interactive terminal dashboard</h2>
+      <p class="section-subtext text-center mx-auto mb-10 max-w-xl">
+        Run <code class="text-accent-light">gtl dashboard</code> (or <code class="text-accent-light">gtl dash</code> / <code class="text-accent-light">gtl ui</code>) for a Bubble Tea TUI: all projects and worktrees in one place, refreshed every couple of seconds. Move with <kbd class="text-white font-mono text-sm">j</kbd>/<kbd class="text-white font-mono text-sm">k</kbd>; <kbd class="text-white font-mono text-sm">s</kbd> start/stop, <kbd class="text-white font-mono text-sm">o</kbd> open browser, <kbd class="text-white font-mono text-sm">d</kbd> release (confirm), <kbd class="text-white font-mono text-sm">/</kbd> filter.
+      </p>
+      <p class="text-center text-sm text-muted">
+        <a href="/docs/#tui-dashboard" class="text-accent-light hover:text-accent underline underline-offset-2">TUI reference in the docs &rarr;</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Review flags -->
+  <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised">
     <div class="max-w-3xl mx-auto">
       <h2 class="section-heading text-center mb-10">Review commands</h2>
       <div class="space-y-5">

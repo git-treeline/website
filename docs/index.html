@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Docs — Git Treeline</title>
-  <meta name="description" content="Git Treeline documentation: .treeline.yml, cross-worktree resolve and link, networking (serve, proxy, tunnel, share), hooks, CLI reference, MCP.">
+  <meta name="description" content="Git Treeline documentation: .treeline.yml, cross-worktree resolve and link, TUI dashboard, networking (serve, proxy, tunnel, share), hooks, CLI reference, MCP.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="canonical" href="https://git-treeline.dev/docs/">
 
@@ -93,6 +93,7 @@
           <h4 class="text-xs uppercase tracking-wider text-muted font-medium mb-3">Workflows</h4>
           <ul class="space-y-1.5">
             <li><a href="#supervisor" class="docs-sidebar-link">Process supervisor</a></li>
+            <li><a href="#tui-dashboard" class="docs-sidebar-link">TUI dashboard</a></li>
             <li><a href="#ai-agents" class="docs-sidebar-link">AI agents</a></li>
             <li><a href="#mcp-server" class="docs-sidebar-link pl-6">MCP server</a></li>
           </ul>
@@ -153,6 +154,7 @@
         <h4 class="text-xs uppercase tracking-wider text-muted font-medium mb-2">Workflows</h4>
         <ul class="space-y-1.5">
           <li><a href="#supervisor" class="text-accent-light hover:text-accent transition-colors" onclick="document.getElementById('mobile-docs-nav').classList.add('hidden')">Supervisor</a></li>
+          <li><a href="#tui-dashboard" class="text-accent-light hover:text-accent transition-colors" onclick="document.getElementById('mobile-docs-nav').classList.add('hidden')">TUI dashboard</a></li>
           <li><a href="#ai-agents" class="text-accent-light hover:text-accent transition-colors" onclick="document.getElementById('mobile-docs-nav').classList.add('hidden')">AI agents</a></li>
         </ul>
       </div>
@@ -547,6 +549,11 @@
             <span class="cmd-name">doctor</span>
             <div class="cmd-flags"><span class="cmd-flag">--json</span></div>
             <p class="cmd-desc">Check config, allocation, runtime, and framework-specific diagnostics in one view.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">dashboard</span>
+            <p class="cmd-desc">Launch the interactive terminal dashboard (Bubble Tea). Browse all worktrees by project with live updates (~2s). Aliases: <code class="text-accent-light">gtl dash</code>, <code class="text-accent-light">gtl ui</code>. <a href="#tui-dashboard" class="text-accent-light hover:text-accent underline underline-offset-2">Details &rarr;</a></p>
           </div>
 
           <div class="cmd-item">
@@ -1064,6 +1071,31 @@
       <p class="text-muted">
         The supervisor communicates over a Unix socket with <code class="text-accent-light">0600</code> permissions (owner-only). Read deadlines and client timeouts prevent hung connections. The socket path is derived from a SHA-256 hash of the worktree path.
       </p>
+    </div>
+  </section>
+
+  <!-- TUI dashboard -->
+  <section id="tui-dashboard" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16 border-t border-surface-border">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="section-heading mb-4">TUI dashboard</h2>
+      <p class="text-muted mb-4">
+        <code class="text-accent-light">gtl dashboard</code> opens a full-screen terminal UI for everything in the registry. Worktrees are grouped by project; each row shows ports, supervisor state, and link overrides. The view polls about every two seconds so you get a live picture without running <code class="text-accent-light">gtl status --watch</code> yourself.
+      </p>
+      <p class="text-muted mb-6">
+        Same aliases as the CLI: <code class="text-accent-light">gtl dash</code> and <code class="text-accent-light">gtl ui</code>.
+      </p>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Keyboard shortcuts</h3>
+      <ul class="text-muted text-sm space-y-2 list-disc pl-5 mb-6">
+        <li><kbd class="text-white font-mono">j</kbd> / <kbd class="text-white font-mono">k</kbd> or &uarr; / &darr; &mdash; move through the list (project headers group worktrees)</li>
+        <li><kbd class="text-white font-mono">Tab</kbd> &mdash; switch focus between list and detail panel; <kbd class="text-white font-mono">Enter</kbd> focuses the detail panel</li>
+        <li><kbd class="text-white font-mono">s</kbd> &mdash; start or stop the supervised dev server for the selected worktree</li>
+        <li><kbd class="text-white font-mono">o</kbd> &mdash; open the app in the browser (same rules as <code class="text-accent-light">gtl open</code>)</li>
+        <li><kbd class="text-white font-mono">r</kbd> &mdash; restart the supervisor</li>
+        <li><kbd class="text-white font-mono">d</kbd> &mdash; release the selected worktree (confirmation prompt; <kbd class="text-white font-mono">y</kbd> to confirm)</li>
+        <li><kbd class="text-white font-mono">/</kbd> &mdash; filter by project, branch, or worktree name; <kbd class="text-white font-mono">Esc</kbd> clears the filter</li>
+        <li><kbd class="text-white font-mono">?</kbd> &mdash; toggle the full shortcut help overlay; <kbd class="text-white font-mono">q</kbd> or <kbd class="text-white font-mono">Ctrl+C</kbd> &mdash; quit</li>
+      </ul>
+      <p class="text-sm text-muted">See <a href="/features/workflows/" class="text-accent-light hover:text-accent underline underline-offset-2">Workflows</a> for how this fits next to PR review and the supervisor.</p>
     </div>
   </section>
 
