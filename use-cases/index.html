@@ -59,33 +59,40 @@
 
   <section class="px-4 sm:px-6 pt-28 sm:pt-36 pb-12 sm:pb-16 text-center">
     <p class="text-sm uppercase tracking-wider text-muted mb-4">Use cases</p>
-    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">Problems worth solving on purpose</h1>
-    <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
-      Short reads for how real teams hit a wall with parallel worktrees—and the exact Treeline pieces that address it. No feature tour; scenario first.
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6 text-balance">Problems worth solving on purpose</h1>
+    <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto mb-4 leading-relaxed">
+      These are scenario guides—not a second feature tour. Each page names a concrete failure mode (ports, URLs, humans who do not use git, machines that need JSON), then points to the Git Treeline commands and config that address it.
+    </p>
+    <p class="text-sm text-muted max-w-2xl mx-auto leading-relaxed">
+      For full depth on each pillar, start with <a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">Isolation</a>, <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking</a>, <a href="/features/workflows/" class="text-accent-light hover:text-accent underline underline-offset-2">Workflows</a>, or <a href="/features/agents/" class="text-accent-light hover:text-accent underline underline-offset-2">AI Agents</a>; use this page when you already know <em>which</em> problem you are solving.
     </p>
   </section>
 
-  <section class="px-4 sm:px-6 pb-20 sm:pb-28">
-    <div class="max-w-4xl mx-auto grid sm:grid-cols-2 gap-6">
-      <a href="/use-cases/multi-repo/" class="block rounded-lg border border-surface-border bg-surface-raised p-6 hover:border-accent/50 transition-colors text-left group">
-        <h2 class="text-white font-mono text-lg mb-2 group-hover:text-accent-light transition-colors">Frontend + API, different repos</h2>
-        <p class="text-sm text-muted mb-4">Two projects on disk, two branch names that should line up. Hardcoded ports in <code class="text-accent-light">.env</code> rot the moment allocations shift.</p>
-        <span class="text-sm text-accent-light">Read &rarr;</span>
+  <section class="px-4 sm:px-6 pb-24 sm:pb-32">
+    <div class="max-w-5xl mx-auto grid sm:grid-cols-2 gap-6 sm:gap-8">
+      <a href="/use-cases/multi-repo/" class="group use-case-hub-card">
+        <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Frontend + API, different repos</h2>
+        <p>Your SPA and your API are different clones. Hardcoded <code class="text-accent-light">localhost</code> ports in the frontend env rot the moment allocations change. The registry and <code class="text-accent-light">{resolve:…}</code> exist so URLs track branch intent—not last week’s guess.</p>
+        <p class="text-xs text-muted font-mono uppercase tracking-wider">Touches · Isolation · <span class="text-accent-light/90">resolve / link</span></p>
+        <span class="text-sm text-accent-light">Read the scenario &rarr;</span>
       </a>
-      <a href="/use-cases/integrations-urls/" class="block rounded-lg border border-surface-border bg-surface-raised p-6 hover:border-accent/50 transition-colors text-left group">
-        <h2 class="text-white font-mono text-lg mb-2 group-hover:text-accent-light transition-colors">OAuth, webhooks, fixed redirect URIs</h2>
-        <p class="text-sm text-muted mb-4">Providers and callbacks care about hostnames and stability. Worktrees care about moving ports. Pick the right tool per job.</p>
-        <span class="text-sm text-accent-light">Read &rarr;</span>
+      <a href="/use-cases/integrations-urls/" class="group use-case-hub-card">
+        <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">OAuth, webhooks, stable URLs</h2>
+        <p>Providers register redirect URIs and webhooks against concrete hostnames. Worktrees move ports. You pick <code class="text-accent-light">gtl serve</code>, <code class="text-accent-light">gtl proxy</code>, <code class="text-accent-light">gtl tunnel</code>, or <code class="text-accent-light">gtl share</code> based on whether the integration needs local HTTPS, a fixed port, a public route, or a disposable link.</p>
+        <p class="text-xs text-muted font-mono uppercase tracking-wider">Touches · Networking (<code class="text-accent-light">serve / proxy / tunnel / share</code>)</p>
+        <span class="text-sm text-accent-light">Read the scenario &rarr;</span>
       </a>
-      <a href="/use-cases/platform-pr/" class="block rounded-lg border border-surface-border bg-surface-raised p-6 hover:border-accent/50 transition-colors text-left group">
-        <h2 class="text-white font-mono text-lg mb-2 group-hover:text-accent-light transition-colors">Product and QA on a PR branch</h2>
-        <p class="text-sm text-muted mb-4">Someone who does not use git needs to see the app. You need a URL without a deploy, and you need to tear it down when review ends.</p>
-        <span class="text-sm text-accent-light">Read &rarr;</span>
+      <a href="/use-cases/platform-pr/" class="group use-case-hub-card">
+        <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Product and QA on a PR branch</h2>
+        <p>Stakeholders need a running app without cloning the repo or waiting on staging. <code class="text-accent-light">gtl review</code> stands up an isolated worktree; <code class="text-accent-light">gtl open</code> and branch URLs give them a path; <code class="text-accent-light">gtl release</code> tears it down when review ends.</p>
+        <p class="text-xs text-muted font-mono uppercase tracking-wider">Touches · Workflows · Networking</p>
+        <span class="text-sm text-accent-light">Read the scenario &rarr;</span>
       </a>
-      <a href="/use-cases/agents-automation/" class="block rounded-lg border border-surface-border bg-surface-raised p-6 hover:border-accent/50 transition-colors text-left group">
-        <h2 class="text-white font-mono text-lg mb-2 group-hover:text-accent-light transition-colors">Agents, scripts, CI</h2>
-        <p class="text-sm text-muted mb-4">Machines do not parse pretty-printed logs. They need ports, env, readiness, and teardown—without shell hacks.</p>
-        <span class="text-sm text-accent-light">Read &rarr;</span>
+      <a href="/use-cases/agents-automation/" class="group use-case-hub-card">
+        <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Agents, scripts, CI</h2>
+        <p>Automation should not scrape <code class="text-white">gtl status</code> output. MCP, <code class="text-accent-light">--json</code> flags, and <code class="text-accent-light">gtl start --await</code> expose ports, env, readiness, and teardown as contracts—same allocation model as humans.</p>
+        <p class="text-xs text-muted font-mono uppercase tracking-wider">Touches · AI Agents · Isolation</p>
+        <span class="text-sm text-accent-light">Read the scenario &rarr;</span>
       </a>
     </div>
   </section>

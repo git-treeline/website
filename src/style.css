@@ -15,7 +15,7 @@
   }
 
   body {
-    @apply bg-surface text-gray-300 font-sans antialiased;
+    @apply bg-surface text-base text-gray-300 font-sans antialiased leading-relaxed;
   }
 
   h1, h2, h3 {
@@ -25,19 +25,23 @@
 
 @layer components {
   .terminal {
-    @apply bg-surface-raised border border-surface-border rounded-lg font-mono text-sm leading-relaxed overflow-x-auto;
+    @apply bg-surface-raised border border-surface-border rounded-lg font-mono text-base leading-relaxed overflow-x-auto;
   }
 
   .terminal-header {
-    @apply flex items-center gap-2 px-4 py-3 border-b border-surface-border;
+    @apply flex items-center gap-2 px-4 sm:px-5 py-3.5 sm:py-4 border-b border-surface-border min-h-[3rem];
   }
 
   .terminal-dot {
-    @apply w-3 h-3 rounded-full;
+    @apply w-3 h-3 rounded-full shrink-0;
   }
 
   .terminal-body {
-    @apply p-3 sm:p-5;
+    @apply p-4 sm:p-6;
+  }
+
+  .terminal-body pre {
+    @apply m-0 overflow-x-auto leading-relaxed;
   }
 
   .terminal .prompt {
@@ -57,15 +61,17 @@
   }
 
   .install-cmd {
-    @apply bg-surface-raised border border-surface-border rounded-lg px-3 sm:px-5 py-2.5 sm:py-3 font-mono text-sm flex items-center justify-between gap-3 sm:gap-4 min-w-0;
+    @apply bg-surface-raised border border-surface-border rounded-lg px-3 sm:px-5 py-2.5 sm:py-3 font-mono text-base flex items-center justify-between gap-3 sm:gap-4 min-w-0;
   }
 
   .section-heading {
     @apply text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-4;
+    text-wrap: balance;
   }
 
   .section-subtext {
     @apply text-base sm:text-lg text-muted max-w-2xl;
+    text-wrap: balance;
   }
 
   .subsection-heading {
@@ -73,7 +79,7 @@
   }
 
   .subsection-label {
-    @apply text-sm text-muted mb-6;
+    @apply text-base text-muted mb-6;
   }
 
   .docs-subsection {
@@ -86,7 +92,7 @@
   }
 
   .cli-table thead {
-    @apply text-xs uppercase tracking-wider;
+    @apply text-sm uppercase tracking-wider;
   }
 
   .cli-table tbody tr {
@@ -128,11 +134,11 @@
   }
 
   .cmd-flag {
-    @apply font-mono text-xs text-accent-light bg-surface px-2 py-0.5 rounded;
+    @apply font-mono text-sm text-accent-light bg-surface px-2 py-0.5 rounded;
   }
 
   .cmd-desc {
-    @apply text-sm text-muted mt-2;
+    @apply text-base text-muted mt-2;
   }
 
   .faq-item {
@@ -162,7 +168,7 @@
   }
 
   .faq-answer {
-    @apply px-4 sm:px-5 pb-4 sm:pb-5 text-sm sm:text-base text-muted;
+    @apply px-4 sm:px-5 pb-4 sm:pb-5 text-base text-muted;
   }
 
   .nav-scrolled {
@@ -170,7 +176,7 @@
   }
 
   .docs-sidebar-link {
-    @apply text-sm text-muted hover:text-white transition-colors block py-1 pl-3 border-l-2 border-transparent;
+    @apply text-base text-muted hover:text-white transition-colors block py-1 pl-3 border-l-2 border-transparent;
   }
 
   .docs-sidebar-active {
@@ -191,16 +197,37 @@
   }
 
   .feature-strip-desc {
-    @apply text-muted text-sm sm:text-base;
+    @apply text-muted text-base sm:text-lg;
   }
 
-  /* Pipeline / flow visual — horizontal progression */
+  /* Pipeline / flow visual — stack until lg so narrow columns (feature cards) never clip */
   .pipeline {
-    @apply flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-0;
+    @apply flex flex-col lg:flex-row items-center justify-center gap-3 lg:gap-0;
+  }
+
+  /* Two-step networking demo: always vertical, roomy; URLs stay on one line (scroll if needed) */
+  .pipeline.pipeline--pair {
+    @apply flex-col items-stretch gap-6 sm:gap-8 py-1;
+  }
+
+  .pipeline.pipeline--pair .pipeline-arrow {
+    @apply hidden;
+  }
+
+  .pipeline.pipeline--pair .pipeline-arrow-mobile {
+    @apply block text-center text-2xl text-muted py-1 lg:block;
+  }
+
+  .pipeline.pipeline--pair .pipeline-step {
+    @apply max-w-none w-full min-w-0 text-center;
+  }
+
+  .pipeline.pipeline--pair .pipeline-url {
+    @apply mb-2 whitespace-nowrap overflow-x-auto overflow-y-hidden py-2 sm:py-2.5 max-w-full;
   }
 
   .pipeline-step {
-    @apply text-center flex-1 max-w-xs;
+    @apply text-center flex-1 max-w-xs min-w-0 lg:min-w-[8rem];
   }
 
   .pipeline-url {
@@ -208,15 +235,36 @@
   }
 
   .pipeline-label {
-    @apply text-xs text-muted uppercase tracking-wider;
+    @apply text-sm text-muted uppercase tracking-wider mt-1;
   }
 
   .pipeline-arrow {
-    @apply text-muted text-2xl font-mono px-2 sm:px-4 hidden sm:block;
+    @apply text-muted text-2xl font-mono px-2 lg:px-4 hidden lg:inline-block shrink-0;
   }
 
   .pipeline-arrow-mobile {
-    @apply text-muted text-xl font-mono sm:hidden;
+    @apply text-muted text-xl font-mono lg:hidden;
+  }
+
+  /* Framed demos — same chrome as .terminal, for non-log visuals (pipelines, checklists, JSON) */
+  .feature-demo {
+    @apply bg-surface-raised border border-surface-border rounded-lg text-left min-w-0;
+  }
+
+  .feature-demo-header {
+    @apply flex items-center gap-2 px-4 sm:px-5 py-3.5 sm:py-4 border-b border-surface-border min-h-[3rem];
+  }
+
+  .feature-demo-body {
+    @apply p-4 sm:p-6 min-w-0;
+  }
+
+  .feature-demo-body > pre {
+    @apply pb-1;
+  }
+
+  .pipeline-url-scheme {
+    @apply text-muted font-mono;
   }
 
   /* Mono callout — large monospace display text */
@@ -230,7 +278,7 @@
   }
 
   .tight-list li {
-    @apply text-sm sm:text-base text-muted;
+    @apply text-base text-muted;
   }
 
   .tight-list li strong {
@@ -247,7 +295,7 @@
   }
 
   .editor-titlebar {
-    @apply px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-mono text-white truncate flex items-center gap-1.5;
+    @apply px-2 sm:px-3 py-1.5 sm:py-2 text-sm font-mono text-white truncate flex items-center gap-1.5;
   }
 
   .editor-titlebar::before {
@@ -263,18 +311,13 @@
     @apply h-1.5 rounded-full bg-surface-border;
   }
 
-  /* Step sequence — vertical checklist, not a terminal */
+  /* Step sequence — vertical checklist, not a terminal (single left rail, no per-row border gaps) */
   .step-sequence {
-    @apply space-y-0;
+    @apply space-y-0 border-l-2 border-surface-border pl-4;
   }
 
   .step-item {
-    @apply flex items-start gap-3 py-2.5 border-l-2 border-surface-border pl-5 relative;
-  }
-
-  .step-item::before {
-    content: '';
-    @apply absolute left-[-1px] top-0 bottom-0 w-0.5;
+    @apply flex items-start gap-3 py-2 relative;
   }
 
   .step-check {
@@ -282,15 +325,19 @@
   }
 
   .step-text {
-    @apply text-sm text-muted;
+    @apply text-base text-muted min-w-0;
   }
 
   .step-item-result {
-    @apply border-l-2 border-accent pl-5 pt-3;
+    @apply pt-2 pb-0;
   }
 
   .step-arrow {
     @apply text-accent font-mono font-bold shrink-0 mt-0.5;
+  }
+
+  .step-sequence-footnote {
+    @apply text-muted text-sm mt-1 pl-7;
   }
 
   /* Stat strip — breather between content-heavy sections */
@@ -307,12 +354,12 @@
   }
 
   .stat-strip-label {
-    @apply text-xs text-muted uppercase tracking-wider mt-1 block;
+    @apply text-sm text-muted uppercase tracking-wider mt-1 block;
   }
 
   /* Feature highlight cards — alternating left/right */
   .feature-card {
-    @apply grid md:grid-cols-2 gap-6 md:gap-10 items-center py-16 sm:py-24;
+    @apply grid md:grid-cols-2 gap-8 md:gap-12 lg:gap-14 items-center py-20 sm:py-28;
   }
 
   .feature-card + .feature-card {
@@ -320,11 +367,11 @@
   }
 
   .feature-card-visual {
-    @apply order-1;
+    @apply order-1 min-w-0;
   }
 
   .feature-card-copy {
-    @apply order-2;
+    @apply order-2 min-w-0 max-w-xl md:max-w-none;
   }
 
   .feature-card-reversed .feature-card-visual {
@@ -337,29 +384,40 @@
 
   .feature-card-title {
     @apply text-xl sm:text-2xl font-mono font-bold text-white mb-3;
+    text-wrap: balance;
   }
 
   .feature-card-desc {
-    @apply text-sm sm:text-base text-muted mb-4;
+    @apply text-base sm:text-lg text-muted mb-5 leading-relaxed flex flex-col gap-4;
   }
 
   .feature-card-link {
-    @apply text-sm text-accent-light hover:text-accent underline underline-offset-2 inline-flex items-center gap-1;
+    @apply text-base text-accent-light hover:text-accent underline underline-offset-2 inline-flex items-center gap-1;
   }
 
   .benefit-card {
-    @apply border-l-2 border-accent/30 pl-5;
+    @apply rounded-lg border border-accent/15 bg-surface-raised/50 p-6 sm:p-8;
   }
 
-  /* Slot machine text rotation */
+  /* Slot machine text rotation — strict clip so frames never bleed into adjacent lines */
   .slot-wrapper {
-    @apply inline-flex overflow-hidden align-bottom;
+    @apply inline-flex overflow-hidden align-middle flex-shrink-0;
     height: 1.3em;
+    max-height: 1.3em;
+    vertical-align: -0.06em;
+    contain: content;
   }
 
   .slot-reel {
     @apply flex flex-col;
     animation: slot-spin 8s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .slot-reel {
+      animation: none;
+      transform: translateY(0);
+    }
   }
 
   .slot-item {
@@ -376,9 +434,39 @@
     100%      { transform: translateY(-5.2em); }
   }
 
+  /* Long-form scenario pages (use cases) — readable measure + section rhythm */
+  .use-case-article {
+    @apply max-w-3xl lg:max-w-4xl mx-auto px-4 sm:px-6 pt-28 sm:pt-36 pb-20 sm:pb-28;
+  }
+
+  .use-case-article > h2 {
+    @apply text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24;
+    text-wrap: balance;
+  }
+
+  .use-case-article > h2:first-of-type {
+    @apply mt-10;
+  }
+
+  .use-case-article > h2:not(:first-of-type) {
+    @apply mt-14;
+  }
+
+  .use-case-lead {
+    @apply text-lg sm:text-xl text-gray-400 mb-10 leading-relaxed max-w-3xl;
+  }
+
+  .use-case-hub-card {
+    @apply block rounded-lg border border-surface-border bg-surface-raised p-6 sm:p-8 hover:border-accent/40 transition-colors text-left;
+  }
+
+  .use-case-hub-card p {
+    @apply text-base text-muted leading-relaxed mb-4 last:mb-0;
+  }
+
   /* Trust bar */
   .trust-bar {
-    @apply flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-10 gap-y-2 text-sm text-muted;
+    @apply flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-10 gap-y-5 sm:gap-y-6 text-base text-muted;
   }
 
   .trust-bar-item {
@@ -395,7 +483,7 @@
   }
 
   .framework-pill {
-    @apply text-xs font-mono text-muted px-2.5 py-1 rounded border border-surface-border;
+    @apply text-sm font-mono text-muted px-2.5 py-1 rounded border border-surface-border;
   }
 
   /* Site footer */
@@ -404,11 +492,11 @@
   }
 
   .site-footer h3 {
-    @apply text-xs font-semibold uppercase tracking-wider text-muted mb-3 font-sans font-normal;
+    @apply text-sm font-semibold uppercase tracking-wider text-muted mb-3 font-sans font-normal;
   }
 
   .site-footer-nav a {
-    @apply text-muted hover:text-white transition-colors;
+    @apply text-base text-muted hover:text-white transition-colors;
   }
 
 }

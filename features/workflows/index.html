@@ -151,20 +151,23 @@
 
   <!-- 3. What changes -->
   <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="section-heading text-center mb-10">What this makes&nbsp;possible</h2>
-      <div class="grid md:grid-cols-3 gap-8">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="section-heading text-center mb-4 text-balance">What this makes&nbsp;possible</h2>
+      <p class="section-subtext text-center mx-auto mb-12 max-w-2xl text-balance">
+        Workflows tie isolation and networking together: one command should stand up a branch with resources, a URL, and a running process—and another command should tear it down cleanly. That is the bar this page documents end to end; <a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">Isolation</a> and <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking</a> explain the underlying pieces.
+      </p>
+      <div class="grid gap-10 lg:grid-cols-3 lg:gap-12">
         <div class="benefit-card">
-          <h3 class="text-white font-mono text-lg mb-3">Product owners review PRs</h3>
-          <p class="text-sm text-muted">Send them a URL. The app is running. No git knowledge required, no developer hand-holding, no deploy to staging.</p>
+          <h3 class="text-white font-mono text-lg mb-3 text-balance">Product and design review real apps</h3>
+          <p class="text-base text-muted leading-relaxed"><code class="text-accent-light">gtl review &lt;PR&gt; --start</code> gives stakeholders a running checkout without asking them to clone, install dependencies, or edit env files. Pair with <code class="text-accent-light">gtl serve</code> for a named HTTPS URL per branch so redirects and demos match what engineers see—no throwaway staging deploy required for a first look.</p>
         </div>
         <div class="benefit-card">
-          <h3 class="text-white font-mono text-lg mb-3">QA tests branches in parallel</h3>
-          <p class="text-sm text-muted">Three PRs open? Three running apps, each with their own database and URL. Test them simultaneously.</p>
+          <h3 class="text-white font-mono text-lg mb-3 text-balance">QA exercises several branches at once</h3>
+          <p class="text-base text-muted leading-relaxed">Multiple PRs means multiple allocations: distinct ports, databases, and URLs. Test flows in parallel instead of serially reconfiguring one machine. When a branch is merged or obsolete, <code class="text-accent-light">gtl release --drop-db</code> (or <code class="text-accent-light">gtl prune --merged</code>) reclaims disk and registry entries explicitly.</p>
         </div>
         <div class="benefit-card">
-          <h3 class="text-white font-mono text-lg mb-3">Agents do the whole lifecycle</h3>
-          <p class="text-sm text-muted">Create worktree, modify code, restart the server, run tests, tear down. Programmatically. The supervisor exposes start/stop/restart over a Unix socket.</p>
+          <h3 class="text-white font-mono text-lg mb-3 text-balance">Agents and CI drive the same supervisor</h3>
+          <p class="text-base text-muted leading-relaxed">Humans use <code class="text-accent-light">gtl start</code> in a terminal; scripts and agents use <code class="text-accent-light">gtl restart</code> / <code class="text-accent-light">gtl stop</code> over the Unix socket—no PID files or signals to guess. Optional hooks in <code class="text-white">.treeline.yml</code> still bracket setup and teardown the same way for everyone.</p>
         </div>
       </div>
     </div>

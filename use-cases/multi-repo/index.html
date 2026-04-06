@@ -54,24 +54,24 @@
     })();
   </script>
 
-  <article class="px-4 sm:px-6 pt-28 sm:pt-36 pb-16 max-w-3xl mx-auto">
+  <article class="use-case-article">
     <p class="text-sm text-muted mb-4"><a href="/use-cases/" class="text-accent-light hover:text-accent">Use cases</a> / Multi-repo</p>
-    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-6">Frontend and API live in different checkouts</h1>
-    <p class="text-lg text-gray-400 mb-10">
-      Your SPA and your API are separate git repos. Each gets its own Treeline project name and its own port allocation. The problem is wiring: the browser needs a base URL for XHR, and that URL must track whichever API branch matches the work you are doing—not a stale port you typed last week.
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-6 text-balance">Frontend and API live in different checkouts</h1>
+    <p class="use-case-lead">
+      Your SPA and your API are separate git repos. Each gets its own Git Treeline project name and its own port allocation. The hard part is wiring: the browser needs a base URL for XHR, and that URL must track whichever API branch matches the work you are doing—not a stale port someone typed last week.
     </p>
 
-    <h2 class="text-xl font-semibold text-white mb-3">What breaks without a registry</h2>
+    <h2>What breaks without a registry</h2>
     <p class="text-muted mb-4">
-      Developers paste <code class="text-accent-light">http://localhost:3030</code> into <code class="text-accent-light">.env.local</code>. Someone re-runs setup, the API moves to <code class="text-accent-light">3040</code>, and every frontend worktree is wrong until someone notices. Branch names drift too: your UI is on <code class="text-white">feature-auth</code> but the API team left their experiment on <code class="text-white">staging</code>.
+      Developers paste <code class="text-accent-light">http://localhost:3030</code> into <code class="text-accent-light">.env.local</code>. Someone re-runs setup, the API moves to <code class="text-accent-light">3040</code>, and every frontend worktree is wrong until someone notices. Branch names drift too: your UI is on <code class="text-white">feature-auth</code> but the API team left their experiment on <code class="text-white">staging</code>. Nothing in plain git fixes that—only a layer that knows <em>both</em> allocations.
     </p>
 
-    <h2 class="text-xl font-semibold text-white mb-3 mt-12">What Treeline does</h2>
+    <h2>What Git Treeline does</h2>
     <p class="text-muted mb-4">
-      Treeline keeps a <strong class="text-white">machine-local registry</strong> of allocations. From any worktree, <code class="text-accent-light">gtl resolve &lt;project&gt;</code> returns the base URL for another project’s current allocation—by default matching <strong class="text-white">the same branch name</strong> as the worktree you run the command from. If you need the UI to follow a different API branch for a while, <code class="text-accent-light">gtl link api staging</code> stores an override in the registry; <code class="text-accent-light">gtl unlink api</code> drops it.
+      Git Treeline keeps a <strong class="text-white">machine-local registry</strong> of allocations (ports, databases, worktree paths). From any worktree, <code class="text-accent-light">gtl resolve &lt;project&gt;</code> returns the base URL for another project’s current allocation—by default matching <strong class="text-white">the same branch name</strong> as the worktree you run the command from. If you need the UI to follow a different API branch for a while, <code class="text-accent-light">gtl link api staging</code> stores an override in the registry; <code class="text-accent-light">gtl unlink api</code> drops it. Overrides show up in <code class="text-accent-light">gtl status</code> and <code class="text-accent-light">gtl doctor</code>.
     </p>
     <p class="text-muted mb-6">
-      In <code class="text-accent-light">.treeline.yml</code>, put <code class="text-white">API_URL: "{resolve:api}"</code> (or <code class="text-white">{resolve:api/main}</code> for an explicit branch). Values are resolved at <strong class="text-white">setup time</strong>. If the target is not allocated, setup fails with a clear error—no silent localhost guess.
+      In <code class="text-accent-light">.treeline.yml</code>, use <code class="text-white">API_URL: "{resolve:api}"</code> (or <code class="text-white">{resolve:api/main}</code> to pin a branch). Values are resolved at <strong class="text-white">setup time</strong>. If the target project is not allocated, setup fails with a clear error—no silent localhost guess.
     </p>
 
     <div class="terminal mb-10">
@@ -84,15 +84,23 @@
       <div class="terminal-body space-y-1 font-mono text-sm">
         <p><span class="prompt">$</span> <span class="command">gtl resolve api</span></p>
         <p class="output text-accent">http://127.0.0.1:3030</p>
+        <p class="text-muted text-xs mt-3"># Scripting / agents:</p>
+        <p><span class="prompt">$</span> <span class="command">gtl resolve api --json</span></p>
         <p class="text-muted text-xs mt-3"># Override when branch names do not match:</p>
         <p><span class="prompt">$</span> <span class="command">gtl link api staging --restart</span></p>
       </div>
     </div>
 
-    <h2 class="text-xl font-semibold text-white mb-3">Where to read more</h2>
-    <ul class="text-muted space-y-2 list-disc pl-5 mb-10">
-      <li><a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">Isolation</a> — ports, env templates, registry model</li>
+    <h2>URLs vs localhost</h2>
+    <p class="text-muted mb-6">
+      For browser calls, you often want a <strong class="text-white">named HTTPS URL</strong> per branch (via <code class="text-accent-light">gtl serve</code>) instead of a raw port. The frontend’s env can point at <code class="text-white">https://api-feature-auth.localhost</code> while <code class="text-white">{resolve:api}</code> fills in the right origin for server-side or tooling. See the <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">networking page</a> for how serve, proxy, tunnel, and share differ.
+    </p>
+
+    <h2>Where to read more</h2>
+    <ul class="text-muted space-y-3 list-disc pl-5 mb-10">
+      <li><a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">Isolation</a> — ports, env templates, registry model, and database cloning</li>
       <li><a href="/docs/#cross-worktree" class="text-accent-light hover:text-accent underline underline-offset-2">Docs: cross-worktree resolve</a></li>
+      <li><a href="/use-cases/agents-automation/" class="text-accent-light hover:text-accent underline underline-offset-2">Agents, scripts, CI</a> — <code class="text-accent-light">--json</code> and MCP for the same contracts</li>
     </ul>
 
     <p class="text-center">

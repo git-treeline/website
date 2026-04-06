@@ -173,12 +173,14 @@
 
   <!-- Getting Started -->
   <section id="getting-started" class="px-4 sm:px-6 lg:px-0 py-14 sm:py-16">
+    <!-- Stable anchor for marketing CTAs (“first-time setup”) — same section as Getting started -->
+    <div id="first-time-setup" class="scroll-mt-20"></div>
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Getting started</h2>
       <p class="text-muted mb-4">
-        Git Treeline is a standalone CLI binary &mdash; no runtime dependency, no git hooks, no background processes. It writes an env file at setup time and gets out of the way.
+        Git Treeline ships as a single CLI binary &mdash; nothing from Treeline runs inside your app&rsquo;s process or bundle. It writes per-worktree env at setup time. Most flows that create or use worktrees (<code class="text-accent-light">gtl new</code>, <code class="text-accent-light">gtl review</code>, <code class="text-accent-light">gtl setup</code>, <code class="text-accent-light">gtl clone</code>) expect a <strong class="text-white">local HTTPS router</strong> so URLs like <code class="text-white">https://{project}-{branch}.localhost</code> resolve without a port number. That router is optional in principle but <strong class="text-white">required for those commands</strong> until you run the one-time install below.
       </p>
-      <p class="text-sm text-muted mb-8">New here? See <a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">how isolation works</a> for the full picture.</p>
+      <p class="text-sm text-muted mb-8">New here? See <a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">how isolation works</a> and the <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">networking page</a> for how <code class="text-accent-light">gtl serve</code> fits with proxy, tunnel, and share.</p>
 
       <div class="docs-subsection">
         <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Install</h3>
@@ -197,6 +199,34 @@
         <p class="text-muted">
           Or download a binary from the <a href="https://github.com/git-treeline/git-treeline/releases" class="text-accent-light hover:text-accent underline underline-offset-2">releases page</a>.
           The binary installs as <code class="text-accent-light">git-treeline</code> with a short alias <code class="text-accent-light">gtl</code>. It also works as <code class="text-accent-light">git treeline</code>.
+        </p>
+      </div>
+
+      <div class="docs-subsection">
+        <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Local HTTPS router (run once after install)</h3>
+        <p class="text-muted mb-4">
+          On <strong class="text-white">macOS and Linux</strong>, install the background router and trust the local certificate authority so browsers accept <code class="text-white">https://*.localhost</code> without certificate warnings, and so traffic on port 443 can reach the router (no <code class="text-white">:port</code> in the URL). <code class="text-accent-light">gtl serve</code> is not supported on native Windows yet (WSL is the path there).
+        </p>
+        <div class="terminal mb-6">
+          <div class="terminal-body">
+            <p><span class="prompt">$</span> <span class="command">gtl serve install</span></p>
+          </div>
+        </div>
+        <p class="text-muted mb-4">
+          Before any <code class="text-white">sudo</code> prompt, the CLI prints what your system password is for&mdash;typically <strong class="text-white">two separate steps</strong> that may each ask for a password:
+        </p>
+        <ul class="text-muted space-y-2 mb-4 list-disc pl-5">
+          <li><strong class="text-white">Trust the local CA</strong> in the system keychain (or equivalent) so Chrome, Safari, and Firefox accept HTTPS to <code class="text-white">*.localhost</code>.</li>
+          <li><strong class="text-white">Port forwarding</strong> so something listening on port 443 forwards to the router&rsquo;s port (so URLs do not need an explicit port).</li>
+        </ul>
+        <p class="text-muted mb-4">
+          You should expect <strong class="text-white">macOS or Linux to prompt for your login password</strong> (or an administrator password) when those steps run&mdash;the tool explains each step; it is not silent background access. If trust fails, the CLI warns that HTTPS may still work but browsers can show a certificate warning. If port forwarding is skipped, you can still use the router, but URLs may need a port suffix (the install output says which).
+        </p>
+        <p class="text-muted mb-4">
+          The installer also registers a <strong class="text-white">persistent service</strong> (e.g. launchd on macOS) so the router keeps running across reboots. On macOS it may sync <code class="text-white">/etc/hosts</code> so Safari resolves <code class="text-white">*.localhost</code> subdomains; if that step fails, run <code class="text-accent-light">gtl serve hosts sync</code> after reading the message.
+        </p>
+        <p class="text-sm text-muted mb-4">
+          Check status any time: <code class="text-accent-light">gtl serve status</code>. Full command reference: <a href="#net-serve" class="text-accent-light hover:text-accent underline underline-offset-2">gtl serve</a> in this doc and the <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">networking feature page</a>.
         </p>
       </div>
 

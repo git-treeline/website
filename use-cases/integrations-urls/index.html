@@ -54,14 +54,14 @@
     })();
   </script>
 
-  <article class="px-4 sm:px-6 pt-28 sm:pt-36 pb-16 max-w-3xl mx-auto">
+  <article class="use-case-article">
     <p class="text-sm text-muted mb-4"><a href="/use-cases/" class="text-accent-light hover:text-accent">Use cases</a> / Integrations</p>
-    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-6">Redirects and webhooks care about the URL, not your branch name</h1>
-    <p class="text-lg text-gray-400 mb-10">
-      OAuth providers, payment webhooks, and mobile deep links are configured with concrete hostnames—or sometimes a single fixed localhost port. Parallel worktrees fight that model because each branch gets its own allocated port. You choose the layer that matches the integration’s constraints.
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-6 text-balance">Redirects and webhooks care about the URL, not your branch name</h1>
+    <p class="use-case-lead">
+      OAuth providers, payment webhooks, and mobile deep links are configured with concrete hostnames—or sometimes a single fixed localhost port. Parallel worktrees fight that model because each branch gets its own allocated port. Git Treeline’s networking layer gives you four commands with four different trust boundaries; you pick the one that matches the integration’s constraints.
     </p>
 
-    <h2 class="text-xl font-semibold text-white mb-4">Pick a tool</h2>
+    <h2>Pick a command</h2>
     <div class="overflow-x-auto rounded-lg border border-surface-border mb-10">
       <table class="cli-table w-full text-sm text-left">
         <thead>
@@ -91,14 +91,16 @@
       </table>
     </div>
 
+    <h2>When you combine more than one</h2>
     <p class="text-muted mb-6">
-      <code class="text-accent-light">gtl tunnel</code> is for ongoing, routable access—think webhooks and OAuth redirect URIs you register once against your domain. <code class="text-accent-light">gtl share</code> is for a disposable session: token-gated in the default Cloudflare mode, cleaned up on Ctrl+C. Frameworks still need host allowlists; Treeline prints the exact change for Rails, Vite, and Django when you run tunnel.
+      It is normal to run <code class="text-accent-light">gtl serve</code> for branch-stable local HTTPS <em>and</em> <code class="text-accent-light">gtl proxy</code> when a provider is hard-coded to <code class="text-white">localhost:3000</code>. It is also normal to use <code class="text-accent-light">gtl tunnel</code> for ongoing, routable access—webhooks and OAuth redirect URIs you register once against your domain—while reserving <code class="text-accent-light">gtl share</code> for a disposable session (token-gated in the default Cloudflare mode, torn down when you stop the process). Frameworks still need host allowlists; the CLI prints concrete hints for Rails, Vite, and Django when you run tunnel.
     </p>
 
-    <h2 class="text-xl font-semibold text-white mb-3 mt-10">Read next</h2>
-    <ul class="text-muted space-y-2 list-disc pl-5 mb-8">
-      <li><a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking feature page</a></li>
+    <h2>Read next</h2>
+    <ul class="text-muted space-y-3 list-disc pl-5 mb-8">
+      <li><a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking</a> — full comparison of <code class="text-accent-light">serve</code>, <code class="text-accent-light">proxy</code>, <code class="text-accent-light">tunnel</code>, and <code class="text-accent-light">share</code></li>
       <li><a href="/docs/#networking" class="text-accent-light hover:text-accent underline underline-offset-2">Docs: networking overview</a></li>
+      <li><a href="/use-cases/multi-repo/" class="text-accent-light hover:text-accent underline underline-offset-2">Multi-repo</a> when the problem is cross-project <code class="text-white">{resolve:…}</code>, not public URLs</li>
     </ul>
 
     <p class="text-center">

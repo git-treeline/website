@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Git Treeline — Review every branch at the same time</title>
+  <title>Git Treeline · Review every branch at the same time</title>
   <meta name="description" content="Git Treeline allocates ports, databases, and env per worktree; resolves cross-repo URLs; and serves, tunnels, or shares named URLs. Interactive TUI dashboard (gtl dashboard). One CLI and a committed .treeline.yml.">
   <meta name="keywords" content="git worktree, parallel development, AI coding agents, port allocation, database cloning, environment isolation, worktree management, dev environment, CLI tool, PR review, localhost subdomain, reverse proxy">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="canonical" href="https://git-treeline.dev">
 
-  <meta property="og:title" content="Git Treeline — Isolated dev environments for every git worktree">
+  <meta property="og:title" content="Git Treeline · Isolated dev environments for every git worktree">
   <meta property="og:description" content="Isolated ports, databases, and named URLs for every git worktree. One config file, one command.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://git-treeline.dev">
@@ -19,7 +19,7 @@
   <meta property="og:image:height" content="630">
 
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Git Treeline — Isolated dev environments for every git worktree">
+  <meta name="twitter:title" content="Git Treeline · Isolated dev environments for every git worktree">
   <meta name="twitter:description" content="Isolated ports, databases, and named URLs for every git worktree. One config file, one command.">
   <meta name="twitter:image" content="https://git-treeline.dev/og-image.png">
 
@@ -27,7 +27,8 @@
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "Git Treeline",
+    "name": "git-treeline",
+    "alternateName": "Git Treeline",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "macOS, Linux, Windows",
     "description": "Worktree environment manager: registry-backed port and DB allocation, env templates including cross-project resolve, local HTTPS router, tunnels, optional ephemeral share links, MCP and JSON for automation.",
@@ -63,22 +64,22 @@
           <rect width="32" height="32" rx="6" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
           <text x="16" y="22" font-family="monospace" font-weight="700" font-size="16" fill="#22c55e" text-anchor="middle">gt</text>
         </svg>
-        <span class="font-mono text-sm font-semibold hidden sm:inline">git-treeline</span>
+        <span class="font-mono text-base font-semibold hidden sm:inline">git-treeline</span>
       </a>
       <div class="flex items-center gap-3 sm:gap-6">
         <div class="relative group">
-          <button class="text-sm text-muted hover:text-white transition-colors flex items-center gap-1">Features <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+          <button class="text-base text-muted hover:text-white transition-colors flex items-center gap-1">Features <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
           <div class="absolute top-full left-0 mt-2 w-44 bg-surface-raised border border-surface-border rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 py-2 z-50">
-            <a href="/features/isolation/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Isolation</a>
-            <a href="/features/networking/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Networking</a>
-            <a href="/features/workflows/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Workflows</a>
-            <a href="/features/agents/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">AI Agents</a>
+            <a href="/features/isolation/" class="block px-4 py-2 text-base text-muted hover:text-white hover:bg-surface transition-colors">Isolation</a>
+            <a href="/features/networking/" class="block px-4 py-2 text-base text-muted hover:text-white hover:bg-surface transition-colors">Networking</a>
+            <a href="/features/workflows/" class="block px-4 py-2 text-base text-muted hover:text-white hover:bg-surface transition-colors">Workflows</a>
+            <a href="/features/agents/" class="block px-4 py-2 text-base text-muted hover:text-white hover:bg-surface transition-colors">AI Agents</a>
           </div>
         </div>
-        <a href="/docs/" class="text-sm text-muted hover:text-white transition-colors">Docs</a>
-        <a href="/use-cases/" class="text-sm text-muted hover:text-white transition-colors">Use cases</a>
-        <a href="https://github.com/git-treeline/git-treeline" class="text-sm text-muted hover:text-white transition-colors hidden sm:inline">GitHub</a>
-        <a href="#get-started" class="text-xs font-mono px-3 sm:px-4 py-2 bg-accent text-surface rounded-md hover:bg-accent-light transition-colors">Install</a>
+        <a href="/docs/" class="text-base text-muted hover:text-white transition-colors">Docs</a>
+        <a href="/use-cases/" class="text-base text-muted hover:text-white transition-colors">Use cases</a>
+        <a href="https://github.com/git-treeline/git-treeline" class="text-base text-muted hover:text-white transition-colors hidden sm:inline">GitHub</a>
+        <a href="#get-started" class="text-base font-mono px-3 sm:px-4 py-2.5 bg-accent text-surface rounded-md hover:bg-accent-light transition-colors">Install</a>
       </div>
     </div>
   </nav>
@@ -95,22 +96,21 @@
   <section id="hero" class="flex flex-col items-center text-center px-4 sm:px-6 pt-32 sm:pt-40 md:pt-48 pb-16 sm:pb-24">
     <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-6">git-treeline</h1>
     <p class="text-xl md:text-2xl text-accent-light max-w-2xl mb-4">Review every branch at the same time</p>
-    <p class="text-sm sm:text-base text-gray-400 max-w-2xl mb-8 sm:mb-12">
+    <p class="text-base sm:text-lg text-gray-400 max-w-2xl mb-8 sm:mb-12 leading-relaxed">
       Isolated ports, databases, and env per worktree. Cross-repo <code class="text-accent-light">resolve</code> and <code class="text-accent-light">link</code> when the API lives in another checkout. One config file, one&nbsp;CLI.
     </p>
     <div class="flex flex-col sm:flex-row items-center gap-4 mb-8 w-full max-w-2xl">
       <div class="install-cmd max-w-full overflow-x-auto">
-        <code class="text-accent-light whitespace-nowrap text-xs sm:text-sm">brew install git-treeline/tap/git-treeline</code>
+        <code class="text-accent-light whitespace-nowrap text-sm sm:text-base">brew install git-treeline/tap/git-treeline</code>
         <button onclick="navigator.clipboard.writeText('brew install git-treeline/tap/git-treeline')" class="text-muted hover:text-white transition-colors" aria-label="Copy install command">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
         </button>
       </div>
-      <a href="https://github.com/git-treeline/git-treeline" class="inline-flex items-center gap-2 px-6 py-3 border border-surface-border rounded-lg text-white hover:border-accent transition-colors">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      <a href="https://github.com/git-treeline/git-treeline" class="inline-flex items-center justify-center gap-3 whitespace-nowrap px-8 py-3.5 border border-surface-border rounded-none text-white hover:border-accent transition-colors">
+        <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
         View on GitHub
       </a>
     </div>
-    <p class="text-sm text-muted">Open source &middot; MIT License &middot; Free forever</p>
   </section>
 
   <!-- Problem / Solution -->
@@ -126,7 +126,7 @@
             <span class="terminal-dot bg-red-500"></span>
             <span class="terminal-dot bg-yellow-500"></span>
             <span class="terminal-dot bg-green-500"></span>
-            <span class="text-xs text-red-400 ml-2">without git-treeline</span>
+            <span class="text-sm text-red-400 ml-2">without git-treeline</span>
           </div>
           <div class="terminal-body space-y-3">
             <div>
@@ -135,7 +135,7 @@
             </div>
             <div>
               <p><span class="prompt">~/feature-b $</span> <span class="command">bin/dev</span></p>
-              <p class="text-red-400">Error: listen EADDRINUSE :::3000</p>
+              <p class="text-red-400">Error: listen EADDRINUSE : :3000</p>
             </div>
             <div>
               <p><span class="prompt">~/feature-b $</span> <span class="command">psql -c "CREATE DATABASE myapp_dev"</span></p>
@@ -148,7 +148,7 @@
             <span class="terminal-dot bg-red-500"></span>
             <span class="terminal-dot bg-yellow-500"></span>
             <span class="terminal-dot bg-green-500"></span>
-            <span class="text-xs text-accent ml-2">with git-treeline</span>
+            <span class="text-sm text-accent ml-2">with git-treeline</span>
           </div>
           <div class="terminal-body space-y-3">
             <div>
@@ -159,7 +159,7 @@
               <p class="output">Wrote <span class="highlight">.env.local</span></p>
               <p class="output">Running setup commands...</p>
               <p class="output text-accent mt-1">==> https://feature-auth.localhost</p>
-              <p class="output text-muted text-xs mt-1">named URL via gtl serve</p>
+              <p class="output text-muted mt-1">named URL via gtl serve</p>
             </div>
           </div>
         </div>
@@ -180,22 +180,23 @@
               <span class="terminal-dot bg-yellow-500"></span>
               <span class="terminal-dot bg-green-500"></span>
             </div>
-            <div class="terminal-body space-y-1">
+            <div class="terminal-body space-y-2">
               <p><span class="prompt">$</span> <span class="command">gtl new feature-auth</span></p>
               <p class="output">Allocated port <span class="highlight">3010</span></p>
               <p class="output">Cloned database <span class="highlight">myapp_dev_feature_auth</span></p>
               <p class="output">Wrote <span class="highlight">.env.local</span></p>
               <p class="output text-accent">==> https://feature-auth.localhost</p>
-              <p class="output text-muted text-xs">named URL via gtl serve</p>
+              <p class="output text-muted">named URL via gtl serve</p>
             </div>
           </div>
         </div>
         <div class="feature-card-copy">
-          <p class="text-xs uppercase tracking-wider text-accent-light mb-2">Isolation</p>
+          <p class="text-base uppercase tracking-wider text-accent-light mb-2">Isolation</p>
           <h3 class="feature-card-title">Two branches. Two apps. Zero&nbsp;conflicts.</h3>
-          <p class="feature-card-desc">
-            Every worktree gets its own port, database, Redis namespace, and env file. Use <code class="text-accent-light">{resolve:other-project}</code> in env templates so a web checkout points at the API checkout—same-branch by default, <code class="text-accent-light">gtl link</code> when it is not.
-          </p>
+          <div class="feature-card-desc">
+            <p>Every worktree gets its own port, database, Redis namespace, and env file.</p>
+            <p>Use <code class="text-accent-light">{resolve:other-project}</code> in env templates so a web checkout targets the API on the same branch by default; use <code class="text-accent-light">gtl link</code> when you need an explicit override.</p>
+          </div>
           <a href="/features/isolation/" class="feature-card-link">How isolation works &rarr;</a>
         </div>
       </div>
@@ -203,62 +204,86 @@
       <!-- Networking -->
       <div class="feature-card feature-card-reversed">
         <div class="feature-card-visual">
-          <div class="pipeline">
-            <div class="pipeline-step">
-              <code class="pipeline-url text-muted text-base">localhost:3010</code>
-              <p class="pipeline-label">Ephemeral port</p>
+          <div class="feature-demo">
+            <div class="feature-demo-header">
+              <span class="terminal-dot bg-red-500"></span>
+              <span class="terminal-dot bg-yellow-500"></span>
+              <span class="terminal-dot bg-green-500"></span>
+              <span class="text-base text-muted ml-2">Networking</span>
             </div>
-            <span class="pipeline-arrow">&rarr;</span>
-            <span class="pipeline-arrow-mobile">&darr;</span>
-            <div class="pipeline-step">
-              <code class="pipeline-url text-accent-light text-base">feature-auth.localhost</code>
-              <p class="pipeline-label">Stable local name</p>
+            <div class="feature-demo-body sm:p-8">
+              <div class="pipeline pipeline--pair">
+                <div class="pipeline-step">
+                  <code class="pipeline-url text-muted font-mono">localhost:3010</code>
+                  <p class="pipeline-label">Ephemeral port</p>
+                </div>
+                <span class="pipeline-arrow" aria-hidden="true">&rarr;</span>
+                <span class="pipeline-arrow-mobile" aria-hidden="true">&darr;</span>
+                <div class="pipeline-step">
+                  <code class="pipeline-url text-white font-mono block leading-snug text-base sm:text-lg">
+                    <span class="pipeline-url-scheme">https://</span><span class="text-accent-light">feature-auth.localhost</span>
+                  </code>
+                  <p class="pipeline-label">HTTPS URL for this branch</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
         <div class="feature-card-copy">
-          <p class="text-xs uppercase tracking-wider text-accent-light mb-2">Networking</p>
+          <p class="text-base uppercase tracking-wider text-accent-light mb-2">Networking</p>
           <h3 class="feature-card-title"><span class="slot-wrapper text-accent-light"><span class="slot-reel"><span class="slot-item">OAuth redirects</span><span class="slot-item">Stripe webhooks</span><span class="slot-item">Mapbox tokens</span><span class="slot-item">API callbacks</span><span class="slot-item">OAuth redirects</span></span></span> just&nbsp;work.</h3>
-          <p class="feature-card-desc">
-            <code class="text-accent-light">gtl serve</code> names each branch on localhost; <code class="text-accent-light">gtl proxy</code> pins a port; <code class="text-accent-light">gtl tunnel</code> exposes a stable public hostname; <code class="text-accent-light">gtl share</code> sends a time-bounded link. Pick the layer that matches OAuth, webhooks, or a one-off demo.
-          </p>
-          <a href="/features/networking/" class="feature-card-link">Networking features &rarr;</a>
+          <div class="feature-card-desc">
+            <p>Branch-stable HTTPS names, a pinned port, a public hostname, or a time-bounded share link—use the network boundary that matches OAuth, webhooks, or a demo, without juggling four unrelated tools.</p>
+            <p class="text-sm sm:text-base">The networking page compares <code class="text-accent-light">gtl serve</code>, <code class="text-accent-light">gtl proxy</code>, <code class="text-accent-light">gtl tunnel</code>, and <code class="text-accent-light">gtl share</code> in full detail.</p>
+          </div>
+          <a href="/features/networking/" class="feature-card-link">Networking in depth &rarr;</a>
         </div>
       </div>
 
       <!-- Workflows -->
       <div class="feature-card">
         <div class="feature-card-visual">
-          <div class="step-sequence max-w-sm">
-            <div class="step-item">
-              <span class="step-check">&#10003;</span>
-              <span class="step-text">Fetched PR <strong class="text-white">#42</strong></span>
+          <div class="feature-demo max-w-sm mx-auto md:mx-0">
+            <div class="feature-demo-header">
+              <span class="terminal-dot bg-red-500"></span>
+              <span class="terminal-dot bg-yellow-500"></span>
+              <span class="terminal-dot bg-green-500"></span>
+              <span class="text-base text-muted ml-2">gtl review</span>
             </div>
-            <div class="step-item">
-              <span class="step-check">&#10003;</span>
-              <span class="step-text">Created worktree, allocated port <strong class="text-white">3020</strong></span>
+            <div class="feature-demo-body">
+              <div class="step-sequence">
+                <div class="step-item">
+                  <span class="step-check">&#10003;</span>
+                  <span class="step-text">Fetched PR <strong class="text-white">#42</strong></span>
+                </div>
+                <div class="step-item">
+                  <span class="step-check">&#10003;</span>
+                  <span class="step-text">Created worktree, allocated port <strong class="text-white">3020</strong></span>
+                </div>
+                <div class="step-item">
+                  <span class="step-check">&#10003;</span>
+                  <span class="step-text">Cloned database, ran setup</span>
+                </div>
+                <div class="step-item">
+                  <span class="step-check">&#10003;</span>
+                  <span class="step-text">Server running</span>
+                </div>
+                <div class="step-item step-item-result">
+                  <span class="step-arrow">&rarr;</span>
+                  <span class="step-text font-mono text-accent">https://myapp-pr-42.localhost</span>
+                </div>
+                <p class="step-sequence-footnote">named URL via gtl serve</p>
+              </div>
             </div>
-            <div class="step-item">
-              <span class="step-check">&#10003;</span>
-              <span class="step-text">Cloned database, ran setup</span>
-            </div>
-            <div class="step-item">
-              <span class="step-check">&#10003;</span>
-              <span class="step-text">Server running</span>
-            </div>
-            <div class="step-item step-item-result">
-              <span class="step-arrow">&rarr;</span>
-              <span class="step-text font-mono text-accent">https://myapp-pr-42.localhost</span>
-            </div>
-            <p class="text-muted text-xs mt-2 pl-7">named URL via gtl serve</p>
           </div>
         </div>
         <div class="feature-card-copy">
-          <p class="text-xs uppercase tracking-wider text-accent-light mb-2">Workflows</p>
+          <p class="text-base uppercase tracking-wider text-accent-light mb-2">Workflows</p>
           <h3 class="feature-card-title">Type a PR number. Get a running&nbsp;app.</h3>
-          <p class="feature-card-desc">
-            <code class="text-accent-light">gtl review 42 --start</code> fetches the PR and boots the app. <code class="text-accent-light">gtl open</code> jumps to the right URL; <code class="text-accent-light">gtl start --await</code> blocks until the port listens. <code class="text-accent-light">gtl dashboard</code> is a live TUI across all worktrees—start, open, release, filter. Optional hooks in <code class="text-accent-light">.treeline.yml</code> run before and after setup and release.
-          </p>
+          <div class="feature-card-desc">
+            <p><code class="text-accent-light">gtl review</code> fetches a PR and boots the app. <code class="text-accent-light">gtl open</code> jumps to the right URL; <code class="text-accent-light">gtl dashboard</code> is a live TUI across worktrees.</p>
+            <p>Optional hooks in <code class="text-accent-light">.treeline.yml</code> run before and after setup and release—see the workflows page for the full supervisor story.</p>
+          </div>
           <a href="/features/workflows/" class="feature-card-link">Review and supervisor &rarr;</a>
         </div>
       </div>
@@ -266,12 +291,15 @@
       <!-- AI Agents -->
       <div class="feature-card feature-card-reversed">
         <div class="feature-card-visual">
-          <div class="config-block rounded-lg border border-surface-border overflow-hidden">
-            <div class="px-4 py-2.5 border-b border-surface-border flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-accent/50"></span>
-              <span class="text-xs font-mono text-muted">MCP config</span>
+          <div class="feature-demo">
+            <div class="feature-demo-header">
+              <span class="terminal-dot bg-red-500"></span>
+              <span class="terminal-dot bg-yellow-500"></span>
+              <span class="terminal-dot bg-green-500"></span>
+              <span class="text-base text-muted ml-2">MCP config</span>
             </div>
-            <pre class="px-4 py-4 text-sm leading-relaxed font-mono overflow-x-auto"><code>{
+            <div class="feature-demo-body">
+              <pre class="m-0 text-sm leading-relaxed font-mono overflow-x-auto"><code>{
   "<span class="text-accent-light">mcpServers</span>": {
     "<span class="text-white">gtl</span>": {
       "<span class="text-accent-light">command</span>": "<span class="text-white">gtl</span>",
@@ -279,14 +307,16 @@
     }
   }
 }</code></pre>
+            </div>
           </div>
         </div>
         <div class="feature-card-copy">
-          <p class="text-xs uppercase tracking-wider text-accent-light mb-2">AI Agents</p>
+          <p class="text-base uppercase tracking-wider text-accent-light mb-2">AI Agents</p>
           <h3 class="feature-card-title">Your agent gets the same tools you&nbsp;do.</h3>
-          <p class="feature-card-desc">
-            MCP exposes <code class="text-accent-light">start</code>, <code class="text-accent-light">stop</code>, <code class="text-accent-light">port</code>, <code class="text-accent-light">status</code>, and more. <code class="text-accent-light">gtl env --json</code> and <code class="text-accent-light">gtl resolve --json</code> cover shell-only runners. <code class="text-accent-light">AGENTS.md</code> tells Cursor, Claude Code, and Codex the same commands.
-          </p>
+          <div class="feature-card-desc">
+            <p>MCP exposes <code class="text-accent-light">start</code>, <code class="text-accent-light">stop</code>, <code class="text-accent-light">port</code>, and <code class="text-accent-light">status</code>. <code class="text-accent-light">gtl env --json</code> and <code class="text-accent-light">gtl resolve --json</code> cover shell-only runners.</p>
+            <p><code class="text-accent-light">AGENTS.md</code> keeps Cursor, Claude Code, and Codex aligned on the same commands.</p>
+          </div>
           <a href="/features/agents/" class="feature-card-link">Agent integration &rarr;</a>
         </div>
       </div>
@@ -294,62 +324,21 @@
     </div>
   </section>
 
-  <!-- Get Started -->
+  <!-- Get started: one job · install + send readers to docs for the full path -->
   <section id="get-started" class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="section-heading text-center mb-4">Get started in 60 seconds</h2>
-      <p class="section-subtext text-center mx-auto mb-12">
-        Install, initialize your project, and create your first isolated worktree.
+    <div class="max-w-xl mx-auto text-center">
+      <h2 class="section-heading mb-4">Get started</h2>
+      <p class="text-muted text-base sm:text-lg mb-8 leading-relaxed">
+        Install the CLI, then run the <strong class="text-white">one-time</strong> local HTTPS setup (<code class="text-accent-light">gtl serve install</code> on macOS/Linux) so <code class="text-accent-light">gtl new</code> / <code class="text-accent-light">review</code> / <code class="text-accent-light">setup</code> can use branch URLs without cert warnings. Expect <strong class="text-white">sudo prompts</strong> for trusting the CA and for port&nbsp;443 forwarding—the guide explains what you will see.
       </p>
-      <div class="grid lg:grid-cols-3 gap-6 sm:gap-8 mb-8 max-w-sm lg:max-w-none mx-auto">
-        <div class="text-center">
-          <div class="text-accent text-3xl font-mono font-bold mb-4">1</div>
-          <h3 class="text-lg mb-3">Install</h3>
-          <div class="install-cmd justify-center">
-            <code class="text-accent-light text-xs">brew install git-treeline/tap/git-treeline</code>
-          </div>
-          <p class="text-xs text-muted mt-3">Also via <code class="text-accent-light">go install</code> or <a href="https://github.com/git-treeline/git-treeline/releases" class="text-accent-light underline underline-offset-2">binary download</a></p>
-        </div>
-        <div class="text-center">
-          <div class="text-accent text-3xl font-mono font-bold mb-4">2</div>
-          <h3 class="text-lg mb-3">Initialize</h3>
-          <div class="install-cmd justify-center">
-            <code class="text-accent-light text-xs">gtl init</code>
-          </div>
-          <p class="text-xs text-muted mt-3">Auto-detects your framework, creates <code class="text-accent-light">.treeline.yml</code></p>
-        </div>
-        <div class="text-center">
-          <div class="text-accent text-3xl font-mono font-bold mb-4">3</div>
-          <h3 class="text-lg mb-3">Create a worktree</h3>
-          <div class="install-cmd justify-center">
-            <code class="text-accent-light text-xs">gtl new feature-x</code>
-          </div>
-          <p class="text-xs text-muted mt-3">Worktree created, resources allocated, ready to boot</p>
-        </div>
+      <div class="install-cmd justify-center max-w-full overflow-x-auto mb-6">
+        <code class="text-accent-light whitespace-nowrap text-sm sm:text-base">brew install git-treeline/tap/git-treeline</code>
+        <button type="button" onclick="navigator.clipboard.writeText('brew install git-treeline/tap/git-treeline')" class="text-muted hover:text-white transition-colors shrink-0" aria-label="Copy install command">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        </button>
       </div>
-      <div class="framework-strip">
-        <span class="framework-pill">Rails</span>
-        <span class="framework-pill">Next.js</span>
-        <span class="framework-pill">Vite</span>
-        <span class="framework-pill">Express</span>
-        <span class="framework-pill">Django</span>
-        <span class="framework-pill">Phoenix</span>
-        <span class="framework-pill">Laravel</span>
-        <span class="framework-pill">Rust</span>
-        <span class="framework-pill">Go</span>
-      </div>
-      <p class="text-xs text-muted text-center mt-3">Auto-detected at init with per-framework guidance</p>
-      <p class="text-sm text-muted text-center mt-10 mb-2">Scenario guides</p>
-      <p class="text-center mb-6">
-        <a href="/use-cases/" class="text-accent-light hover:text-accent underline underline-offset-2">Multi-repo, integrations, PR review, agents</a>
-      </p>
-      <div class="mt-2 text-center">
-        <a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg" class="inline-flex items-center gap-2 text-sm text-muted hover:text-white transition-colors border border-surface-border rounded-lg px-4 py-2.5">
-          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-          macOS menu bar app
-          <span class="text-xs text-muted">(v0.1.0)</span>
-        </a>
-      </div>
+      <p class="text-sm text-muted mb-8">Also <code class="text-accent-light">go install</code> or a <a href="https://github.com/git-treeline/git-treeline/releases" class="text-accent-light hover:text-accent underline underline-offset-2">release binary</a>.</p>
+      <a href="/docs/#first-time-setup" class="inline-flex items-center justify-center px-5 py-3 rounded-md bg-accent text-surface text-base font-mono font-semibold hover:bg-accent-light transition-colors">First-time setup guide</a>
     </div>
   </section>
 
@@ -363,24 +352,18 @@
     </div>
   </div>
 
-  <!-- CTA -->
+  <!-- Closing CTA: no third copy of install; hero + get-started already cover it -->
   <section id="cta" class="px-4 sm:px-6 py-16 sm:py-28 text-center">
     <div class="max-w-2xl mx-auto">
       <h2 class="section-heading mb-4">Every branch, running</h2>
       <p class="section-subtext mx-auto mb-10">Your whole team sees the work, not just the diff.</p>
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 w-full">
-        <div class="install-cmd max-w-full overflow-x-auto">
-          <code class="text-accent-light whitespace-nowrap text-xs sm:text-sm">brew install git-treeline/tap/git-treeline</code>
-          <button onclick="navigator.clipboard.writeText('brew install git-treeline/tap/git-treeline')" class="text-muted hover:text-white transition-colors" aria-label="Copy install command">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-          </button>
-        </div>
-        <a href="https://github.com/git-treeline/git-treeline" class="inline-flex items-center gap-2 px-6 py-3 border border-surface-border rounded-lg text-white hover:border-accent transition-colors">
-          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568L24 9.306l-6 5.848 1.416 8.259L12 19.446l-7.416 3.967L6 15.154 0 9.306l8.332-1.151z"/></svg>
-          Star on GitHub
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+        <a href="/docs/" class="inline-flex items-center justify-center px-5 py-3 rounded-md bg-accent text-surface text-base font-mono font-semibold hover:bg-accent-light transition-colors">Documentation</a>
+        <a href="https://github.com/git-treeline/git-treeline" class="inline-flex items-center justify-center gap-3 whitespace-nowrap px-8 py-3.5 border border-surface-border rounded-none text-white hover:border-accent transition-colors text-base">
+          <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
         </a>
       </div>
-      <p class="text-sm text-muted">Open source &middot; MIT License &middot; Free forever</p>
     </div>
   </section>
 
@@ -392,7 +375,7 @@
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-10 gap-y-8 max-w-lg">
             <div>
               <h3>Product</h3>
-              <ul class="space-y-2.5 text-sm">
+              <ul class="space-y-2.5 text-base">
                 <li><a href="/features/isolation/">Isolation</a></li>
                 <li><a href="/features/networking/">Networking</a></li>
                 <li><a href="/features/workflows/">Workflows</a></li>
@@ -401,14 +384,15 @@
             </div>
             <div>
               <h3>Resources</h3>
-              <ul class="space-y-2.5 text-sm">
+              <ul class="space-y-2.5 text-base">
                 <li><a href="/docs/">Documentation</a></li>
+                <li><a href="/docs/#first-time-setup">First-time setup</a></li>
                 <li><a href="/use-cases/">Use cases</a></li>
               </ul>
             </div>
             <div class="col-span-2 sm:col-span-1">
               <h3>Open source</h3>
-              <ul class="space-y-2.5 text-sm">
+              <ul class="space-y-2.5 text-base">
                 <li><a href="https://github.com/git-treeline/git-treeline">GitHub</a></li>
                 <li><a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg">Menu bar app</a></li>
                 <li><a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt">MIT License</a></li>
@@ -417,11 +401,11 @@
           </div>
         </nav>
         <div class="shrink-0 lg:max-w-[220px]">
-                    <p class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Built by</p>
-          <a href="https://x.com/jonathansimmons" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-white hover:text-accent-light transition-colors">Jonathan Simmons</a>
+          <p class="text-sm font-semibold uppercase tracking-wider text-muted mb-3">Built by</p>
+          <a href="https://x.com/jonathansimmons" target="_blank" rel="noopener noreferrer" class="text-base font-semibold text-white hover:text-accent-light transition-colors">Jonathan Simmons</a>
         </div>
       </div>
-      <div class="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-surface-border pt-8 text-xs text-muted">
+      <div class="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-surface-border pt-8 text-sm sm:text-base text-muted">
         <a href="/" class="font-mono hover:text-white transition-colors">git-treeline.dev</a>
         <span>Open source · <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a></span>
       </div>
