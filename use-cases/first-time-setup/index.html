@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>First-time setup: a guided tour &mdash; Git Treeline</title>
+  <meta name="description" content="Install Git Treeline, run gtl init, understand every section of .treeline.yml and config.json, create your first worktree, and verify everything works.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://git-treeline.dev/use-cases/first-time-setup/">
+  <meta property="og:title" content="First-time setup: a guided tour &mdash; Git Treeline">
+  <meta property="og:description" content="From install to your first isolated worktree. A walkthrough of everything Treeline can configure for your project.">
+  <meta property="og:image" content="https://git-treeline.dev/og-image.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <script src="https://cdn.usefathom.com/script.js" data-site="QPFTFHRS" defer></script>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav id="site-nav" class="fixed top-0 left-0 right-0 z-50 bg-surface transition-colors duration-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3 text-white hover:text-accent-light transition-colors">
+        <svg class="w-7 h-7" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="6" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+          <text x="16" y="22" font-family="monospace" font-weight="700" font-size="16" fill="#22c55e" text-anchor="middle">gt</text>
+        </svg>
+        <span class="font-mono text-sm font-semibold hidden sm:inline">git-treeline</span>
+      </a>
+      <div class="flex items-center gap-3 sm:gap-6">
+        <div class="relative group">
+          <button class="text-sm text-muted hover:text-white transition-colors flex items-center gap-1">Features <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button>
+          <div class="absolute top-full left-0 mt-2 w-44 bg-surface-raised border border-surface-border rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 py-2 z-50">
+            <a href="/features/isolation/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Isolation</a>
+            <a href="/features/networking/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Networking</a>
+            <a href="/features/workflows/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">Workflows</a>
+            <a href="/features/agents/" class="block px-4 py-2 text-sm text-muted hover:text-white hover:bg-surface transition-colors">AI Agents</a>
+          </div>
+        </div>
+        <a href="/docs/" class="text-sm text-muted hover:text-white transition-colors">Docs</a>
+        <a href="/use-cases/" class="text-sm text-white transition-colors">Use cases</a>
+        <a href="https://github.com/git-treeline/git-treeline" class="text-sm text-muted hover:text-white transition-colors hidden sm:inline">GitHub</a>
+        <a href="/#get-started" class="text-xs font-mono px-3 sm:px-4 py-2 bg-accent text-surface rounded-md hover:bg-accent-light transition-colors">Install</a>
+      </div>
+    </div>
+  </nav>
+  <script>
+    (function() {
+      var nav = document.getElementById('site-nav');
+      window.addEventListener('scroll', function() {
+        nav.classList.toggle('nav-scrolled', window.scrollY > 40);
+      });
+    })();
+  </script>
+
+  <article class="use-case-article">
+    <p class="text-sm text-muted mb-4"><a href="/use-cases/" class="text-accent-light hover:text-accent">Use cases</a> / Getting started</p>
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-6 text-balance">First-time setup: a guided&nbsp;tour</h1>
+    <p class="use-case-lead">
+      You&rsquo;ve installed Git Treeline and you&rsquo;re looking at a project. This page walks through the full setup, section by section &mdash; what Treeline generates, what every config field does, and how to decide what your project needs. By the end you&rsquo;ll have an isolated worktree running your app.
+    </p>
+
+    <!-- 1. Install -->
+    <h2>1. Install</h2>
+    <div class="terminal mb-6">
+      <div class="terminal-header">
+        <span class="terminal-dot bg-red-500"></span>
+        <span class="terminal-dot bg-yellow-500"></span>
+        <span class="terminal-dot bg-green-500"></span>
+      </div>
+      <div class="terminal-body space-y-4">
+        <div>
+          <p class="text-xs text-muted mb-1"># macOS / Linux (Homebrew)</p>
+          <p><span class="prompt">$</span> <span class="command">brew install git-treeline/tap/gtl</span></p>
+        </div>
+        <div>
+          <p class="text-xs text-muted mb-1"># or from source</p>
+          <p><span class="prompt">$</span> <span class="command">go install github.com/git-treeline/git-treeline/cmd/gtl@latest</span></p>
+        </div>
+      </div>
+    </div>
+    <p class="text-muted mb-8">
+      Treeline is a single binary with no runtime dependencies. It works on macOS and Linux. Windows is supported for core features (ports, env, databases); the HTTPS subdomain router (<code class="text-accent-light">gtl serve</code>) is macOS/Linux only.
+    </p>
+
+    <!-- 2. Init -->
+    <h2>2. Run <code class="text-accent-light">gtl init</code></h2>
+    <div class="terminal mb-6">
+      <div class="terminal-header">
+        <span class="terminal-dot bg-red-500"></span>
+        <span class="terminal-dot bg-yellow-500"></span>
+        <span class="terminal-dot bg-green-500"></span>
+      </div>
+      <div class="terminal-body space-y-2">
+        <p><span class="prompt">$</span> <span class="command">cd your-project</span></p>
+        <p><span class="prompt">$</span> <span class="command">gtl init</span></p>
+        <p class="output">Detected <span class="highlight">Rails</span> project</p>
+        <p class="output">Generated <span class="highlight">.treeline.yml</span></p>
+        <p class="output">Wrote agent context to <span class="highlight">AGENTS.md</span></p>
+        <p class="output"></p>
+        <p class="output text-yellow-400">Diagnostics:</p>
+        <p class="output text-muted">&nbsp; &check; dotenv-rails loaded via Gemfile</p>
+        <p class="output text-muted">&nbsp; &check; PostgreSQL adapter detected</p>
+        <p class="output text-muted">&nbsp; &check; bin/dev present and executable</p>
+        <p class="output text-muted">&nbsp; &check; post-checkout hook installed</p>
+      </div>
+    </div>
+    <p class="text-muted mb-4">
+      <code class="text-accent-light">init</code> does three things:
+    </p>
+    <ol class="text-muted space-y-2 list-decimal pl-5 mb-4">
+      <li><strong class="text-white">Detects your framework</strong> (Next.js, Vite, Rails, Express, Python, Rust, Go) and generates a tailored <code class="text-accent-light">.treeline.yml</code></li>
+      <li><strong class="text-white">Writes agent context</strong> to <code class="text-accent-light">AGENTS.md</code> (or appends to <code class="text-accent-light">CLAUDE.md</code> if that exists) so AI agents know to use <code class="text-accent-light">gtl port</code> instead of assuming port 3000</li>
+      <li><strong class="text-white">Runs diagnostics</strong> &mdash; checks for dotenv support, port wiring, database adapters, and prints actionable warnings</li>
+    </ol>
+    <p class="text-muted mb-8">
+      Use <code class="text-accent-light">--project myapp</code> to set the project name explicitly. Use <code class="text-accent-light">--template-db myapp_dev</code> to pre-fill the database template. Use <code class="text-accent-light">--skip-agent-config</code> if you don&rsquo;t want agent context generated.
+    </p>
+
+    <!-- 3. Tour the config -->
+    <h2>3. Tour the generated config</h2>
+    <p class="text-muted mb-4">
+      Here&rsquo;s a fully loaded <code class="text-accent-light">.treeline.yml</code>. Your generated file will be simpler &mdash; <code class="text-accent-light">init</code> only includes what it detects. Let&rsquo;s walk through each section so you know what&rsquo;s available and when you&rsquo;d add it.
+    </p>
+
+    <div class="terminal mb-8">
+      <div class="terminal-header">
+        <span class="terminal-dot bg-red-500"></span>
+        <span class="terminal-dot bg-yellow-500"></span>
+        <span class="terminal-dot bg-green-500"></span>
+        <span class="text-xs text-muted ml-2">.treeline.yml (annotated)</span>
+      </div>
+      <div class="terminal-body">
+        <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-muted"># --- Identity ---</span>
+<span class="text-accent-light">project</span>: myapp
+<span class="text-accent-light">merge_target</span>: develop
+
+<span class="text-muted"># --- Ports ---</span>
+<span class="text-accent-light">port_count</span>: 2
+
+<span class="text-muted"># --- Environment ---</span>
+<span class="text-accent-light">env_file</span>: .env.local
+
+<span class="text-accent-light">env</span>:
+  <span class="text-white">PORT</span>: "{port}"
+  <span class="text-white">ESBUILD_PORT</span>: "{port_2}"
+  <span class="text-white">DATABASE_NAME</span>: "{database}"
+  <span class="text-white">DATABASE_URL</span>: "postgresql://localhost:5432/{database}"
+  <span class="text-white">REDIS_URL</span>: "{redis_url}"
+  <span class="text-white">APPLICATION_HOST</span>: "localhost:{port}"
+
+<span class="text-muted"># --- Database ---</span>
+<span class="text-accent-light">database</span>:
+  <span class="text-accent-light">adapter</span>: postgresql
+  <span class="text-accent-light">template</span>: myapp_development
+  <span class="text-accent-light">pattern</span>: "{template}_{worktree}"
+
+<span class="text-muted"># --- Files ---</span>
+<span class="text-accent-light">copy_files</span>:
+  - config/master.key
+
+<span class="text-muted"># --- Commands ---</span>
+<span class="text-accent-light">commands</span>:
+  <span class="text-accent-light">setup</span>:
+    - bundle install --quiet
+    - yarn install --silent
+  <span class="text-accent-light">start</span>: bin/dev
+
+<span class="text-muted"># --- Lifecycle hooks ---</span>
+<span class="text-accent-light">hooks</span>:
+  <span class="text-accent-light">pre_setup</span>:
+    - psql -lqt | grep myapp_development
+  <span class="text-accent-light">post_setup</span>:
+    - echo "Ready"
+
+<span class="text-muted"># --- Aliases ---</span>
+<span class="text-accent-light">aliases</span>:
+  <span class="text-white">mailhog</span>: 8025
+  <span class="text-white">sidekiq</span>: 9292
+
+<span class="text-muted"># --- Editor ---</span>
+<span class="text-accent-light">editor</span>:
+  <span class="text-accent-light">title</span>: "{project} ({branch}) &mdash; :{port}"
+  <span class="text-accent-light">color</span>: auto
+  <span class="text-accent-light">theme</span>: GitHub Dark</code></pre>
+      </div>
+    </div>
+
+    <!-- 3a. Identity -->
+    <h3 class="text-white font-mono text-lg mb-3 mt-10">project</h3>
+    <p class="text-muted mb-4">
+      The name used in the registry, in branch URLs (<code class="text-white">myapp-feature-auth.localhost</code>), and as a namespace for port reservations. Defaults to the directory name. Most projects never change this.
+    </p>
+
+    <h3 class="text-white font-mono text-lg mb-3 mt-8">merge_target</h3>
+    <p class="text-muted mb-8">
+      The branch that <code class="text-accent-light">gtl prune --merged</code> checks against. Treeline auto-detects this from your git remote &mdash; you only need to set it if your repo uses something other than <code class="text-white">main</code>/<code class="text-white">master</code> (e.g. <code class="text-white">develop</code>, <code class="text-white">staging</code>).
+    </p>
+
+    <!-- 3b. Ports -->
+    <h3 class="text-white font-mono text-lg mb-3">port_count</h3>
+    <p class="text-muted mb-4">
+      How many contiguous ports each worktree gets. Default is 1. Set it higher when your app needs multiple ports &mdash; Rails with esbuild needs 2 (one for the server, one for the asset builder), a full-stack monolith with a separate WebSocket server might need 3.
+    </p>
+    <p class="text-muted mb-8">
+      Ports are allocated in blocks. If <code class="text-accent-light">port_count: 2</code> and the base is 3002, the first worktree gets 3002&ndash;3003, the next gets 3012&ndash;3013 (based on the increment in your user config).
+    </p>
+
+    <!-- 3c. Environment -->
+    <h3 class="text-white font-mono text-lg mb-3">env_file</h3>
+    <p class="text-muted mb-4">
+      Where Treeline writes the env file. Usually <code class="text-white">.env.local</code> (Next.js, Vite) or <code class="text-white">.env</code> (Express, Rails). If the source file you want to seed from has a different name, use the extended form:
+    </p>
+    <div class="terminal mb-8">
+      <div class="terminal-header">
+        <span class="terminal-dot bg-red-500"></span>
+        <span class="terminal-dot bg-yellow-500"></span>
+        <span class="terminal-dot bg-green-500"></span>
+      </div>
+      <div class="terminal-body">
+        <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-accent-light">env_file</span>:
+  <span class="text-accent-light">path</span>: .env
+  <span class="text-accent-light">seed_from</span>: .env.example</code></pre>
+      </div>
+    </div>
+
+    <h3 class="text-white font-mono text-lg mb-3">env</h3>
+    <p class="text-muted mb-4">
+      Key-value pairs written to the env file. Values support <strong class="text-white">interpolation tokens</strong> that Treeline resolves at setup time:
+    </p>
+    <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
+      <table class="cli-table w-full text-sm text-left">
+        <thead>
+          <tr class="border-b border-surface-border bg-surface">
+            <th class="px-4 py-3 font-mono text-accent-light">Token</th>
+            <th class="px-4 py-3 text-accent-light">Resolves to</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-border text-muted">
+          <tr>
+            <td class="px-4 py-3 font-mono"><code class="text-accent-light">{port}</code></td>
+            <td class="px-4 py-3">First allocated port</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono"><code class="text-accent-light">{port_N}</code></td>
+            <td class="px-4 py-3">Nth allocated port (e.g. <code class="text-white">{port_2}</code>)</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono"><code class="text-accent-light">{database}</code></td>
+            <td class="px-4 py-3">Cloned database name</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono"><code class="text-accent-light">{redis_url}</code></td>
+            <td class="px-4 py-3">Full Redis URL with namespace</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono"><code class="text-accent-light">{redis_prefix}</code></td>
+            <td class="px-4 py-3">Redis key prefix (prefixed strategy)</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono"><code class="text-accent-light">{project}</code></td>
+            <td class="px-4 py-3">Project name</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono"><code class="text-accent-light">{worktree}</code></td>
+            <td class="px-4 py-3">Worktree/branch name</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono"><code class="text-accent-light">{resolve:project}</code></td>
+            <td class="px-4 py-3">URL of another project&rsquo;s allocation (same branch)</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono"><code class="text-accent-light">{resolve:project/branch}</code></td>
+            <td class="px-4 py-3">URL of another project&rsquo;s allocation on a specific branch</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 3d. Database -->
+    <h3 class="text-white font-mono text-lg mb-3">database</h3>
+    <p class="text-muted mb-4">
+      Entirely optional. If your project doesn&rsquo;t use a local database, or you handle database creation in <code class="text-accent-light">commands.setup</code>, omit this whole block.
+    </p>
+    <p class="text-muted mb-4">
+      When present, Treeline clones a database per worktree at setup time:
+    </p>
+    <ul class="text-muted space-y-2 list-disc pl-5 mb-4">
+      <li><strong class="text-white">adapter:</strong> <code class="text-accent-light">postgresql</code> or <code class="text-accent-light">sqlite</code></li>
+      <li><strong class="text-white">template:</strong> the source database to clone from. For PostgreSQL this is passed to <code class="text-accent-light">createdb --template</code>. For SQLite it&rsquo;s the file path to copy.</li>
+      <li><strong class="text-white">pattern:</strong> naming pattern for cloned databases. <code class="text-accent-light">{template}_{worktree}</code> produces names like <code class="text-white">myapp_development_feature_auth</code></li>
+    </ul>
+    <p class="text-muted mb-8">
+      The template database is never modified. Use <code class="text-accent-light">gtl db reset</code> to re-clone, <code class="text-accent-light">gtl db restore dump.sql</code> to load from a dump, and <code class="text-accent-light">--drop-db</code> with <code class="text-accent-light">gtl release</code> to clean up. For a deep dive, see <a href="/use-cases/database-per-branch/" class="text-accent-light hover:text-accent underline underline-offset-2">Database per branch</a>.
+    </p>
+
+    <!-- 3e. Files -->
+    <h3 class="text-white font-mono text-lg mb-3">copy_files</h3>
+    <p class="text-muted mb-8">
+      Files copied from the main repo directory into each new worktree. Typically secrets that aren&rsquo;t in version control &mdash; <code class="text-white">config/master.key</code>, <code class="text-white">.env.secret</code>, certificates. Treeline copies them during setup so the worktree has everything it needs to boot.
+    </p>
+
+    <!-- 3f. Commands -->
+    <h3 class="text-white font-mono text-lg mb-3">commands.setup</h3>
+    <p class="text-muted mb-4">
+      Shell commands that run inside the worktree after the env file is written. Install dependencies, run migrations, seed data &mdash; whatever your project needs. They run in order and have access to the env vars Treeline just wrote (<code class="text-accent-light">$PORT</code>, <code class="text-accent-light">$DATABASE_URL</code>, etc.).
+    </p>
+
+    <h3 class="text-white font-mono text-lg mb-3 mt-8">commands.start</h3>
+    <p class="text-muted mb-8">
+      Whatever you&rsquo;d type to boot the app. <code class="text-white">bin/dev</code>, <code class="text-white">npm run dev</code>, <code class="text-white">foreman start</code>, <code class="text-white">cargo run</code>. Used by <code class="text-accent-light">gtl start</code> and the <code class="text-accent-light">--start</code> flag on <code class="text-accent-light">gtl new</code> and <code class="text-accent-light">gtl review</code>. The server runs under a lightweight supervisor that agents and scripts can control via <code class="text-accent-light">gtl stop</code> / <code class="text-accent-light">gtl restart</code>.
+    </p>
+
+    <!-- 3g. Hooks -->
+    <h3 class="text-white font-mono text-lg mb-3">hooks</h3>
+    <p class="text-muted mb-4">
+      Lifecycle hooks for validation and cleanup. Four hook points:
+    </p>
+    <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
+      <table class="cli-table w-full text-sm text-left">
+        <thead>
+          <tr class="border-b border-surface-border bg-surface">
+            <th class="px-4 py-3 font-mono text-accent-light">Hook</th>
+            <th class="px-4 py-3 text-accent-light">When</th>
+            <th class="px-4 py-3 text-accent-light">On failure</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-border text-muted">
+          <tr>
+            <td class="px-4 py-3 font-mono"><code class="text-accent-light">pre_setup</code></td>
+            <td class="px-4 py-3">Before <code class="text-accent-light">commands.setup</code></td>
+            <td class="px-4 py-3 text-white">Aborts setup</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono"><code class="text-accent-light">post_setup</code></td>
+            <td class="px-4 py-3">After all setup</td>
+            <td class="px-4 py-3">Warns, continues</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono"><code class="text-accent-light">pre_release</code></td>
+            <td class="px-4 py-3">Before resource release</td>
+            <td class="px-4 py-3 text-white">Aborts release</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono"><code class="text-accent-light">post_release</code></td>
+            <td class="px-4 py-3">After resource release</td>
+            <td class="px-4 py-3">Warns, continues</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-muted mb-8">
+      Use <code class="text-accent-light">pre_setup</code> to gate on prerequisites (template database must exist, secrets must be present). Use <code class="text-accent-light">post_release</code> for cleanup like notifying a monitoring service or removing cloud resources.
+    </p>
+
+    <!-- 3h. Aliases -->
+    <h3 class="text-white font-mono text-lg mb-3">aliases</h3>
+    <p class="text-muted mb-8">
+      Project-level service aliases for the HTTPS router. If your team runs Mailhog on <code class="text-white">:8025</code> and Sidekiq web on <code class="text-white">:9292</code>, define them here and everyone gets <code class="text-white">https://mailhog.localhost</code> and <code class="text-white">https://sidekiq.localhost</code> automatically. For personal tools, use <code class="text-accent-light">gtl serve alias</code> instead. See <a href="/use-cases/local-services/" class="text-accent-light hover:text-accent underline underline-offset-2">Named URLs for local services</a>.
+    </p>
+
+    <!-- 3i. Editor -->
+    <h3 class="text-white font-mono text-lg mb-3">editor</h3>
+    <p class="text-muted mb-4">
+      Optional visual cues so you can tell worktree windows apart at a glance:
+    </p>
+    <ul class="text-muted space-y-2 list-disc pl-5 mb-8">
+      <li><strong class="text-white">title:</strong> window/tab title template. Supports <code class="text-accent-light">{project}</code>, <code class="text-accent-light">{branch}</code>, <code class="text-accent-light">{port}</code> tokens. Works with VS Code and Cursor.</li>
+      <li><strong class="text-white">color:</strong> title/status bar color. Set <code class="text-accent-light">"auto"</code> for a deterministic color derived from the branch name, or a hex value like <code class="text-white">"#1a5276"</code>.</li>
+      <li><strong class="text-white">theme:</strong> full IDE theme override per worktree (e.g. <code class="text-white">"Monokai"</code>, <code class="text-white">"GitHub Dark"</code>).</li>
+    </ul>
+
+    <!-- 4. User config -->
+    <h2>4. Your machine config</h2>
+    <p class="text-muted mb-4">
+      <code class="text-accent-light">.treeline.yml</code> describes the project. Your user config (<code class="text-accent-light">config.json</code>) describes your machine &mdash; how ports are allocated, where worktrees go, which editor you use. It lives at:
+    </p>
+    <ul class="text-muted space-y-1 list-disc pl-5 mb-6 text-sm">
+      <li><strong class="text-white">macOS:</strong> <code class="text-accent-light">~/Library/Application Support/git-treeline/config.json</code></li>
+      <li><strong class="text-white">Linux:</strong> <code class="text-accent-light">~/.config/git-treeline/config.json</code></li>
+      <li><strong class="text-white">Windows:</strong> <code class="text-accent-light">%APPDATA%/git-treeline/config.json</code></li>
+    </ul>
+    <p class="text-muted mb-4">
+      <code class="text-accent-light">gtl init</code> creates this automatically if it doesn&rsquo;t exist. You can also run <code class="text-accent-light">gtl config</code> to see or modify it. Here are the key sections:
+    </p>
+
+    <h3 class="text-white font-mono text-lg mb-3 mt-8">Port allocation</h3>
+    <div class="terminal mb-4">
+      <div class="terminal-header">
+        <span class="terminal-dot bg-red-500"></span>
+        <span class="terminal-dot bg-yellow-500"></span>
+        <span class="terminal-dot bg-green-500"></span>
+        <span class="text-xs text-muted ml-2">config.json (partial)</span>
+      </div>
+      <div class="terminal-body">
+        <pre class="m-0 text-sm leading-relaxed font-mono"><code>{
+  "<span class="text-accent-light">port</span>": {
+    "<span class="text-accent-light">base</span>": 3002,
+    "<span class="text-accent-light">increment</span>": 10,
+    "<span class="text-accent-light">reservations</span>": {
+      "<span class="text-white">myapp</span>": 3010,
+      "<span class="text-white">myapp/staging</span>": 3020
+    }
+  }
+}</code></pre>
+      </div>
+    </div>
+    <p class="text-muted mb-4">
+      <strong class="text-white">base</strong> is where dynamic allocation starts (3002 by default &mdash; ports 3000 and 3001 are reserved for <code class="text-accent-light">gtl proxy</code> and the HTTPS router). <strong class="text-white">increment</strong> controls the gap between allocations. <strong class="text-white">reservations</strong> pin specific projects or branches to stable ports &mdash; useful for long-lived worktrees that other services depend on.
+    </p>
+    <div class="terminal mb-8">
+      <div class="terminal-header">
+        <span class="terminal-dot bg-red-500"></span>
+        <span class="terminal-dot bg-yellow-500"></span>
+        <span class="terminal-dot bg-green-500"></span>
+      </div>
+      <div class="terminal-body space-y-2">
+        <p class="text-xs text-muted mb-1"># Pin your main repo to port 3010</p>
+        <p><span class="prompt">$</span> <span class="command">gtl config set port.reservations.myapp 3010</span></p>
+        <p class="text-xs text-muted mt-3 mb-1"># Pin the staging worktree to 3020</p>
+        <p><span class="prompt">$</span> <span class="command">gtl config set port.reservations.myapp/staging 3020</span></p>
+      </div>
+    </div>
+
+    <h3 class="text-white font-mono text-lg mb-3">Worktree path</h3>
+    <p class="text-muted mb-4">
+      By default, <code class="text-accent-light">gtl new</code> creates worktrees as siblings of the repo (<code class="text-white">../myapp-feature-x</code>). If you prefer worktrees inside the repo:
+    </p>
+    <div class="terminal mb-4">
+      <div class="terminal-header">
+        <span class="terminal-dot bg-red-500"></span>
+        <span class="terminal-dot bg-yellow-500"></span>
+        <span class="terminal-dot bg-green-500"></span>
+        <span class="text-xs text-muted ml-2">config.json (partial)</span>
+      </div>
+      <div class="terminal-body">
+        <pre class="m-0 text-sm leading-relaxed font-mono"><code>{
+  "<span class="text-accent-light">worktree</span>": {
+    "<span class="text-accent-light">path</span>": ".worktrees/{branch}"
+  }
+}</code></pre>
+      </div>
+    </div>
+    <p class="text-muted mb-8">
+      Supports <code class="text-accent-light">{project}</code> and <code class="text-accent-light">{branch}</code> interpolation. If the path is inside the repo, Treeline ensures it&rsquo;s in <code class="text-accent-light">.gitignore</code> automatically.
+    </p>
+
+    <h3 class="text-white font-mono text-lg mb-3">Redis</h3>
+    <p class="text-muted mb-8">
+      If your project uses Redis, Treeline can namespace each worktree to prevent key collisions. <strong class="text-white">Prefixed</strong> (default) namespaces keys under <code class="text-white">myapp:feature-x:...</code> in a shared DB&nbsp;0. <strong class="text-white">Database</strong> gives each worktree its own Redis DB number (1&ndash;15). Set <code class="text-accent-light">redis.strategy</code> in your user config. Most teams never change this.
+    </p>
+
+    <!-- 5. First worktree -->
+    <h2>5. Create your first worktree</h2>
+    <div class="terminal mb-6">
+      <div class="terminal-header">
+        <span class="terminal-dot bg-red-500"></span>
+        <span class="terminal-dot bg-yellow-500"></span>
+        <span class="terminal-dot bg-green-500"></span>
+      </div>
+      <div class="terminal-body space-y-2">
+        <p><span class="prompt">$</span> <span class="command">gtl new feature-auth --start</span></p>
+        <p class="output">Creating worktree <span class="highlight">feature-auth</span></p>
+        <p class="output">Allocated ports <span class="highlight">3002</span>, <span class="highlight">3003</span></p>
+        <p class="output">Cloned database <span class="highlight">myapp_development_feature_auth</span></p>
+        <p class="output">Copied <span class="highlight">config/master.key</span></p>
+        <p class="output">Wrote <span class="highlight">.env.local</span></p>
+        <p class="output">Running setup: bundle install --quiet</p>
+        <p class="output">Running setup: yarn install --silent</p>
+        <p class="output text-accent">==> https://myapp-feature-auth.localhost</p>
+        <p class="output">Starting: bin/dev (port 3002)</p>
+      </div>
+    </div>
+    <p class="text-muted mb-4">
+      One command: worktree created, ports allocated, database cloned, env file written, files copied, setup commands run, server booted. The <code class="text-accent-light">--start</code> flag kicks off the server under the supervisor immediately.
+    </p>
+    <p class="text-muted mb-8">
+      If you already have a worktree (e.g. from <code class="text-accent-light">git worktree add</code>), use <code class="text-accent-light">gtl setup &lt;path&gt;</code> to allocate resources for it. Going forward, the post-checkout hook installed by <code class="text-accent-light">gtl init</code> handles this automatically for new checkouts.
+    </p>
+
+    <!-- 6. Verify -->
+    <h2>6. Verify everything works</h2>
+    <div class="terminal mb-6">
+      <div class="terminal-header">
+        <span class="terminal-dot bg-red-500"></span>
+        <span class="terminal-dot bg-yellow-500"></span>
+        <span class="terminal-dot bg-green-500"></span>
+      </div>
+      <div class="terminal-body space-y-2">
+        <p><span class="prompt">$</span> <span class="command">gtl doctor</span></p>
+        <p class="output">Config:</p>
+        <p class="output text-muted">&nbsp; &check; .treeline.yml found</p>
+        <p class="output text-muted">&nbsp; &check; User config loaded</p>
+        <p class="output text-muted">&nbsp; &check; post-checkout hook installed</p>
+        <p class="output">Allocation:</p>
+        <p class="output text-muted">&nbsp; &check; Ports 3002-3003 allocated</p>
+        <p class="output text-muted">&nbsp; &check; Database myapp_development_feature_auth exists</p>
+        <p class="output text-muted">&nbsp; &check; Redis namespace assigned</p>
+        <p class="output">Runtime:</p>
+        <p class="output text-muted">&nbsp; &check; Server listening on :3002</p>
+        <p class="output text-muted">&nbsp; &check; .env.local matches allocation</p>
+      </div>
+    </div>
+    <p class="text-muted mb-8">
+      <code class="text-accent-light">gtl doctor</code> checks config, allocation, and runtime. If something is wrong &mdash; missing template database, port conflict, stale env file &mdash; it tells you exactly what to fix. Add <code class="text-accent-light">--json</code> for structured output.
+    </p>
+
+    <!-- 7. What to commit -->
+    <h2>7. What to commit</h2>
+    <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
+      <table class="cli-table w-full text-sm text-left">
+        <thead>
+          <tr class="border-b border-surface-border bg-surface">
+            <th class="px-4 py-3 text-accent-light">File</th>
+            <th class="px-4 py-3 text-accent-light">Commit?</th>
+            <th class="px-4 py-3 text-accent-light">Why</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-border text-muted">
+          <tr>
+            <td class="px-4 py-3 font-mono"><code class="text-accent-light">.treeline.yml</code></td>
+            <td class="px-4 py-3 text-white">Yes</td>
+            <td class="px-4 py-3">Project config &mdash; shared with the team</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono"><code class="text-accent-light">AGENTS.md</code></td>
+            <td class="px-4 py-3 text-white">Yes</td>
+            <td class="px-4 py-3">Agent context &mdash; tells AI agents how to use ports</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono"><code class="text-accent-light">config.json</code></td>
+            <td class="px-4 py-3">No</td>
+            <td class="px-4 py-3">Per-machine settings &mdash; lives outside the repo</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono"><code class="text-accent-light">registry.json</code></td>
+            <td class="px-4 py-3">No</td>
+            <td class="px-4 py-3">Allocation ledger &mdash; lives outside the repo</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-muted mb-8">
+      Once you commit <code class="text-accent-light">.treeline.yml</code> and <code class="text-accent-light">AGENTS.md</code>, every teammate who installs <code class="text-accent-light">gtl</code> can run <code class="text-accent-light">gtl new &lt;branch&gt; --start</code> and get a fully isolated environment. See <a href="/use-cases/onboarding/" class="text-accent-light hover:text-accent underline underline-offset-2">New developer, one command</a> for that walkthrough.
+    </p>
+
+    <!-- 8. What's next -->
+    <h2>What&rsquo;s next</h2>
+    <p class="text-muted mb-4">
+      You have a working config and your first worktree. From here, the depth you go depends on your project:
+    </p>
+    <ul class="text-muted space-y-3 list-disc pl-5 mb-8">
+      <li><a href="/use-cases/onboarding/" class="text-accent-light hover:text-accent underline underline-offset-2">New developer, one command</a> &mdash; what your teammates see when they join</li>
+      <li><a href="/use-cases/database-per-branch/" class="text-accent-light hover:text-accent underline underline-offset-2">Database per branch</a> &mdash; clone, seed, or SQLite strategies</li>
+      <li><a href="/use-cases/integrations-urls/" class="text-accent-light hover:text-accent underline underline-offset-2">Why port 3000 stays free</a> &mdash; the proxy facade for OAuth, Stripe, and CORS</li>
+      <li><a href="/use-cases/local-services/" class="text-accent-light hover:text-accent underline underline-offset-2">Named URLs for local services</a> &mdash; aliases for sidecars and tools</li>
+      <li><a href="/docs/" class="text-accent-light hover:text-accent underline underline-offset-2">Full documentation</a> &mdash; complete CLI reference and config options</li>
+    </ul>
+
+    <p class="text-center">
+      <a href="/use-cases/" class="text-sm text-accent-light hover:text-accent">All use cases</a>
+    </p>
+  </article>
+
+  <footer class="site-footer">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-12 pb-10">
+      <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-10 lg:gap-14">
+        <nav class="site-footer-nav flex-1 min-w-0" aria-label="Footer">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-10 gap-y-8 max-w-lg">
+            <div>
+              <h3>Product</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="/features/isolation/">Isolation</a></li>
+                <li><a href="/features/networking/">Networking</a></li>
+                <li><a href="/features/workflows/">Workflows</a></li>
+                <li><a href="/features/agents/">AI Agents</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3>Resources</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="/docs/">Documentation</a></li>
+                <li><a href="/use-cases/">Use cases</a></li>
+              </ul>
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+              <h3>Open source</h3>
+              <ul class="space-y-2.5 text-sm">
+                <li><a href="https://github.com/git-treeline/git-treeline">GitHub</a></li>
+                <li><a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg">Menu bar app</a></li>
+                <li><a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt">MIT License</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <div class="shrink-0 lg:max-w-[220px]">
+          <p class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Built by</p>
+          <a href="https://x.com/jonathansimmons" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-white hover:text-accent-light transition-colors">Jonathan Simmons</a>
+        </div>
+      </div>
+      <div class="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-surface-border pt-8 text-xs text-muted">
+        <a href="/" class="font-mono hover:text-white transition-colors">git-treeline.dev</a>
+        <span>Open source &middot; <a href="https://github.com/git-treeline/git-treeline/blob/main/LICENSE.txt" class="hover:text-white transition-colors">MIT License</a></span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -522,6 +522,22 @@
     @apply flex flex-col rounded-lg border border-surface-border bg-surface-raised p-6 sm:p-8 hover:border-accent/40 transition-colors text-left h-full;
   }
 
+  .use-case-featured {
+    @apply sm:col-span-2 sm:flex-row sm:items-start sm:gap-10 border-accent/20;
+  }
+
+  .use-case-featured .use-case-hub-body {
+    @apply sm:flex-1;
+  }
+
+  .use-case-featured .use-case-hub-meta {
+    @apply sm:mt-0 sm:border-t-0 sm:border-l sm:border-surface-border sm:pl-10 sm:pt-0 sm:w-56 sm:shrink-0 sm:self-stretch sm:flex sm:flex-col sm:justify-center;
+  }
+
+  .use-case-group-label {
+    @apply text-xs uppercase tracking-wider text-muted mb-4 sm:col-span-2 font-mono;
+  }
+
   .use-case-hub-card p {
     @apply text-sm sm:text-base text-muted leading-relaxed mb-4;
   }
@@ -552,7 +568,7 @@
 
   /* Trust bar */
   .trust-bar {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 text-sm text-muted;
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 text-sm text-muted leading-relaxed;
   }
 
   .trust-bar-item {
@@ -560,7 +576,7 @@
   }
 
   .trust-bar-item strong {
-    @apply text-white font-medium block;
+    @apply text-white font-semibold block mb-1 text-[0.9375rem];
   }
 
   /* Framework pills */

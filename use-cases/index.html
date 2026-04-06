@@ -71,6 +71,59 @@
   <section class="px-4 sm:px-6 pb-24 sm:pb-32">
     <div class="max-w-5xl mx-auto grid sm:grid-cols-2 gap-6 sm:gap-8">
 
+      <!-- Featured: start here -->
+      <a href="/use-cases/first-time-setup/" class="group use-case-hub-card use-case-featured">
+        <div class="use-case-hub-body">
+          <p class="text-xs uppercase tracking-wider text-accent-light mb-3 font-mono">Start here</p>
+          <h2 class="text-white font-mono text-xl sm:text-2xl mb-3 group-hover:text-accent-light transition-colors">First-time setup: a guided&nbsp;tour</h2>
+          <p>Install <code class="text-accent-light">gtl</code>, run <code class="text-accent-light">gtl init</code>, and walk through every section of the config &mdash; ports, databases, env files, commands, hooks, aliases, and editor integration. Ends with your first running worktree.</p>
+        </div>
+        <div class="use-case-hub-meta">
+          <span class="use-case-hub-label">Covers</span>
+          <div class="use-case-hub-tags">
+            <span class="use-case-tag">.treeline.yml</span>
+            <span class="use-case-tag">config.json</span>
+            <span class="use-case-tag">gtl init</span>
+          </div>
+          <span class="use-case-hub-cta">Read the guide &rarr;</span>
+        </div>
+      </a>
+
+      <!-- Group: Environment isolation -->
+      <p class="use-case-group-label">Environment isolation</p>
+
+      <a href="/use-cases/onboarding/" class="group use-case-hub-card">
+        <div class="use-case-hub-body">
+          <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">New developer, one command</h2>
+          <p>The README says &ldquo;run these 14 steps.&rdquo; With <code class="text-accent-light">.treeline.yml</code> in the repo, it says <code class="text-accent-light">gtl new main --start</code>. Ports, database, env file, dependencies, and a running server &mdash; under a minute.</p>
+        </div>
+        <div class="use-case-hub-meta">
+          <span class="use-case-hub-label">Touches</span>
+          <div class="use-case-hub-tags">
+            <span class="use-case-tag">Isolation</span>
+            <span class="use-case-tag">Workflows</span>
+            <span class="use-case-tag">gtl new</span>
+          </div>
+          <span class="use-case-hub-cta">Read the scenario &rarr;</span>
+        </div>
+      </a>
+
+      <a href="/use-cases/database-per-branch/" class="group use-case-hub-card">
+        <div class="use-case-hub-body">
+          <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Database per branch, no shared state</h2>
+          <p>Two worktrees, same database. One runs a migration, the other breaks. Clone from a PostgreSQL template in seconds, seed from hooks, or copy a SQLite file &mdash; each worktree gets its own data.</p>
+        </div>
+        <div class="use-case-hub-meta">
+          <span class="use-case-hub-label">Touches</span>
+          <div class="use-case-hub-tags">
+            <span class="use-case-tag">Isolation</span>
+            <span class="use-case-tag">database</span>
+            <span class="use-case-tag">gtl db</span>
+          </div>
+          <span class="use-case-hub-cta">Read the scenario &rarr;</span>
+        </div>
+      </a>
+
       <a href="/use-cases/multi-repo/" class="group use-case-hub-card">
         <div class="use-case-hub-body">
           <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Frontend + API, different repos</h2>
@@ -85,6 +138,9 @@
           <span class="use-case-hub-cta">Read the scenario &rarr;</span>
         </div>
       </a>
+
+      <!-- Group: Networking -->
+      <p class="use-case-group-label">Networking</p>
 
       <a href="/use-cases/integrations-urls/" class="group use-case-hub-card">
         <div class="use-case-hub-body">
@@ -102,6 +158,24 @@
           <span class="use-case-hub-cta">Read the scenario &rarr;</span>
         </div>
       </a>
+
+      <a href="/use-cases/local-services/" class="group use-case-hub-card">
+        <div class="use-case-hub-body">
+          <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Named URLs for local services</h2>
+          <p>Redis Commander on <code class="text-accent-light">:8081</code>, pgAdmin on <code class="text-accent-light">:5050</code>, Mailhog on <code class="text-accent-light">:8025</code>. One command gives each a named HTTPS URL through the same router that serves your branches.</p>
+        </div>
+        <div class="use-case-hub-meta">
+          <span class="use-case-hub-label">Touches</span>
+          <div class="use-case-hub-tags">
+            <span class="use-case-tag">Networking</span>
+            <span class="use-case-tag">serve alias</span>
+          </div>
+          <span class="use-case-hub-cta">Read the scenario &rarr;</span>
+        </div>
+      </a>
+
+      <!-- Group: Team & automation -->
+      <p class="use-case-group-label">Team &amp; automation</p>
 
       <a href="/use-cases/platform-pr/" class="group use-case-hub-card">
         <div class="use-case-hub-body">
