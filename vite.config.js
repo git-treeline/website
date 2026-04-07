@@ -27,6 +27,7 @@ export default defineConfig({
         useCasesDatabase: resolve(__dirname, 'use-cases/database-per-branch/index.html'),
         useCasesOnboarding: resolve(__dirname, 'use-cases/onboarding/index.html'),
         useCasesFirstTimeSetup: resolve(__dirname, 'use-cases/first-time-setup/index.html'),
+        useCasesOauthAlias: resolve(__dirname, 'use-cases/oauth-alias/index.html'),
       },
     },
   },

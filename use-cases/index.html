@@ -59,9 +59,9 @@
 
   <section class="px-4 sm:px-6 pt-28 sm:pt-36 pb-12 sm:pb-16 text-center">
     <p class="text-sm uppercase tracking-wider text-muted mb-4">Use cases</p>
-    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6 text-balance">Scenario guides by&nbsp;problem</h1>
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6 text-balance">What provisioning looks like in&nbsp;practice</h1>
     <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto mb-4 leading-relaxed">
-      Each page starts with a concrete failure mode &mdash; ports colliding, URLs breaking, agents guessing config &mdash; then walks through the commands and config that fix it.
+      Git Treeline provisions complete environments per worktree: ports, databases, routing, env, lifecycle hooks. These guides show what that means for real workflows.
     </p>
     <p class="text-sm text-muted max-w-2xl mx-auto leading-relaxed">
       For full depth on each pillar, start with <a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">Isolation</a>, <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking</a>, <a href="/features/workflows/" class="text-accent-light hover:text-accent underline underline-offset-2">Workflows</a>, or <a href="/features/agents/" class="text-accent-light hover:text-accent underline underline-offset-2">AI Agents</a>; use this page when you already know <em>which</em> problem you are solving.
@@ -88,161 +88,148 @@
     </a>
   </section>
 
-  <!-- Scenario cards -->
+  <!-- Scenario list -->
   <section class="px-4 sm:px-6 pb-24 sm:pb-32">
     <div class="max-w-5xl mx-auto">
 
-      <!-- Group: Environment isolation -->
-      <p class="use-case-group-label">Environment isolation</p>
-      <div class="grid sm:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
-        <a href="/use-cases/database-per-branch/" class="group use-case-hub-card">
-          <div class="use-case-hub-body">
-            <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Database per branch, no shared state</h2>
-            <p>Two worktrees, same database. One runs a migration, the other breaks. Clone from a PostgreSQL template in seconds, seed from hooks, or copy a SQLite file &mdash; each worktree gets its own data.</p>
-          </div>
-          <div class="use-case-hub-meta">
-            <span class="use-case-hub-label">Touches</span>
-            <div class="use-case-hub-tags">
-              <span class="use-case-tag">Isolation</span>
-              <span class="use-case-tag">database</span>
-              <span class="use-case-tag">gtl db</span>
-            </div>
-            <span class="use-case-hub-cta">Read the scenario &rarr;</span>
-          </div>
-        </a>
-
-        <a href="/use-cases/multi-repo/" class="group use-case-hub-card">
-          <div class="use-case-hub-body">
-            <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Frontend + API, different repos</h2>
-            <p>Your frontend hardcodes a port for the API. Someone re-runs setup, the port moves, and every frontend worktree breaks. <code class="text-accent-light">{resolve:&hellip;}</code> tracks the right branch automatically.</p>
-          </div>
-          <div class="use-case-hub-meta">
-            <span class="use-case-hub-label">Touches</span>
-            <div class="use-case-hub-tags">
-              <span class="use-case-tag">Isolation</span>
-              <span class="use-case-tag">resolve / link</span>
-            </div>
-            <span class="use-case-hub-cta">Read the scenario &rarr;</span>
-          </div>
-        </a>
+      <!-- Filter pills -->
+      <div class="flex flex-wrap gap-2 mb-6" id="uc-filters">
+        <button data-filter="all" class="text-sm font-mono px-4 py-1.5 rounded-full border transition-colors bg-accent/10 border-accent text-accent-light">All</button>
+        <button data-filter="isolation" class="text-sm font-mono px-4 py-1.5 rounded-full border transition-colors border-surface-border text-muted hover:text-white hover:border-white/30">Isolation</button>
+        <button data-filter="networking" class="text-sm font-mono px-4 py-1.5 rounded-full border transition-colors border-surface-border text-muted hover:text-white hover:border-white/30">Networking</button>
+        <button data-filter="workflows" class="text-sm font-mono px-4 py-1.5 rounded-full border transition-colors border-surface-border text-muted hover:text-white hover:border-white/30">Workflows</button>
+        <button data-filter="agents" class="text-sm font-mono px-4 py-1.5 rounded-full border transition-colors border-surface-border text-muted hover:text-white hover:border-white/30">AI Agents</button>
       </div>
 
-      <!-- Group: Networking -->
-      <p class="use-case-group-label">Networking</p>
-      <div class="grid sm:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
-        <a href="/use-cases/integrations-urls/" class="group use-case-hub-card">
-          <div class="use-case-hub-body">
-            <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Why port 3000 stays free</h2>
-            <p>OAuth, Stripe, Mapbox, and CORS are registered to <code class="text-accent-light">localhost:3000</code>. A second branch takes that port and every integration breaks. Treeline reserves common ports for <code class="text-accent-light">gtl proxy</code>.</p>
+      <!-- Rows -->
+      <div class="flex flex-col gap-3" id="uc-list">
+
+        <a href="/use-cases/oauth-alias/" data-tags="networking" class="group flex items-center gap-4 sm:gap-6 px-5 sm:px-6 py-4 sm:py-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors text-left">
+          <div class="flex-1 min-w-0">
+            <span class="text-white font-mono text-sm sm:text-base group-hover:text-accent-light transition-colors">OAuth callbacks across worktrees</span>
+            <p class="text-sm text-muted leading-snug mt-1">One redirect URI, any branch. Start hooks claim the alias per-session.</p>
           </div>
-          <div class="use-case-hub-meta">
-            <span class="use-case-hub-label">Touches</span>
-            <div class="use-case-hub-tags">
-              <span class="use-case-tag">Networking</span>
-              <span class="use-case-tag">proxy</span>
-              <span class="use-case-tag">serve</span>
-            </div>
-            <span class="use-case-hub-cta">Read the scenario &rarr;</span>
+          <div class="hidden md:flex flex-wrap gap-1.5 shrink-0">
+            <span class="use-case-tag">Networking</span>
+            <span class="use-case-tag">start hooks</span>
           </div>
+          <svg class="w-4 h-4 text-accent-light/50 group-hover:text-accent shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </a>
 
-        <a href="/use-cases/local-services/" class="group use-case-hub-card">
-          <div class="use-case-hub-body">
-            <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Named URLs for local services</h2>
-            <p>Redis Commander on <code class="text-accent-light">:8081</code>, pgAdmin on <code class="text-accent-light">:5050</code>, Mailhog on <code class="text-accent-light">:8025</code>. One command gives each a named HTTPS URL through the same router that serves your branches.</p>
+        <a href="/use-cases/database-per-branch/" data-tags="isolation" class="group flex items-center gap-4 sm:gap-6 px-5 sm:px-6 py-4 sm:py-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors text-left">
+          <div class="flex-1 min-w-0">
+            <span class="text-white font-mono text-sm sm:text-base group-hover:text-accent-light transition-colors">Database per branch, no shared state</span>
+            <p class="text-sm text-muted leading-snug mt-1">Clone from a PostgreSQL template, seed from hooks, or copy a SQLite file.</p>
           </div>
-          <div class="use-case-hub-meta">
-            <span class="use-case-hub-label">Touches</span>
-            <div class="use-case-hub-tags">
-              <span class="use-case-tag">Networking</span>
-              <span class="use-case-tag">serve alias</span>
-            </div>
-            <span class="use-case-hub-cta">Read the scenario &rarr;</span>
+          <div class="hidden md:flex flex-wrap gap-1.5 shrink-0">
+            <span class="use-case-tag">Isolation</span>
+            <span class="use-case-tag">gtl db</span>
           </div>
+          <svg class="w-4 h-4 text-accent-light/50 group-hover:text-accent shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </a>
+
+        <a href="/use-cases/multi-repo/" data-tags="isolation" class="group flex items-center gap-4 sm:gap-6 px-5 sm:px-6 py-4 sm:py-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors text-left">
+          <div class="flex-1 min-w-0">
+            <span class="text-white font-mono text-sm sm:text-base group-hover:text-accent-light transition-colors">Frontend + API, different repos</span>
+            <p class="text-sm text-muted leading-snug mt-1"><code class="text-accent-light">{resolve:&hellip;}</code> tracks the right branch across projects automatically.</p>
+          </div>
+          <div class="hidden md:flex flex-wrap gap-1.5 shrink-0">
+            <span class="use-case-tag">Isolation</span>
+            <span class="use-case-tag">resolve / link</span>
+          </div>
+          <svg class="w-4 h-4 text-accent-light/50 group-hover:text-accent shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
+
+        <a href="/use-cases/integrations-urls/" data-tags="networking" class="group flex items-center gap-4 sm:gap-6 px-5 sm:px-6 py-4 sm:py-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors text-left">
+          <div class="flex-1 min-w-0">
+            <span class="text-white font-mono text-sm sm:text-base group-hover:text-accent-light transition-colors">Why port 3000 stays free</span>
+            <p class="text-sm text-muted leading-snug mt-1">Treeline reserves common ports so OAuth, Stripe, and CORS never break.</p>
+          </div>
+          <div class="hidden md:flex flex-wrap gap-1.5 shrink-0">
+            <span class="use-case-tag">Networking</span>
+            <span class="use-case-tag">proxy</span>
+          </div>
+          <svg class="w-4 h-4 text-accent-light/50 group-hover:text-accent shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
+
+        <a href="/use-cases/local-services/" data-tags="networking" class="group flex items-center gap-4 sm:gap-6 px-5 sm:px-6 py-4 sm:py-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors text-left">
+          <div class="flex-1 min-w-0">
+            <span class="text-white font-mono text-sm sm:text-base group-hover:text-accent-light transition-colors">Named URLs for local services</span>
+            <p class="text-sm text-muted leading-snug mt-1">One command gives Redis Commander, pgAdmin, or Mailhog a named HTTPS URL.</p>
+          </div>
+          <div class="hidden md:flex flex-wrap gap-1.5 shrink-0">
+            <span class="use-case-tag">Networking</span>
+            <span class="use-case-tag">serve alias</span>
+          </div>
+          <svg class="w-4 h-4 text-accent-light/50 group-hover:text-accent shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
+
+        <a href="/use-cases/onboarding/" data-tags="workflows" class="group flex items-center gap-4 sm:gap-6 px-5 sm:px-6 py-4 sm:py-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors text-left">
+          <div class="flex-1 min-w-0">
+            <span class="text-white font-mono text-sm sm:text-base group-hover:text-accent-light transition-colors">New developer, one command</span>
+            <p class="text-sm text-muted leading-snug mt-1">Ports, database, env, dependencies, and a running server under a minute.</p>
+          </div>
+          <div class="hidden md:flex flex-wrap gap-1.5 shrink-0">
+            <span class="use-case-tag">Workflows</span>
+            <span class="use-case-tag">gtl new</span>
+          </div>
+          <svg class="w-4 h-4 text-accent-light/50 group-hover:text-accent shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
+
+        <a href="/use-cases/platform-pr/" data-tags="workflows networking" class="group flex items-center gap-4 sm:gap-6 px-5 sm:px-6 py-4 sm:py-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors text-left">
+          <div class="flex-1 min-w-0">
+            <span class="text-white font-mono text-sm sm:text-base group-hover:text-accent-light transition-colors">Product and QA on a PR branch</span>
+            <p class="text-sm text-muted leading-snug mt-1"><code class="text-accent-light">gtl review</code> stands up an isolated worktree with a branch URL.</p>
+          </div>
+          <div class="hidden md:flex flex-wrap gap-1.5 shrink-0">
+            <span class="use-case-tag">Workflows</span>
+            <span class="use-case-tag">Networking</span>
+          </div>
+          <svg class="w-4 h-4 text-accent-light/50 group-hover:text-accent shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
+
+        <a href="/use-cases/agents-automation/" data-tags="agents" class="group flex items-center gap-4 sm:gap-6 px-5 sm:px-6 py-4 sm:py-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors text-left">
+          <div class="flex-1 min-w-0">
+            <span class="text-white font-mono text-sm sm:text-base group-hover:text-accent-light transition-colors">Local agent awareness</span>
+            <p class="text-sm text-muted leading-snug mt-1">MCP server and <code class="text-accent-light">--json</code> flags give agents structured worktree context.</p>
+          </div>
+          <div class="hidden md:flex flex-wrap gap-1.5 shrink-0">
+            <span class="use-case-tag">AI Agents</span>
+            <span class="use-case-tag">MCP</span>
+          </div>
+          <svg class="w-4 h-4 text-accent-light/50 group-hover:text-accent shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
+
       </div>
-
-      <!-- Group: Team & onboarding -->
-      <p class="use-case-group-label">Team &amp; onboarding</p>
-      <div class="use-case-carousel">
-        <div class="use-case-carousel-track" id="team-carousel">
-          <a href="/use-cases/onboarding/" class="group use-case-hub-card">
-            <div class="use-case-hub-body">
-              <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">New developer, one command</h2>
-              <p>The README says &ldquo;run these 14 steps.&rdquo; With <code class="text-accent-light">.treeline.yml</code> in the repo, it says <code class="text-accent-light">gtl new main --start</code>. Ports, database, env file, dependencies, and a running server &mdash; under a minute.</p>
-            </div>
-            <div class="use-case-hub-meta">
-              <span class="use-case-hub-label">Touches</span>
-              <div class="use-case-hub-tags">
-                <span class="use-case-tag">Isolation</span>
-                <span class="use-case-tag">Workflows</span>
-                <span class="use-case-tag">gtl new</span>
-              </div>
-              <span class="use-case-hub-cta">Read the scenario &rarr;</span>
-            </div>
-          </a>
-
-          <a href="/use-cases/platform-pr/" class="group use-case-hub-card">
-            <div class="use-case-hub-body">
-              <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Product and QA on a PR branch</h2>
-              <p>Stakeholders need a running app without cloning the repo or waiting on staging. <code class="text-accent-light">gtl review</code> stands up an isolated worktree with a branch URL. <code class="text-accent-light">gtl release</code> frees resources when review ends.</p>
-            </div>
-            <div class="use-case-hub-meta">
-              <span class="use-case-hub-label">Touches</span>
-              <div class="use-case-hub-tags">
-                <span class="use-case-tag">Workflows</span>
-                <span class="use-case-tag">Networking</span>
-              </div>
-              <span class="use-case-hub-cta">Read the scenario &rarr;</span>
-            </div>
-          </a>
-
-          <a href="/use-cases/agents-automation/" class="group use-case-hub-card">
-            <div class="use-case-hub-body">
-              <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Agents, scripts, CI</h2>
-              <p>Automation should not scrape <code class="text-white">gtl status</code> output. MCP, <code class="text-accent-light">--json</code> flags, and <code class="text-accent-light">gtl start --await</code> expose ports, env, and teardown as structured contracts.</p>
-            </div>
-            <div class="use-case-hub-meta">
-              <span class="use-case-hub-label">Touches</span>
-              <div class="use-case-hub-tags">
-                <span class="use-case-tag">AI Agents</span>
-                <span class="use-case-tag">Isolation</span>
-              </div>
-              <span class="use-case-hub-cta">Read the scenario &rarr;</span>
-            </div>
-          </a>
-        </div>
-        <button class="use-case-carousel-btn use-case-carousel-prev" id="team-prev" hidden aria-label="Previous">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-        </button>
-        <button class="use-case-carousel-btn use-case-carousel-next" id="team-next" aria-label="Next">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-        </button>
-      </div>
-      <script>
-        (function() {
-          var track = document.getElementById('team-carousel');
-          var prev = document.getElementById('team-prev');
-          var next = document.getElementById('team-next');
-          function updateArrows() {
-            prev.hidden = track.scrollLeft < 10;
-            next.hidden = track.scrollLeft + track.clientWidth >= track.scrollWidth - 10;
-          }
-          prev.addEventListener('click', function() {
-            var card = track.querySelector('.use-case-hub-card');
-            track.scrollBy({ left: -(card.offsetWidth + 24), behavior: 'smooth' });
-          });
-          next.addEventListener('click', function() {
-            var card = track.querySelector('.use-case-hub-card');
-            track.scrollBy({ left: card.offsetWidth + 24, behavior: 'smooth' });
-          });
-          track.addEventListener('scroll', updateArrows, { passive: true });
-          window.addEventListener('resize', updateArrows);
-          updateArrows();
-        })();
-      </script>
-
     </div>
+
+    <script>
+      (function() {
+        var active = 'bg-accent/10 border-accent text-accent-light';
+        var inactive = 'border-surface-border text-muted hover:text-white hover:border-white/30';
+        var buttons = document.querySelectorAll('#uc-filters button');
+        var rows = document.querySelectorAll('#uc-list > a');
+
+        buttons.forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            var filter = btn.dataset.filter;
+
+            buttons.forEach(function(b) {
+              b.className = 'text-sm font-mono px-4 py-1.5 rounded-full border transition-colors ' +
+                (b === btn ? active : inactive);
+            });
+
+            rows.forEach(function(row) {
+              if (filter === 'all' || row.dataset.tags.indexOf(filter) !== -1) {
+                row.style.display = '';
+              } else {
+                row.style.display = 'none';
+              }
+            });
+          });
+        });
+      })();
+    </script>
   </section>
 
   <footer class="site-footer">

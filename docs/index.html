@@ -184,7 +184,7 @@
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Getting started</h2>
       <p class="text-muted mb-4">
-        Git Treeline ships as a single CLI binary &mdash; nothing from Treeline runs inside your app&rsquo;s process or bundle. It writes per-worktree env at setup time.
+        Git Treeline is a <strong class="text-white">worktree provisioner</strong>: a single CLI that declaratively provisions ports, databases, routing, env files, editor config, and lifecycle hooks for every git worktree. Nothing from Treeline runs inside your app&rsquo;s process or bundle. It writes per-worktree env at setup time.
       </p>
       <p class="text-muted mb-4">
         Every worktree&rsquo;s server is always reachable at <code class="text-white">http://localhost:{port}</code> &mdash; plain HTTP on the allocated port. The <strong class="text-white">local HTTPS router</strong> (<code class="text-accent-light">gtl serve</code>) adds a named URL like <code class="text-white">https://myapp-feature-auth.prt.dev</code> that auto-routes to the right port, so you never need to remember which port belongs to which branch. One-time install below.

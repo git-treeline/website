@@ -615,6 +615,7 @@
     @apply text-sm font-mono text-accent-light group-hover:text-accent transition-colors;
   }
 
+
   /* Trust bar */
   .trust-bar {
     @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 text-sm text-muted leading-relaxed;
