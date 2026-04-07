@@ -368,7 +368,7 @@
           <div class="cmd-item">
             <div class="cmd-name">env</div>
             <div class="cmd-flags"><span class="cmd-flag">map</span> <span class="cmd-flag">auto-synced</span></div>
-            <p class="cmd-desc">Key-value pairs written to the env file. Supports interpolation tokens. Synced automatically on fresh <code class="text-accent-light">gtl start</code> and <code class="text-accent-light">gtl restart</code>. Manual: <code class="text-accent-light">gtl env sync</code>.</p>
+            <p class="cmd-desc">Key-value pairs written to the env file. Supports interpolation tokens (<code class="text-accent-light">{port}</code>, <code class="text-accent-light">{branch}</code>, <code class="text-accent-light">{router_url}</code>, <code class="text-accent-light">{router_domain}</code>, <code class="text-accent-light">{resolve:*}</code>, etc.). Synced automatically on fresh <code class="text-accent-light">gtl start</code> and <code class="text-accent-light">gtl restart</code>. Manual: <code class="text-accent-light">gtl env sync</code>.</p>
           </div>
           <div class="cmd-item">
             <div class="cmd-name">commands.setup</div>
@@ -464,6 +464,18 @@
               <td class="px-5 py-3 text-muted">Worktree directory name</td>
             </tr>
             <tr>
+              <td class="px-5 py-3 font-mono text-white">{branch}</td>
+              <td class="px-5 py-3 text-muted">Branch name of this worktree</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white">{router_url}</td>
+              <td class="px-5 py-3 text-muted">HTTPS URL for this worktree (e.g. <code class="text-white">https://myapp-feature.prt.dev</code>). Requires <code class="text-accent-light">gtl serve</code>.</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 font-mono text-white">{router_domain}</td>
+              <td class="px-5 py-3 text-muted">Router domain only (e.g. <code class="text-white">prt.dev</code>). Useful for composable values like Rails <code class="text-accent-light">config.hosts &lt;&lt; ".{router_domain}"</code> or cookie domains.</td>
+            </tr>
+            <tr>
               <td class="px-5 py-3 font-mono text-white">{resolve:project}</td>
               <td class="px-5 py-3 text-muted">Base URL (<code class="text-accent-light">http://127.0.0.1:{port}</code>) for another registered project. Default branch matches current worktree; <code class="text-accent-light">gtl link</code> overrides. Fails setup if not allocated.</td>
             </tr>
@@ -473,6 +485,23 @@
             </tr>
           </tbody>
         </table>
+      </div>
+      <div class="text-sm text-muted mt-6 p-5 bg-surface rounded-lg border border-surface-border space-y-4">
+        <p>
+          <strong class="text-white">When to use each host token</strong>
+        </p>
+        <p>
+          <code class="text-accent-light">localhost:{port}</code> &mdash; your app&rsquo;s canonical listen address. <strong class="text-white">The safe default.</strong> Works whether or not <code class="text-accent-light">gtl serve</code> is running. Use for <code class="text-accent-light">HOST</code>, <code class="text-accent-light">APP_URL</code>, <code class="text-accent-light">default_url_options</code>, mailer host, and anything that must keep working if the router is down.
+        </p>
+        <p>
+          <code class="text-accent-light">{router_url}</code> &mdash; the HTTPS branch URL (e.g. <code class="text-white">https://myapp-feature.prt.dev</code>). Use when a value specifically needs the routed HTTPS origin: CORS allowed origins, CSP directives, or OAuth redirect URIs registered to the branch URL. Depends on <code class="text-accent-light">gtl serve</code> running.
+        </p>
+        <p>
+          <code class="text-accent-light">{router_domain}</code> &mdash; just the domain (e.g. <code class="text-white">prt.dev</code>). Use for host whitelisting and composable domain values: Rails <code class="text-accent-light">config.hosts &lt;&lt; ".prt.dev"</code>, cookie domains, or wildcard CSP entries. Required if your framework validates the <code class="text-accent-light">Host</code> header — without it, requests arriving via the router are rejected as blocked hosts.
+        </p>
+        <p class="text-xs text-muted border-t border-surface-border pt-3">
+          <strong class="text-white">Rails example:</strong> In your <code class="text-accent-light">env:</code> block, set <code class="text-accent-light">HOST: "localhost:{port}"</code> and <code class="text-accent-light">ROUTER_DOMAIN: "{router_domain}"</code>. In <code class="text-accent-light">development.rb</code>, add <code class="text-white">config.hosts &lt;&lt; ".#{ENV['ROUTER_DOMAIN']}"</code> so Rails accepts requests on the router domain. Your route helpers and mailer links use <code class="text-accent-light">localhost:{port}</code> by default &mdash; stable and router-independent.
+        </p>
       </div>
     </div>
   </section>
