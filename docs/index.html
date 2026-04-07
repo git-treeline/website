@@ -421,6 +421,21 @@
             <div class="cmd-flags"><span class="cmd-flag">list</span></div>
             <p class="cmd-desc">Shell commands after free/drop. On failure, warns only.</p>
           </div>
+          <div class="cmd-item">
+            <div class="cmd-name">hooks.&lt;name&gt;.pre_start</div>
+            <div class="cmd-flags"><span class="cmd-flag">string or list</span> <span class="cmd-flag">--with or auto</span></div>
+            <p class="cmd-desc">Shell command(s) run before the supervisor launches. Activated via <code class="text-accent-light">gtl start --with &lt;name&gt;</code> or <code class="text-accent-light">auto: true</code>. Supports <code class="text-accent-light">{port}</code> interpolation. Failure aborts the start. See <a href="#lifecycle-hooks" class="text-accent-light hover:text-accent underline underline-offset-2">start hooks</a>.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">hooks.&lt;name&gt;.post_stop</div>
+            <div class="cmd-flags"><span class="cmd-flag">string or list</span></div>
+            <p class="cmd-desc">Shell command(s) run on graceful supervisor exit (Ctrl+C), in reverse order. Errors logged, not fatal.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">hooks.&lt;name&gt;.auto</div>
+            <div class="cmd-flags"><span class="cmd-flag">bool</span> <span class="cmd-flag">default: false</span></div>
+            <p class="cmd-desc">When <code class="text-accent-light">true</code>, this hook runs on every fresh <code class="text-accent-light">gtl start</code> without needing <code class="text-accent-light">--with</code>.</p>
+          </div>
         </div>
       </div>
 
@@ -516,19 +531,132 @@
   <section id="lifecycle-hooks" class="px-4 sm:px-6 lg:px-0 py-16 sm:py-20 border-t border-surface-border">
     <div class="max-w-4xl mx-auto">
       <h2 class="section-heading mb-4">Lifecycle hooks</h2>
-      <p class="text-muted mb-6">
-        Optional keys in <code class="text-accent-light">.treeline.yml</code>: <code class="text-white">pre_setup</code>, <code class="text-white">post_setup</code>, <code class="text-white">pre_release</code>, <code class="text-white">post_release</code>. Each is a list of shell commands.
-      </p>
-      <p class="text-muted text-sm mb-4">
-        <strong class="text-white">Setup order:</strong> allocate → env → database → <code class="text-accent-light">pre_setup</code> → <code class="text-accent-light">commands.setup</code> → editor → <code class="text-accent-light">post_setup</code>.
-        <strong class="text-white"> Release order:</strong> confirm → <code class="text-accent-light">pre_release</code> → free/drop → <code class="text-accent-light">post_release</code>.
-      </p>
-      <ul class="text-muted text-sm space-y-2 list-disc pl-5 mb-6">
-        <li><strong class="text-white">pre_setup</strong> runs after allocate, env, and database steps, before <code class="text-accent-light">commands.setup</code>. Failure aborts setup.</li>
-        <li><strong class="text-white">post_setup</strong> runs after <code class="text-accent-light">commands.setup</code> and editor writes. Failure logs a warning; setup continues.</li>
-        <li><strong class="text-white">pre_release</strong> runs after confirmation, before freeing resources. Failure aborts release.</li>
-        <li><strong class="text-white">post_release</strong> runs after free/drop. Failure logs a warning.</li>
-      </ul>
+
+      <div class="docs-subsection">
+        <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Setup &amp; release hooks</h3>
+        <p class="text-muted mb-4">
+          Optional keys in <code class="text-accent-light">.treeline.yml</code>: <code class="text-white">hooks.pre_setup</code>, <code class="text-white">hooks.post_setup</code>, <code class="text-white">hooks.pre_release</code>, <code class="text-white">hooks.post_release</code>. Each is a list of shell commands.
+        </p>
+        <p class="text-muted text-sm mb-4">
+          <strong class="text-white">Setup order:</strong> allocate &rarr; env &rarr; database &rarr; <code class="text-accent-light">pre_setup</code> &rarr; <code class="text-accent-light">commands.setup</code> &rarr; editor &rarr; <code class="text-accent-light">post_setup</code>.
+          <strong class="text-white"> Release order:</strong> confirm &rarr; <code class="text-accent-light">pre_release</code> &rarr; free/drop &rarr; <code class="text-accent-light">post_release</code>.
+        </p>
+        <ul class="text-muted text-sm space-y-2 list-disc pl-5 mb-6">
+          <li><strong class="text-white">pre_setup</strong> runs after allocate, env, and database steps, before <code class="text-accent-light">commands.setup</code>. Failure aborts setup.</li>
+          <li><strong class="text-white">post_setup</strong> runs after <code class="text-accent-light">commands.setup</code> and editor writes. Failure logs a warning; setup continues.</li>
+          <li><strong class="text-white">pre_release</strong> runs after confirmation, before freeing resources. Failure aborts release.</li>
+          <li><strong class="text-white">post_release</strong> runs after free/drop. Failure logs a warning.</li>
+        </ul>
+      </div>
+
+      <div class="docs-subsection">
+        <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Start hooks</h3>
+        <p class="text-muted mb-4">
+          Named hooks that run before the server starts and after it exits. Define them under <code class="text-accent-light">hooks:</code> in <code class="text-accent-light">.treeline.yml</code> and activate with <code class="text-accent-light">gtl start --with &lt;name&gt;</code>.
+        </p>
+        <p class="text-muted mb-6">
+          Start hooks are for quick environment setup and teardown &mdash; registering router aliases, seeding data, setting debug flags. They are <strong class="text-white">not</strong> a process manager. If you need multiple long-lived processes, use foreman/overmind in your <code class="text-accent-light">commands.start</code>.
+        </p>
+
+        <div class="terminal mb-6">
+          <div class="terminal-header"><span class="text-xs text-muted">.treeline.yml</span></div>
+          <div class="terminal-body">
+            <pre class="text-sm"><span class="text-accent-light">hooks</span><span class="text-muted">:</span>
+  <span class="text-accent-light">oauth</span><span class="text-muted">:</span>
+    <span class="text-accent-light">pre_start</span><span class="text-muted">:</span> <span class="text-white">gtl serve alias salt-oauth {port}</span>
+    <span class="text-accent-light">post_stop</span><span class="text-muted">:</span> <span class="text-white">gtl serve alias --remove salt-oauth</span>
+  <span class="text-accent-light">seed</span><span class="text-muted">:</span>
+    <span class="text-accent-light">pre_start</span><span class="text-muted">:</span> <span class="text-white">bin/rails db:seed</span>
+  <span class="text-accent-light">prepare</span><span class="text-muted">:</span>
+    <span class="text-accent-light">auto</span><span class="text-muted">:</span> <span class="text-white">true</span>
+    <span class="text-accent-light">pre_start</span><span class="text-muted">:</span>
+      <span class="text-muted">-</span> <span class="text-white">bundle exec rails db:migrate</span>
+      <span class="text-muted">-</span> <span class="text-white">bundle exec rails assets:precompile</span></pre>
+          </div>
+        </div>
+
+        <div class="terminal mb-6">
+          <div class="terminal-header"><span class="text-xs text-muted">Usage</span></div>
+          <div class="terminal-body space-y-1">
+            <p><span class="prompt">$</span> <span class="command">gtl start --with oauth</span> <span class="text-muted"># activate one hook</span></p>
+            <p><span class="prompt">$</span> <span class="command">gtl start --with oauth,seed</span> <span class="text-muted"># activate multiple</span></p>
+            <p><span class="prompt">$</span> <span class="command">gtl start</span> <span class="text-muted"># no manual hooks (auto hooks still run)</span></p>
+          </div>
+        </div>
+
+        <h4 class="text-white font-medium mb-3">How it works</h4>
+        <div class="overflow-x-auto rounded-lg border border-surface-border mb-6">
+          <table class="cli-table w-full text-sm text-left">
+            <thead>
+              <tr class="border-b border-surface-border bg-surface">
+                <th class="px-5 py-3 text-accent-light font-medium">Event</th>
+                <th class="px-5 py-3 text-accent-light font-medium">What happens</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-border">
+              <tr>
+                <td class="px-5 py-3 text-white whitespace-nowrap">Fresh <code class="text-accent-light">gtl start --with</code></td>
+                <td class="px-5 py-3 text-muted"><code class="text-accent-light">pre_start</code> hooks run in order, then the supervisor launches</td>
+              </tr>
+              <tr>
+                <td class="px-5 py-3 text-white whitespace-nowrap">Ctrl+C (supervisor exit)</td>
+                <td class="px-5 py-3 text-muted"><code class="text-accent-light">post_stop</code> hooks run in <strong class="text-white">reverse</strong> order</td>
+              </tr>
+              <tr>
+                <td class="px-5 py-3 text-white whitespace-nowrap">Resume (<code class="text-accent-light">gtl start</code> after stop)</td>
+                <td class="px-5 py-3 text-muted"><code class="text-accent-light">--with</code> is ignored with a warning. Hooks only fire on fresh start.</td>
+              </tr>
+              <tr>
+                <td class="px-5 py-3 text-white whitespace-nowrap"><code class="text-accent-light">gtl restart</code></td>
+                <td class="px-5 py-3 text-muted">Hooks are not re-fired. Restart is lightweight.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h4 class="text-white font-medium mb-3">Configuration reference</h4>
+        <ul class="text-muted text-sm space-y-2 list-disc pl-5 mb-6">
+          <li><code class="text-accent-light">hooks.&lt;name&gt;.pre_start</code> &mdash; shell command(s) run before the supervisor launches. String or array of strings. <strong class="text-white">Failure aborts the start.</strong></li>
+          <li><code class="text-accent-light">hooks.&lt;name&gt;.post_stop</code> &mdash; shell command(s) run on graceful supervisor exit (Ctrl+C / SIGTERM), in reverse order. Errors are logged, not fatal. <strong class="text-white">Skipped on ungraceful shutdown</strong> (SIGKILL, power loss) &mdash; write idempotent hooks.</li>
+          <li><code class="text-accent-light">hooks.&lt;name&gt;.auto</code> &mdash; <code class="text-white">true</code> to run on every fresh <code class="text-accent-light">gtl start</code> without needing <code class="text-accent-light">--with</code>. Default: <code class="text-white">false</code>.</li>
+          <li>Both <code class="text-accent-light">pre_start</code> and <code class="text-accent-light">post_stop</code> are optional &mdash; a hook can define one without the other.</li>
+          <li>Hook commands support <code class="text-accent-light">{port}</code> and <code class="text-accent-light">{port_N}</code> interpolation, same as <code class="text-accent-light">commands.start</code>.</li>
+        </ul>
+
+        <h4 class="text-white font-medium mb-3">Example: OAuth with a stable alias</h4>
+        <p class="text-muted mb-4">
+          OAuth providers require a fixed callback URL. You can&rsquo;t change it per branch. Register a stable router alias that always points at whichever worktree you&rsquo;re testing OAuth in:
+        </p>
+        <div class="terminal mb-4">
+          <div class="terminal-header"><span class="text-xs text-muted">.treeline.yml</span></div>
+          <div class="terminal-body">
+            <pre class="text-sm"><span class="text-accent-light">hooks</span><span class="text-muted">:</span>
+  <span class="text-accent-light">oauth</span><span class="text-muted">:</span>
+    <span class="text-accent-light">pre_start</span><span class="text-muted">:</span> <span class="text-white">gtl serve alias salt-oauth {port}</span>
+    <span class="text-accent-light">post_stop</span><span class="text-muted">:</span> <span class="text-white">gtl serve alias --remove salt-oauth</span>
+
+<span class="text-accent-light">env</span><span class="text-muted">:</span>
+  <span class="text-accent-light">OAUTH_CALLBACK_HOST</span><span class="text-muted">:</span> <span class="text-white">"https://salt-oauth.{router_domain}"</span>
+  <span class="text-accent-light">SESSION_COOKIE_DOMAIN</span><span class="text-muted">:</span> <span class="text-white">".{router_domain}"</span></pre>
+          </div>
+        </div>
+        <p class="text-muted text-sm mb-2">
+          Register <code class="text-white">https://salt-oauth.prt.dev/auth/callback</code> as your OAuth redirect URI (once, in the provider dashboard). Then:
+        </p>
+        <div class="terminal mb-4">
+          <div class="terminal-body space-y-1">
+            <p><span class="prompt">$</span> <span class="command">gtl start --with oauth</span></p>
+            <p class="output text-accent">==> Hook [oauth] pre_start: gtl serve alias salt-oauth 3010</p>
+            <p class="output">Server running on localhost:3010</p>
+            <p class="output text-muted"># salt-oauth.prt.dev now routes to this branch</p>
+            <p class="output text-muted"># Ctrl+C removes the alias automatically</p>
+          </div>
+        </div>
+        <p class="text-muted text-sm">
+          Whichever branch you start last with <code class="text-accent-light">--with oauth</code> gets the alias. Session cookies are scoped to <code class="text-accent-light">.prt.dev</code> so they work across branch URLs and the alias.
+        </p>
+      </div>
+
     </div>
   </section>
 
@@ -739,8 +867,8 @@
 
           <div class="cmd-item">
             <span class="cmd-name">start</span>
-            <div class="cmd-flags"><span class="cmd-flag">--await</span><span class="cmd-flag">--await-timeout</span></div>
-            <p class="cmd-desc"><strong class="text-white">Fresh start</strong> (no supervisor running): syncs the env file, refreshes editor settings, reads <code class="text-accent-light">commands.start</code>, and launches a new supervisor. <strong class="text-white">Resume</strong> (supervisor alive after <code class="text-accent-light">gtl stop</code>): sends a start signal &mdash; does not re-sync env or re-read the start command. <code class="text-accent-light">--await</code> blocks until TCP accepts on the allocated port (default timeout 60s).</p>
+            <div class="cmd-flags"><span class="cmd-flag">--with &lt;hooks&gt;</span><span class="cmd-flag">--await</span><span class="cmd-flag">--await-timeout</span></div>
+            <p class="cmd-desc"><strong class="text-white">Fresh start</strong> (no supervisor running): runs <a href="#lifecycle-hooks" class="text-accent-light hover:text-accent underline underline-offset-2">start hooks</a> (<code class="text-accent-light">--with</code> and auto), syncs the env file, refreshes editor settings, reads <code class="text-accent-light">commands.start</code>, and launches a new supervisor. <strong class="text-white">Resume</strong> (supervisor alive after <code class="text-accent-light">gtl stop</code>): sends a start signal &mdash; does not re-sync env, re-read the start command, or re-fire hooks. <code class="text-accent-light">--await</code> blocks until TCP accepts on the allocated port (default timeout 60s). On graceful exit (Ctrl+C), <code class="text-accent-light">post_stop</code> hooks run in reverse.</p>
           </div>
 
           <div class="cmd-item">
@@ -760,7 +888,7 @@
 
           <div class="cmd-item">
             <span class="cmd-name">serve</span>
-            <p class="cmd-desc">Local HTTPS subdomain router. <code class="text-accent-light">serve install</code> for one-time setup, <code class="text-accent-light">serve status</code> for routes. <a href="#net-serve" class="text-accent-light hover:text-accent underline underline-offset-2">Details &rarr;</a></p>
+            <p class="cmd-desc">Local HTTPS subdomain router. <code class="text-accent-light">serve install</code> for one-time setup (also upgrades), <code class="text-accent-light">serve status</code> for routes, <code class="text-accent-light">serve alias &lt;name&gt; &lt;port&gt;</code> to register a custom hostname, <code class="text-accent-light">serve alias --remove &lt;name&gt;</code> to unregister. Aliases are hot-reloaded by the running router within 5 seconds. <a href="#net-serve" class="text-accent-light hover:text-accent underline underline-offset-2">Details &rarr;</a></p>
           </div>
 
           <div class="cmd-item">
@@ -1460,9 +1588,9 @@
         Your app always listens on <code class="text-white">localhost:{port}</code> (HTTP). The router adds an HTTPS layer: <code class="text-accent-light">{project}-{branch}.prt.dev</code> auto-routes to the correct worktree port, so you open a branch name instead of remembering a port number. Runs as a <code class="text-accent-light">launchd</code> (macOS) or <code class="text-accent-light">systemd</code> (Linux) background service. Routes refresh every 5 seconds from the registry.
       </p>
 
-      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Install (one-time)</h3>
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Install &amp; upgrade</h3>
       <p class="text-muted mb-4">
-        Generates trusted HTTPS certificates, adds port forwarding for clean URLs, and registers the background service. Your system password is needed twice &mdash; once to trust the CA, once to forward port 443.
+        Generates trusted HTTPS certificates, adds port forwarding for clean URLs, and registers the background service. Your system password is needed twice &mdash; once to trust the CA, once to forward port 443. Running <code class="text-accent-light">gtl serve install</code> when a router is already running restarts it with the new binary &mdash; no need to <code class="text-accent-light">uninstall</code> first. After upgrading the CLI, <code class="text-accent-light">gtl serve status</code> and <code class="text-accent-light">gtl start</code> warn if the running router is an older version.
       </p>
       <div class="terminal mb-8">
         <div class="terminal-header">
@@ -1786,6 +1914,16 @@
             <div class="terminal mb-0">
               <div class="terminal-body">
                 <p><span class="prompt">$</span> <span class="command">gtl serve install</span> <span class="text-muted"># regenerates CA if expired</span></p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-white font-medium mb-1">Router version mismatch after upgrading the CLI</p>
+            <p class="text-muted mb-2">After <code class="text-accent-light">brew upgrade git-treeline</code>, the CLI is newer than the running router. <code class="text-accent-light">gtl serve status</code> and <code class="text-accent-light">gtl start</code> will warn. Re-run install to restart the router with the new binary.</p>
+            <div class="terminal mb-0">
+              <div class="terminal-body">
+                <p><span class="prompt">$</span> <span class="command">gtl serve install</span> <span class="text-muted"># restarts the running router with the new version</span></p>
               </div>
             </div>
           </div>
