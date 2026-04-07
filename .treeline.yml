@@ -2,4 +2,4 @@ project: website
 port_count: 1
 
 commands:
-  start: npx vite --port {port}
+  start: npx vite --port {port} --host

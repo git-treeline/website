@@ -68,7 +68,7 @@
 
     <h2>What Git Treeline does</h2>
     <p class="text-muted mb-4">
-      Git Treeline keeps a <strong class="text-white">machine-local registry</strong> of allocations (ports, databases, worktree paths). From any worktree, <code class="text-accent-light">gtl resolve &lt;project&gt;</code> returns the base URL for another project’s current allocation—by default matching <strong class="text-white">the same branch name</strong> as the worktree you run the command from. If you need the UI to follow a different API branch for a while, <code class="text-accent-light">gtl link api staging</code> stores an override in the registry; <code class="text-accent-light">gtl unlink api</code> drops it. Overrides show up in <code class="text-accent-light">gtl status</code> and <code class="text-accent-light">gtl doctor</code>.
+      Git Treeline keeps a <strong class="text-white">machine-local registry</strong> of allocations (ports, databases, worktree paths). From any worktree, <code class="text-accent-light">gtl resolve &lt;project&gt;</code> returns the base URL for another project’s current allocation—by default matching <strong class="text-white">the same branch name</strong> as the worktree you run the command from. If you need the UI to follow a different API branch for a while, <code class="text-accent-light">gtl link api staging</code> stores an override in the registry, regenerates the env file, and restarts the supervised server automatically. <code class="text-accent-light">gtl unlink api</code> drops the override (same auto-refresh). Overrides show up in <code class="text-accent-light">gtl status</code> and <code class="text-accent-light">gtl doctor</code>.
     </p>
     <p class="text-muted mb-6">
       In <code class="text-accent-light">.treeline.yml</code>, use <code class="text-white">API_URL: "{resolve:api}"</code> (or <code class="text-white">{resolve:api/main}</code> to pin a branch). Values are resolved at <strong class="text-white">setup time</strong>. If the target project is not allocated, setup fails with a clear error—no silent localhost guess.
@@ -87,13 +87,13 @@
         <p class="text-muted text-xs mt-3"># Scripting / agents:</p>
         <p><span class="prompt">$</span> <span class="command">gtl resolve api --json</span></p>
         <p class="text-muted text-xs mt-3"># Override when branch names do not match:</p>
-        <p><span class="prompt">$</span> <span class="command">gtl link api staging --restart</span></p>
+        <p><span class="prompt">$</span> <span class="command">gtl link api staging</span></p>
       </div>
     </div>
 
     <h2>URLs vs localhost</h2>
     <p class="text-muted mb-6">
-      For browser calls, you often want a <strong class="text-white">named HTTPS URL</strong> per branch (via <code class="text-accent-light">gtl serve</code>) instead of a raw port. The frontend’s env can point at <code class="text-white">https://api-feature-auth.localhost</code> while <code class="text-white">{resolve:api}</code> fills in the right origin for server-side or tooling. See the <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">networking page</a> for how serve, proxy, tunnel, and share differ.
+      For browser calls, you often want a <strong class="text-white">named HTTPS URL</strong> per branch (via <code class="text-accent-light">gtl serve</code>) instead of a raw port. The frontend’s env can point at <code class="text-white">https://api-feature-auth.prt.dev</code> while <code class="text-white">{resolve:api}</code> fills in the right origin for server-side or tooling. See the <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">networking page</a> for how serve, proxy, tunnel, and share differ.
     </p>
 
     <h2>Where to read more</h2>

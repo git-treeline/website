@@ -139,12 +139,12 @@
         </div>
         <div class="step-item step-item-result">
           <span class="step-arrow">&rarr;</span>
-              <span class="step-text font-mono text-accent">https://myapp-pr-42.localhost</span>
+              <span class="step-text font-mono text-accent">https://myapp-pr-42.prt.dev</span>
         </div>
         <p class="text-muted text-xs mt-2 pl-7">named URL via gtl serve</p>
       </div>
       <p class="text-sm text-muted max-w-md mx-auto">
-        Done reviewing? <code class="text-accent-light">gtl release --drop-db</code> frees the allocated port, drops the cloned database, and cleans up the env file. Remove the worktree directory separately with <code class="text-accent-light">git worktree remove</code>.
+        Done reviewing? <code class="text-accent-light">gtl release --drop-db --remove-worktree</code> frees the allocated port, drops the cloned database, cleans up the env file, and removes the worktree directory in one step.
       </p>
     </div>
   </section>
@@ -240,7 +240,7 @@
         </div>
         <div>
           <h3 class="text-white font-mono text-base mb-2">Open and await</h3>
-          <p><code class="text-accent-light">gtl open</code> opens the app in a browser—HTTPS on <code class="text-white">{project}-{branch}.localhost</code> when <code class="text-white">gtl serve</code> is running, otherwise <code class="text-white">http://localhost:{port}</code>. <code class="text-accent-light">gtl start --await</code> blocks until something listens on the allocated port (use <code class="text-accent-light">--await-timeout</code> for scripts and CI).</p>
+          <p><code class="text-accent-light">gtl open</code> opens the app in a browser—HTTPS on <code class="text-white">{project}-{branch}.prt.dev</code> when <code class="text-white">gtl serve</code> is running, otherwise <code class="text-white">http://localhost:{port}</code>. <code class="text-accent-light">gtl start --await</code> blocks until something listens on the allocated port (use <code class="text-accent-light">--await-timeout</code> for scripts and CI).</p>
         </div>
       </div>
     </div>

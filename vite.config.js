@@ -3,6 +3,9 @@ import { resolve } from 'path'
 
 export default defineConfig({
   root: '.',
+  server: {
+    allowedHosts: ['.prt.dev', '.localhost'],
+  },
   build: {
     outDir: 'dist',
     emptyDirOnBuild: true,

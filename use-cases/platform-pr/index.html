@@ -64,7 +64,7 @@
     <h2 class="text-xl font-semibold text-white mb-3">The flow</h2>
     <ol class="text-muted space-y-3 list-decimal pl-5 mb-8">
       <li><code class="text-accent-light">gtl review 42 --start</code> (from the main repo) fetches the PR with <code class="text-white">gh</code>, creates a worktree, allocates ports and database, runs setup, and boots the app.</li>
-      <li><code class="text-accent-light">gtl open</code> opens the right URL in the browser: HTTPS on <code class="text-white">{project}-{branch}.localhost</code> when <code class="text-accent-light">gtl serve</code> is installed; otherwise <code class="text-white">http://localhost:{port}</code>.</li>
+      <li><code class="text-accent-light">gtl open</code> opens the right URL in the browser: HTTPS on <code class="text-white">{project}-{branch}.prt.dev</code> when <code class="text-accent-light">gtl serve</code> is installed; otherwise <code class="text-white">http://localhost:{port}</code>.</li>
       <li>If they are off your machine, <code class="text-accent-light">gtl share</code> exposes a time-bounded public or tailnet URL—different tradeoffs than <code class="text-accent-light">gtl tunnel</code>, which is built for stable routes you register with providers.</li>
       <li>When review ends, <code class="text-accent-light">gtl release</code> frees the allocation; add <code class="text-accent-light">--drop-db</code> when the cloned database should go too.</li>
     </ol>

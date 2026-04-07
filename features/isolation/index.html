@@ -285,7 +285,7 @@
             <code class="text-accent-light">gtl resolve api</code> prints the base URL for project <code class="text-white">api</code> on the <strong class="text-white">same branch name</strong> as your current worktree—no extra config when both repos track <code class="text-white">feature-auth</code>. In <code class="text-accent-light">.treeline.yml</code>, <code class="text-white">API_URL: "{resolve:api}"</code> resolves at setup time. Use <code class="text-white">{resolve:api/main}</code> to pin a branch explicitly.
           </p>
           <p class="text-sm text-muted">
-            If the frontend branch does not match the API branch you need, <code class="text-accent-light">gtl link api staging</code> stores an override in the registry (visible in <code class="text-accent-light">gtl status</code> and <code class="text-accent-light">gtl doctor</code>). <code class="text-accent-light">gtl unlink api</code> clears it. Setup fails with a clear error if the target is not allocated.
+            If the frontend branch does not match the API branch you need, <code class="text-accent-light">gtl link api staging</code> stores an override, regenerates the env file, and restarts the server automatically (visible in <code class="text-accent-light">gtl status</code> and <code class="text-accent-light">gtl doctor</code>). <code class="text-accent-light">gtl unlink api</code> clears it. Setup fails with a clear error if the target is not allocated.
           </p>
         </div>
         <div class="terminal">

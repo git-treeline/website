@@ -181,7 +181,7 @@
         Git Treeline ships as a single CLI binary &mdash; nothing from Treeline runs inside your app&rsquo;s process or bundle. It writes per-worktree env at setup time.
       </p>
       <p class="text-muted mb-4">
-        Most commands (<code class="text-accent-light">gtl new</code>, <code class="text-accent-light">gtl review</code>, <code class="text-accent-light">gtl setup</code>, <code class="text-accent-light">gtl clone</code>) expect a <strong class="text-white">local HTTPS router</strong> so URLs like <code class="text-white">https://{project}-{branch}.localhost</code> resolve without a port number. That router is <strong class="text-white">required for those commands</strong> until you run the one-time install below.
+        Every worktree&rsquo;s server is always reachable at <code class="text-white">http://localhost:{port}</code> &mdash; plain HTTP on the allocated port. The <strong class="text-white">local HTTPS router</strong> (<code class="text-accent-light">gtl serve</code>) adds a named URL like <code class="text-white">https://myapp-feature-auth.prt.dev</code> that auto-routes to the right port, so you never need to remember which port belongs to which branch. One-time install below.
       </p>
       <p class="text-sm text-muted mb-8">New here? See <a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">how isolation works</a> and the <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">networking page</a> for how <code class="text-accent-light">gtl serve</code> fits with proxy, tunnel, and share.</p>
 
@@ -208,7 +208,7 @@
       <div class="docs-subsection">
         <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Local HTTPS router (run once after install)</h3>
         <p class="text-muted mb-4">
-          On <strong class="text-white">macOS and Linux</strong>, install the background router and trust the local certificate authority so browsers accept <code class="text-white">https://*.localhost</code> without certificate warnings, and so traffic on port 443 can reach the router (no <code class="text-white">:port</code> in the URL). <code class="text-accent-light">gtl serve</code> is not supported on native Windows yet (WSL is the path there).
+          On <strong class="text-white">macOS and Linux</strong>, install the background router and trust the local certificate authority so browsers accept HTTPS for your router domain without certificate warnings, and so traffic on port 443 can reach the router (no <code class="text-white">:port</code> in the URL). New installs use <code class="text-accent-light">prt.dev</code> by default (wildcard DNS to 127.0.0.1). <code class="text-accent-light">gtl serve</code> is not supported on native Windows yet (WSL is the path there).
         </p>
         <div class="terminal mb-6">
           <div class="terminal-body">
@@ -219,14 +219,14 @@
           Before any <code class="text-white">sudo</code> prompt, the CLI prints what your system password is for&mdash;typically <strong class="text-white">two separate steps</strong> that may each ask for a password:
         </p>
         <ul class="text-muted space-y-2 mb-4 list-disc pl-5">
-          <li><strong class="text-white">Trust the local CA</strong> in the system keychain (or equivalent) so Chrome, Safari, and Firefox accept HTTPS to <code class="text-white">*.localhost</code>.</li>
+          <li><strong class="text-white">Trust the local CA</strong> in the system keychain (or equivalent) so Chrome, Safari, and Firefox accept HTTPS for the router domain.</li>
           <li><strong class="text-white">Port forwarding</strong> so something listening on port 443 forwards to the router&rsquo;s port (so URLs do not need an explicit port).</li>
         </ul>
         <p class="text-muted mb-4">
           You should expect <strong class="text-white">macOS or Linux to prompt for your login password</strong> (or an administrator password) when those steps run&mdash;the tool explains each step; it is not silent background access. If trust fails, the CLI warns that HTTPS may still work but browsers can show a certificate warning. If port forwarding is skipped, you can still use the router, but URLs may need a port suffix (the install output says which).
         </p>
         <p class="text-muted mb-4">
-          The installer also registers a <strong class="text-white">persistent service</strong> (e.g. launchd on macOS) so the router keeps running across reboots. On macOS it may sync <code class="text-white">/etc/hosts</code> so Safari resolves <code class="text-white">*.localhost</code> subdomains; if that step fails, run <code class="text-accent-light">gtl serve hosts sync</code> after reading the message.
+          The installer also registers a <strong class="text-white">persistent service</strong> (e.g. launchd on macOS) so the router keeps running across reboots. The installer persists <code class="text-accent-light">router.domain</code> to <code class="text-accent-light">config.json</code> so the domain is always explicit on disk.
         </p>
         <p class="text-sm text-muted mb-4">
           Check status any time: <code class="text-accent-light">gtl serve status</code>. Full command reference: <a href="#net-serve" class="text-accent-light hover:text-accent underline underline-offset-2">gtl serve</a> in this doc and the <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">networking feature page</a>.
@@ -337,8 +337,8 @@
           </div>
           <div class="cmd-item">
             <div class="cmd-name">port_count</div>
-            <div class="cmd-flags"><span class="cmd-flag">int</span></div>
-            <p class="cmd-desc">Number of ports to allocate per worktree. Default <code class="text-accent-light">1</code>. Use <code class="text-accent-light">2</code> for apps with a separate asset build port.</p>
+            <div class="cmd-flags"><span class="cmd-flag">int</span> <span class="cmd-flag">requires gtl setup</span></div>
+            <p class="cmd-desc">Number of ports to allocate per worktree. Default <code class="text-accent-light">1</code>. Use <code class="text-accent-light">2</code> for apps with a separate asset build port. Changes require <code class="text-accent-light">gtl setup</code> &mdash; port allocation affects the shared registry.</p>
           </div>
           <div class="cmd-item">
             <div class="cmd-name">env_file</div>
@@ -347,8 +347,8 @@
           </div>
           <div class="cmd-item">
             <div class="cmd-name">database.adapter</div>
-            <div class="cmd-flags"><span class="cmd-flag">string</span></div>
-            <p class="cmd-desc"><code class="text-accent-light">postgresql</code> or <code class="text-accent-light">sqlite</code>. Determines cloning strategy.</p>
+            <div class="cmd-flags"><span class="cmd-flag">string</span> <span class="cmd-flag">destructive</span></div>
+            <p class="cmd-desc"><code class="text-accent-light">postgresql</code> or <code class="text-accent-light">sqlite</code>. Determines cloning strategy. Databases are cloned once during <code class="text-accent-light">gtl new</code>. To re-clone: <code class="text-accent-light">gtl db reset</code>.</p>
           </div>
           <div class="cmd-item">
             <div class="cmd-name">database.template</div>
@@ -362,28 +362,28 @@
           </div>
           <div class="cmd-item">
             <div class="cmd-name">copy_files</div>
-            <div class="cmd-flags"><span class="cmd-flag">list</span></div>
-            <p class="cmd-desc">Files to copy from the main worktree. Secrets, credentials, local config that aren't in git.</p>
+            <div class="cmd-flags"><span class="cmd-flag">list</span> <span class="cmd-flag">requires gtl setup</span></div>
+            <p class="cmd-desc">Files to copy from the main worktree. Secrets, credentials, local config that aren't in git. Provisioning only &mdash; not re-run on <code class="text-accent-light">gtl start</code>. Manual: <code class="text-accent-light">gtl setup</code>.</p>
           </div>
           <div class="cmd-item">
             <div class="cmd-name">env</div>
-            <div class="cmd-flags"><span class="cmd-flag">map</span></div>
-            <p class="cmd-desc">Key-value pairs written to the env file. Supports interpolation tokens.</p>
+            <div class="cmd-flags"><span class="cmd-flag">map</span> <span class="cmd-flag">auto-synced</span></div>
+            <p class="cmd-desc">Key-value pairs written to the env file. Supports interpolation tokens. Synced automatically on fresh <code class="text-accent-light">gtl start</code> and <code class="text-accent-light">gtl restart</code>. Manual: <code class="text-accent-light">gtl env sync</code>.</p>
           </div>
           <div class="cmd-item">
             <div class="cmd-name">commands.setup</div>
-            <div class="cmd-flags"><span class="cmd-flag">list</span></div>
-            <p class="cmd-desc">Commands to run after env file is written. Allocated values like <code class="text-accent-light">$PORT</code> are available. See <a href="#setup-commands" class="text-accent-light hover:text-accent underline underline-offset-2">setup commands</a>.</p>
+            <div class="cmd-flags"><span class="cmd-flag">list</span> <span class="cmd-flag">requires gtl setup</span></div>
+            <p class="cmd-desc">Commands to run after env file is written. Allocated values like <code class="text-accent-light">$PORT</code> are available. Not re-run on <code class="text-accent-light">gtl start</code> &mdash; setup can be slow. Manual: <code class="text-accent-light">gtl setup</code> or <code class="text-accent-light">gtl switch --setup</code>. See <a href="#setup-commands" class="text-accent-light hover:text-accent underline underline-offset-2">setup commands</a>.</p>
           </div>
           <div class="cmd-item">
             <div class="cmd-name">commands.start</div>
-            <div class="cmd-flags"><span class="cmd-flag">string</span></div>
-            <p class="cmd-desc">Command to boot the app. Used by <code class="text-accent-light">gtl start</code> and the <code class="text-accent-light">--start</code> flag on <code class="text-accent-light">new</code> and <code class="text-accent-light">review</code>.</p>
+            <div class="cmd-flags"><span class="cmd-flag">string</span> <span class="cmd-flag">fresh start only</span></div>
+            <p class="cmd-desc">Command to boot the app. Read on fresh <code class="text-accent-light">gtl start</code> (no supervisor running). If the supervisor is already alive, it uses the original command &mdash; Ctrl+C the supervisor and <code class="text-accent-light">gtl start</code> again to pick up changes. <code class="text-accent-light">gtl restart</code> warns if there&rsquo;s a mismatch.</p>
           </div>
           <div class="cmd-item">
             <div class="cmd-name">editor.title</div>
-            <div class="cmd-flags"><span class="cmd-flag">string</span></div>
-            <p class="cmd-desc">Window title template. Tokens: <code class="text-accent-light">{project}</code>, <code class="text-accent-light">{port}</code>, <code class="text-accent-light">{branch}</code>. Works with VS Code and Cursor.</p>
+            <div class="cmd-flags"><span class="cmd-flag">string</span> <span class="cmd-flag">auto-synced</span></div>
+            <p class="cmd-desc">Window title template. Tokens: <code class="text-accent-light">{project}</code>, <code class="text-accent-light">{port}</code>, <code class="text-accent-light">{branch}</code>, <code class="text-accent-light">{url}</code>, <code class="text-accent-light">{router_url}</code>. Works with VS Code and Cursor. Synced on fresh <code class="text-accent-light">gtl start</code>, <code class="text-accent-light">gtl env sync</code>, or <code class="text-accent-light">gtl editor refresh</code>.</p>
           </div>
           <div class="cmd-item">
             <div class="cmd-name">editor.color</div>
@@ -507,7 +507,7 @@
       <h3 class="text-lg font-mono text-white mb-3">Commands</h3>
       <ul class="text-sm text-muted space-y-2 mb-6 list-disc pl-5">
         <li><code class="text-accent-light">gtl resolve &lt;project&gt;</code> — URL for that project on the <strong class="text-white">same branch name</strong> as the current worktree (unless a link overrides it). Optional branch: <code class="text-accent-light">gtl resolve api staging</code>. <code class="text-accent-light">--json</code> for scripts.</li>
-        <li><code class="text-accent-light">gtl link &lt;project&gt; &lt;branch&gt;</code> — store an override so <code class="text-white">{resolve:project}</code> targets <code class="text-white">&lt;branch&gt;</code>. Persists across restart and <code class="text-accent-light">gtl refresh</code>. <code class="text-accent-light">--restart</code> bounces the supervised server. <code class="text-accent-light">gtl link</code> with no args lists links. <code class="text-accent-light">gtl unlink &lt;project&gt;</code> removes the override.</li>
+        <li><code class="text-accent-light">gtl link &lt;project&gt; &lt;branch&gt;</code> — store an override so <code class="text-white">{resolve:project}</code> targets <code class="text-white">&lt;branch&gt;</code>. Persists across restart and <code class="text-accent-light">gtl refresh</code>. Automatically regenerates the env file and restarts the supervised server. <code class="text-accent-light">gtl link</code> with no args lists links. <code class="text-accent-light">gtl unlink &lt;project&gt;</code> removes the override (also regenerates env and restarts).</li>
       </ul>
       <p class="text-muted text-sm mb-4">
         Overrides appear in <code class="text-accent-light">gtl status</code> and <code class="text-accent-light">gtl doctor</code>. See <a href="/use-cases/multi-repo/" class="text-accent-light hover:text-accent underline underline-offset-2">use case: multi-repo</a>.
@@ -533,26 +533,26 @@
 
           <div class="cmd-item">
             <span class="cmd-name">new &lt;branch&gt;</span>
-            <div class="cmd-flags"><span class="cmd-flag">--base</span><span class="cmd-flag">--path</span><span class="cmd-flag">--start</span><span class="cmd-flag">--dry-run</span></div>
-            <p class="cmd-desc">Create worktree + allocate resources + run setup in one step. <code class="text-accent-light">--start</code> boots the app after setup. Must be run from the main repo.</p>
+            <div class="cmd-flags"><span class="cmd-flag">--base</span><span class="cmd-flag">--path</span><span class="cmd-flag">--start</span><span class="cmd-flag">--open</span><span class="cmd-flag">--dry-run</span></div>
+            <p class="cmd-desc">Create worktree + allocate resources + run setup in one step. Reads <code class="text-accent-light">.treeline.yml</code> from the main repo for allocation, then runs setup from the new worktree. <code class="text-accent-light">--start</code> boots the app after setup. <code class="text-accent-light">--open</code> opens in browser. Works without a <code class="text-accent-light">.treeline.yml</code> &mdash; detects the framework and prompts to init for server projects, or creates a plain worktree for non-server projects (Go, Rust). Must be run from the main repo.</p>
           </div>
 
           <div class="cmd-item">
             <span class="cmd-name">review &lt;PR#&gt;</span>
-            <div class="cmd-flags"><span class="cmd-flag">--path</span><span class="cmd-flag">--start</span></div>
-            <p class="cmd-desc">Fetch a GitHub PR into a new worktree with full setup. Requires <code class="text-accent-light">gh</code> CLI. Must be run from the main repo.</p>
+            <div class="cmd-flags"><span class="cmd-flag">--path</span><span class="cmd-flag">--start</span><span class="cmd-flag">--open</span></div>
+            <p class="cmd-desc">Fetch a GitHub PR into a new worktree with full setup. Requires <code class="text-accent-light">gh</code> CLI. <code class="text-accent-light">--open</code> opens in browser after setup. Must be run from the main repo.</p>
           </div>
 
           <div class="cmd-item">
             <span class="cmd-name">switch &lt;branch-or-PR#&gt;</span>
-            <div class="cmd-flags"><span class="cmd-flag">--setup</span></div>
-            <p class="cmd-desc">Switch a worktree to a different branch or PR. Fetches from origin, checks out, updates registry, refreshes env. <code class="text-accent-light">--setup</code> re-runs <code class="text-accent-light">commands.setup</code>.</p>
+            <div class="cmd-flags"><span class="cmd-flag">--setup</span><span class="cmd-flag">--restart</span></div>
+            <p class="cmd-desc">Switch a worktree to a different branch or PR. Fetches from origin, checks out, updates registry, refreshes env. <code class="text-accent-light">--setup</code> re-runs <code class="text-accent-light">commands.setup</code>. <code class="text-accent-light">--restart</code> bounces the supervised server after switching.</p>
           </div>
 
           <div class="cmd-item">
             <span class="cmd-name">setup [path]</span>
             <div class="cmd-flags"><span class="cmd-flag">--main-repo</span><span class="cmd-flag">--dry-run</span></div>
-            <p class="cmd-desc">Allocate resources and configure a worktree. Idempotent &mdash; safe to re-run. When reusing an existing allocation, verifies ports are still free and still valid for current config (including <code class="text-accent-light">port.reservations</code> and <code class="text-accent-light">port_count</code>); if not, re-allocates, updates the registry, and warns.</p>
+            <p class="cmd-desc">Full provisioning: allocate ports, copy files, write env, clone DB, run setup commands. Reads <code class="text-accent-light">.treeline.yml</code> from the worktree you&rsquo;re in. Idempotent &mdash; safe to re-run. When reusing an existing allocation, verifies ports are still free and still valid for current config; if not, re-allocates, updates the registry, and warns.</p>
           </div>
 
           <div class="cmd-item">
@@ -563,8 +563,8 @@
 
           <div class="cmd-item">
             <span class="cmd-name">release [path]</span>
-            <div class="cmd-flags"><span class="cmd-flag">--drop-db</span><span class="cmd-flag">--project</span><span class="cmd-flag">--all</span><span class="cmd-flag">--force</span><span class="cmd-flag">--dry-run</span></div>
-            <p class="cmd-desc">Free allocated resources. <code class="text-accent-light">--drop-db</code> removes the cloned database. <code class="text-accent-light">--all</code> releases everything across projects.</p>
+            <div class="cmd-flags"><span class="cmd-flag">--drop-db</span><span class="cmd-flag">--remove-worktree</span><span class="cmd-flag">--project</span><span class="cmd-flag">--all</span><span class="cmd-flag">--force</span><span class="cmd-flag">--dry-run</span></div>
+            <p class="cmd-desc">Free allocated resources. <code class="text-accent-light">--drop-db</code> removes the cloned database. <code class="text-accent-light">--remove-worktree</code> also deletes the worktree directory (warns if you&rsquo;re inside it). <code class="text-accent-light">--all</code> releases everything across projects. Warns if the worktree has unpushed commits.</p>
           </div>
 
           <div class="cmd-item">
@@ -585,6 +585,16 @@
           </div>
 
           <div class="cmd-item">
+            <span class="cmd-name">worktrees</span>
+            <p class="cmd-desc">Interactive TUI picker for worktrees, grouped by project. Arrow keys to navigate, Enter to print the path. Alias: <code class="text-accent-light">gtl wt</code>.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">where &lt;branch&gt;</span>
+            <p class="cmd-desc">Print the filesystem path to a worktree by branch name. Searches across all projects. Use <code class="text-accent-light">project/branch</code> to disambiguate when multiple projects have the same branch.</p>
+          </div>
+
+          <div class="cmd-item">
             <span class="cmd-name">status</span>
             <div class="cmd-flags"><span class="cmd-flag">--project</span><span class="cmd-flag">--json</span><span class="cmd-flag">--check</span><span class="cmd-flag">--watch</span><span class="cmd-flag">--interval</span></div>
             <p class="cmd-desc">Show all allocations. <code class="text-accent-light">--check</code> probes ports to verify servers are responding. <code class="text-accent-light">--watch</code> auto-refreshes at <code class="text-accent-light">--interval</code> (default 2s). <code class="text-accent-light">--json</code> for structured output.</p>
@@ -592,8 +602,8 @@
 
           <div class="cmd-item">
             <span class="cmd-name">prune</span>
-            <div class="cmd-flags"><span class="cmd-flag">--stale</span><span class="cmd-flag">--merged</span><span class="cmd-flag">--drop-db</span><span class="cmd-flag">--force</span></div>
-            <p class="cmd-desc">Clean orphaned allocations. <code class="text-accent-light">--stale</code> targets worktrees whose directory no longer exists. <code class="text-accent-light">--merged</code> targets branches merged to <code class="text-accent-light">merge_target</code>. <code class="text-accent-light">--drop-db</code> also drops databases.</p>
+            <div class="cmd-flags"><span class="cmd-flag">--stale</span><span class="cmd-flag">--merged</span><span class="cmd-flag">--drop-db</span><span class="cmd-flag">--remove-worktree</span><span class="cmd-flag">--force</span></div>
+            <p class="cmd-desc">Clean orphaned allocations. <code class="text-accent-light">--stale</code> targets worktrees whose directory no longer exists. <code class="text-accent-light">--merged</code> targets branches merged to <code class="text-accent-light">merge_target</code>. <code class="text-accent-light">--drop-db</code> also drops databases. <code class="text-accent-light">--remove-worktree</code> deletes directories too.</p>
           </div>
 
           <div class="cmd-item">
@@ -604,8 +614,8 @@
 
           <div class="cmd-item">
             <span class="cmd-name">link &lt;project&gt; &lt;branch&gt;</span>
-            <div class="cmd-flags"><span class="cmd-flag">--restart</span><span class="cmd-flag">--json</span></div>
-            <p class="cmd-desc">Override <code class="text-accent-light">{resolve:project}</code> to a fixed branch. <code class="text-accent-light">gtl link</code> lists links. <a href="#cross-worktree" class="text-accent-light hover:text-accent underline underline-offset-2">Details &rarr;</a></p>
+            <div class="cmd-flags"><span class="cmd-flag">--json</span></div>
+            <p class="cmd-desc">Override <code class="text-accent-light">{resolve:project}</code> to a fixed branch. Regenerates env and restarts the server automatically. <code class="text-accent-light">gtl link</code> lists links. <a href="#cross-worktree" class="text-accent-light hover:text-accent underline underline-offset-2">Details &rarr;</a></p>
           </div>
 
           <div class="cmd-item">
@@ -614,9 +624,14 @@
           </div>
 
           <div class="cmd-item">
-            <span class="cmd-name">env</span>
+            <span class="cmd-name">env show</span>
             <div class="cmd-flags"><span class="cmd-flag">--json</span><span class="cmd-flag">--template</span></div>
-            <p class="cmd-desc">Print the current worktree&apos;s env file. Treeline-managed keys marked <code class="text-white">[treeline]</code>. <code class="text-accent-light">--template</code> shows unresolved tokens.</p>
+            <p class="cmd-desc">Print the current worktree&apos;s env file. Treeline-managed keys marked <code class="text-white">[treeline]</code>. <code class="text-accent-light">--template</code> shows unresolved tokens. <code class="text-accent-light">gtl env</code> with no subcommand defaults to <code class="text-accent-light">show</code>.</p>
+          </div>
+
+          <div class="cmd-item">
+            <span class="cmd-name">env sync</span>
+            <p class="cmd-desc">Re-read <code class="text-accent-light">env:</code> from <code class="text-accent-light">.treeline.yml</code>, update the env file, and refresh editor settings. Use when you&rsquo;ve edited <code class="text-accent-light">.treeline.yml</code> and don&rsquo;t use <code class="text-accent-light">gtl start</code> to run your server.</p>
           </div>
 
           <div class="cmd-item">
@@ -626,7 +641,7 @@
 
           <div class="cmd-item">
             <span class="cmd-name">open</span>
-            <p class="cmd-desc">Open the app in a browser: HTTPS <code class="text-white">{project}-{branch}.localhost</code> when <code class="text-accent-light">gtl serve</code> is running, else <code class="text-white">http://localhost:{port}</code>.</p>
+            <p class="cmd-desc">Open the app in a browser: HTTPS <code class="text-white">{project}-{branch}.prt.dev</code> when <code class="text-accent-light">gtl serve</code> is running, else <code class="text-white">http://localhost:{port}</code>.</p>
           </div>
 
           <div class="cmd-item">
@@ -690,17 +705,17 @@
           <div class="cmd-item">
             <span class="cmd-name">start</span>
             <div class="cmd-flags"><span class="cmd-flag">--await</span><span class="cmd-flag">--await-timeout</span></div>
-            <p class="cmd-desc">Run <code class="text-accent-light">commands.start</code> under a Unix socket supervisor. Injects allocated env vars into the child process. Resumes the server if the supervisor is already running. <code class="text-accent-light">--await</code> blocks until TCP accepts on the allocated port (default timeout 60s), on both a fresh start and resume.</p>
+            <p class="cmd-desc"><strong class="text-white">Fresh start</strong> (no supervisor running): syncs the env file, refreshes editor settings, reads <code class="text-accent-light">commands.start</code>, and launches a new supervisor. <strong class="text-white">Resume</strong> (supervisor alive after <code class="text-accent-light">gtl stop</code>): sends a start signal &mdash; does not re-sync env or re-read the start command. <code class="text-accent-light">--await</code> blocks until TCP accepts on the allocated port (default timeout 60s).</p>
           </div>
 
           <div class="cmd-item">
             <span class="cmd-name">stop</span>
-            <p class="cmd-desc">Pause the supervised server. The supervisor stays alive so the server can be resumed.</p>
+            <p class="cmd-desc">Stop the server process. The supervisor stays alive so the server can be resumed with <code class="text-accent-light">gtl start</code>. To fully exit the supervisor, Ctrl+C in the terminal where it&rsquo;s running.</p>
           </div>
 
           <div class="cmd-item">
             <span class="cmd-name">restart</span>
-            <p class="cmd-desc">Atomic stop + start. Bounces the supervised server in one step.</p>
+            <p class="cmd-desc">Syncs the env file, pushes updated env vars to the supervisor, and restarts the server. Warns if <code class="text-accent-light">commands.start</code> in <code class="text-accent-light">.treeline.yml</code> differs from what the supervisor is running.</p>
           </div>
 
           <div class="cmd-item">
@@ -722,7 +737,7 @@
           <div class="cmd-item">
             <span class="cmd-name">tunnel [port]</span>
             <div class="cmd-flags"><span class="cmd-flag">--domain</span><span class="cmd-flag">--tunnel</span></div>
-            <p class="cmd-desc">Public HTTPS tunnel via Cloudflare. <code class="text-accent-light">tunnel setup</code> adds named configs; <code class="text-accent-light">gtl tunnel default &lt;name&gt;</code> sets default. <a href="#net-tunnel" class="text-accent-light hover:text-accent underline underline-offset-2">Details &rarr;</a></p>
+            <p class="cmd-desc">Public HTTPS tunnel via Cloudflare. <code class="text-accent-light">tunnel setup</code> adds named configs (multiple domains supported); <code class="text-accent-light">gtl tunnel default &lt;name&gt;</code> sets default; <code class="text-accent-light">tunnel remove &lt;name&gt;</code> deletes a named config. <a href="#net-tunnel" class="text-accent-light hover:text-accent underline underline-offset-2">Details &rarr;</a></p>
           </div>
 
           <div class="cmd-item">
@@ -775,13 +790,13 @@
         <div class="cmd-list px-4 sm:px-5">
           <div class="cmd-item">
             <div class="cmd-name">port.base</div>
-            <div class="cmd-flags"><span class="cmd-flag">default: 3000</span></div>
-            <p class="cmd-desc">Starting port number for allocations.</p>
+            <div class="cmd-flags"><span class="cmd-flag">default: 3002</span></div>
+            <p class="cmd-desc">Starting port number for allocations. Ports 3000 and 3001 are reserved for <code class="text-accent-light">gtl proxy</code> and the HTTPS router.</p>
           </div>
           <div class="cmd-item">
             <div class="cmd-name">port.increment</div>
-            <div class="cmd-flags"><span class="cmd-flag">default: 10</span></div>
-            <p class="cmd-desc">Gap between port allocations. Set to match your <code class="text-accent-light">port_count</code> or higher.</p>
+            <div class="cmd-flags"><span class="cmd-flag">default: 2</span></div>
+            <p class="cmd-desc">Gap between port allocations. Must be &ge; your <code class="text-accent-light">port_count</code>.</p>
           </div>
           <div class="cmd-item">
             <div class="cmd-name">redis.strategy</div>
@@ -812,6 +827,26 @@
             <div class="cmd-name">editor.colors</div>
             <div class="cmd-flags"><span class="cmd-flag">default: {}</span></div>
             <p class="cmd-desc">Per-project or per-branch color overrides. Same key format as themes.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">router.domain</div>
+            <div class="cmd-flags"><span class="cmd-flag">default: prt.dev (new installs) · localhost (existing)</span></div>
+            <p class="cmd-desc">Base domain for the HTTPS router. New installs use <code class="text-accent-light">prt.dev</code> (wildcard DNS to 127.0.0.1, avoids Chrome stripping <code class="text-white">https://</code> from <code class="text-white">.localhost</code> links). Existing installs keep <code class="text-accent-light">localhost</code> automatically. To switch: <code class="text-accent-light">gtl serve uninstall && gtl config set router.domain prt.dev && gtl serve install</code>.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">router.port</div>
+            <div class="cmd-flags"><span class="cmd-flag">default: 3001</span></div>
+            <p class="cmd-desc">Port the HTTPS router listens on. Must not equal <code class="text-accent-light">port.base</code>.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">worktree.path</div>
+            <div class="cmd-flags"><span class="cmd-flag">default: sibling directory</span></div>
+            <p class="cmd-desc">Where <code class="text-accent-light">gtl new</code> creates worktrees. Supports <code class="text-accent-light">{project}</code> and <code class="text-accent-light">{branch}</code> interpolation. Example: <code class="text-accent-light">.worktrees/{branch}</code>. Paths inside the repo are auto-gitignored.</p>
+          </div>
+          <div class="cmd-item">
+            <div class="cmd-name">warnings.safari</div>
+            <div class="cmd-flags"><span class="cmd-flag">default: true</span></div>
+            <p class="cmd-desc">Show Safari resolution warnings during setup. With <code class="text-accent-light">prt.dev</code> these are rarely needed (real DNS resolves automatically). Disable with <code class="text-accent-light">gtl config set warnings.safari false</code>.</p>
           </div>
         </div>
       </div>
@@ -1145,7 +1180,7 @@
         </div>
         <div class="terminal-body">
           <pre class="text-sm"><span class="text-accent-light">editor</span><span class="text-muted">:</span>
-  <span class="text-accent-light">title</span><span class="text-muted">:</span> <span class="text-white">"{project} ({branch}) :{port}"</span>
+  <span class="text-accent-light">title</span><span class="text-muted">:</span> <span class="text-white">"{project} ({branch}) &mdash; {url}"</span>
   <span class="text-accent-light">color</span><span class="text-muted">:</span> <span class="text-white">"auto"</span>
   <span class="text-accent-light">theme</span><span class="text-muted">:</span> <span class="text-white">"GitHub Dark"</span></pre>
         </div>
@@ -1162,7 +1197,7 @@
           <tbody class="divide-y divide-surface-border">
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">title</td>
-              <td class="px-5 py-3 text-muted">Window title template. Tokens: <code class="text-accent-light">{project}</code>, <code class="text-accent-light">{port}</code>, <code class="text-accent-light">{branch}</code>.</td>
+              <td class="px-5 py-3 text-muted">Window title template. Tokens: <code class="text-accent-light">{project}</code>, <code class="text-accent-light">{port}</code>, <code class="text-accent-light">{branch}</code>, <code class="text-accent-light">{url}</code> (<code class="text-white">http://localhost:3010</code>), <code class="text-accent-light">{router_url}</code> (<code class="text-white">https://myapp-feature.prt.dev</code>, uses your configured domain).</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white whitespace-nowrap">color</td>
@@ -1356,18 +1391,18 @@
       <div class="docs-subsection">
         <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Design rationale</h3>
         <p class="text-muted mb-4">
-          Treeline&rsquo;s networking is built around one principle: <strong class="text-white">common ports stay free so the developer controls what listens on them.</strong>
+          Every worktree server listens on <code class="text-white">http://localhost:{port}</code> &mdash; plain HTTP always works. The HTTPS router (<code class="text-accent-light">gtl serve</code>) maps <code class="text-white">https://{project}-{branch}.prt.dev</code> to the right port automatically, so you open <code class="text-accent-light">myapp-feature-auth.prt.dev</code> instead of remembering that feature-auth is on port 3014.
         </p>
         <p class="text-muted mb-4">
-          Worktree servers never bind to ports like 3000, 4000, 5000, or 8080. Instead, Treeline allocates from a managed range starting at <strong class="text-white">3002</strong>. This is deliberate:
+          Treeline&rsquo;s port allocation is built around one principle: <strong class="text-white">common ports stay free so the developer controls what listens on them.</strong> Worktree servers never bind to ports like 3000, 4000, 5000, or 8080. Instead, Treeline allocates from a managed range starting at <strong class="text-white">3002</strong>:
         </p>
         <ul class="text-muted space-y-2 mb-6 list-disc pl-5">
-          <li><strong class="text-white">Port 3000</strong> stays free for <code class="text-accent-light">gtl proxy</code> &mdash; a facade that lets OAuth providers, Stripe webhooks, Mapbox, and CORS policies keep pointing at <code class="text-white">localhost:3000</code> regardless of which worktree is active.</li>
-          <li><strong class="text-white">Port 3001</strong> is used by <code class="text-accent-light">gtl serve</code> &mdash; the background HTTPS router that maps <code class="text-white">{project}-{branch}.localhost</code> to the right worktree.</li>
-          <li><strong class="text-white">Port 3002+</strong> are allocated to worktrees. The developer never types these &mdash; branch-named URLs and the proxy abstract them away.</li>
+          <li><strong class="text-white">Port 3000</strong> stays free for <code class="text-accent-light">gtl proxy</code> &mdash; a facade that lets OAuth providers, Stripe webhooks, and CORS policies keep pointing at <code class="text-white">localhost:3000</code> regardless of which worktree is active.</li>
+          <li><strong class="text-white">Port 3001</strong> is the HTTPS router (<code class="text-accent-light">gtl serve</code>) that maps branch-named URLs to worktree ports.</li>
+          <li><strong class="text-white">Port 3002+</strong> are allocated to worktrees. You rarely type these &mdash; branch URLs and the proxy abstract them away.</li>
         </ul>
         <p class="text-muted mb-4">
-          This creates two layers of access: <strong class="text-white">branch URLs</strong> (<code class="text-accent-light">myapp-feature.localhost</code>) for your browser and inter-service resolution, and the <strong class="text-white">proxy</strong> (<code class="text-accent-light">localhost:3000</code>) for anything external that expects a fixed origin. Both work at the same time. See <a href="/use-cases/integrations-urls/" class="text-accent-light hover:text-accent underline underline-offset-2">why port 3000 stays free</a> for the full story.
+          Two ways to reach any worktree: <strong class="text-white">branch URLs</strong> (<code class="text-accent-light">myapp-feature.prt.dev</code>) for your browser and inter-service resolution, and the <strong class="text-white">proxy</strong> (<code class="text-accent-light">localhost:3000</code>) for anything external that expects a fixed origin. Both work at the same time. See <a href="/use-cases/integrations-urls/" class="text-accent-light hover:text-accent underline underline-offset-2">why port 3000 stays free</a> for the full story.
         </p>
       </div>
 
@@ -1387,7 +1422,7 @@
       <h3 class="subsection-heading">gtl serve</h3>
       <p class="subsection-label">Local HTTPS subdomain router</p>
       <p class="text-muted mb-8">
-        Maps <code class="text-accent-light">{project}-{branch}.localhost</code> to the correct worktree port. Runs as a <code class="text-accent-light">launchd</code> (macOS) or <code class="text-accent-light">systemd</code> (Linux) background service. Routes refresh every 5 seconds from the registry.
+        Your app always listens on <code class="text-white">localhost:{port}</code> (HTTP). The router adds an HTTPS layer: <code class="text-accent-light">{project}-{branch}.prt.dev</code> auto-routes to the correct worktree port, so you open a branch name instead of remembering a port number. Runs as a <code class="text-accent-light">launchd</code> (macOS) or <code class="text-accent-light">systemd</code> (Linux) background service. Routes refresh every 5 seconds from the registry.
       </p>
 
       <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Install (one-time)</h3>
@@ -1403,14 +1438,14 @@
         <div class="terminal-body space-y-2">
           <p><span class="prompt">$</span> <span class="command">gtl serve install</span></p>
           <p class="output">gtl serve is a local HTTPS router that gives every worktree a URL:</p>
-          <p class="output">  https://{project}-{branch}.localhost</p>
+          <p class="output">  https://{project}-{branch}.prt.dev</p>
           <p class="output"></p>
           <p class="output">To set this up, your system password will be needed twice:</p>
-          <p class="output">  1. To trust a certificate authority so browsers accept *.localhost</p>
+          <p class="output">  1. To trust a certificate authority so browsers accept HTTPS</p>
           <p class="output">  2. To forward port 443 &rarr; 3001 so URLs don't need a port number</p>
           <p class="output"></p>
           <p class="output text-accent">All set! Router is running in the background.</p>
-          <p class="output">  https://{project}-{branch}.localhost</p>
+          <p class="output">  https://{project}-{branch}.prt.dev</p>
         </div>
       </div>
 
@@ -1423,9 +1458,9 @@
           <p class="output">Port forwarding: active (443 &rarr; router)</p>
           <p class="output"></p>
           <p class="output">Routes (3):</p>
-          <p class="output">  https://<span class="highlight">myapp-main</span>.localhost &rarr; :3000</p>
-          <p class="output">  https://<span class="highlight">myapp-feature-auth</span>.localhost &rarr; :3010</p>
-          <p class="output">  https://<span class="highlight">myapp-pr-42</span>.localhost &rarr; :3020</p>
+          <p class="output">  https://<span class="highlight">myapp-main</span>.prt.dev &rarr; :3000</p>
+          <p class="output">  https://<span class="highlight">myapp-feature-auth</span>.prt.dev &rarr; :3010</p>
+          <p class="output">  https://<span class="highlight">myapp-pr-42</span>.prt.dev &rarr; :3020</p>
         </div>
       </div>
       <p class="text-muted mb-8">
@@ -1434,7 +1469,7 @@
 
       <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">How it works</h3>
       <ol class="list-decimal list-inside text-muted space-y-2 mb-8 pl-2">
-        <li><code class="text-accent-light">gtl serve install</code> generates a local CA and wildcard <code class="text-accent-light">*.localhost</code> server certificate.</li>
+        <li><code class="text-accent-light">gtl serve install</code> generates a local CA and wildcard server certificate for the configured domain (<code class="text-accent-light">*.prt.dev</code> by default).</li>
         <li>The CA is trusted in your system keychain so browsers show a green lock.</li>
         <li>Port 443 is forwarded to the router (default port 3001) so URLs don't need a port number.</li>
         <li>A background service starts the router automatically on boot.</li>
@@ -1582,6 +1617,11 @@
         <li>If project or branch can't be determined, it falls back to quick mode.</li>
       </ol>
 
+      <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Multiple domains</h3>
+      <p class="text-muted mb-4">
+        <code class="text-accent-light">gtl tunnel setup</code> supports multiple Cloudflare domains. When the requested domain differs from your current credentials, gtl prompts to authenticate with the correct zone and stores per-domain certificates. DNS routing targets the correct zone automatically; if not, it provides CNAME instructions with the tunnel UUID.
+      </p>
+
       <h3 class="text-lg sm:text-xl font-mono text-white mb-3 sm:mb-4">Requirements</h3>
       <p class="text-muted">
         Quick mode needs <code class="text-accent-light">cloudflared</code> installed (no account). Named mode needs a Cloudflare account with a domain. On macOS, <code class="text-accent-light">gtl tunnel setup</code> offers to install cloudflared via Homebrew if missing.
@@ -1636,17 +1676,17 @@
             <tr>
               <td class="px-5 py-3 font-mono text-white">main</td>
               <td class="px-5 py-3 font-mono text-muted">myapp-main</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs leading-relaxed">myapp-main.localhost<br>myapp-main.example.dev</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs leading-relaxed">myapp-main.prt.dev<br>myapp-main.example.dev</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white">feature/auth-flow</td>
               <td class="px-5 py-3 font-mono text-muted">myapp-auth-flow</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs leading-relaxed">myapp-auth-flow.localhost<br>myapp-auth-flow.example.dev</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs leading-relaxed">myapp-auth-flow.prt.dev<br>myapp-auth-flow.example.dev</td>
             </tr>
             <tr>
               <td class="px-5 py-3 font-mono text-white">bugfix/fix_login_crash</td>
               <td class="px-5 py-3 font-mono text-muted">myapp-fix-login-crash</td>
-              <td class="px-5 py-3 font-mono text-muted text-xs leading-relaxed">myapp-fix-login-crash.localhost<br>myapp-fix-login-crash.example.dev</td>
+              <td class="px-5 py-3 font-mono text-muted text-xs leading-relaxed">myapp-fix-login-crash.prt.dev<br>myapp-fix-login-crash.example.dev</td>
             </tr>
           </tbody>
         </table>

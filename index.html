@@ -160,7 +160,7 @@
               <p class="output">Cloned database <span class="highlight">myapp_dev_feature_auth</span></p>
               <p class="output">Wrote <span class="highlight">.env.local</span></p>
               <p class="output">Running setup commands...</p>
-              <p class="output text-accent mt-1">==> https://myapp-feature-auth.localhost</p>
+              <p class="output text-accent mt-1">==> https://myapp-feature-auth.prt.dev</p>
               <p class="output text-muted mt-1">named URL via gtl serve (one-time setup)</p>
             </div>
           </div>
@@ -204,7 +204,7 @@
           </div>
           <div class="border-l-2 border-accent/40 pl-4">
             <p class="text-white font-medium mb-1">Branch URLs for everything else</p>
-            <p class="text-sm text-muted">Your browser uses <code class="text-accent-light">myapp-feature.localhost</code>. Third-party services use port 3000. Both work at the same time.</p>
+            <p class="text-sm text-muted">Your browser uses <code class="text-accent-light">myapp-feature.prt.dev</code>. Third-party services use port 3000. Both work at the same time.</p>
           </div>
         </div>
       </div>
@@ -238,7 +238,7 @@
               <p class="output">Allocated port <span class="highlight">3010</span></p>
               <p class="output">Cloned database <span class="highlight">myapp_dev_feature_auth</span></p>
               <p class="output">Wrote <span class="highlight">.env.local</span></p>
-              <p class="output text-accent">==> https://myapp-feature-auth.localhost</p>
+              <p class="output text-accent">==> https://myapp-feature-auth.prt.dev</p>
               <p class="output text-muted">named URL via gtl serve</p>
             </div>
           </div>
@@ -273,7 +273,7 @@
                 <span class="pipeline-arrow-mobile" aria-hidden="true">&darr;</span>
                 <div class="pipeline-step">
                   <code class="pipeline-url text-white font-mono block leading-snug text-base sm:text-lg">
-                    <span class="pipeline-url-scheme">https://</span><span class="text-accent-light">myapp-feature-auth.localhost</span>
+                    <span class="pipeline-url-scheme">https://</span><span class="text-accent-light">myapp-feature-auth.prt.dev</span>
                   </code>
                   <p class="pipeline-label">HTTPS URL for this branch</p>
                 </div>
@@ -285,7 +285,7 @@
           <p class="text-base uppercase tracking-wider text-accent-light mb-2">Networking</p>
           <h3 class="feature-card-title">The URL follows the branch, not the&nbsp;port.</h3>
           <div class="feature-card-desc">
-            <p>Each branch gets a stable HTTPS address that survives restarts. Port 3000 stays free for <code class="text-accent-light">gtl proxy</code> so OAuth, Stripe, and CORS stay configured to a single origin.</p>
+            <p>Your app still listens on <code class="text-accent-light">localhost:{port}</code> &mdash; but the router gives every branch a named HTTPS URL so you don&rsquo;t need to remember which port is which. Port 3000 stays free for <code class="text-accent-light">gtl proxy</code> so OAuth, Stripe, and CORS stay configured to a single origin.</p>
           </div>
           <a href="/features/networking/" class="feature-card-link">Networking in depth &rarr;</a>
         </div>
@@ -322,7 +322,7 @@
                 </div>
                 <div class="step-item step-item-result">
                   <span class="step-arrow">&rarr;</span>
-                  <span class="step-text font-mono text-accent">https://myapp-pr-42.localhost</span>
+                  <span class="step-text font-mono text-accent">https://myapp-pr-42.prt.dev</span>
                 </div>
                 <p class="step-sequence-footnote">named URL via gtl serve</p>
               </div>

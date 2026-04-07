@@ -68,144 +68,179 @@
     </p>
   </section>
 
-  <section class="px-4 sm:px-6 pb-24 sm:pb-32">
-    <div class="max-w-5xl mx-auto grid sm:grid-cols-2 gap-6 sm:gap-8">
+  <!-- Hero card -->
+  <section class="px-4 sm:px-6 pb-10 sm:pb-14">
+    <a href="/use-cases/first-time-setup/" class="group use-case-hub-card use-case-featured max-w-5xl mx-auto">
+      <div class="use-case-hub-body">
+        <p class="text-xs uppercase tracking-wider text-accent-light mb-3 font-mono">Start here</p>
+        <h2 class="text-white font-mono text-xl sm:text-2xl mb-3 group-hover:text-accent-light transition-colors">First-time setup: a guided&nbsp;tour</h2>
+        <p>Install <code class="text-accent-light">gtl</code>, run <code class="text-accent-light">gtl init</code>, and walk through every section of the config &mdash; ports, databases, env files, commands, hooks, aliases, and editor integration. Ends with your first running worktree.</p>
+      </div>
+      <div class="use-case-hub-meta">
+        <span class="use-case-hub-label">Covers</span>
+        <div class="use-case-hub-tags">
+          <span class="use-case-tag">.treeline.yml</span>
+          <span class="use-case-tag">config.json</span>
+          <span class="use-case-tag">gtl init</span>
+        </div>
+        <span class="use-case-hub-cta">Read the guide &rarr;</span>
+      </div>
+    </a>
+  </section>
 
-      <!-- Featured: start here -->
-      <a href="/use-cases/first-time-setup/" class="group use-case-hub-card use-case-featured">
-        <div class="use-case-hub-body">
-          <p class="text-xs uppercase tracking-wider text-accent-light mb-3 font-mono">Start here</p>
-          <h2 class="text-white font-mono text-xl sm:text-2xl mb-3 group-hover:text-accent-light transition-colors">First-time setup: a guided&nbsp;tour</h2>
-          <p>Install <code class="text-accent-light">gtl</code>, run <code class="text-accent-light">gtl init</code>, and walk through every section of the config &mdash; ports, databases, env files, commands, hooks, aliases, and editor integration. Ends with your first running worktree.</p>
-        </div>
-        <div class="use-case-hub-meta">
-          <span class="use-case-hub-label">Covers</span>
-          <div class="use-case-hub-tags">
-            <span class="use-case-tag">.treeline.yml</span>
-            <span class="use-case-tag">config.json</span>
-            <span class="use-case-tag">gtl init</span>
-          </div>
-          <span class="use-case-hub-cta">Read the guide &rarr;</span>
-        </div>
-      </a>
+  <!-- Scenario cards -->
+  <section class="px-4 sm:px-6 pb-24 sm:pb-32">
+    <div class="max-w-5xl mx-auto">
 
       <!-- Group: Environment isolation -->
       <p class="use-case-group-label">Environment isolation</p>
-
-      <a href="/use-cases/onboarding/" class="group use-case-hub-card">
-        <div class="use-case-hub-body">
-          <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">New developer, one command</h2>
-          <p>The README says &ldquo;run these 14 steps.&rdquo; With <code class="text-accent-light">.treeline.yml</code> in the repo, it says <code class="text-accent-light">gtl new main --start</code>. Ports, database, env file, dependencies, and a running server &mdash; under a minute.</p>
-        </div>
-        <div class="use-case-hub-meta">
-          <span class="use-case-hub-label">Touches</span>
-          <div class="use-case-hub-tags">
-            <span class="use-case-tag">Isolation</span>
-            <span class="use-case-tag">Workflows</span>
-            <span class="use-case-tag">gtl new</span>
+      <div class="grid sm:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
+        <a href="/use-cases/database-per-branch/" class="group use-case-hub-card">
+          <div class="use-case-hub-body">
+            <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Database per branch, no shared state</h2>
+            <p>Two worktrees, same database. One runs a migration, the other breaks. Clone from a PostgreSQL template in seconds, seed from hooks, or copy a SQLite file &mdash; each worktree gets its own data.</p>
           </div>
-          <span class="use-case-hub-cta">Read the scenario &rarr;</span>
-        </div>
-      </a>
-
-      <a href="/use-cases/database-per-branch/" class="group use-case-hub-card">
-        <div class="use-case-hub-body">
-          <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Database per branch, no shared state</h2>
-          <p>Two worktrees, same database. One runs a migration, the other breaks. Clone from a PostgreSQL template in seconds, seed from hooks, or copy a SQLite file &mdash; each worktree gets its own data.</p>
-        </div>
-        <div class="use-case-hub-meta">
-          <span class="use-case-hub-label">Touches</span>
-          <div class="use-case-hub-tags">
-            <span class="use-case-tag">Isolation</span>
-            <span class="use-case-tag">database</span>
-            <span class="use-case-tag">gtl db</span>
+          <div class="use-case-hub-meta">
+            <span class="use-case-hub-label">Touches</span>
+            <div class="use-case-hub-tags">
+              <span class="use-case-tag">Isolation</span>
+              <span class="use-case-tag">database</span>
+              <span class="use-case-tag">gtl db</span>
+            </div>
+            <span class="use-case-hub-cta">Read the scenario &rarr;</span>
           </div>
-          <span class="use-case-hub-cta">Read the scenario &rarr;</span>
-        </div>
-      </a>
+        </a>
 
-      <a href="/use-cases/multi-repo/" class="group use-case-hub-card">
-        <div class="use-case-hub-body">
-          <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Frontend + API, different repos</h2>
-          <p>Your frontend hardcodes a port for the API. Someone re-runs setup, the API moves to a different port, and every frontend worktree breaks. <code class="text-accent-light">{resolve:&hellip;}</code> tracks the right branch automatically.</p>
-        </div>
-        <div class="use-case-hub-meta">
-          <span class="use-case-hub-label">Touches</span>
-          <div class="use-case-hub-tags">
-            <span class="use-case-tag">Isolation</span>
-            <span class="use-case-tag">resolve / link</span>
+        <a href="/use-cases/multi-repo/" class="group use-case-hub-card">
+          <div class="use-case-hub-body">
+            <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Frontend + API, different repos</h2>
+            <p>Your frontend hardcodes a port for the API. Someone re-runs setup, the port moves, and every frontend worktree breaks. <code class="text-accent-light">{resolve:&hellip;}</code> tracks the right branch automatically.</p>
           </div>
-          <span class="use-case-hub-cta">Read the scenario &rarr;</span>
-        </div>
-      </a>
+          <div class="use-case-hub-meta">
+            <span class="use-case-hub-label">Touches</span>
+            <div class="use-case-hub-tags">
+              <span class="use-case-tag">Isolation</span>
+              <span class="use-case-tag">resolve / link</span>
+            </div>
+            <span class="use-case-hub-cta">Read the scenario &rarr;</span>
+          </div>
+        </a>
+      </div>
 
       <!-- Group: Networking -->
       <p class="use-case-group-label">Networking</p>
-
-      <a href="/use-cases/integrations-urls/" class="group use-case-hub-card">
-        <div class="use-case-hub-body">
-          <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Why port 3000 stays free</h2>
-          <p>OAuth, Stripe, Mapbox, and CORS are all registered to <code class="text-accent-light">localhost:3000</code>. A second branch takes that port and every integration breaks. Treeline reserves common ports for <code class="text-accent-light">gtl proxy</code>.</p>
-        </div>
-        <div class="use-case-hub-meta">
-          <span class="use-case-hub-label">Touches</span>
-          <div class="use-case-hub-tags">
-            <span class="use-case-tag">Networking</span>
-            <span class="use-case-tag">proxy</span>
-            <span class="use-case-tag">serve</span>
-            <span class="use-case-tag">tunnel</span>
+      <div class="grid sm:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
+        <a href="/use-cases/integrations-urls/" class="group use-case-hub-card">
+          <div class="use-case-hub-body">
+            <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Why port 3000 stays free</h2>
+            <p>OAuth, Stripe, Mapbox, and CORS are registered to <code class="text-accent-light">localhost:3000</code>. A second branch takes that port and every integration breaks. Treeline reserves common ports for <code class="text-accent-light">gtl proxy</code>.</p>
           </div>
-          <span class="use-case-hub-cta">Read the scenario &rarr;</span>
-        </div>
-      </a>
-
-      <a href="/use-cases/local-services/" class="group use-case-hub-card">
-        <div class="use-case-hub-body">
-          <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Named URLs for local services</h2>
-          <p>Redis Commander on <code class="text-accent-light">:8081</code>, pgAdmin on <code class="text-accent-light">:5050</code>, Mailhog on <code class="text-accent-light">:8025</code>. One command gives each a named HTTPS URL through the same router that serves your branches.</p>
-        </div>
-        <div class="use-case-hub-meta">
-          <span class="use-case-hub-label">Touches</span>
-          <div class="use-case-hub-tags">
-            <span class="use-case-tag">Networking</span>
-            <span class="use-case-tag">serve alias</span>
+          <div class="use-case-hub-meta">
+            <span class="use-case-hub-label">Touches</span>
+            <div class="use-case-hub-tags">
+              <span class="use-case-tag">Networking</span>
+              <span class="use-case-tag">proxy</span>
+              <span class="use-case-tag">serve</span>
+            </div>
+            <span class="use-case-hub-cta">Read the scenario &rarr;</span>
           </div>
-          <span class="use-case-hub-cta">Read the scenario &rarr;</span>
-        </div>
-      </a>
+        </a>
 
-      <!-- Group: Team & automation -->
-      <p class="use-case-group-label">Team &amp; automation</p>
-
-      <a href="/use-cases/platform-pr/" class="group use-case-hub-card">
-        <div class="use-case-hub-body">
-          <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Product and QA on a PR branch</h2>
-          <p>Stakeholders need a running app without cloning the repo or waiting on staging. <code class="text-accent-light">gtl review</code> stands up an isolated worktree with a branch URL. <code class="text-accent-light">gtl release</code> frees resources when review ends.</p>
-        </div>
-        <div class="use-case-hub-meta">
-          <span class="use-case-hub-label">Touches</span>
-          <div class="use-case-hub-tags">
-            <span class="use-case-tag">Workflows</span>
-            <span class="use-case-tag">Networking</span>
+        <a href="/use-cases/local-services/" class="group use-case-hub-card">
+          <div class="use-case-hub-body">
+            <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Named URLs for local services</h2>
+            <p>Redis Commander on <code class="text-accent-light">:8081</code>, pgAdmin on <code class="text-accent-light">:5050</code>, Mailhog on <code class="text-accent-light">:8025</code>. One command gives each a named HTTPS URL through the same router that serves your branches.</p>
           </div>
-          <span class="use-case-hub-cta">Read the scenario &rarr;</span>
-        </div>
-      </a>
-
-      <a href="/use-cases/agents-automation/" class="group use-case-hub-card">
-        <div class="use-case-hub-body">
-          <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Agents, scripts, CI</h2>
-          <p>Automation should not scrape <code class="text-white">gtl status</code> output. MCP, <code class="text-accent-light">--json</code> flags, and <code class="text-accent-light">gtl start --await</code> expose ports, env, and teardown as structured contracts.</p>
-        </div>
-        <div class="use-case-hub-meta">
-          <span class="use-case-hub-label">Touches</span>
-          <div class="use-case-hub-tags">
-            <span class="use-case-tag">AI Agents</span>
-            <span class="use-case-tag">Isolation</span>
+          <div class="use-case-hub-meta">
+            <span class="use-case-hub-label">Touches</span>
+            <div class="use-case-hub-tags">
+              <span class="use-case-tag">Networking</span>
+              <span class="use-case-tag">serve alias</span>
+            </div>
+            <span class="use-case-hub-cta">Read the scenario &rarr;</span>
           </div>
-          <span class="use-case-hub-cta">Read the scenario &rarr;</span>
+        </a>
+      </div>
+
+      <!-- Group: Team & onboarding -->
+      <p class="use-case-group-label">Team &amp; onboarding</p>
+      <div class="use-case-carousel">
+        <div class="use-case-carousel-track" id="team-carousel">
+          <a href="/use-cases/onboarding/" class="group use-case-hub-card">
+            <div class="use-case-hub-body">
+              <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">New developer, one command</h2>
+              <p>The README says &ldquo;run these 14 steps.&rdquo; With <code class="text-accent-light">.treeline.yml</code> in the repo, it says <code class="text-accent-light">gtl new main --start</code>. Ports, database, env file, dependencies, and a running server &mdash; under a minute.</p>
+            </div>
+            <div class="use-case-hub-meta">
+              <span class="use-case-hub-label">Touches</span>
+              <div class="use-case-hub-tags">
+                <span class="use-case-tag">Isolation</span>
+                <span class="use-case-tag">Workflows</span>
+                <span class="use-case-tag">gtl new</span>
+              </div>
+              <span class="use-case-hub-cta">Read the scenario &rarr;</span>
+            </div>
+          </a>
+
+          <a href="/use-cases/platform-pr/" class="group use-case-hub-card">
+            <div class="use-case-hub-body">
+              <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Product and QA on a PR branch</h2>
+              <p>Stakeholders need a running app without cloning the repo or waiting on staging. <code class="text-accent-light">gtl review</code> stands up an isolated worktree with a branch URL. <code class="text-accent-light">gtl release</code> frees resources when review ends.</p>
+            </div>
+            <div class="use-case-hub-meta">
+              <span class="use-case-hub-label">Touches</span>
+              <div class="use-case-hub-tags">
+                <span class="use-case-tag">Workflows</span>
+                <span class="use-case-tag">Networking</span>
+              </div>
+              <span class="use-case-hub-cta">Read the scenario &rarr;</span>
+            </div>
+          </a>
+
+          <a href="/use-cases/agents-automation/" class="group use-case-hub-card">
+            <div class="use-case-hub-body">
+              <h2 class="text-white font-mono text-lg mb-3 group-hover:text-accent-light transition-colors">Agents, scripts, CI</h2>
+              <p>Automation should not scrape <code class="text-white">gtl status</code> output. MCP, <code class="text-accent-light">--json</code> flags, and <code class="text-accent-light">gtl start --await</code> expose ports, env, and teardown as structured contracts.</p>
+            </div>
+            <div class="use-case-hub-meta">
+              <span class="use-case-hub-label">Touches</span>
+              <div class="use-case-hub-tags">
+                <span class="use-case-tag">AI Agents</span>
+                <span class="use-case-tag">Isolation</span>
+              </div>
+              <span class="use-case-hub-cta">Read the scenario &rarr;</span>
+            </div>
+          </a>
         </div>
-      </a>
+        <button class="use-case-carousel-btn use-case-carousel-prev" id="team-prev" hidden aria-label="Previous">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <button class="use-case-carousel-btn use-case-carousel-next" id="team-next" aria-label="Next">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+      <script>
+        (function() {
+          var track = document.getElementById('team-carousel');
+          var prev = document.getElementById('team-prev');
+          var next = document.getElementById('team-next');
+          function updateArrows() {
+            prev.hidden = track.scrollLeft < 10;
+            next.hidden = track.scrollLeft + track.clientWidth >= track.scrollWidth - 10;
+          }
+          prev.addEventListener('click', function() {
+            var card = track.querySelector('.use-case-hub-card');
+            track.scrollBy({ left: -(card.offsetWidth + 24), behavior: 'smooth' });
+          });
+          next.addEventListener('click', function() {
+            var card = track.querySelector('.use-case-hub-card');
+            track.scrollBy({ left: card.offsetWidth + 24, behavior: 'smooth' });
+          });
+          track.addEventListener('scroll', updateArrows, { passive: true });
+          window.addEventListener('resize', updateArrows);
+          updateArrows();
+        })();
+      </script>
 
     </div>
   </section>

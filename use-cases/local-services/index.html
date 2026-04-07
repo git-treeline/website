@@ -83,13 +83,13 @@
       </div>
       <div class="terminal-body space-y-2">
         <p><span class="prompt">$</span> <span class="command">gtl serve alias redis-ui 8081</span></p>
-        <p class="output">Alias redis-ui.localhost &rarr; :8081</p>
+        <p class="output">Alias redis-ui.prt.dev &rarr; :8081</p>
         <p class="output">The router will pick this up on next refresh (~5s).</p>
       </div>
     </div>
 
     <p class="text-muted mb-4">
-      That&rsquo;s it. Open <code class="text-white">https://redis-ui.localhost</code> in your browser &mdash; trusted HTTPS, no port number, same certificate authority as your branch URLs.
+      That&rsquo;s it. Open <code class="text-white">https://redis-ui.prt.dev</code> in your browser &mdash; trusted HTTPS, no port number, same certificate authority as your branch URLs.
     </p>
 
     <div class="terminal mb-6">
@@ -167,7 +167,7 @@
     </div>
 
     <p class="text-muted mb-4">
-      After any teammate runs <code class="text-accent-light">gtl setup</code> or creates a worktree with <code class="text-accent-light">gtl new</code>, the router learns these aliases within ~5 seconds. Everyone on the team gets <code class="text-white">https://mailhog.localhost</code> and <code class="text-white">https://sidekiq.localhost</code> without any per-machine configuration.
+      After any teammate runs <code class="text-accent-light">gtl setup</code> or creates a worktree with <code class="text-accent-light">gtl new</code>, the router learns these aliases within ~5 seconds. Everyone on the team gets <code class="text-white">https://mailhog.prt.dev</code> and <code class="text-white">https://sidekiq.prt.dev</code> without any per-machine configuration.
     </p>
     <p class="text-muted mb-8">
       This is the key difference: <strong class="text-white">personal aliases live in your user config and travel with you</strong>. <strong class="text-white">Project aliases live in <code class="text-accent-light">.treeline.yml</code> and travel with the repo.</strong> The router merges both.
@@ -187,13 +187,13 @@
         <p class="output">Port forwarding: active (443 &rarr; router)</p>
         <p class="output"></p>
         <p class="output">Routes (5):</p>
-        <p class="output">&nbsp; https://<span class="highlight">myapp-main</span>.localhost &rarr; :3002</p>
-        <p class="output">&nbsp; https://<span class="highlight">myapp-feature-auth</span>.localhost &rarr; :3012</p>
+        <p class="output">&nbsp; https://<span class="highlight">myapp-main</span>.prt.dev &rarr; :3002</p>
+        <p class="output">&nbsp; https://<span class="highlight">myapp-feature-auth</span>.prt.dev &rarr; :3012</p>
         <p class="output"></p>
         <p class="output">Aliases (3):</p>
-        <p class="output">&nbsp; https://<span class="text-accent-light">mailhog</span>.localhost &rarr; :8025 <span class="text-muted">(project)</span></p>
-        <p class="output">&nbsp; https://<span class="text-accent-light">sidekiq</span>.localhost &rarr; :9292 <span class="text-muted">(project)</span></p>
-        <p class="output">&nbsp; https://<span class="text-accent-light">grafana</span>.localhost &rarr; :3100 <span class="text-muted">(user)</span></p>
+        <p class="output">&nbsp; https://<span class="text-accent-light">mailhog</span>.prt.dev &rarr; :8025 <span class="text-muted">(project)</span></p>
+        <p class="output">&nbsp; https://<span class="text-accent-light">sidekiq</span>.prt.dev &rarr; :9292 <span class="text-muted">(project)</span></p>
+        <p class="output">&nbsp; https://<span class="text-accent-light">grafana</span>.prt.dev &rarr; :3100 <span class="text-muted">(user)</span></p>
       </div>
     </div>
 

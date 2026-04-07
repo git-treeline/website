@@ -181,7 +181,7 @@
 
 <span class="text-muted"># --- Editor ---</span>
 <span class="text-accent-light">editor</span>:
-  <span class="text-accent-light">title</span>: "{project} ({branch}) &mdash; :{port}"
+  <span class="text-accent-light">title</span>: "{project} ({branch}) &mdash; {url}"
   <span class="text-accent-light">color</span>: auto
   <span class="text-accent-light">theme</span>: GitHub Dark</code></pre>
       </div>
@@ -190,7 +190,7 @@
     <!-- 3a. Identity -->
     <h3 class="text-white font-mono text-lg mb-3 mt-10">project</h3>
     <p class="text-muted mb-4">
-      The name used in the registry, in branch URLs (<code class="text-white">myapp-feature-auth.localhost</code>), and as a namespace for port reservations. Defaults to the directory name. Most projects never change this.
+      The name used in the registry, in branch URLs (<code class="text-white">myapp-feature-auth.prt.dev</code>), and as a namespace for port reservations. Defaults to the directory name. Most projects never change this.
     </p>
 
     <h3 class="text-white font-mono text-lg mb-3 mt-8">merge_target</h3>
@@ -357,7 +357,7 @@
     <!-- 3h. Aliases -->
     <h3 class="text-white font-mono text-lg mb-3">aliases</h3>
     <p class="text-muted mb-8">
-      Project-level service aliases for the HTTPS router. If your team runs Mailhog on <code class="text-white">:8025</code> and Sidekiq web on <code class="text-white">:9292</code>, define them here and everyone gets <code class="text-white">https://mailhog.localhost</code> and <code class="text-white">https://sidekiq.localhost</code> automatically. For personal tools, use <code class="text-accent-light">gtl serve alias</code> instead. See <a href="/use-cases/local-services/" class="text-accent-light hover:text-accent underline underline-offset-2">Named URLs for local services</a>.
+      Project-level service aliases for the HTTPS router. If your team runs Mailhog on <code class="text-white">:8025</code> and Sidekiq web on <code class="text-white">:9292</code>, define them here and everyone gets <code class="text-white">https://mailhog.prt.dev</code> and <code class="text-white">https://sidekiq.prt.dev</code> automatically. For personal tools, use <code class="text-accent-light">gtl serve alias</code> instead. See <a href="/use-cases/local-services/" class="text-accent-light hover:text-accent underline underline-offset-2">Named URLs for local services</a>.
     </p>
 
     <!-- 3i. Editor -->
@@ -366,7 +366,7 @@
       Optional visual cues so you can tell worktree windows apart at a glance:
     </p>
     <ul class="text-muted space-y-2 list-disc pl-5 mb-8">
-      <li><strong class="text-white">title:</strong> window/tab title template. Supports <code class="text-accent-light">{project}</code>, <code class="text-accent-light">{branch}</code>, <code class="text-accent-light">{port}</code> tokens. Works with VS Code and Cursor.</li>
+      <li><strong class="text-white">title:</strong> window/tab title template. Supports <code class="text-accent-light">{project}</code>, <code class="text-accent-light">{branch}</code>, <code class="text-accent-light">{port}</code>, <code class="text-accent-light">{url}</code>, <code class="text-accent-light">{router_url}</code> tokens. Works with VS Code and Cursor.</li>
       <li><strong class="text-white">color:</strong> title/status bar color. Set <code class="text-accent-light">"auto"</code> for a deterministic color derived from the branch name, or a hex value like <code class="text-white">"#1a5276"</code>.</li>
       <li><strong class="text-white">theme:</strong> full IDE theme override per worktree (e.g. <code class="text-white">"Monokai"</code>, <code class="text-white">"GitHub Dark"</code>).</li>
     </ul>
@@ -397,7 +397,7 @@
         <pre class="m-0 text-sm leading-relaxed font-mono"><code>{
   "<span class="text-accent-light">port</span>": {
     "<span class="text-accent-light">base</span>": 3002,
-    "<span class="text-accent-light">increment</span>": 10,
+    "<span class="text-accent-light">increment</span>": 2,
     "<span class="text-accent-light">reservations</span>": {
       "<span class="text-white">myapp</span>": 3010,
       "<span class="text-white">myapp/staging</span>": 3020
@@ -468,7 +468,7 @@
         <p class="output">Wrote <span class="highlight">.env.local</span></p>
         <p class="output">Running setup: bundle install --quiet</p>
         <p class="output">Running setup: yarn install --silent</p>
-        <p class="output text-accent">==> https://myapp-feature-auth.localhost</p>
+        <p class="output text-accent">==> https://myapp-feature-auth.prt.dev</p>
         <p class="output">Starting: bin/dev (port 3002)</p>
       </div>
     </div>
