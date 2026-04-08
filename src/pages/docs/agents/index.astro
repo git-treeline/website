@@ -6,7 +6,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
 
 <DocsLayout
   title="AI agents — Git Treeline"
-  description="Set up Git Treeline for AI coding agents: lifecycle hooks, structured output, MCP server, agent context files, and port discovery."
+  description="Set up Git Treeline for AI coding agents: MCP server with read and write tools, structured output, lifecycle hooks, and agent context files."
   canonical="https://git-treeline.dev/docs/agents/"
   activePage="agents"
 >
@@ -17,15 +17,137 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       <span class="text-white">AI agents</span>
     </nav>
     <h1 class="text-3xl sm:text-4xl md:text-5xl font-mono font-bold text-white tracking-tight mb-4">
-      AI agent setup
+      AI agent integration
     </h1>
     <p class="text-base sm:text-lg text-muted max-w-2xl mb-12">
-      Lifecycle hooks, structured output, MCP server, and auto-generated context files. See the <a href="/features/agents/" class="text-accent-light hover:text-accent underline underline-offset-2">AI Agents feature page</a> for use cases and integration patterns.
+      The MCP server exposes the full GTL toolset to AI agents: query allocations, provision worktrees, manage cross-service links, and control the dev server. Agents work with real allocations instead of guessing. See the <a href="/features/agents/" class="text-accent-light hover:text-accent underline underline-offset-2">AI Agents feature page</a> for use cases.
+    </p>
+
+    <h2 id="mcp-server">MCP server</h2>
+    <p>
+      Git Treeline ships a built-in <a href="https://modelcontextprotocol.io" class="text-accent-light hover:text-accent underline underline-offset-2">Model Context Protocol</a> server. Agents in Cursor, Claude Code, Windsurf, and other MCP-compatible editors call tools directly instead of parsing shell output.
+    </p>
+    <p class="mb-6">
+      Add it to your editor's MCP configuration:
+    </p>
+    <div class="mb-8">
+      <Terminal>
+        <pre class="text-sm">{'{'}
+  &quot;<span class="text-accent-light">mcpServers</span>&quot;: {'{'}
+    &quot;<span class="text-white">gtl</span>&quot;: {'{'}
+      &quot;<span class="text-accent-light">command</span>&quot;: &quot;<span class="text-white">gtl</span>&quot;,
+      &quot;<span class="text-accent-light">args</span>&quot;: [&quot;<span class="text-white">mcp</span>&quot;]
+    {'}'}
+  {'}'}
+{'}'}</pre>
+      </Terminal>
+    </div>
+
+    <h3>Query tools</h3>
+    <p class="mb-4">Read allocation state, configuration, and routing.</p>
+    <div class="overflow-x-auto mb-8">
+      <table class="w-full text-sm border border-surface-border rounded-lg overflow-hidden">
+        <thead>
+          <tr class="border-b border-surface-border">
+            <th class="text-left px-5 py-3 text-muted">Tool</th>
+            <th class="text-left px-5 py-3 text-muted">Description</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-border">
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>status</code></td><td class="px-5 py-3 text-muted">Full allocation: ports, database, branch, links, supervisor state, listening status</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>list</code></td><td class="px-5 py-3 text-muted">All active allocations across all projects (optionally filter by project)</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>port</code></td><td class="px-5 py-3 text-muted">Get the primary allocated port for a worktree</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>db_name</code></td><td class="px-5 py-3 text-muted">Get the allocated database name</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>routes</code></td><td class="px-5 py-3 text-muted">Routing URLs for each allocated port (HTTPS via router or localhost fallback)</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>resolve</code></td><td class="px-5 py-3 text-muted">Look up another project's URL (same-branch matching, respects link overrides)</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>env</code></td><td class="px-5 py-3 text-muted">Resolved env vars with metadata on which keys GTL manages</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>where</code></td><td class="px-5 py-3 text-muted">Find the filesystem path of a worktree by branch name</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>doctor</code></td><td class="px-5 py-3 text-muted">Health diagnostics: config, allocation, port availability, runtime state</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>config_get</code></td><td class="px-5 py-3 text-muted">Read a config value by dotted key path (project or user scope)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Provisioning tools</h3>
+    <p class="mb-4">Create worktrees, allocate resources, and manage configuration.</p>
+    <div class="overflow-x-auto mb-8">
+      <table class="w-full text-sm border border-surface-border rounded-lg overflow-hidden">
+        <thead>
+          <tr class="border-b border-surface-border">
+            <th class="text-left px-5 py-3 text-muted">Tool</th>
+            <th class="text-left px-5 py-3 text-muted">Description</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-border">
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>new</code></td><td class="px-5 py-3 text-muted">Create a git worktree and run full setup in one step (ports, DB, env)</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>setup</code></td><td class="px-5 py-3 text-muted">Allocate resources for an existing worktree (idempotent)</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>link</code></td><td class="px-5 py-3 text-muted">Override cross-service resolution (point {'{'}resolve:project{'}'} at a specific branch)</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>unlink</code></td><td class="px-5 py-3 text-muted">Remove a link override, revert to same-branch matching</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>env_sync</code></td><td class="px-5 py-3 text-muted">Re-sync the env file from .treeline.yml (re-resolves all tokens)</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>config_set</code></td><td class="px-5 py-3 text-muted">Set a user-level config value</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Supervisor control</h3>
+    <p class="mb-4">Manage the dev server process.</p>
+    <div class="overflow-x-auto mb-8">
+      <table class="w-full text-sm border border-surface-border rounded-lg overflow-hidden">
+        <thead>
+          <tr class="border-b border-surface-border">
+            <th class="text-left px-5 py-3 text-muted">Tool</th>
+            <th class="text-left px-5 py-3 text-muted">Description</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-border">
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>start</code></td><td class="px-5 py-3 text-muted">Start or resume the supervised dev server</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>stop</code></td><td class="px-5 py-3 text-muted">Stop the dev server (supervisor stays alive for quick resume)</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>restart</code></td><td class="px-5 py-3 text-muted">Restart the dev server (re-evaluates env including resolve links)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Resources</h3>
+    <p>
+      The MCP server also exposes read-only resources:
+    </p>
+    <div class="overflow-x-auto mb-4">
+      <table class="w-full text-sm border border-surface-border rounded-lg overflow-hidden">
+        <thead>
+          <tr class="border-b border-surface-border">
+            <th class="text-left px-5 py-3 text-muted">URI</th>
+            <th class="text-left px-5 py-3 text-muted">Description</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-border">
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>gtl://allocations</code></td><td class="px-5 py-3 text-muted">Full allocation registry across all projects</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>gtl://config/user</code></td><td class="px-5 py-3 text-muted">User-level git-treeline configuration</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="mb-8">
+      Every tool accepts an optional <code class="text-accent-light">path</code> argument. When omitted, the server uses the agent's current working directory.
+    </p>
+
+    <h2>Autonomous worktree provisioning</h2>
+    <p>
+      With <code class="text-accent-light">new</code> and <code class="text-accent-light">setup</code> exposed via MCP, agents can provision worktrees without shell commands:
+    </p>
+    <div class="mb-4">
+      <Terminal label="MCP tool call">
+        <pre class="text-sm"><span class="text-accent-light">tool</span><span class="text-muted">:</span> <span class="text-white">new</span>
+<span class="text-accent-light">args</span><span class="text-muted">:</span>
+  <span class="text-accent-light">branch</span><span class="text-muted">:</span> <span class="text-white">fix-auth-bug</span>
+  <span class="text-accent-light">base</span><span class="text-muted">:</span> <span class="text-white">main</span></pre>
+      </Terminal>
+    </div>
+    <p class="mb-8">
+      This creates the worktree, allocates ports, clones the database (if configured), writes the env file, and returns the allocated resources. The agent gets structured JSON with the URL, port, and database name to use immediately.
     </p>
 
     <h2>Lifecycle hooks</h2>
     <p>
-      Map these to your agent orchestrator's worktree creation and teardown events:
+      For orchestrators that manage worktrees at a higher level, the CLI commands remain the integration points:
     </p>
     <div class="mb-8">
       <Terminal>
@@ -48,22 +170,9 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       </Terminal>
     </div>
 
-    <h2>Orchestrator config</h2>
-    <p>
-      If your orchestrator uses a JSON config for lifecycle hooks:
-    </p>
-    <div class="mb-8">
-      <Terminal>
-        <pre class="text-sm">{'{'}
-  &quot;<span class="text-accent-light">setup</span>&quot;: &quot;<span class="text-white">gtl setup .</span>&quot;,
-  &quot;<span class="text-accent-light">archive</span>&quot;: &quot;<span class="text-white">gtl release . --drop-db</span>&quot;
-{'}'}</pre>
-      </Terminal>
-    </div>
-
     <h2>Structured output</h2>
     <p>
-      Use <code class="text-accent-light">--json</code> on any read command for machine-parseable output:
+      For agents that do not use MCP, use <code class="text-accent-light">--json</code> on any read command:
     </p>
     <div class="mb-8">
       <Terminal>
@@ -72,27 +181,29 @@ import DocsPagination from '../../../components/DocsPagination.astro';
             <span class="text-accent-light">$</span>{' '}
             <span class="text-white">gtl status --json</span>
           </p>
-          <pre class="text-muted mt-2">[{'{'}
-  &quot;<span class="text-white">worktree</span>&quot;: &quot;<span class="text-accent">agent-task-42</span>&quot;,
-  &quot;<span class="text-white">port</span>&quot;: <span class="text-accent">3010</span>,
-  &quot;<span class="text-white">database</span>&quot;: &quot;<span class="text-accent">myapp_dev_task_42</span>&quot;,
-  &quot;<span class="text-white">redis_prefix</span>&quot;: &quot;<span class="text-accent">myapp:task-42</span>&quot;
-{'}'}]</pre>
+          <pre class="text-muted mt-2">{'{'}
+  &quot;<span class="text-white">worktree</span>&quot;: &quot;<span class="text-accent">/code/myapp-fix-auth</span>&quot;,
+  &quot;<span class="text-white">branch</span>&quot;: &quot;<span class="text-accent">fix-auth-bug</span>&quot;,
+  &quot;<span class="text-white">ports</span>&quot;: [<span class="text-accent">3010</span>],
+  &quot;<span class="text-white">database</span>&quot;: &quot;<span class="text-accent">myapp_dev_fix_auth</span>&quot;,
+  &quot;<span class="text-white">listening</span>&quot;: <span class="text-accent">true</span>,
+  &quot;<span class="text-white">supervisor</span>&quot;: &quot;<span class="text-accent">running</span>&quot;
+{'}'}</pre>
         </div>
       </Terminal>
     </div>
 
     <h2>Agent context file</h2>
     <p>
-      <code class="text-accent-light">gtl init</code> writes a treeline section to <code class="text-accent-light">AGENTS.md</code> (created if it doesn't exist, appended otherwise). If <code class="text-accent-light">CLAUDE.md</code> exists but <code class="text-accent-light">AGENTS.md</code> doesn't, it appends there instead. The section tells agents to use <code class="text-accent-light">gtl port</code> for port discovery and lists the allocated env vars.
+      <code class="text-accent-light">gtl init</code> writes a treeline section to <code class="text-accent-light">AGENTS.md</code> (created if missing, appended otherwise). If <code class="text-accent-light">CLAUDE.md</code> exists but <code class="text-accent-light">AGENTS.md</code> doesn't, it appends there instead. The section tells agents about port discovery, server management, and available MCP tools.
     </p>
     <p class="mb-8">
-      <code class="text-accent-light">AGENTS.md</code> is read by any MCP-compatible editor, so one file covers them all. Use <code class="text-accent-light">--skip-agent-config</code> on <code class="text-accent-light">gtl init</code> to opt out.
+      Use <code class="text-accent-light">--skip-agent-config</code> on <code class="text-accent-light">gtl init</code> to opt out.
     </p>
 
     <h2>Port discovery</h2>
     <p>
-      Agents can query the allocated port programmatically:
+      Agents can query the allocated port via MCP (<code class="text-accent-light">port</code> tool) or shell:
     </p>
     <div class="mb-8">
       <Terminal>
@@ -100,71 +211,6 @@ import DocsPagination from '../../../components/DocsPagination.astro';
 <span class="text-white">curl http://localhost:$PORT/health</span></pre>
       </Terminal>
     </div>
-
-    <h2 id="mcp-server">MCP server</h2>
-    <p>
-      Git Treeline ships a built-in <a href="https://modelcontextprotocol.io" class="text-accent-light hover:text-accent underline underline-offset-2">Model Context Protocol</a> server. Agents in Cursor, Claude Code, Windsurf, and other MCP-compatible editors get native tool access with no shell commands or output parsing.
-    </p>
-    <p class="mb-6">
-      Add it to your editor's MCP configuration:
-    </p>
-    <div class="mb-8">
-      <Terminal>
-        <pre class="text-sm">{'{'}
-  &quot;<span class="text-accent-light">mcpServers</span>&quot;: {'{'}
-    &quot;<span class="text-white">gtl</span>&quot;: {'{'}
-      &quot;<span class="text-accent-light">command</span>&quot;: &quot;<span class="text-white">gtl</span>&quot;,
-      &quot;<span class="text-accent-light">args</span>&quot;: [&quot;<span class="text-white">mcp</span>&quot;]
-    {'}'}
-  {'}'}
-{'}'}</pre>
-      </Terminal>
-    </div>
-
-    <h3>Available tools</h3>
-    <div class="overflow-x-auto mb-8">
-      <table class="w-full text-sm border border-surface-border rounded-lg overflow-hidden">
-        <thead>
-          <tr class="border-b border-surface-border">
-            <th class="text-left px-5 py-3 text-muted">Tool</th>
-            <th class="text-left px-5 py-3 text-muted">Description</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-surface-border">
-          <tr><td class="px-5 py-3 font-mono text-xs"><code>status</code></td><td class="px-5 py-3 text-muted">Allocation for a worktree: port, database, branch, supervisor state</td></tr>
-          <tr><td class="px-5 py-3 font-mono text-xs"><code>list</code></td><td class="px-5 py-3 text-muted">All active allocations across all projects</td></tr>
-          <tr><td class="px-5 py-3 font-mono text-xs"><code>start</code></td><td class="px-5 py-3 text-muted">Start or resume the supervised dev server</td></tr>
-          <tr><td class="px-5 py-3 font-mono text-xs"><code>stop</code></td><td class="px-5 py-3 text-muted">Stop the dev server (supervisor stays alive for resume)</td></tr>
-          <tr><td class="px-5 py-3 font-mono text-xs"><code>restart</code></td><td class="px-5 py-3 text-muted">Restart the dev server</td></tr>
-          <tr><td class="px-5 py-3 font-mono text-xs"><code>port</code></td><td class="px-5 py-3 text-muted">Get the allocated port for a worktree</td></tr>
-          <tr><td class="px-5 py-3 font-mono text-xs"><code>db_name</code></td><td class="px-5 py-3 text-muted">Get the database name for a worktree</td></tr>
-          <tr><td class="px-5 py-3 font-mono text-xs"><code>doctor</code></td><td class="px-5 py-3 text-muted">Run project health diagnostics</td></tr>
-          <tr><td class="px-5 py-3 font-mono text-xs"><code>config_get</code></td><td class="px-5 py-3 text-muted">Read a configuration value by dotted key path (project or user scope)</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <h3>Resources</h3>
-    <p>
-      The MCP server also exposes read-only resources that agents can inspect:
-    </p>
-    <div class="overflow-x-auto mb-4">
-      <table class="w-full text-sm border border-surface-border rounded-lg overflow-hidden">
-        <thead>
-          <tr class="border-b border-surface-border">
-            <th class="text-left px-5 py-3 text-muted">URI</th>
-            <th class="text-left px-5 py-3 text-muted">Description</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-surface-border">
-          <tr><td class="px-5 py-3 font-mono text-xs"><code>gtl://config/user</code></td><td class="px-5 py-3 text-muted">User-level git-treeline configuration</td></tr>
-          <tr><td class="px-5 py-3 font-mono text-xs"><code>gtl://allocations</code></td><td class="px-5 py-3 text-muted">Full allocation registry across all projects</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p>
-      Every tool accepts an optional <code class="text-accent-light">path</code> argument. When omitted, the server uses the agent's current working directory.
-    </p>
 
     <DocsPagination
       prev={{ href: "/docs/supervisor/", label: "Supervisor" }}

@@ -285,6 +285,19 @@ import DocsPagination from '../../../components/DocsPagination.astro';
             >.
           </p>
         </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">routes</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--json</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Print the routing URLs for all allocated ports. Shows HTTPS URLs via the router when running, otherwise localhost fallback. Also shows the tunnel URL if configured.
+          </p>
+        </div>
       </div>
     </div>
 
@@ -615,7 +628,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           <span class="font-mono text-white text-base font-semibold">mcp</span>
           <p class="text-base text-muted mt-2">
             Start the MCP server (stdio transport). Used by editors, not invoked directly. See <a
-              href="/docs/#mcp-server"
+              href="/docs/agents/#mcp-server"
               class="text-accent-light hover:text-accent underline underline-offset-2">MCP setup</a
             >.
           </p>
