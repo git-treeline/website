@@ -1,0 +1,212 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import Terminal from '../../../components/Terminal.astro';
+import DocsPagination from '../../../components/DocsPagination.astro';
+---
+
+<DocsLayout
+  title="Getting started — Git Treeline"
+  description="Install Git Treeline, set up the HTTPS router, initialize your first project, and create a worktree in under five minutes."
+  canonical="https://git-treeline.dev/docs/getting-started/"
+  activePage="getting-started"
+>
+  <div class="docs-guide pt-20 sm:pt-24 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-0">
+    <nav class="text-sm text-muted mb-6">
+      <a href="/docs/" class="hover:text-white transition-colors">Docs</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-white">Getting started</span>
+    </nav>
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-mono font-bold text-white tracking-tight mb-4">
+      Getting started
+    </h1>
+    <p class="text-base sm:text-lg text-muted max-w-2xl mb-12">
+      Git Treeline is a <strong class="text-white">worktree provisioner</strong>: a single CLI that declaratively provisions ports, databases, routing, env files, editor config, and lifecycle hooks for every git worktree. Nothing from Treeline runs inside your app's process or bundle. It writes per-worktree env at setup time.
+    </p>
+
+    <h2>Install</h2>
+    <p>Homebrew (macOS and Linux):</p>
+    <div class="mb-6">
+      <Terminal>
+        <div class="space-y-2">
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">brew install git-treeline/tap/git-treeline</span>
+          </p>
+        </div>
+      </Terminal>
+    </div>
+    <p>Go install:</p>
+    <div class="mb-6">
+      <Terminal>
+        <div class="space-y-2">
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">go install github.com/git-treeline/git-treeline@latest</span>
+          </p>
+        </div>
+      </Terminal>
+    </div>
+    <p class="mb-10">
+      Or download a binary from the <a
+        href="https://github.com/git-treeline/git-treeline/releases"
+        class="text-accent-light hover:text-accent underline underline-offset-2">releases page</a>.
+      The binary installs as <code class="text-accent-light">git-treeline</code> with a short alias <code class="text-accent-light">gtl</code>. It also works as <code class="text-accent-light">git treeline</code>.
+    </p>
+
+    <h2>Local HTTPS router</h2>
+    <p>
+      Run this once after install. It sets up a background router and trusts a local certificate authority so browsers accept HTTPS for your router domain without warnings. New installs use <code class="text-accent-light">prt.dev</code> by default (wildcard DNS to 127.0.0.1).
+    </p>
+    <div class="mb-6">
+      <Terminal>
+        <div class="space-y-2">
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl serve install</span>
+          </p>
+        </div>
+      </Terminal>
+    </div>
+    <p>
+      The CLI prints what each <code class="text-white">sudo</code> prompt is for before asking. Typically two separate steps, each of which may request your password:
+    </p>
+    <ul class="text-muted space-y-2 mb-4 list-disc pl-5">
+      <li>
+        <strong class="text-white">Trust the local CA</strong> in the system keychain so Chrome, Safari, and Firefox accept HTTPS.
+      </li>
+      <li>
+        <strong class="text-white">Port forwarding</strong> so port 443 forwards to the router (no explicit port in URLs).
+      </li>
+    </ul>
+    <p>
+      The installer registers a persistent service (e.g. launchd on macOS) so the router survives reboots. Check status any time with <code class="text-accent-light">gtl serve status</code>.
+    </p>
+    <p class="mb-10">
+      <code class="text-accent-light">gtl serve</code> is not supported on native Windows yet (WSL works). See the <a href="/docs/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking guide</a> for the full picture on routing, proxy, tunnel, and share.
+    </p>
+
+    <h2>Initialize a project</h2>
+    <div class="mb-6">
+      <Terminal>
+        <div class="space-y-2">
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">cd ~/myapp</span>
+          </p>
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl init --project myapp</span>
+          </p>
+          <p class="text-muted">
+            Detected <span class="text-accent">Rails</span> project
+          </p>
+          <p class="text-muted">
+            Wrote <span class="text-accent">.treeline.yml</span>
+          </p>
+          <p class="text-muted">
+            Wrote <span class="text-accent">AGENTS.md</span> (treeline section)
+          </p>
+        </div>
+      </Terminal>
+    </div>
+    <p class="mb-10">
+      <code class="text-accent-light">gtl init</code> auto-detects your framework (Rails, Next.js, Vite, Express, Python, Rust, Go) and generates a tailored <code class="text-accent-light">.treeline.yml</code> with commented-out optional config so available features are discoverable. It also writes a treeline section to <code class="text-accent-light">AGENTS.md</code> so MCP-compatible editors know to use <code class="text-accent-light">gtl port</code>. Pass <code class="text-accent-light">--skip-agent-config</code> to skip the agent context file.
+    </p>
+
+    <h2>Create your first worktree</h2>
+    <div class="mb-6">
+      <Terminal>
+        <div class="space-y-2">
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl new feature-auth</span>
+          </p>
+          <p class="text-muted">
+            Creating worktree <span class="text-accent">feature-auth</span>
+          </p>
+          <p class="text-muted">
+            Allocated port <span class="text-accent">3010</span>
+          </p>
+          <p class="text-muted">
+            Cloned database <span class="text-accent">myapp_dev_feature_auth</span>
+          </p>
+          <p class="text-muted">
+            Wrote <span class="text-accent">.env.local</span>
+          </p>
+          <p class="text-muted">Running setup commands&hellip;</p>
+          <p class="text-muted text-accent mt-1">Ready. Start your server in this worktree.</p>
+        </div>
+      </Terminal>
+    </div>
+    <p class="mb-10">
+      Add <code class="text-accent-light">--start</code> to boot the app immediately after setup. Every worktree gets its own port, database, env file, and HTTPS URL automatically.
+    </p>
+
+    <h2>Review a GitHub PR</h2>
+    <div class="mb-6">
+      <Terminal>
+        <div class="space-y-2">
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl review 42 --start</span>
+          </p>
+          <p class="text-muted">
+            Fetching PR <span class="text-accent">#42</span> (Add OAuth login)
+          </p>
+          <p class="text-muted">
+            Creating worktree <span class="text-accent">myapp-pr-42</span>
+          </p>
+          <p class="text-muted">
+            Allocated port <span class="text-accent">3020</span>
+          </p>
+          <p class="text-muted">
+            Cloned database <span class="text-accent">myapp_dev_pr_42</span>
+          </p>
+          <p class="text-muted text-accent mt-1">Starting server on port 3020&hellip;</p>
+        </div>
+      </Terminal>
+    </div>
+    <p class="mb-10">
+      Requires the <a href="https://cli.github.com/" class="text-accent-light hover:text-accent underline underline-offset-2">GitHub CLI</a> (<code class="text-accent-light">gh</code>). Both <code class="text-accent-light">review</code> and <code class="text-accent-light">new</code> must be run from the main repo, not from inside a worktree.
+    </p>
+
+    <h2>Switch branches</h2>
+    <div class="mb-6">
+      <Terminal>
+        <div class="space-y-2">
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl switch feature-payments</span>
+          </p>
+          <p class="text-muted">Fetching from origin&hellip;</p>
+          <p class="text-muted">
+            Switched to <span class="text-accent">feature-payments</span>
+          </p>
+          <p class="text-muted">
+            Refreshed <span class="text-accent">.env.local</span>
+          </p>
+        </div>
+      </Terminal>
+    </div>
+    <p class="mb-10">
+      Fetches from origin, checks out the branch, updates the registry, and refreshes the env file. Accepts PR numbers too: <code class="text-accent-light">gtl switch 42</code> resolves the branch via <code class="text-accent-light">gh</code>. Add <code class="text-accent-light">--setup</code> to re-run <code class="text-accent-light">commands.setup</code> after switching.
+    </p>
+
+    <h2>Check project health</h2>
+    <div class="mb-6">
+      <Terminal>
+        <div class="space-y-2">
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl doctor</span>
+          </p>
+        </div>
+      </Terminal>
+    </div>
+    <p class="mb-16">
+      Checks config presence, env file status, port allocation, supervisor state, and framework-specific guidance in one view. Run it when something seems off.
+    </p>
+
+    <DocsPagination next={{ href: "/docs/lifecycle/", label: "Lifecycle" }} />
+  </div>
+</DocsLayout>

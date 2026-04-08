@@ -1,0 +1,356 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import CmdRef from '../../../components/CmdRef.astro';
+import DocsPagination from '../../../components/DocsPagination.astro';
+---
+
+<DocsLayout
+  title="Configuration Reference — Git Treeline Docs"
+  description="Complete reference for .treeline.yml project config, interpolation tokens, and user-level settings in Git Treeline."
+  canonical="https://git-treeline.dev/docs/configuration/"
+  activePage="configuration"
+>
+  <header class="pt-20 sm:pt-24 pb-2 sm:pb-4 px-4 sm:px-6 lg:px-0">
+    <p class="text-sm text-muted mb-4">
+      <a href="/docs/" class="text-accent-light hover:text-accent">Docs</a> / Configuration
+    </p>
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-6 text-balance">Configuration reference</h1>
+    <p class="text-lg sm:text-xl text-gray-400 mb-10 leading-relaxed max-w-3xl">
+      Two config layers: <code class="text-accent-light">.treeline.yml</code> in your repo (project-level, committed) and a user config on your machine (per-developer, not committed). This page is a pure reference for every field.
+    </p>
+  </header>
+
+  <div class="docs-guide px-4 sm:px-6 lg:px-0 pb-20">
+    <h2>.treeline.yml</h2>
+    <p class="text-muted mb-6">
+      Lives in your project root, committed to git. Defines what GTL provisions for each worktree.
+    </p>
+
+    <div class="rounded-lg border border-surface-border mb-8 overflow-hidden">
+      <div class="px-4 sm:px-5">
+        <CmdRef name="project" type="string">
+          <p>Project name. Used as a namespace for allocations and database naming.</p>
+        </CmdRef>
+        <CmdRef name="merge_target" type="string">
+          <p>
+            Branch that <code class="text-accent-light">prune --merged</code> checks against. Auto-detected from remote if omitted.
+          </p>
+        </CmdRef>
+        <CmdRef name="port_count" type="int" flags={['requires gtl setup']}>
+          <p>
+            Number of ports to allocate per worktree. Default <code class="text-accent-light">1</code>. Changes require <code class="text-accent-light">gtl setup</code> since port allocation affects the shared registry.
+          </p>
+        </CmdRef>
+        <CmdRef name="env_file" type="string or map">
+          <p>
+            Env file path as a string shorthand (e.g. <code class="text-accent-light">.env.local</code>). When the output file differs from the seed, use a map: <code class="text-accent-light">path:</code> (where values are written) and <code class="text-accent-light">seed_from:</code> (source template to copy first).
+          </p>
+        </CmdRef>
+        <CmdRef name="database.adapter" type="string" flags={['destructive']}>
+          <p>
+            <code class="text-accent-light">postgresql</code> or <code class="text-accent-light">sqlite</code>. Databases are cloned during <code class="text-accent-light">gtl new</code>. To re-clone: <code class="text-accent-light">gtl db reset</code>.
+          </p>
+        </CmdRef>
+        <CmdRef name="database.template" type="string">
+          <p>Source database to clone from. For PostgreSQL, used with <code class="text-accent-light">createdb --template</code>.</p>
+        </CmdRef>
+        <CmdRef name="database.pattern" type="string">
+          <p>
+            Naming pattern for cloned databases. Tokens: <code class="text-accent-light">{'{template}'}</code>, <code class="text-accent-light">{'{worktree}'}</code>.
+          </p>
+        </CmdRef>
+        <CmdRef name="copy_files" type="list" flags={['requires gtl setup']}>
+          <p>
+            Files to copy from the main worktree. Secrets, credentials, local config that aren't in git. Run during provisioning only.
+          </p>
+        </CmdRef>
+        <CmdRef name="env" type="map" flags={['auto-synced']}>
+          <p>
+            Key-value pairs written to the env file. Supports <a href="#interpolation-tokens" class="text-accent-light hover:text-accent underline underline-offset-2">interpolation tokens</a>. Synced on fresh <code class="text-accent-light">gtl start</code> and <code class="text-accent-light">gtl restart</code>. Manual: <code class="text-accent-light">gtl env sync</code>.
+          </p>
+        </CmdRef>
+        <CmdRef name="aliases" type="map">
+          <p>
+            Project-level router aliases. Map of alias name to port offset. Resolved per-worktree. See <a href="/docs/networking/#aliases" class="text-accent-light hover:text-accent underline underline-offset-2">Networking: Aliases</a>.
+          </p>
+        </CmdRef>
+        <CmdRef name="commands.setup" type="list" flags={['requires gtl setup']}>
+          <p>
+            Commands to run after env file is written. Not re-run on <code class="text-accent-light">gtl start</code>. Manual: <code class="text-accent-light">gtl setup</code> or <code class="text-accent-light">gtl switch --setup</code>.
+          </p>
+        </CmdRef>
+        <CmdRef name="commands.start" type="string" flags={['fresh start only']}>
+          <p>
+            Command to boot the app. Read on fresh <code class="text-accent-light">gtl start</code> only. If the supervisor is alive, it uses the original command. <code class="text-accent-light">gtl restart</code> warns on mismatch.
+          </p>
+        </CmdRef>
+        <CmdRef name="editor.title" type="string" flags={['auto-synced']}>
+          <p>
+            Window title template. Tokens: <code class="text-accent-light">{'{project}'}</code>, <code class="text-accent-light">{'{port}'}</code>, <code class="text-accent-light">{'{branch}'}</code>, <code class="text-accent-light">{'{url}'}</code>, <code class="text-accent-light">{'{router_url}'}</code>. VS Code and Cursor.
+          </p>
+        </CmdRef>
+        <CmdRef name="editor.color" type="string">
+          <p>
+            Title/status bar color. <code class="text-accent-light">"auto"</code> generates a deterministic color from the branch name. Or a hex value. VS Code, Cursor, JetBrains.
+          </p>
+        </CmdRef>
+        <CmdRef name="editor.theme" type="string">
+          <p>Full IDE theme override applied when entering the worktree.</p>
+        </CmdRef>
+        <CmdRef name="hooks.pre_setup" type="list">
+          <p>Shell commands before <code class="text-accent-light">commands.setup</code>. On failure, setup aborts.</p>
+        </CmdRef>
+        <CmdRef name="hooks.post_setup" type="list">
+          <p>Shell commands after <code class="text-accent-light">commands.setup</code> and editor. On failure, warns only.</p>
+        </CmdRef>
+        <CmdRef name="hooks.pre_release" type="list">
+          <p>Shell commands after release confirmation, before freeing resources. On failure, release aborts.</p>
+        </CmdRef>
+        <CmdRef name="hooks.post_release" type="list">
+          <p>Shell commands after free/drop. On failure, warns only.</p>
+        </CmdRef>
+        <CmdRef name={"hooks.<name>.pre_start"} type="string or list" flags={['--with or auto']}>
+          <p>
+            Shell commands before the supervisor launches. Activated via <code class="text-accent-light">gtl start --with &lt;name&gt;</code> or <code class="text-accent-light">auto: true</code>. Supports <code class="text-accent-light">{'{port}'}</code>. Failure aborts the start. See <a href="/docs/hooks/" class="text-accent-light hover:text-accent underline underline-offset-2">Hooks guide</a>.
+          </p>
+        </CmdRef>
+        <CmdRef name={"hooks.<name>.post_stop"} type="string or list">
+          <p>Shell commands on graceful supervisor exit (Ctrl+C), in reverse order. Errors logged, not fatal.</p>
+        </CmdRef>
+        <CmdRef name={"hooks.<name>.auto"} type="bool" flags={['default: false']}>
+          <p>
+            When <code class="text-accent-light">true</code>, this hook runs on every fresh <code class="text-accent-light">gtl start</code> without <code class="text-accent-light">--with</code>.
+          </p>
+        </CmdRef>
+      </div>
+    </div>
+
+    <h2 id="interpolation-tokens">Interpolation tokens</h2>
+    <p class="text-muted mb-4">
+      Used in the <code class="text-accent-light">env</code> map. Replaced with allocated values at setup time and env sync.
+    </p>
+
+    <div class="overflow-x-auto rounded-lg border border-surface-border mb-6">
+      <table
+        class="w-full min-w-[480px] text-sm text-left font-sans [&_td:first-child]:whitespace-nowrap [&_th:first-child]:whitespace-nowrap [&_code]:bg-surface [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded"
+      >
+        <thead class="uppercase tracking-wider">
+          <tr class="border-b border-surface-border bg-surface">
+            <th class="px-4 py-3 font-mono text-accent-light">Token</th>
+            <th class="px-4 py-3 text-accent-light">Value</th>
+            <th class="px-4 py-3 text-accent-light">Available in</th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-surface-border text-muted [&>tr]:bg-surface-raised [&>tr]:transition-colors [&>tr:hover]:bg-surface"
+        >
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">{'{port}'}</td>
+            <td class="px-4 py-3">Primary allocated port</td>
+            <td class="px-4 py-3">env, commands.start, hooks</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">{'{port_2} ... {port_10}'}</td>
+            <td class="px-4 py-3">
+              Additional allocated ports (when <code class="text-accent-light">port_count</code> &gt; 1)
+            </td>
+            <td class="px-4 py-3">env, commands.start, hooks</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">{'{database}'}</td>
+            <td class="px-4 py-3">Cloned database name</td>
+            <td class="px-4 py-3">env</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">{'{redis_url}'}</td>
+            <td class="px-4 py-3">Redis URL with namespace applied</td>
+            <td class="px-4 py-3">env</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">{'{redis_prefix}'}</td>
+            <td class="px-4 py-3">Redis key prefix (prefix strategy)</td>
+            <td class="px-4 py-3">env</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">{'{project}'}</td>
+            <td class="px-4 py-3">Project name from config</td>
+            <td class="px-4 py-3">env</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">{'{worktree}'}</td>
+            <td class="px-4 py-3">Worktree directory name</td>
+            <td class="px-4 py-3">env</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">{'{branch}'}</td>
+            <td class="px-4 py-3">Branch name of this worktree</td>
+            <td class="px-4 py-3">editor.title only</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">{'{router_url}'}</td>
+            <td class="px-4 py-3">
+              HTTPS URL (<code class="text-white">https://myapp-feature.prt.dev</code>). Requires <code class="text-accent-light">gtl serve</code>.
+            </td>
+            <td class="px-4 py-3">env</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">{'{router_domain}'}</td>
+            <td class="px-4 py-3">
+              Router domain only (e.g. <code class="text-white">prt.dev</code>). For host whitelisting and cookie domains.
+            </td>
+            <td class="px-4 py-3">env</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">{'{resolve:project}'}</td>
+            <td class="px-4 py-3">
+              Base URL (<code class="text-white">{'http://127.0.0.1:{port}'}</code>) of another project. Default branch matches current worktree; <code class="text-accent-light">gtl link</code> overrides.
+            </td>
+            <td class="px-4 py-3">env</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">{'{resolve:project/branch}'}</td>
+            <td class="px-4 py-3">Same, pinned to a specific branch. Link overrides do not apply.</td>
+            <td class="px-4 py-3">env</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="text-base text-muted p-5 bg-surface rounded-lg border border-surface-border space-y-4 mb-8">
+      <p>
+        <strong class="text-white">When to use each host token</strong>
+      </p>
+      <p>
+        <code class="text-accent-light">localhost:{'{port}'}</code> is your app's canonical listen address. The safe default. Works whether or not <code class="text-accent-light">gtl serve</code> is running. Use for <code class="text-accent-light">HOST</code>, <code class="text-accent-light">APP_URL</code>, <code class="text-accent-light">default_url_options</code>, mailer host, and anything that must keep working if the router is down.
+      </p>
+      <p>
+        <code class="text-accent-light">{'{router_url}'}</code> is the HTTPS branch URL (e.g. <code class="text-white">https://myapp-feature.prt.dev</code>). Use when a value specifically needs the routed HTTPS origin: CORS allowed origins, CSP directives, or OAuth redirect URIs. Depends on <code class="text-accent-light">gtl serve</code>.
+      </p>
+      <p>
+        <code class="text-accent-light">{'{router_domain}'}</code> is just the domain (e.g. <code class="text-white">prt.dev</code>). Use for host whitelisting, cookie domains, or wildcard CSP entries. Required if your framework validates the <code class="text-accent-light">Host</code> header.
+      </p>
+      <p class="text-xs border-t border-surface-border pt-3">
+        See <a href="/use-cases/oauth-alias/" class="text-accent-light hover:text-accent underline underline-offset-2">OAuth callbacks across worktrees</a> for a full walkthrough.
+      </p>
+    </div>
+
+    <h2 id="user-config">User config</h2>
+    <p class="text-muted mb-4">
+      Per-machine settings. Manage with <code class="text-accent-light">gtl config list</code>, <code class="text-accent-light">get</code>, <code class="text-accent-light">set</code>, <code class="text-accent-light">path</code>, <code class="text-accent-light">edit</code>.
+    </p>
+    <div class="overflow-x-auto rounded-lg border border-surface-border mb-6">
+      <table
+        class="w-full min-w-[480px] text-sm text-left font-sans [&_td:first-child]:whitespace-nowrap [&_th:first-child]:whitespace-nowrap [&_code]:bg-surface [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded"
+      >
+        <thead class="uppercase tracking-wider">
+          <tr class="border-b border-surface-border bg-surface">
+            <th class="px-4 py-3 font-mono text-accent-light">Platform</th>
+            <th class="px-4 py-3 text-accent-light">Path</th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-surface-border text-muted [&>tr]:bg-surface-raised [&>tr]:transition-colors [&>tr:hover]:bg-surface"
+        >
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">macOS</td>
+            <td class="px-4 py-3"><code class="text-accent-light">~/Library/Application Support/git-treeline/</code></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">Linux</td>
+            <td class="px-4 py-3">
+              <code class="text-accent-light">$XDG_CONFIG_HOME/git-treeline/</code> (defaults to <code class="text-accent-light">~/.config/git-treeline/</code>)
+            </td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">Windows</td>
+            <td class="px-4 py-3"><code class="text-accent-light">%APPDATA%/git-treeline/</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="rounded-lg border border-surface-border mb-8 overflow-hidden">
+      <div class="px-4 sm:px-5">
+        <CmdRef name="port.base" flags={['default: 3002']}>
+          <p>
+            Starting port number for allocations. Ports 3000 and 3001 are reserved for <code class="text-accent-light">gtl proxy</code> and the HTTPS router.
+          </p>
+        </CmdRef>
+        <CmdRef name="port.increment" flags={['default: 2']}>
+          <p>Gap between port allocations. Must be &ge; your <code class="text-accent-light">port_count</code>.</p>
+        </CmdRef>
+        <CmdRef name="port.reservations" flags={['default: {}']}>
+          <p>
+            Map of project (or <code class="text-accent-light">project/branch</code>) to pinned port number. Branch-specific keys take priority.
+          </p>
+        </CmdRef>
+        <CmdRef name="redis.strategy" flags={['default: prefixed']}>
+          <p>
+            <code class="text-accent-light">prefixed</code> for key namespacing (unlimited worktrees) or <code class="text-accent-light">database</code> for separate Redis DBs (1-15).
+          </p>
+        </CmdRef>
+        <CmdRef name="redis.url" flags={['default: redis://localhost:6379']}>
+          <p>Redis server URL used for namespace assignment.</p>
+        </CmdRef>
+        <CmdRef name="router.domain" flags={['default: prt.dev (new) / localhost (existing)']}>
+          <p>
+            Base domain for the HTTPS router. To switch: <code class="text-accent-light">gtl serve uninstall && gtl config set router.domain prt.dev && gtl serve install</code>.
+          </p>
+        </CmdRef>
+        <CmdRef name="router.port" flags={['default: 3001']}>
+          <p>Port the HTTPS router listens on. Must not equal <code class="text-accent-light">port.base</code>.</p>
+        </CmdRef>
+        <CmdRef name="router.aliases" flags={['default: {}']}>
+          <p>User-defined alias name to target port. Managed via <code class="text-accent-light">gtl serve alias</code>.</p>
+        </CmdRef>
+        <CmdRef name="editor.name" flags={['auto-detected']}>
+          <p>Detected editor (Cursor, VS Code, Zed, JetBrains). Set by <code class="text-accent-light">gtl init</code>.</p>
+        </CmdRef>
+        <CmdRef name="editor.themes" flags={['default: {}']}>
+          <p>
+            Per-project or per-branch theme overrides. Keys: <code class="text-accent-light">project</code> or <code class="text-accent-light">project/branch</code>.
+          </p>
+        </CmdRef>
+        <CmdRef name="editor.colors" flags={['default: {}']}>
+          <p>Per-project or per-branch color overrides. Same key format.</p>
+        </CmdRef>
+        <CmdRef name="worktree.path" flags={['default: sibling directory']}>
+          <p>
+            Where <code class="text-accent-light">gtl new</code> creates worktrees. Supports <code class="text-accent-light">{'{project}'}</code> and <code class="text-accent-light">{'{branch}'}</code>. Paths inside the repo are auto-gitignored.
+          </p>
+        </CmdRef>
+        <CmdRef name="tunnel.name" flags={['set by gtl tunnel setup']}>
+          <p>Cloudflare tunnel name.</p>
+        </CmdRef>
+        <CmdRef name="tunnel.domain" flags={['set by gtl tunnel setup']}>
+          <p>Domain for named tunnel subdomains.</p>
+        </CmdRef>
+        <CmdRef name="warnings.safari" flags={['default: true']}>
+          <p>Show Safari resolution warnings. Rarely needed with <code class="text-accent-light">prt.dev</code>.</p>
+        </CmdRef>
+      </div>
+    </div>
+
+    <h2>Related</h2>
+    <ul class="text-muted space-y-3 list-disc pl-5 mb-8">
+      <li>
+        <a href="/docs/hooks/" class="text-accent-light hover:text-accent underline underline-offset-2">Hooks guide</a>: how lifecycle and start hooks work.
+      </li>
+      <li>
+        <a href="/docs/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking guide</a>: port allocation, routing, and the full networking stack.
+      </li>
+      <li>
+        <a href="/docs/cli/" class="text-accent-light hover:text-accent underline underline-offset-2">CLI reference</a>: every command and flag.
+      </li>
+    </ul>
+
+    <p class="text-center mt-16">
+      <a href="/docs/" class="text-sm text-accent-light hover:text-accent">Back to docs</a>
+    </p>
+
+    <DocsPagination
+      prev={{ href: "/docs/agents/", label: "AI agents" }}
+      next={{ href: "/docs/cli/", label: "CLI reference" }}
+    />
+  </div>
+</DocsLayout>

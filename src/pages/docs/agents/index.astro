@@ -1,0 +1,174 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import Terminal from '../../../components/Terminal.astro';
+import DocsPagination from '../../../components/DocsPagination.astro';
+---
+
+<DocsLayout
+  title="AI agents — Git Treeline"
+  description="Set up Git Treeline for AI coding agents: lifecycle hooks, structured output, MCP server, agent context files, and port discovery."
+  canonical="https://git-treeline.dev/docs/agents/"
+  activePage="agents"
+>
+  <div class="docs-guide pt-20 sm:pt-24 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-0">
+    <nav class="text-sm text-muted mb-6">
+      <a href="/docs/" class="hover:text-white transition-colors">Docs</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-white">AI agents</span>
+    </nav>
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-mono font-bold text-white tracking-tight mb-4">
+      AI agent setup
+    </h1>
+    <p class="text-base sm:text-lg text-muted max-w-2xl mb-12">
+      Lifecycle hooks, structured output, MCP server, and auto-generated context files. See the <a href="/features/agents/" class="text-accent-light hover:text-accent underline underline-offset-2">AI Agents feature page</a> for use cases and integration patterns.
+    </p>
+
+    <h2>Lifecycle hooks</h2>
+    <p>
+      Map these to your agent orchestrator's worktree creation and teardown events:
+    </p>
+    <div class="mb-8">
+      <Terminal>
+        <div class="space-y-4">
+          <div>
+            <p class="text-xs text-muted mb-1"># on worktree creation</p>
+            <p>
+              <span class="text-accent-light">$</span>{' '}
+              <span class="text-white">gtl setup .</span>
+            </p>
+          </div>
+          <div>
+            <p class="text-xs text-muted mb-1"># on worktree teardown</p>
+            <p>
+              <span class="text-accent-light">$</span>{' '}
+              <span class="text-white">gtl release . --drop-db</span>
+            </p>
+          </div>
+        </div>
+      </Terminal>
+    </div>
+
+    <h2>Orchestrator config</h2>
+    <p>
+      If your orchestrator uses a JSON config for lifecycle hooks:
+    </p>
+    <div class="mb-8">
+      <Terminal>
+        <pre class="text-sm">{'{'}
+  &quot;<span class="text-accent-light">setup</span>&quot;: &quot;<span class="text-white">gtl setup .</span>&quot;,
+  &quot;<span class="text-accent-light">archive</span>&quot;: &quot;<span class="text-white">gtl release . --drop-db</span>&quot;
+{'}'}</pre>
+      </Terminal>
+    </div>
+
+    <h2>Structured output</h2>
+    <p>
+      Use <code class="text-accent-light">--json</code> on any read command for machine-parseable output:
+    </p>
+    <div class="mb-8">
+      <Terminal>
+        <div>
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl status --json</span>
+          </p>
+          <pre class="text-muted mt-2">[{'{'}
+  &quot;<span class="text-white">worktree</span>&quot;: &quot;<span class="text-accent">agent-task-42</span>&quot;,
+  &quot;<span class="text-white">port</span>&quot;: <span class="text-accent">3010</span>,
+  &quot;<span class="text-white">database</span>&quot;: &quot;<span class="text-accent">myapp_dev_task_42</span>&quot;,
+  &quot;<span class="text-white">redis_prefix</span>&quot;: &quot;<span class="text-accent">myapp:task-42</span>&quot;
+{'}'}]</pre>
+        </div>
+      </Terminal>
+    </div>
+
+    <h2>Agent context file</h2>
+    <p>
+      <code class="text-accent-light">gtl init</code> writes a treeline section to <code class="text-accent-light">AGENTS.md</code> (created if it doesn't exist, appended otherwise). If <code class="text-accent-light">CLAUDE.md</code> exists but <code class="text-accent-light">AGENTS.md</code> doesn't, it appends there instead. The section tells agents to use <code class="text-accent-light">gtl port</code> for port discovery and lists the allocated env vars.
+    </p>
+    <p class="mb-8">
+      <code class="text-accent-light">AGENTS.md</code> is read by any MCP-compatible editor, so one file covers them all. Use <code class="text-accent-light">--skip-agent-config</code> on <code class="text-accent-light">gtl init</code> to opt out.
+    </p>
+
+    <h2>Port discovery</h2>
+    <p>
+      Agents can query the allocated port programmatically:
+    </p>
+    <div class="mb-8">
+      <Terminal>
+        <pre class="text-sm"><span class="text-accent-light">PORT</span><span class="text-muted">=</span><span class="text-white">$(gtl port)</span>
+<span class="text-white">curl http://localhost:$PORT/health</span></pre>
+      </Terminal>
+    </div>
+
+    <h2 id="mcp-server">MCP server</h2>
+    <p>
+      Git Treeline ships a built-in <a href="https://modelcontextprotocol.io" class="text-accent-light hover:text-accent underline underline-offset-2">Model Context Protocol</a> server. Agents in Cursor, Claude Code, Windsurf, and other MCP-compatible editors get native tool access with no shell commands or output parsing.
+    </p>
+    <p class="mb-6">
+      Add it to your editor's MCP configuration:
+    </p>
+    <div class="mb-8">
+      <Terminal>
+        <pre class="text-sm">{'{'}
+  &quot;<span class="text-accent-light">mcpServers</span>&quot;: {'{'}
+    &quot;<span class="text-white">gtl</span>&quot;: {'{'}
+      &quot;<span class="text-accent-light">command</span>&quot;: &quot;<span class="text-white">gtl</span>&quot;,
+      &quot;<span class="text-accent-light">args</span>&quot;: [&quot;<span class="text-white">mcp</span>&quot;]
+    {'}'}
+  {'}'}
+{'}'}</pre>
+      </Terminal>
+    </div>
+
+    <h3>Available tools</h3>
+    <div class="overflow-x-auto mb-8">
+      <table class="w-full text-sm border border-surface-border rounded-lg overflow-hidden">
+        <thead>
+          <tr class="border-b border-surface-border">
+            <th class="text-left px-5 py-3 text-muted">Tool</th>
+            <th class="text-left px-5 py-3 text-muted">Description</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-border">
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>status</code></td><td class="px-5 py-3 text-muted">Allocation for a worktree: port, database, branch, supervisor state</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>list</code></td><td class="px-5 py-3 text-muted">All active allocations across all projects</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>start</code></td><td class="px-5 py-3 text-muted">Start or resume the supervised dev server</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>stop</code></td><td class="px-5 py-3 text-muted">Stop the dev server (supervisor stays alive for resume)</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>restart</code></td><td class="px-5 py-3 text-muted">Restart the dev server</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>port</code></td><td class="px-5 py-3 text-muted">Get the allocated port for a worktree</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>db_name</code></td><td class="px-5 py-3 text-muted">Get the database name for a worktree</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>doctor</code></td><td class="px-5 py-3 text-muted">Run project health diagnostics</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>config_get</code></td><td class="px-5 py-3 text-muted">Read a configuration value by dotted key path (project or user scope)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Resources</h3>
+    <p>
+      The MCP server also exposes read-only resources that agents can inspect:
+    </p>
+    <div class="overflow-x-auto mb-4">
+      <table class="w-full text-sm border border-surface-border rounded-lg overflow-hidden">
+        <thead>
+          <tr class="border-b border-surface-border">
+            <th class="text-left px-5 py-3 text-muted">URI</th>
+            <th class="text-left px-5 py-3 text-muted">Description</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-border">
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>gtl://config/user</code></td><td class="px-5 py-3 text-muted">User-level git-treeline configuration</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>gtl://allocations</code></td><td class="px-5 py-3 text-muted">Full allocation registry across all projects</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Every tool accepts an optional <code class="text-accent-light">path</code> argument. When omitted, the server uses the agent's current working directory.
+    </p>
+
+    <DocsPagination
+      prev={{ href: "/docs/supervisor/", label: "Supervisor" }}
+      next={{ href: "/docs/configuration/", label: "Configuration" }}
+    />
+  </div>
+</DocsLayout>

@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface: #0d1117;
+  --color-surface-raised: #151d28;
+  --color-surface-border: #30363d;
+  --color-accent: #22c55e;
+  --color-accent-light: #4ade80;
+  --color-muted: #8b949e;
+  --font-mono: "Source Code Pro", monospace;
+  --font-sans: "Inter", sans-serif;
+}
+
+/* --- Base resets (cannot be inline Tailwind) --- */
+
+html {
+  scroll-padding-top: 5rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  @apply bg-surface text-base text-gray-300 font-sans antialiased leading-relaxed;
+}
+
+h1, h2, h3 {
+  @apply font-mono text-white;
+}
+
+/* --- JS-toggled state classes --- */
+
+.nav-scrolled {
+  border-bottom: 1px solid #30363d;
+}
+
+.docs-sidebar-active {
+  @apply text-accent-light border-accent-light;
+}
+
+/* --- Docs guide vertical rhythm (targets child elements, can't be inline) --- */
+
+.docs-guide h2 {
+  @apply text-xl sm:text-2xl font-mono font-bold text-white mb-5 scroll-mt-24;
+  text-wrap: balance;
+}
+
+.docs-guide h2:first-child {
+  @apply mt-2;
+}
+
+.docs-guide h2:not(:first-child) {
+  @apply mt-16 pt-10 border-t border-surface-border;
+}
+
+.docs-guide h3 {
+  @apply text-base sm:text-lg font-mono font-semibold text-white mt-10 mb-4;
+}
+
+.docs-guide p,
+.docs-guide li {
+  @apply text-[0.9375rem] sm:text-base leading-relaxed;
+}
+
+/* --- Mobile: smaller inline code in docs --- */
+
+@media (max-width: 639px) {
+  .docs-content code:not(pre code) {
+    font-size: 0.8125rem;
+    padding: 0.125rem 0.3rem;
+    border-radius: 0.25rem;
+    background: rgba(22, 27, 34, 0.6);
+  }
+}

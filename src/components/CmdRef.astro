@@ -1,0 +1,19 @@
+---
+const { name, type, flags = [] } = Astro.props;
+---
+<div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+  <div class="font-mono text-white text-base font-semibold">
+    {name}
+    {type && <span class="font-mono text-sm text-muted font-normal ml-2">{type}</span>}
+  </div>
+  {flags.length > 0 && (
+    <div class="flex flex-wrap gap-1.5 mt-2">
+      {flags.map((flag: string) => (
+        <span class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded">{flag}</span>
+      ))}
+    </div>
+  )}
+  <div class="text-base text-muted mt-2">
+    <slot />
+  </div>
+</div>

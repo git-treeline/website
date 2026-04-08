@@ -1,0 +1,29 @@
+---
+export interface Props {
+  prev?: { href: string; label: string };
+  next?: { href: string; label: string };
+}
+
+const { prev, next } = Astro.props;
+---
+
+{(prev || next) && (
+  <nav class="flex items-center justify-between border-t border-surface-border pt-8 mt-16">
+    {prev ? (
+      <a href={prev.href} class="group flex items-center gap-2 text-muted hover:text-white transition-colors">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="text-sm">{prev.label}</span>
+      </a>
+    ) : <span />}
+    {next ? (
+      <a href={next.href} class="group flex items-center gap-2 text-muted hover:text-white transition-colors ml-auto">
+        <span class="text-sm">{next.label}</span>
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    ) : <span />}
+  </nav>
+)}

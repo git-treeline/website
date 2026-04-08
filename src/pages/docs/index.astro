@@ -1,0 +1,103 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+---
+
+<DocsLayout
+  title="Docs — Git Treeline"
+  description="Git Treeline documentation: getting started, guides, configuration, CLI reference, and troubleshooting."
+  canonical="https://git-treeline.dev/docs/"
+>
+  <div class="pt-20 sm:pt-24 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-0">
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-3">Documentation</h1>
+    <p class="text-base sm:text-lg text-muted max-w-2xl mb-12">
+      Everything you need to configure, use, and integrate Git Treeline.
+    </p>
+
+    <div class="space-y-1">
+      <a href="/docs/getting-started/" class="block p-4 sm:p-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors group">
+        <div class="flex items-baseline justify-between gap-4">
+          <h2 class="text-white font-semibold group-hover:text-accent-light transition-colors">Getting started</h2>
+          <span class="text-accent-light text-xs shrink-0 hidden sm:inline">&rarr;</span>
+        </div>
+        <p class="text-sm text-muted mt-1">Install, set up the HTTPS router, initialize a project, and create your first worktree.</p>
+      </a>
+      <a href="/docs/lifecycle/" class="block p-4 sm:p-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors group">
+        <div class="flex items-baseline justify-between gap-4">
+          <h2 class="text-white font-semibold group-hover:text-accent-light transition-colors">Lifecycle</h2>
+          <span class="text-accent-light text-xs shrink-0 hidden sm:inline">&rarr;</span>
+        </div>
+        <p class="text-sm text-muted mt-1">What happens at each step: gtl new, setup, start, release, prune.</p>
+      </a>
+      <a href="/docs/hooks/" class="block p-4 sm:p-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors group">
+        <div class="flex items-baseline justify-between gap-4">
+          <h2 class="text-white font-semibold group-hover:text-accent-light transition-colors">Hooks</h2>
+          <span class="text-accent-light text-xs shrink-0 hidden sm:inline">&rarr;</span>
+        </div>
+        <p class="text-sm text-muted mt-1">Setup/release hooks, start hooks, edge cases, and when to use them.</p>
+      </a>
+      <a href="/docs/networking/" class="block p-4 sm:p-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors group">
+        <div class="flex items-baseline justify-between gap-4">
+          <h2 class="text-white font-semibold group-hover:text-accent-light transition-colors">Networking</h2>
+          <span class="text-accent-light text-xs shrink-0 hidden sm:inline">&rarr;</span>
+        </div>
+        <p class="text-sm text-muted mt-1">Port allocation, HTTPS router, aliases, proxy, tunnels, and the prt.dev domain.</p>
+      </a>
+      <a href="/docs/database/" class="block p-4 sm:p-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors group">
+        <div class="flex items-baseline justify-between gap-4">
+          <h2 class="text-white font-semibold group-hover:text-accent-light transition-colors">Database</h2>
+          <span class="text-accent-light text-xs shrink-0 hidden sm:inline">&rarr;</span>
+        </div>
+        <p class="text-sm text-muted mt-1">Per-worktree databases: PostgreSQL cloning, SQLite, naming, gtl db commands.</p>
+      </a>
+      <a href="/docs/editor/" class="block p-4 sm:p-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors group">
+        <div class="flex items-baseline justify-between gap-4">
+          <h2 class="text-white font-semibold group-hover:text-accent-light transition-colors">Editor</h2>
+          <span class="text-accent-light text-xs shrink-0 hidden sm:inline">&rarr;</span>
+        </div>
+        <p class="text-sm text-muted mt-1">Per-worktree window titles, title bar colors, themes, and IDE-specific behavior.</p>
+      </a>
+      <a href="/docs/resolve/" class="block p-4 sm:p-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors group">
+        <div class="flex items-baseline justify-between gap-4">
+          <h2 class="text-white font-semibold group-hover:text-accent-light transition-colors">Resolve</h2>
+          <span class="text-accent-light text-xs shrink-0 hidden sm:inline">&rarr;</span>
+        </div>
+        <p class="text-sm text-muted mt-1">Connect services across repos with gtl resolve, gtl link, and env tokens.</p>
+      </a>
+      <a href="/docs/supervisor/" class="block p-4 sm:p-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors group">
+        <div class="flex items-baseline justify-between gap-4">
+          <h2 class="text-white font-semibold group-hover:text-accent-light transition-colors">Supervisor</h2>
+          <span class="text-accent-light text-xs shrink-0 hidden sm:inline">&rarr;</span>
+        </div>
+        <p class="text-sm text-muted mt-1">Process supervisor, remote restart, TUI dashboard, and the Unix socket.</p>
+      </a>
+      <a href="/docs/agents/" class="block p-4 sm:p-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors group">
+        <div class="flex items-baseline justify-between gap-4">
+          <h2 class="text-white font-semibold group-hover:text-accent-light transition-colors">AI agents</h2>
+          <span class="text-accent-light text-xs shrink-0 hidden sm:inline">&rarr;</span>
+        </div>
+        <p class="text-sm text-muted mt-1">Lifecycle hooks, structured output, MCP server, and agent context files.</p>
+      </a>
+      <a href="/docs/configuration/" class="block p-4 sm:p-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors group">
+        <div class="flex items-baseline justify-between gap-4">
+          <h2 class="text-white font-semibold group-hover:text-accent-light transition-colors">Configuration</h2>
+          <span class="text-accent-light text-xs shrink-0 hidden sm:inline">&rarr;</span>
+        </div>
+        <p class="text-sm text-muted mt-1">Every .treeline.yml field, interpolation token, and user config key.</p>
+      </a>
+      <a href="/docs/cli/" class="block p-4 sm:p-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors group">
+        <div class="flex items-baseline justify-between gap-4">
+          <h2 class="text-white font-semibold group-hover:text-accent-light transition-colors">CLI reference</h2>
+          <span class="text-accent-light text-xs shrink-0 hidden sm:inline">&rarr;</span>
+        </div>
+        <p class="text-sm text-muted mt-1">Every command with flags, descriptions, and behavior notes.</p>
+      </a>
+      <a href="/docs/troubleshooting/" class="block p-4 sm:p-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors group">
+        <div class="flex items-baseline justify-between gap-4">
+          <h2 class="text-white font-semibold group-hover:text-accent-light transition-colors">Troubleshooting</h2>
+          <span class="text-accent-light text-xs shrink-0 hidden sm:inline">&rarr;</span>
+        </div>
+        <p class="text-sm text-muted mt-1">Common issues by symptom: HTTPS, CSRF, ports, stale config, upgrades.</p>
+      </a>
+    </div>
+  </div>
+</DocsLayout>

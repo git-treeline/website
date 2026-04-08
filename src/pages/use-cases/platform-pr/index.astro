@@ -1,0 +1,35 @@
+---
+import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+---
+
+<ArticleLayout
+  title="Product and QA on a PR — Git Treeline"
+  description="gtl review for an isolated PR worktree, gtl open for the browser, gtl share for a stakeholder link, gtl release when done."
+  canonical="https://git-treeline.dev/use-cases/platform-pr/"
+  breadcrumb="Use cases"
+  breadcrumbHref="/use-cases/"
+  heading="Someone needs to see PR #42 in a browser"
+  lead="Product and QA should not need your README, a staging deploy, or a screen share of your laptop. They need a URL that shows the branch under review, and you need a straight path to create and destroy that environment so it does not linger."
+>
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">The flow</h2>
+  <ol class="text-muted space-y-3 list-decimal pl-5 mb-8">
+    <li><code class="text-accent-light">gtl review 42 --start</code> (from the main repo) fetches the PR with <code class="text-white">gh</code>, creates a worktree, allocates ports and database, runs setup, and boots the app.</li>
+    <li><code class="text-accent-light">gtl open</code> opens the right URL in the browser: HTTPS on <code class="text-white">{'{project}'}-{'{branch}'}.prt.dev</code> when <code class="text-accent-light">gtl serve</code> is installed; otherwise <code class="text-white">http://localhost:{'{port}'}</code>.</li>
+    <li>If they are off your machine, <code class="text-accent-light">gtl share</code> exposes a time-bounded public or tailnet URL—different tradeoffs than <code class="text-accent-light">gtl tunnel</code>, which is built for stable routes you register with providers.</li>
+    <li>When review ends, <code class="text-accent-light">gtl release</code> frees the allocation; add <code class="text-accent-light">--drop-db</code> when the cloned database should go too.</li>
+  </ol>
+
+  <p class="text-muted mb-10">
+    Hooks in <code class="text-accent-light">.treeline.yml</code> (<code class="text-white">pre_setup</code>, <code class="text-white">post_setup</code>, etc.) let you run team-specific steps—notifications, fixtures—without forking Treeline.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Read next</h2>
+  <ul class="text-muted space-y-2 list-disc pl-5 mb-8">
+    <li><a href="/features/workflows/" class="text-accent-light hover:text-accent underline underline-offset-2">Workflows</a></li>
+    <li><a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking</a> (share vs tunnel)</li>
+  </ul>
+
+  <p class="text-center">
+    <a href="/use-cases/" class="text-sm text-accent-light hover:text-accent">All use cases</a>
+  </p>
+</ArticleLayout>

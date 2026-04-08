@@ -1,0 +1,480 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import Terminal from '../../../components/Terminal.astro';
+import DocsPagination from '../../../components/DocsPagination.astro';
+---
+
+<DocsLayout
+  title="Networking — Git Treeline Docs"
+  description="How Git Treeline's networking stack works: port allocation, the HTTPS router, aliases, proxy, tunnels, and sharing. Architecture, configuration, and edge cases."
+  canonical="https://git-treeline.dev/docs/networking/"
+  activePage="networking"
+>
+  <header class="pt-20 sm:pt-24 pb-2 sm:pb-4 px-4 sm:px-6 lg:px-0">
+    <p class="text-sm text-muted mb-4"><a href="/docs/" class="text-accent-light hover:text-accent">Docs</a> / Networking</p>
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-6 text-balance">Networking stack</h1>
+    <p class="text-lg sm:text-xl text-gray-400 mb-10 leading-relaxed max-w-3xl">
+      Every worktree gets its own port. The networking layer gives those ports human-readable names, stable URLs for third-party integrations, and optional public access. This page explains the architecture, the design decisions behind it, and how the pieces fit together.
+    </p>
+  </header>
+  <div class="docs-guide px-4 sm:px-6 lg:px-0 pb-20">
+    <h2>The core problem</h2>
+    <p class="text-muted mb-4">
+      When you run multiple worktrees, each server needs its own port. Typing <code class="text-white">localhost:3014</code> into your browser works, but nobody remembers which port belongs to which branch. Worse, OAuth providers, Stripe webhooks, and CORS policies all expect a fixed origin. Changing that config every time you switch branches is not sustainable.
+    </p>
+    <p class="text-muted mb-8">
+      GTL solves this with two layers of abstraction over raw port numbers: <strong class="text-white">branch URLs</strong> for your browser and <strong class="text-white">a proxy</strong> for anything external that expects a fixed origin.
+    </p>
+
+    <h2>Port allocation</h2>
+    <p class="text-muted mb-4">
+      GTL's port allocator is built around one principle: <strong class="text-white">common development ports stay free so the developer controls what listens on them.</strong>
+    </p>
+    <p class="text-muted mb-4">
+      Worktree servers never bind to ports like 3000, 4000, 5000, 8080, or 8888. Those are reserved for tools the developer explicitly chooses: <code class="text-accent-light">gtl proxy</code>, a debugging proxy, a test runner, or anything else that expects a well-known port.
+    </p>
+
+    <div class="overflow-x-auto rounded-lg border border-surface-border mb-6">
+      <table
+        class="w-full min-w-[480px] text-sm text-left font-sans [&_td:first-child]:whitespace-nowrap [&_th:first-child]:whitespace-nowrap [&_code]:bg-surface [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded"
+      >
+        <thead class="uppercase tracking-wider">
+          <tr class="border-b border-surface-border bg-surface">
+            <th class="px-4 py-3 text-accent-light">Port</th>
+            <th class="px-4 py-3 text-accent-light">Reserved for</th>
+            <th class="px-4 py-3 text-accent-light">Why</th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-surface-border text-muted [&>tr]:bg-surface-raised [&>tr]:transition-colors [&>tr:hover]:bg-surface"
+        >
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">3000</td>
+            <td class="px-4 py-3">Developer / <code class="text-accent-light">gtl proxy</code></td>
+            <td class="px-4 py-3">The port most OAuth, webhook, and CORS configs point to. Always available for the proxy facade.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">3001</td>
+            <td class="px-4 py-3">HTTPS router (<code class="text-accent-light">gtl serve</code>)</td>
+            <td class="px-4 py-3">Maps branch-named subdomains to worktree ports. Port 443 is forwarded here.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">3002+</td>
+            <td class="px-4 py-3">Worktree allocations</td>
+            <td class="px-4 py-3">Starting base for dynamic allocation. You rarely type these directly.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>How allocation works</h3>
+    <p class="text-muted mb-4">
+      The allocator walks from the port base (default <code class="text-white">3002</code>) in increments (default <code class="text-white">2</code>), looking for a contiguous block of ports that are:
+    </p>
+    <ul class="text-muted space-y-2 list-disc pl-5 mb-4">
+      <li>Not already allocated to another worktree</li>
+      <li>Not in the reserved common ports list</li>
+      <li>Not the router port</li>
+      <li>Not a browser-blocked port (WHATWG spec)</li>
+      <li>Actually free on the loopback interface (tested with <code class="text-white">net.Listen</code>)</li>
+    </ul>
+    <p class="text-muted mb-4">
+      The increment value (default 2) determines the reservation block size. With an increment of 2 and <code class="text-accent-light">port_count: 1</code>, each worktree gets a 2-port block even though it only uses one. This leaves room for future multi-port support without reallocating.
+    </p>
+    <p class="text-muted mb-8">
+      Projects needing multiple ports set <code class="text-accent-light">port_count</code> in <code class="text-accent-light">.treeline.yml</code>. The allocator then finds a contiguous block of that size. The ports are exposed as <code class="text-accent-light">{'{port}'}</code>, <code class="text-accent-light">{'{port_2}'}</code>, <code class="text-accent-light">{'{port_3}'}</code>, etc. in env interpolation.
+    </p>
+
+    <h3>Port reservations</h3>
+    <p class="text-muted mb-4">
+      You can pin a project or specific branch to a fixed port via user config:
+    </p>
+    <div class="mb-8">
+      <Terminal>
+        <div class="space-y-2 text-sm leading-relaxed">
+          <p><span class="text-accent-light">$</span> <span class="text-white">gtl config set port.reservations.myapp 3010</span></p>
+          <p><span class="text-accent-light">$</span> <span class="text-white">gtl config set port.reservations.myapp/main 3020</span></p>
+        </div>
+      </Terminal>
+    </div>
+    <p class="text-muted mb-8">
+      A project-level reservation (<code class="text-white">myapp</code>) applies to the main worktree. A project/branch reservation (<code class="text-white">myapp/main</code>) targets a specific branch. Reservations reserve the full increment block size (not just one port), preventing other worktrees from being allocated nearby.
+    </p>
+
+    <h2>Two ways to reach a worktree</h2>
+    <p class="text-muted mb-4">
+      Both are always available simultaneously. You don't have to choose one or the other.
+    </p>
+
+    <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
+      <table
+        class="w-full min-w-[480px] text-sm text-left font-sans [&_td:first-child]:whitespace-nowrap [&_th:first-child]:whitespace-nowrap [&_code]:bg-surface [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded"
+      >
+        <thead class="uppercase tracking-wider">
+          <tr class="border-b border-surface-border bg-surface">
+            <th class="px-4 py-3 text-accent-light"></th>
+            <th class="px-4 py-3 text-accent-light">Branch URL</th>
+            <th class="px-4 py-3 text-accent-light">Direct loopback</th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-surface-border text-muted [&>tr]:bg-surface-raised [&>tr]:transition-colors [&>tr:hover]:bg-surface"
+        >
+          <tr>
+            <td class="px-4 py-3 text-white">URL</td>
+            <td class="px-4 py-3"><code class="text-accent-light">https://myapp-feature.prt.dev</code></td>
+            <td class="px-4 py-3"><code class="text-accent-light">http://localhost:3010</code></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white">Protocol</td>
+            <td class="px-4 py-3">HTTPS (locally trusted CA)</td>
+            <td class="px-4 py-3">HTTP</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white">Requires router</td>
+            <td class="px-4 py-3">Yes (<code class="text-accent-light">gtl serve</code>)</td>
+            <td class="px-4 py-3">No</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white">Host header</td>
+            <td class="px-4 py-3">The subdomain (preserved through proxy)</td>
+            <td class="px-4 py-3"><code class="text-white">localhost</code></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white">Best for</td>
+            <td class="px-4 py-3">Browser, cross-service links, CORS, session cookies</td>
+            <td class="px-4 py-3">Direct API calls, scripts, CI</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>The HTTPS router (gtl serve)</h2>
+    <p class="text-muted mb-4">
+      The router is a pure Go reverse proxy that runs as a background service. It maps <code class="text-accent-light">{'{project}-{branch}.{domain}'}</code> subdomains to local ports, adding HTTPS with a locally-trusted CA.
+    </p>
+
+    <h3>How it works</h3>
+    <ol class="text-muted space-y-3 list-decimal pl-5 mb-8">
+      <li><code class="text-accent-light">gtl serve install</code> generates a local ECDSA certificate authority (10-year lifetime) and installs it in your system trust store.</li>
+      <li>Port forwarding (macOS <code class="text-white">pf</code>, Linux <code class="text-white">iptables</code>/<code class="text-white">nft</code>) redirects port 443 to the router port (3001), so URLs don't need a port number.</li>
+      <li>A <code class="text-white">launchd</code> (macOS) or <code class="text-white">systemd</code> (Linux) service keeps the router running across reboots.</li>
+      <li>Every 5 seconds, the router reads the GTL registry and rebuilds its route table. New worktrees appear automatically.</li>
+      <li>Per-hostname TLS certificates are issued on demand (SAN includes the hostname + localhost + loopback IPs). No wildcard certs are used due to Safari/Chromium issues with <code class="text-white">*.localhost</code>.</li>
+      <li>Incoming requests match by subdomain, and the router reverse-proxies to the target port on loopback. The original <code class="text-white">Host</code> header is preserved. <code class="text-white">X-Forwarded-Proto</code> and <code class="text-white">X-Forwarded-For</code> are set.</li>
+      <li>Loop detection: an <code class="text-white">X-Gtl-Hops</code> header is incremented on each pass. At 5 hops, the router returns HTTP 508 with debugging hints (common with Vite, webpack, or Next.js dev servers that proxy back to themselves).</li>
+    </ol>
+
+    <h3>The prt.dev domain</h3>
+    <p class="text-muted mb-4">
+      Fresh installs default to <code class="text-white">prt.dev</code> as the router domain. This is a real domain with <strong class="text-white">wildcard DNS</strong> pointing <code class="text-white">*.prt.dev</code> to <code class="text-white">127.0.0.1</code>. No local DNS server or <code class="text-white">/etc/hosts</code> editing needed for most setups.
+    </p>
+    <p class="text-muted mb-4">
+      On macOS, GTL also writes <code class="text-white">/etc/hosts</code> entries as a fallback (Safari resolves <code class="text-white">.localhost</code> domains inconsistently). On Linux, hosts entries are written when using a non-localhost domain.
+    </p>
+    <p class="text-muted mb-8">
+      If you're offline or behind a corporate DNS that blocks external resolution, you can switch to <code class="text-accent-light">router.domain localhost</code> via <code class="text-accent-light">gtl config</code>. The <code class="text-white">.localhost</code> TLD resolves locally by spec (RFC 6761), but some browsers handle it inconsistently.
+    </p>
+
+    <h2>Aliases</h2>
+    <p class="text-muted mb-4">
+      Aliases give a stable hostname to a port that isn't derived from a branch name. Two sources:
+    </p>
+    <ul class="text-muted space-y-2 list-disc pl-5 mb-4">
+      <li><strong class="text-white">User aliases:</strong> <code class="text-accent-light">gtl serve alias redis-ui 8081</code> creates <code class="text-white">https://redis-ui.prt.dev</code> routing to port 8081. Stored in user config.</li>
+      <li><strong class="text-white">Project aliases:</strong> Defined in <code class="text-accent-light">.treeline.yml</code> under <code class="text-accent-light">aliases:</code>. Each entry maps a name to a port offset. Resolved per-worktree from the registry.</li>
+    </ul>
+    <p class="text-muted mb-4">
+      Aliases are picked up by the router on its 5-second refresh cycle. No restart needed. If a registry route and an alias share the same name, the registry route wins.
+    </p>
+    <p class="text-muted mb-8">
+      The most common use case for aliases is OAuth: register a stable alias like <code class="text-white">myapp-oauth.prt.dev</code> in your provider dashboard once, then use a start hook to point it at whichever branch you're testing. See <a href="/use-cases/oauth-alias/" class="text-accent-light hover:text-accent underline underline-offset-2">OAuth callbacks across worktrees</a> for the full walkthrough.
+    </p>
+
+    <h2>The port proxy (gtl proxy)</h2>
+    <p class="text-muted mb-4">
+      The proxy binds a well-known port (like 3000) and forwards traffic to whichever worktree you run it from. It solves a different problem than the router: third-party services that are hardcoded to <code class="text-white">localhost:3000</code> and can't use branch-named subdomains.
+    </p>
+
+    <div class="mb-6">
+      <Terminal>
+        <div class="space-y-4 text-sm leading-relaxed">
+          <div>
+            <p><span class="text-accent-light">~/feature-auth $</span> <span class="text-white">gtl proxy 3000</span></p>
+            <p class="text-muted">Proxying :3000 &rarr; :3010</p>
+          </div>
+          <div>
+            <p class="text-xs text-muted mb-1"># With local HTTPS</p>
+            <p><span class="text-accent-light">~/feature-auth $</span> <span class="text-white">gtl proxy 443 --tls</span></p>
+            <p class="text-muted">Proxying https://localhost:443 &rarr; :3010</p>
+          </div>
+        </div>
+      </Terminal>
+    </div>
+
+    <p class="text-muted mb-4">
+      When you omit the target port, the proxy reads the registry for the current directory and forwards to the first allocated port. This means you configure your OAuth provider to <code class="text-white">localhost:3000</code> once, and rotate which worktree sits behind it by running <code class="text-accent-light">gtl proxy 3000</code> from different worktree directories.
+    </p>
+    <p class="text-muted mb-4">
+      The proxy handles HTTP, WebSocket upgrades, and SSE streams. The <code class="text-white">Host</code> header is preserved. The <code class="text-accent-light">--tls</code> flag terminates HTTPS on the listen side using a separate cert resolution: cached cert, then <a href="https://github.com/FiloSottile/mkcert" class="text-accent-light hover:text-accent underline underline-offset-2">mkcert</a> if installed, then self-signed fallback.
+    </p>
+    <p class="text-muted mb-8">
+      See <a href="/use-cases/integrations-urls/" class="text-accent-light hover:text-accent underline underline-offset-2">Why port 3000 stays free</a> for the full rationale.
+    </p>
+
+    <h2>Router vs proxy: when to use which</h2>
+    <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
+      <table
+        class="w-full min-w-[480px] text-sm text-left font-sans [&_td:first-child]:whitespace-nowrap [&_th:first-child]:whitespace-nowrap [&_code]:bg-surface [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded"
+      >
+        <thead class="uppercase tracking-wider">
+          <tr class="border-b border-surface-border bg-surface">
+            <th class="px-4 py-3 text-accent-light">Scenario</th>
+            <th class="px-4 py-3 text-accent-light">Use</th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-surface-border text-muted [&>tr]:bg-surface-raised [&>tr]:transition-colors [&>tr:hover]:bg-surface"
+        >
+          <tr>
+            <td class="px-4 py-3">Opening a branch in the browser</td>
+            <td class="px-4 py-3 text-white">Router (<code class="text-accent-light">myapp-feature.prt.dev</code>)</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3">Cross-service <code class="text-accent-light">{'{resolve:...}'}</code> links between repos</td>
+            <td class="px-4 py-3 text-white">Router (automatic via env tokens)</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3">OAuth callback registered to <code class="text-white">localhost:3000</code></td>
+            <td class="px-4 py-3 text-white">Proxy (<code class="text-accent-light">gtl proxy 3000</code>)</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3">OAuth with a branch-stable alias</td>
+            <td class="px-4 py-3 text-white">Router + alias (<code class="text-accent-light">gtl serve alias</code>)</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3">Stripe webhook to <code class="text-white">localhost:3000</code></td>
+            <td class="px-4 py-3 text-white">Proxy (<code class="text-accent-light">gtl proxy 3000</code>)</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3">Showing work to a remote teammate</td>
+            <td class="px-4 py-3 text-white"><code class="text-accent-light">gtl tunnel</code> or <code class="text-accent-light">gtl share</code></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3">Script or CI hitting a local server</td>
+            <td class="px-4 py-3 text-white">Direct loopback (<code class="text-accent-light">localhost:{'{port}'}</code>)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Public access: tunnels and sharing</h2>
+    <p class="text-muted mb-4">
+      Both features expose a local worktree to the internet via Cloudflare tunnels, but they serve different trust boundaries.
+    </p>
+
+    <h3>gtl tunnel</h3>
+    <p class="text-muted mb-4">
+      <strong class="text-white">Quick mode</strong> (no account): generates a disposable <code class="text-white">*.trycloudflare.com</code> URL. No setup, no config, but the URL changes every run.
+    </p>
+    <p class="text-muted mb-4">
+      <strong class="text-white">Named mode</strong> (your domain): after running <code class="text-accent-light">gtl tunnel setup</code>, every <code class="text-accent-light">gtl tunnel</code> maps to <code class="text-white">{'{routeKey}.yourdomain.dev'}</code> using the same route key convention as the local router. Stable, predictable, and branch-specific. Multiple Cloudflare domains are supported.
+    </p>
+
+    <h3>gtl share</h3>
+    <p class="text-muted mb-4">
+      Creates a token-gated URL for quick demos. The recipient authenticates with a one-time token, then gets session cookies. Hostnames and tokens rotate on every run. Ctrl+C tears everything down.
+    </p>
+    <p class="text-muted mb-8">
+      <code class="text-accent-light">gtl share --tailscale</code> uses Tailscale Serve instead for tailnet-only access with identity-based auth. Mutually exclusive with <code class="text-accent-light">--tunnel</code>.
+    </p>
+
+    <h2>Route key convention</h2>
+    <p class="text-muted mb-4">
+      The router, tunnel, and share commands all derive URLs from the same route key. The algorithm:
+    </p>
+    <ol class="text-muted space-y-2 list-decimal pl-5 mb-6">
+      <li>Project and branch names are lowercased</li>
+      <li>Common branch prefixes stripped: <code class="text-accent-light">feature/</code>, <code class="text-accent-light">chore/</code>, <code class="text-accent-light">bugfix/</code>, <code class="text-accent-light">hotfix/</code></li>
+      <li>Slashes and underscores become dashes</li>
+      <li>Non-alphanumeric characters (except dashes) are removed</li>
+      <li>Consecutive dashes collapsed</li>
+      <li>DNS label truncated to 63 characters (with a short hash suffix if truncation was needed)</li>
+      <li>Result: <code class="text-accent-light">{'{project}-{branch}'}</code></li>
+    </ol>
+
+    <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
+      <table
+        class="w-full min-w-[480px] text-sm text-left font-sans [&_td:first-child]:whitespace-nowrap [&_th:first-child]:whitespace-nowrap [&_code]:bg-surface [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded"
+      >
+        <thead class="uppercase tracking-wider">
+          <tr class="border-b border-surface-border bg-surface">
+            <th class="px-4 py-3 text-accent-light">Branch</th>
+            <th class="px-4 py-3 text-accent-light">Route key</th>
+            <th class="px-4 py-3 text-accent-light">URL</th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-surface-border text-muted [&>tr]:bg-surface-raised [&>tr]:transition-colors [&>tr:hover]:bg-surface"
+        >
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">main</td>
+            <td class="px-4 py-3 font-mono">myapp-main</td>
+            <td class="px-4 py-3 font-mono text-xs">myapp-main.prt.dev</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">feature/auth-flow</td>
+            <td class="px-4 py-3 font-mono">myapp-auth-flow</td>
+            <td class="px-4 py-3 font-mono text-xs">myapp-auth-flow.prt.dev</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">bugfix/fix_login_crash</td>
+            <td class="px-4 py-3 font-mono">myapp-fix-login-crash</td>
+            <td class="px-4 py-3 font-mono text-xs">myapp-fix-login-crash.prt.dev</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Networking env tokens</h2>
+    <p class="text-muted mb-4">
+      GTL interpolates networking-related tokens into your <code class="text-accent-light">.treeline.yml</code> env section and <code class="text-accent-light">commands.start</code>:
+    </p>
+
+    <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
+      <table
+        class="w-full min-w-[480px] text-sm text-left font-sans [&_td:first-child]:whitespace-nowrap [&_th:first-child]:whitespace-nowrap [&_code]:bg-surface [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded"
+      >
+        <thead class="uppercase tracking-wider">
+          <tr class="border-b border-surface-border bg-surface">
+            <th class="px-4 py-3 text-accent-light">Token</th>
+            <th class="px-4 py-3 text-accent-light">Expands to</th>
+            <th class="px-4 py-3 text-accent-light">Context</th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-surface-border text-muted [&>tr]:bg-surface-raised [&>tr]:transition-colors [&>tr:hover]:bg-surface"
+        >
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">{'{port}'}</td>
+            <td class="px-4 py-3">Primary allocated port (e.g. <code class="text-white">3010</code>)</td>
+            <td class="px-4 py-3">env, commands.start, hooks</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">{'{port_N}'}</td>
+            <td class="px-4 py-3">Nth allocated port (<code class="text-white">{'{port_2}'}</code> = port+1)</td>
+            <td class="px-4 py-3">env, commands.start, hooks</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">{'{router_domain}'}</td>
+            <td class="px-4 py-3">The configured router domain (e.g. <code class="text-white">prt.dev</code>)</td>
+            <td class="px-4 py-3">env only</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">{'{router_url}'}</td>
+            <td class="px-4 py-3"><code class="text-white">{'https://{routeKey}.{domain}'}</code></td>
+            <td class="px-4 py-3">env only</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">{'{resolve:project}'}</td>
+            <td class="px-4 py-3"><code class="text-white">{'http://127.0.0.1:{port}'}</code> of another project's allocation</td>
+            <td class="px-4 py-3">env only</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">{'{resolve:project/branch}'}</td>
+            <td class="px-4 py-3">Same, targeting a specific branch</td>
+            <td class="px-4 py-3">env only</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="text-muted mb-8">
+      <strong class="text-white">Hooks have limited interpolation.</strong> Hook commands only support <code class="text-accent-light">{'{port}'}</code> and <code class="text-accent-light">{'{port_N}'}</code>. Tokens like <code class="text-accent-light">{'{router_domain}'}</code> and <code class="text-accent-light">{'{resolve:...}'}</code> are not available in hook commands. If a hook needs those values, reference the environment variables that GTL writes to the env file.
+    </p>
+
+    <h2>Edge cases and limitations</h2>
+    <ul class="text-muted space-y-3 list-disc pl-5 mb-8">
+      <li><strong class="text-white">Only the first port is routed.</strong> If your project uses <code class="text-accent-light">port_count: 3</code>, only the primary port gets a subdomain on the router. Secondary ports are accessible via <code class="text-white">localhost:{'{port_N}'}</code> directly.</li>
+      <li><strong class="text-white">Windows.</strong> <code class="text-accent-light">gtl serve install</code> does not support Windows (WSL2 planned). Windows users fall back to <code class="text-white">localhost:{'{port}'}</code> without branch-named HTTPS URLs.</li>
+      <li><strong class="text-white">Offline DNS.</strong> If <code class="text-white">prt.dev</code> DNS can't resolve (corporate firewall, no internet), branch URLs won't work unless <code class="text-white">/etc/hosts</code> entries cover them. Switching to <code class="text-accent-light">router.domain localhost</code> avoids this.</li>
+      <li><strong class="text-white">gtl resolve vs {'{resolve:...}'}.</strong> The <code class="text-accent-light">gtl resolve</code> CLI command rewrites the output to the router URL if the router is running. The <code class="text-accent-light">{'{resolve:...}'}</code> env token always expands to <code class="text-white">{'http://127.0.0.1:{port}'}</code>. They're different by design: env tokens point directly at the backend, the CLI gives you the browsable URL.</li>
+      <li><strong class="text-white">Alias precedence.</strong> If a registry route and an alias share the same name, the registry route wins. Aliases are intended for ports that don't have an automatic registry entry.</li>
+    </ul>
+
+    <h2>Configuration reference</h2>
+    <p class="text-muted mb-4">
+      Networking settings live in <strong class="text-white">user config</strong> (<code class="text-accent-light">gtl config</code>), not in <code class="text-accent-light">.treeline.yml</code>. They're per-machine, not per-project.
+    </p>
+    <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
+      <table
+        class="w-full min-w-[480px] text-sm text-left font-sans [&_td:first-child]:whitespace-nowrap [&_th:first-child]:whitespace-nowrap [&_code]:bg-surface [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded"
+      >
+        <thead class="uppercase tracking-wider">
+          <tr class="border-b border-surface-border bg-surface">
+            <th class="px-4 py-3 text-accent-light">Key</th>
+            <th class="px-4 py-3 text-accent-light">Default</th>
+            <th class="px-4 py-3 text-accent-light">Description</th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-surface-border text-muted [&>tr]:bg-surface-raised [&>tr]:transition-colors [&>tr:hover]:bg-surface"
+        >
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">port.base</td>
+            <td class="px-4 py-3">3002</td>
+            <td class="px-4 py-3">Starting port for worktree allocation.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">port.increment</td>
+            <td class="px-4 py-3">2</td>
+            <td class="px-4 py-3">Step size between allocations. Also the reservation block size.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">port.reservations</td>
+            <td class="px-4 py-3">{}</td>
+            <td class="px-4 py-3">Map of <code class="text-white">project</code> or <code class="text-white">project/branch</code> to a fixed base port.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">router.port</td>
+            <td class="px-4 py-3">3001</td>
+            <td class="px-4 py-3">Port the HTTPS router listens on. Must not equal <code class="text-white">port.base</code>.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">router.domain</td>
+            <td class="px-4 py-3">prt.dev</td>
+            <td class="px-4 py-3">Base domain for branch-named URLs. Fresh installs default to <code class="text-white">prt.dev</code>.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">router.aliases</td>
+            <td class="px-4 py-3">{}</td>
+            <td class="px-4 py-3">User-defined alias name &rarr; target port.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">tunnel.name</td>
+            <td class="px-4 py-3">&mdash;</td>
+            <td class="px-4 py-3">Cloudflare tunnel name. Set by <code class="text-accent-light">gtl tunnel setup</code>.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">tunnel.domain</td>
+            <td class="px-4 py-3">&mdash;</td>
+            <td class="px-4 py-3">Domain for named tunnel subdomains. Set by <code class="text-accent-light">gtl tunnel setup</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>See it in action</h2>
+    <ul class="text-muted space-y-3 list-disc pl-5 mb-8">
+      <li><a href="/use-cases/integrations-urls/" class="text-accent-light hover:text-accent underline underline-offset-2">Why port 3000 stays free</a>: the proxy facade for OAuth and webhooks.</li>
+      <li><a href="/use-cases/oauth-alias/" class="text-accent-light hover:text-accent underline underline-offset-2">OAuth callbacks across worktrees</a>: using aliases and start hooks for stable callback URLs.</li>
+      <li><a href="/use-cases/local-services/" class="text-accent-light hover:text-accent underline underline-offset-2">Local services</a>: cross-worktree resolution with <code class="text-accent-light">{'{resolve:...}'}</code>.</li>
+      <li><a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking feature page</a>: the marketing overview.</li>
+    </ul>
+
+    <DocsPagination
+      prev={{ href: "/docs/hooks/", label: "Hooks" }}
+      next={{ href: "/docs/database/", label: "Database" }}
+    />
+  </div>
+</DocsLayout>

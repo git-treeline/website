@@ -1,0 +1,189 @@
+---
+import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+import Terminal from '../../../components/Terminal.astro';
+---
+
+<ArticleLayout
+  title="Database per branch &mdash; Git Treeline"
+  description="Every worktree gets its own database — cloned from a template in seconds, seeded from hooks, or copied as a SQLite file. No shared state, no broken migrations."
+  canonical="https://git-treeline.dev/use-cases/database-per-branch/"
+  breadcrumb="Use cases"
+  breadcrumbHref="/use-cases/"
+  heading="Database per branch, no shared&nbsp;state"
+  lead='Two worktrees. Same <code class="text-white">myapp_dev</code> database. One runs a migration, the other&rsquo;s schema breaks. Treeline can give every worktree its own database &mdash; cloned from a template in seconds, seeded from hooks, or copied as a SQLite file. Database isolation is opt-in: omit the <code class="text-accent-light">database</code> block entirely if your project doesn&rsquo;t need it.'
+>
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-10">Option A: Clone from a template (PostgreSQL)</h2>
+  <p class="text-muted mb-4">
+    PostgreSQL&rsquo;s <code class="text-accent-light">createdb --template</code> copies the full schema and data from an existing database without running migrations or seeds. If your template database is ready to go, a new worktree gets a complete database in seconds &mdash; even if your seed file takes 20 minutes.
+  </p>
+  <p class="text-muted mb-4">
+    The trick: <strong class="text-white">keep your template database up to date.</strong> If you maintain a clean, seeded template (e.g. after each migration, re-seed the template), every clone starts from a known-good state. Your CI can do this, or a <code class="text-accent-light">post_setup</code> hook on the main worktree can keep it fresh.
+  </p>
+
+  <div class="mb-6">
+    <Terminal label=".treeline.yml">
+      <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-accent-light">project</span>: myapp
+
+<span class="text-accent-light">database</span>:
+  <span class="text-accent-light">adapter</span>: postgresql
+  <span class="text-accent-light">template</span>: myapp_development
+  <span class="text-accent-light">pattern</span>: {'"{template}_{worktree}"'}
+
+<span class="text-accent-light">env</span>:
+  <span class="text-white">PORT</span>: {'"{port}"'}
+  <span class="text-white">DATABASE_URL</span>: {'"postgresql://localhost:5432/'}{'{database}'}{'"'}</code></pre>
+    </Terminal>
+  </div>
+
+  <div class="mb-6">
+    <Terminal label="what happens">
+      <div class="space-y-2">
+        <p><span class="text-accent-light">$</span> <span class="text-white">gtl new feature-auth</span></p>
+        <p class="text-muted">Creating worktree <span class="text-accent">feature-auth</span></p>
+        <p class="text-muted">Allocated port <span class="text-accent">3012</span></p>
+        <p class="text-muted">Cloned database <span class="text-accent">myapp_development_feature_auth</span></p>
+        <p class="text-muted">Wrote <span class="text-accent">.env.local</span></p>
+        <p class="text-muted text-accent">==&gt; https://myapp-feature-auth.prt.dev</p>
+      </div>
+    </Terminal>
+  </div>
+
+  <p class="text-muted mb-4">
+    The <code class="text-accent-light">{'{database}'}</code> token in the env block resolves to the cloned database name. The <code class="text-accent-light">pattern</code> field controls the naming: <code class="text-white">myapp_development_feature_auth</code> in this example. The template database is never modified.
+  </p>
+
+  <h3 class="text-white font-mono text-lg mb-3 mt-8">Managing worktree databases</h3>
+  <div class="mb-6">
+    <Terminal>
+      <div class="space-y-4">
+        <div>
+          <p class="text-xs text-muted mb-1"># Print the worktree&rsquo;s database name</p>
+          <p><span class="text-accent-light">$</span> <span class="text-white">gtl db name</span></p>
+          <p class="text-muted">myapp_development_feature_auth</p>
+        </div>
+        <div>
+          <p class="text-xs text-muted mb-1"># Drop and re-clone from the template</p>
+          <p><span class="text-accent-light">$</span> <span class="text-white">gtl db reset</span></p>
+        </div>
+        <div>
+          <p class="text-xs text-muted mb-1"># Clone from a different source instead</p>
+          <p><span class="text-accent-light">$</span> <span class="text-white">gtl db reset --from staging_snapshot</span></p>
+        </div>
+        <div>
+          <p class="text-xs text-muted mb-1"># Restore from a pg_dump file (auto-detects format)</p>
+          <p><span class="text-accent-light">$</span> <span class="text-white">gtl db restore dump.sql</span></p>
+        </div>
+        <div>
+          <p class="text-xs text-muted mb-1"># Clean up when done</p>
+          <p><span class="text-accent-light">$</span> <span class="text-white">gtl release --drop-db</span></p>
+        </div>
+      </div>
+    </Terminal>
+  </div>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Option B: Seed from hooks (no template)</h2>
+  <p class="text-muted mb-4">
+    If your team prefers running migrations + seeds on every new worktree instead of maintaining a template, skip the <code class="text-accent-light">database</code> block and use <code class="text-accent-light">commands.setup</code> to create the database from scratch.
+  </p>
+
+  <div class="mb-6">
+    <Terminal label=".treeline.yml">
+      <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-accent-light">project</span>: myapp
+
+<span class="text-accent-light">env</span>:
+  <span class="text-white">PORT</span>: {'"{port}"'}
+  <span class="text-white">DATABASE_NAME</span>: {'"myapp_dev_{worktree}"'}
+
+<span class="text-accent-light">commands</span>:
+  <span class="text-accent-light">setup</span>:
+    - bin/rails db:create
+    - bin/rails db:schema:load
+    - bin/rails db:seed</code></pre>
+    </Terminal>
+  </div>
+
+  <p class="text-muted mb-4">
+    This approach trades setup speed for simplicity &mdash; no template to maintain, every worktree starts from the current schema. If your seed file is slow (10+ minutes), consider Option A instead. If it&rsquo;s fast or you&rsquo;re using a framework like Prisma that handles migrations differently, this may be all you need.
+  </p>
+  <p class="text-muted mb-8">
+    You can also combine the two: clone from a template for the schema, then run lightweight data patches in <code class="text-accent-light">commands.setup</code>.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Option C: SQLite (file copy)</h2>
+  <p class="text-muted mb-4">
+    SQLite databases are files. Treeline clones by copying the file to the worktree directory. No server, no <code class="text-accent-light">createdb</code>.
+  </p>
+
+  <div class="mb-8">
+    <Terminal label=".treeline.yml">
+      <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-accent-light">project</span>: myapp
+
+<span class="text-accent-light">database</span>:
+  <span class="text-accent-light">adapter</span>: sqlite
+  <span class="text-accent-light">template</span>: db/development.sqlite3</code></pre>
+    </Terminal>
+  </div>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Port-dependent data</h2>
+  <p class="text-muted mb-4">
+    If your database stores URLs that include the port &mdash; OAuth redirect URIs, webhook endpoints, asset URLs &mdash; the cloned data will have stale values pointing to the template&rsquo;s port. Use <code class="text-accent-light">commands.setup</code> to patch them after cloning:
+  </p>
+
+  <div class="mb-8">
+    <Terminal label=".treeline.yml">
+      <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-accent-light">commands</span>:
+  <span class="text-accent-light">setup</span>:
+    - psql $DATABASE_URL -c "UPDATE settings SET base_url = 'http://localhost:$PORT'"</code></pre>
+    </Terminal>
+  </div>
+
+  <p class="text-muted mb-8">
+    Setup commands run after the env file is written, so <code class="text-accent-light">$PORT</code> and <code class="text-accent-light">$DATABASE_URL</code> are already available.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">When to use which</h2>
+  <div class="overflow-x-auto rounded-lg border border-surface-border mb-10">
+    <table class="w-full text-sm text-left">
+      <thead>
+        <tr class="border-b border-surface-border bg-surface">
+          <th class="px-4 py-3 text-accent-light">Approach</th>
+          <th class="px-4 py-3 text-accent-light">Speed</th>
+          <th class="px-4 py-3 text-accent-light">Best when</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-border text-muted">
+        <tr>
+          <td class="px-4 py-3"><strong class="text-white">Clone from template</strong></td>
+          <td class="px-4 py-3">Seconds</td>
+          <td class="px-4 py-3">Seed is slow, team maintains a clean template database</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3"><strong class="text-white">Seed from hooks</strong></td>
+          <td class="px-4 py-3">Varies</td>
+          <td class="px-4 py-3">Seed is fast, or team uses migrations (Prisma, Knex) instead of templates</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3"><strong class="text-white">SQLite file copy</strong></td>
+          <td class="px-4 py-3">Instant</td>
+          <td class="px-4 py-3">App uses SQLite &mdash; no server needed</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3"><strong class="text-white">No database config</strong></td>
+          <td class="px-4 py-3">&mdash;</td>
+          <td class="px-4 py-3">App doesn&rsquo;t use a local database, or databases are managed externally</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Read next</h2>
+  <ul class="text-muted space-y-3 list-disc pl-5 mb-8">
+    <li><a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">Isolation feature page</a> &mdash; ports, databases, Redis, and env file management</li>
+    <li><a href="/docs/#configuration" class="text-accent-light hover:text-accent underline underline-offset-2">Docs: configuration</a> &mdash; full <code class="text-accent-light">.treeline.yml</code> reference with all database options</li>
+    <li><a href="/docs/#db-management" class="text-accent-light hover:text-accent underline underline-offset-2">Docs: database management</a> &mdash; <code class="text-accent-light">gtl db</code> commands</li>
+  </ul>
+
+  <p class="text-center">
+    <a href="/use-cases/" class="text-sm text-accent-light hover:text-accent">All use cases</a>
+  </p>
+</ArticleLayout>

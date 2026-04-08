@@ -1,0 +1,39 @@
+---
+const { title, link, linkText = 'Learn more', reversed = false } = Astro.props;
+---
+<div class={`md:grid md:grid-cols-2 md:gap-12 lg:gap-14 items-center py-20 sm:py-28 border-t border-surface-border feature-card-scroll ${reversed ? 'feature-card-reversed' : ''}`}>
+  <div class={`min-w-0 ${reversed ? 'md:order-1' : 'md:order-2'} max-w-xl md:max-w-none`}>
+    <h3 class="text-xl sm:text-2xl font-mono font-bold text-white mb-3 text-balance">{title}</h3>
+    <div class="text-base sm:text-lg text-muted mb-5 leading-relaxed flex flex-col gap-4">
+      <slot />
+    </div>
+    {link && (
+      <a href={link} class="inline-block text-sm font-mono font-semibold px-5 py-2.5 rounded-md border border-accent/40 text-accent-light hover:bg-accent/10 hover:border-accent transition-colors">
+        {linkText}
+      </a>
+    )}
+  </div>
+  <div class={`min-w-0 ${reversed ? 'md:order-2' : 'md:order-1'}`}>
+    <slot name="demo" />
+  </div>
+</div>
+
+<style>
+  @media (max-width: 767px) {
+    .feature-card-scroll {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      gap: 0.75rem;
+    }
+    .feature-card-scroll::-webkit-scrollbar { display: none; }
+    .feature-card-scroll > div {
+      flex: 0 0 calc(100% - 2.5rem);
+      scroll-snap-align: start;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+  }
+</style>

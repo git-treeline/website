@@ -1,0 +1,203 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import Terminal from '../../../components/Terminal.astro';
+import DocsPagination from '../../../components/DocsPagination.astro';
+---
+
+<DocsLayout
+  title="Lifecycle - Git Treeline Docs"
+  description="What happens when you run gtl new, gtl setup, gtl start, gtl release, and gtl prune. Step-by-step provisioning and teardown."
+  canonical="https://git-treeline.dev/docs/lifecycle/"
+  activePage="lifecycle"
+>
+  <header class="pt-20 sm:pt-24 pb-2 sm:pb-4 px-4 sm:px-6 lg:px-0">
+    <p class="text-sm text-muted mb-4">
+      <a href="/docs/" class="text-accent-light hover:text-accent">Docs</a> / Lifecycle
+    </p>
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-6 text-balance">Worktree lifecycle</h1>
+    <p class="text-lg sm:text-xl text-gray-400 mb-10 leading-relaxed max-w-3xl">
+      Treeline turns a branch into an isolated dev environment: ports, database, env, and supervised processes. This guide walks through each CLI command in order so you know what runs when, and what you can combine into a single step.
+    </p>
+  </header>
+  <div class="docs-guide px-4 sm:px-6 lg:px-0 pb-20">
+    <h2>Overview</h2>
+    <p class="text-base text-muted mb-4">
+      A worktree typically moves through <strong class="text-white">create</strong>, <strong class="text-white">setup</strong>, <strong class="text-white">start</strong>, your day-to-day <strong class="text-white">work</strong>, then <strong class="text-white">release</strong> (teardown). Each step can be explicit (<code class="text-accent-light">gtl setup</code> then <code class="text-accent-light">gtl start</code>) or combined (<code class="text-accent-light">gtl new</code> runs setup for you; <code class="text-accent-light">gtl new --start</code> also boots the dev server).
+    </p>
+    <p class="text-base text-muted mb-8">
+      Understanding this pipeline helps when something fails mid-setup, when you need to re-run provisioning after a config change, or when you want to know what <code class="text-accent-light">gtl release</code> actually tears down.
+    </p>
+
+    <h2><code class="text-accent-light">gtl new</code></h2>
+    <p class="text-base text-muted mb-4">
+      Creates a new git worktree and runs full setup against it. You must run <code class="text-accent-light">gtl new</code> from the <strong class="text-white">main</strong> repository checkout (not from inside another worktree), because Treeline uses the main repo as the source for allocation and shared files.
+    </p>
+    <p class="text-base text-muted mb-4">
+      Under the hood it combines <code class="text-accent-light">git worktree add</code> with the same provisioning path as <code class="text-accent-light">gtl setup</code>: allocate resources, copy files, write env, clone the database, run setup commands and hooks.
+    </p>
+    <p class="text-base text-muted mb-6">
+      Pass <code class="text-accent-light">--start</code> to launch the supervised dev server immediately after setup finishes.
+    </p>
+    <div class="mb-8">
+      <Terminal label="Shell">
+        <pre class="m-0 text-base leading-relaxed font-mono"><code><span class="text-muted"># From the main repo</span>
+gtl new feature/payments
+gtl new feature/payments --start</code></pre>
+      </Terminal>
+    </div>
+
+    <h2><code class="text-accent-light">gtl setup</code></h2>
+    <p class="text-base text-muted mb-4">
+      Idempotent provisioning for the <strong class="text-white">current</strong> worktree. Safe to run again after config edits that affect ports, env, or install steps.
+    </p>
+    <p class="text-base text-muted mb-4">Execution order:</p>
+    <ol class="text-base text-muted space-y-2 list-decimal pl-5 mb-4">
+      <li>Allocate ports, database name, and Redis namespace (or reuse existing allocation).</li>
+      <li><code class="text-accent-light">copy_files</code> from the main repo into the worktree.</li>
+      <li>Write the env file with interpolated values (ports, DB name, tokens like <code class="text-accent-light">{'{port}'}</code>, <code class="text-accent-light">{'{database}'}</code>, resolve placeholders, etc.).</li>
+      <li>Clone the database from the template (skipped when allocations are reused and the DB already exists).</li>
+      <li><code class="text-accent-light">pre_setup</code> hooks.</li>
+      <li><code class="text-accent-light">commands.setup</code>.</li>
+      <li>Configure the editor (title, color) for this worktree.</li>
+      <li><code class="text-accent-light">post_setup</code> hooks.</li>
+    </ol>
+    <p class="text-base text-muted mb-8">
+      If setup fails <strong class="text-white">after</strong> a new allocation was created, Treeline releases the registry entry so ports and names do not leak.
+    </p>
+
+    <h2><code class="text-accent-light">gtl start</code></h2>
+    <p class="text-base text-muted mb-4">
+      Launches the supervised dev server for this worktree. Before starting the child process, Treeline syncs the env file and refreshes editor metadata so what you see matches <code class="text-accent-light">.treeline.yml</code>.
+    </p>
+    <p class="text-base text-muted mb-4">
+      Start hooks run according to your config: hooks marked <code class="text-accent-light">auto</code>, plus any hook names you pass with <code class="text-accent-light">--with</code>.
+    </p>
+    <p class="text-base text-muted mb-8">
+      <strong class="text-white">Fresh start</strong> means no supervisor is running yet: Treeline reads <code class="text-accent-light">commands.start</code>, syncs env, then boots the server. <strong class="text-white">Resume</strong> means a supervisor is already listening: <code class="text-accent-light">gtl start</code> may only signal the existing process instead of re-reading config (see <a href="#when-config-changes-take-effect" class="text-accent-light hover:text-accent underline underline-offset-2">When config changes take effect</a>).
+    </p>
+
+    <h2><code class="text-accent-light">gtl restart</code> / <code class="text-accent-light">gtl stop</code></h2>
+    <p class="text-base text-muted mb-4">
+      <code class="text-accent-light">gtl restart</code> bounces the dev server: it syncs env (and updates the supervisor environment), then restarts the child. Use this after env or hook changes when you do not need a full new supervisor.
+    </p>
+    <p class="text-base text-muted mb-8">
+      <code class="text-accent-light">gtl stop</code> stops the server process but leaves the supervisor alive. The next <code class="text-accent-light">gtl start</code> may <strong class="text-white">resume</strong> with the previously loaded start command rather than re-provisioning from disk.
+    </p>
+
+    <h2><code class="text-accent-light">gtl switch</code></h2>
+    <p class="text-base text-muted mb-4">
+      Fetches from <code class="text-accent-light">origin</code>, checks out a branch in the current worktree, updates the registry entry for this path, and refreshes env so allocations match the branch.
+    </p>
+    <p class="text-base text-muted mb-4">
+      You can pass a pull request number instead of a branch name when your hosting integration supports it.
+    </p>
+    <p class="text-base text-muted mb-8">
+      Pass <code class="text-accent-light">--setup</code> to re-run <code class="text-accent-light">gtl setup</code> after the checkout (for example when dependencies or migrations changed on the target branch).
+    </p>
+
+    <h2><code class="text-accent-light">gtl release</code></h2>
+    <p class="text-base text-muted mb-4">
+      Teardown for this worktree. Runs <code class="text-accent-light">pre_release</code> hooks, then frees the port, database, and Redis allocation in the registry, then runs <code class="text-accent-light">post_release</code> hooks.
+    </p>
+    <ul class="text-base text-muted space-y-2 list-disc pl-5 mb-8">
+      <li><code class="text-accent-light">--drop-db</code> drops the database.</li>
+      <li><code class="text-accent-light">--remove-worktree</code> also removes the git worktree directory.</li>
+      <li><code class="text-accent-light">--force</code> skips confirmation prompts.</li>
+    </ul>
+
+    <h2><code class="text-accent-light">gtl prune</code></h2>
+    <p class="text-base text-muted mb-8">
+      Bulk cleanup of stale worktrees. Treeline uses <code class="text-accent-light">merge_target</code> from <code class="text-accent-light">.treeline.yml</code> to decide which remote branches count as merged, so it can offer to remove worktrees whose branches are already integrated.
+    </p>
+
+    <h2 id="when-config-changes-take-effect">When config changes take effect</h2>
+    <p class="text-base text-muted mb-4">
+      Each worktree has its own <code class="text-accent-light">.treeline.yml</code> (the file checked out on that branch). Commands read the worktree you are in, not the main repo. The table below summarizes which fields apply on fresh start, restart, and manual commands. Adapted from the Treeline <code class="text-accent-light">CONFIG_LIFECYCLE</code> reference.
+    </p>
+    <p class="text-base text-muted mb-4">
+      <strong class="text-white">Key insight:</strong> changing <code class="text-accent-light">commands.start</code> requires stopping the supervisor process entirely (for example Ctrl+C in the terminal where it runs) and running <code class="text-accent-light">gtl start</code> again. <code class="text-accent-light">gtl stop</code> stops the child only; <code class="text-accent-light">gtl restart</code> syncs env but does not replace an in-memory start command and will warn if it detects a mismatch.
+    </p>
+
+    <div class="overflow-x-auto rounded-lg border border-surface-border mb-6">
+      <table
+        class="w-full min-w-[640px] text-base text-left font-sans [&_td:first-child]:whitespace-nowrap [&_th:first-child]:whitespace-nowrap [&_code]:bg-surface [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded"
+      >
+        <thead class="uppercase tracking-wider text-base">
+          <tr class="border-b border-surface-border bg-surface">
+            <th class="px-4 py-3 text-accent-light">Field</th>
+            <th class="px-4 py-3 text-accent-light">Applied on fresh <code class="text-accent-light">gtl start</code>?</th>
+            <th class="px-4 py-3 text-accent-light">How to apply manually</th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-surface-border text-muted [&>tr]:bg-surface-raised [&>tr]:transition-colors [&>tr:hover]:bg-surface"
+        >
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">env:</td>
+            <td class="px-4 py-3">Yes (also on <code class="text-accent-light">gtl restart</code>)</td>
+            <td class="px-4 py-3"><code class="text-accent-light">gtl env sync</code></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">commands.start</td>
+            <td class="px-4 py-3">Yes, fresh start only (see note above)</td>
+            <td class="px-4 py-3">Stop supervisor, then <code class="text-accent-light">gtl start</code></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">editor</td>
+            <td class="px-4 py-3">Yes (also via <code class="text-accent-light">gtl env sync</code>)</td>
+            <td class="px-4 py-3"><code class="text-accent-light">gtl editor refresh</code></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">commands.setup</td>
+            <td class="px-4 py-3">No (slow / destructive)</td>
+            <td class="px-4 py-3"><code class="text-accent-light">gtl setup</code> or <code class="text-accent-light">gtl switch --setup</code></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">copy_files</td>
+            <td class="px-4 py-3">No (provisioning only)</td>
+            <td class="px-4 py-3"><code class="text-accent-light">gtl setup</code></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">database.*</td>
+            <td class="px-4 py-3">No (destructive)</td>
+            <td class="px-4 py-3"><code class="text-accent-light">gtl db reset</code></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">port_count</td>
+            <td class="px-4 py-3">No (registry conflict risk)</td>
+            <td class="px-4 py-3"><code class="text-accent-light">gtl setup</code></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">project</td>
+            <td class="px-4 py-3">Yes (read on demand)</td>
+            <td class="px-4 py-3">Next command that uses it</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">hooks</td>
+            <td class="px-4 py-3">N/A</td>
+            <td class="px-4 py-3">Fires when the hook event occurs</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="text-base text-muted mb-8">
+      <code class="text-accent-light">gtl env sync</code> refreshes the env file and editor settings without starting the server. <code class="text-accent-light">gtl restart</code> applies env changes to a running supervisor. <code class="text-accent-light">gtl setup</code> is the path for <code class="text-accent-light">copy_files</code>, <code class="text-accent-light">commands.setup</code>, port re-allocation, and database clone steps.
+    </p>
+
+    <h2>See also</h2>
+    <ul class="text-base text-muted space-y-3 list-disc pl-5 mb-8">
+      <li>
+        <a href="/docs/hooks/" class="text-accent-light hover:text-accent underline underline-offset-2">Hooks guide</a>: setup, release, and start hooks.
+      </li>
+      <li>
+        <a href="/docs/configuration/" class="text-accent-light hover:text-accent underline underline-offset-2">Configuration reference</a>: every <code class="text-accent-light">.treeline.yml</code> field.
+      </li>
+    </ul>
+
+    <DocsPagination
+      prev={{ href: "/docs/getting-started/", label: "Getting started" }}
+      next={{ href: "/docs/hooks/", label: "Hooks" }}
+    />
+  </div>
+</DocsLayout>

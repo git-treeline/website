@@ -1,0 +1,145 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import Terminal from '../../../components/Terminal.astro';
+import DocsPagination from '../../../components/DocsPagination.astro';
+---
+
+<DocsLayout
+  title="Cross-worktree resolve - Git Treeline Docs"
+  description={"How to connect services across worktrees using gtl resolve, gtl link, and the {resolve:...} env token."}
+  canonical="https://git-treeline.dev/docs/resolve/"
+  activePage="resolve"
+>
+  <header class="pt-20 sm:pt-24 pb-2 sm:pb-4 px-4 sm:px-6 lg:px-0">
+    <p class="text-sm text-muted mb-4">
+      <a href="/docs/" class="text-accent-light hover:text-accent">Docs</a> / Resolve
+    </p>
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-6 text-balance">Cross-worktree resolve</h1>
+    <p class="text-lg sm:text-xl text-gray-400 mb-10 leading-relaxed max-w-3xl">
+      When multiple Treeline-managed repos run on one machine, each worktree gets its own ports. Resolve turns a stable name (another project on the same branch) into the correct base URL at env write time, so frontends and APIs stay wired without hand-editing ports.
+    </p>
+  </header>
+  <div class="docs-guide px-4 sm:px-6 lg:px-0 pb-20">
+    <h2>The problem</h2>
+    <p class="text-base text-muted mb-4">
+      Typical layout: a frontend repo and an API repo, both managed by Treeline. The browser loads the UI from one worktree and the UI calls an HTTP API in another. Each worktree receives a different port allocation, so a hardcoded <code class="text-accent-light">localhost:3xxx</code> in config breaks as soon as you create another branch or re-run setup.
+    </p>
+    <p class="text-base text-muted mb-8">
+      You need a value that tracks the API worktree for the <strong class="text-white">same branch name</strong> (or an explicit override), not a single static port.
+    </p>
+
+    <h2>How resolve works</h2>
+    <p class="text-base text-muted mb-4">
+      In your env template you write placeholders such as <code class="text-accent-light">{'{resolve:project}'}</code> (the project key is the Treeline project name, for example <code class="text-accent-light">{'{resolve:api}'}</code> or <code class="text-accent-light">{'{resolve:api/main}'}</code> when you need a nested key).
+    </p>
+    <p class="text-base text-muted mb-4">
+      When Treeline writes the env file, it looks up the target project in the registry, finds the allocation for the <strong class="text-white">same branch name</strong> as the current worktree (unless you pinned a branch with <code class="text-accent-light">gtl link</code>), and substitutes a base URL.
+    </p>
+    <p class="text-base text-muted mb-4">
+      Default output shape is <code class="text-accent-light">http://127.0.0.1:</code><code class="text-accent-light">{'{port}'}</code> (loopback, not the hostname <code class="text-accent-light">localhost</code>). If the HTTPS router is running, Treeline may substitute an HTTPS router URL instead so callers can use stable hostnames.
+    </p>
+    <p class="text-base text-muted mb-8">
+      Resolution happens at <strong class="text-white">env write time</strong> (setup, switch, link, start-time sync), not on every HTTP request from your app.
+    </p>
+
+    <h2><code class="text-accent-light">gtl resolve</code> CLI</h2>
+    <p class="text-base text-muted mb-4">
+      <code class="text-accent-light">gtl resolve &lt;project&gt; [branch]</code> prints the resolved base URL for a target project. Omit the branch to use the <strong class="text-white">current worktree branch</strong> as the match key.
+    </p>
+    <p class="text-base text-muted mb-4">
+      Pass <code class="text-accent-light">--json</code> for machine-readable output in scripts.
+    </p>
+    <div class="mb-8">
+      <Terminal label="Shell">
+        <pre class="m-0 text-base leading-relaxed font-mono"><code>gtl resolve api
+gtl resolve api feature/payments
+gtl resolve api --json</code></pre>
+      </Terminal>
+    </div>
+
+    <h2><code class="text-accent-light">gtl link</code> / <code class="text-accent-light">gtl unlink</code></h2>
+    <p class="text-base text-muted mb-4">
+      Linking overrides which branch a resolve token targets. Example: <code class="text-accent-light">gtl link api staging</code> pins <code class="text-accent-light">{'{resolve:api}'}</code> to the <code class="text-accent-light">staging</code> branch allocation, even when your current worktree is on another branch.
+    </p>
+    <p class="text-base text-muted mb-4">
+      Overrides persist across restarts. After a link change, Treeline regenerates env and restarts the supervised server so the running process sees new values.
+    </p>
+    <p class="text-base text-muted mb-4">
+      Run <code class="text-accent-light">gtl link</code> with no arguments to list current links. <code class="text-accent-light">gtl unlink api</code> removes the override for that project.
+    </p>
+    <div class="mb-8">
+      <Terminal label="Shell">
+        <pre class="m-0 text-base leading-relaxed font-mono"><code>gtl link api staging
+gtl link
+gtl unlink api</code></pre>
+      </Terminal>
+    </div>
+
+    <h2>Link prerequisites</h2>
+    <p class="text-base text-muted mb-8">
+      The target worktree must already exist in the registry: <code class="text-accent-light">gtl setup</code> (or equivalent) must have run in that project for the branch you reference. <code class="text-accent-light">gtl link</code> validates this before persisting an override.
+    </p>
+
+    <h2>Env template example</h2>
+    <p class="text-base text-muted mb-4">
+      In <code class="text-accent-light">.treeline.yml</code>, under <code class="text-accent-light">env:</code>, you might declare:
+    </p>
+    <div class="mb-6">
+      <Terminal label=".treeline.yml (excerpt)">
+        <pre class="m-0 text-base leading-relaxed font-mono"><code><span class="text-accent-light">env</span>:
+  <span class="text-accent-light">API_URL</span>: <span class="text-white">"{'{resolve:api}'}"</span></code></pre>
+      </Terminal>
+    </div>
+    <p class="text-base text-muted mb-4">
+      Before resolution, the generated env file on disk could still contain the literal token (or Treeline may show the template in diagnostics). After resolution for a worktree where the <code class="text-accent-light">api</code> project has branch <code class="text-accent-light">feature/payments</code> at port <code class="text-accent-light">3044</code>, the value becomes something like:
+    </p>
+    <div class="mb-8">
+      <Terminal label=".env.local (conceptual)">
+        <pre class="m-0 text-base leading-relaxed font-mono"><code>API_URL=http://127.0.0.1:3044</code></pre>
+      </Terminal>
+    </div>
+
+    <h2>Edge cases</h2>
+    <ul class="text-base text-muted space-y-3 list-disc pl-5 mb-6">
+      <li>
+        <strong class="text-white">Missing resolve target:</strong> env generation fails with an error if the registry has no matching allocation for the required project and branch.
+      </li>
+      <li>
+        <strong class="text-white">Circular resolves:</strong> if two projects resolve to each other through the router in a loop, the router can respond with <code class="text-accent-light">508 Loop Detected</code>.
+      </li>
+      <li>
+        <strong class="text-white">Partial link failure:</strong> the registry may update while env write emits a warning. Treat warnings as a signal to run <code class="text-accent-light">gtl doctor</code> or re-run sync.
+      </li>
+      <li>
+        <strong class="text-white"><code class="text-accent-light">--restart</code> on link:</strong> deprecated. Since v0.33.0, link operations restart the supervised server automatically when needed.
+      </li>
+    </ul>
+
+    <h2>Multi-repo patterns</h2>
+    <p class="text-base text-muted mb-8">
+      For a full walkthrough (frontend repo + API repo, link overrides, and day-to-day workflow), see <a href="/use-cases/multi-repo/" class="text-accent-light hover:text-accent underline underline-offset-2">use case: multi-repo</a>.
+    </p>
+
+    <h2>See also</h2>
+    <ul class="text-base text-muted space-y-3 list-disc pl-5 mb-8">
+      <li>
+        <a href="/docs/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking guide</a>: router, ports, and HTTPS URLs.
+      </li>
+      <li>
+        <a href="/docs/configuration/" class="text-accent-light hover:text-accent underline underline-offset-2">Configuration reference</a>: <code class="text-accent-light">env:</code> and project keys.
+      </li>
+      <li>
+        <a href="/docs/lifecycle/" class="text-accent-light hover:text-accent underline underline-offset-2">Lifecycle guide</a>: when env is rewritten during setup and start.
+      </li>
+    </ul>
+
+    <p class="text-center mt-16">
+      <a href="/docs/" class="text-base text-accent-light hover:text-accent">Back to docs</a>
+    </p>
+
+    <DocsPagination
+      prev={{ href: "/docs/editor/", label: "Editor" }}
+      next={{ href: "/docs/supervisor/", label: "Supervisor" }}
+    />
+  </div>
+</DocsLayout>

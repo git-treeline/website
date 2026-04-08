@@ -1,0 +1,160 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import Terminal from '../../../components/Terminal.astro';
+import DocsPagination from '../../../components/DocsPagination.astro';
+---
+
+<DocsLayout
+  title="Database — Git Treeline Docs"
+  description="How Git Treeline manages per-worktree databases: PostgreSQL cloning, SQLite, naming, gtl db commands, and edge cases."
+  canonical="https://git-treeline.dev/docs/database/"
+  activePage="database"
+>
+  <header class="pt-20 sm:pt-24 pb-2 sm:pb-4 px-4 sm:px-6 lg:px-0">
+    <p class="text-sm text-muted mb-4">
+      <a href="/docs/" class="text-accent-light hover:text-accent">Docs</a> / Database
+    </p>
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-6 text-balance">Database management</h1>
+    <p class="text-lg sm:text-xl text-gray-400 mb-10 leading-relaxed max-w-3xl">
+      Git Treeline can clone a template database for each worktree so branches stay isolated. This page covers naming, PostgreSQL and SQLite behavior, the <code class="text-accent-light">gtl db</code> commands, and cleanup.
+    </p>
+  </header>
+  <div class="docs-guide px-4 sm:px-6 lg:px-0 pb-20">
+    <h2>How database allocation works</h2>
+    <p class="text-base text-muted mb-4">
+      Database cloning runs only when <code class="text-accent-light">database.template</code> is set in <code class="text-accent-light">.treeline.yml</code>. The main repository worktree uses the template database itself (no derived name). Additional worktrees get a new database whose name is built from <code class="text-accent-light">database.pattern</code> (default <code class="text-white">{'{template}_{worktree}'}</code>), so names look like <code class="text-white">myapp_development_feature_auth</code>.
+    </p>
+    <p class="text-base text-muted mb-8">
+      If the registry already has an allocation for this worktree path, that allocation is reused and the clone step is skipped. Setup still runs <code class="text-accent-light">commands.setup</code> and refreshes env files.
+    </p>
+
+    <h2>Configuration</h2>
+    <p class="text-base text-muted mb-4">
+      <code class="text-accent-light">database.adapter</code> is <code class="text-white">postgresql</code> by default; set <code class="text-white">sqlite</code> for file-based databases.
+    </p>
+    <p class="text-base text-muted mb-4">
+      <code class="text-accent-light">database.template</code> is required for cloning: a PostgreSQL database name to pass to <code class="text-white">createdb --template</code>, or a path to the SQLite file to copy (resolved relative to the main repo for worktrees).
+    </p>
+    <p class="text-base text-muted mb-4">
+      <code class="text-accent-light">database.pattern</code> defaults to <code class="text-white">{'{template}_{worktree}'}</code>. Tokens: <code class="text-white">{'{template}'}</code>, <code class="text-white">{'{worktree}'}</code> (sanitized directory name), <code class="text-white">{'{project}'}</code>.
+    </p>
+    <div class="mb-8">
+      <Terminal label=".treeline.yml">
+        <pre class="m-0 text-base leading-relaxed font-mono"><code><span class="text-accent-light">database</span>:
+  <span class="text-accent-light">adapter</span>: <span class="text-white">postgresql</span>
+  <span class="text-accent-light">template</span>: <span class="text-white">myapp_development</span>
+  <span class="text-accent-light">pattern</span>: <span class="text-white">"{'{template}_{worktree}'}"</span></code></pre>
+      </Terminal>
+    </div>
+
+    <h2><code class="text-accent-light">gtl db</code> commands</h2>
+    <p class="text-base text-muted mb-4">
+      <code class="text-accent-light">gtl db name</code> prints the allocated database name for the current worktree. Add <code class="text-white">--json</code> for structured output.
+    </p>
+    <div class="mb-6">
+      <Terminal>
+        <div class="space-y-2 text-base">
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl db name</span>
+          </p>
+        </div>
+      </Terminal>
+    </div>
+    <p class="text-base text-muted mb-4">
+      <code class="text-accent-light">gtl db reset</code> drops the worktree database and re-clones from <code class="text-accent-light">database.template</code>. Use <code class="text-white">--from &lt;name&gt;</code> to clone from a different source.
+    </p>
+    <div class="mb-6">
+      <Terminal>
+        <div class="space-y-2 text-base">
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl db reset</span>
+          </p>
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl db reset --from myapp_staging</span>
+          </p>
+        </div>
+      </Terminal>
+    </div>
+    <p class="text-base text-muted mb-4">
+      <code class="text-accent-light">gtl db restore &lt;dumpfile&gt;</code> drops the database, recreates it, and loads a dump. Format is detected (custom <code class="text-white">pg_dump</code> or plain SQL).
+    </p>
+    <div class="mb-6">
+      <Terminal>
+        <div class="space-y-2 text-base">
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl db restore ./backup.dump</span>
+          </p>
+        </div>
+      </Terminal>
+    </div>
+    <p class="text-base text-muted mb-4">
+      <code class="text-accent-light">gtl db drop</code> removes the worktree database only (it does not delete the template).
+    </p>
+    <div class="mb-8">
+      <Terminal>
+        <div class="space-y-2 text-base">
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl db drop</span>
+          </p>
+        </div>
+      </Terminal>
+    </div>
+
+    <h2>PostgreSQL workflow</h2>
+    <p class="text-base text-muted mb-4">
+      Maintain a template database with schema and seed data. Point <code class="text-accent-light">database.template</code> at it. On <code class="text-accent-light">gtl new</code> or <code class="text-accent-light">gtl setup</code>, Treeline clones it for the worktree. Run migrations and further setup in <code class="text-accent-light">commands.setup</code>. Use <code class="text-accent-light">gtl db reset</code> when you need a clean copy from the template.
+    </p>
+
+    <h2>SQLite workflow</h2>
+    <p class="text-base text-muted mb-8">
+      Set <code class="text-accent-light">database.adapter: sqlite</code> and <code class="text-accent-light">database.template</code> to the path of a SQLite file in the main repo. Treeline copies that file into each worktree; paths differ from PostgreSQL (per-worktree file under the worktree directory). Use <code class="text-accent-light">gtl db reset</code> to re-copy from the template file.
+    </p>
+
+    <h2>Port-dependent data</h2>
+    <p class="text-base text-muted mb-8">
+      If rows in the database store URLs with embedded ports (OAuth redirects, webhooks), those values must be updated when the allocated port changes. Run fixups from <code class="text-accent-light">commands.setup</code> with <code class="text-accent-light">$PORT</code> in the environment. See the <a href="/docs/#setup-commands" class="text-accent-light hover:text-accent underline underline-offset-2">Setup commands</a> section on the docs hub for the full pattern.
+    </p>
+
+    <h2>Cleanup</h2>
+    <p class="text-base text-muted mb-4">
+      <code class="text-accent-light">gtl release --drop-db</code> frees the worktree allocation and drops the cloned database. <code class="text-accent-light">gtl prune --drop-db</code> can drop databases for merged or stale worktrees depending on the flags you pass.
+    </p>
+    <div class="mb-8">
+      <Terminal>
+        <div class="space-y-2 text-base">
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl release --drop-db</span>
+          </p>
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl prune --drop-db</span>
+          </p>
+        </div>
+      </Terminal>
+    </div>
+
+    <h2>See also</h2>
+    <ul class="text-base text-muted space-y-2 list-disc pl-5 mb-4">
+      <li>
+        <a href="/docs/configuration/" class="text-accent-light hover:text-accent underline underline-offset-2">Configuration reference</a> (<code class="text-accent-light">database.*</code>)
+      </li>
+      <li>
+        <a href="/docs/hooks/" class="text-accent-light hover:text-accent underline underline-offset-2">Hooks guide</a> for <code class="text-accent-light">pre_setup</code> / <code class="text-accent-light">post_setup</code> around provisioning
+      </li>
+      <li>
+        <a href="/use-cases/database-per-branch/" class="text-accent-light hover:text-accent underline underline-offset-2">Use case: database per branch</a>
+      </li>
+    </ul>
+
+    <DocsPagination
+      prev={{ href: "/docs/networking/", label: "Networking" }}
+      next={{ href: "/docs/editor/", label: "Editor" }}
+    />
+  </div>
+</DocsLayout>

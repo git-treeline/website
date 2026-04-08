@@ -1,0 +1,235 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Terminal from '../../../components/Terminal.astro';
+import BenefitCard from '../../../components/BenefitCard.astro';
+import FeatureStrip from '../../../components/FeatureStrip.astro';
+---
+
+<BaseLayout
+  title="Workflows — Git Treeline"
+  description="Type a PR number, get a running app. One-command PR review, process supervisor, interactive TUI dashboard, and automated teardown for git worktree workflows."
+  canonical="https://git-treeline.dev/features/workflows/"
+  activeNav="features"
+>
+  <section class="px-4 sm:px-6 pt-28 sm:pt-36 pb-16 sm:pb-20 text-center">
+    <p class="text-sm uppercase tracking-wider text-muted mb-4">Workflows</p>
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">Type a PR number.<br />Get a running app.</h1>
+    <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
+      <code class="text-accent-light">gtl review</code> creates an isolated worktree, allocates resources, runs setup, and boots the server—all from a PR number. Requires the <code class="text-accent-light">gh</code> CLI for PR fetching; everything else is built in.
+    </p>
+  </section>
+
+  <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-6 sm:mb-4 text-balance">10 minutes of setup for 2 minutes of&nbsp;review</h2>
+        <p class="text-base sm:text-lg text-muted max-w-2xl text-balance mx-auto mb-10">
+          Product owner asks to see PR #42. Here's what happens.
+        </p>
+      </div>
+      <div class="max-w-2xl mx-auto">
+        <Terminal label="the manual way">
+          <div class="space-y-2">
+            <p><span class="text-accent-light">$</span> <span class="text-white">gh pr checkout 42</span></p>
+            <p><span class="text-accent-light">$</span> <span class="text-white">git worktree add ../pr-42 add-oauth-login</span></p>
+            <p><span class="text-accent-light">$</span> <span class="text-white">cd ../pr-42</span></p>
+            <p><span class="text-accent-light">$</span> <span class="text-white">cp ../.env.local .env.local</span></p>
+            <p><span class="text-accent-light">$</span> <span class="text-white">vim .env.local</span> <span class="text-muted"># change PORT, DATABASE_URL&hellip;</span></p>
+            <p><span class="text-accent-light">$</span> <span class="text-white">createdb myapp_dev_pr42</span></p>
+            <p><span class="text-accent-light">$</span> <span class="text-white">rails db:schema:load</span></p>
+            <p><span class="text-accent-light">$</span> <span class="text-white">bundle install</span></p>
+            <p><span class="text-accent-light">$</span> <span class="text-white">bin/dev</span></p>
+            <p class="text-muted text-xs mt-2"># 8 commands. 10 minutes. Hope you didn't miss a step.</p>
+          </div>
+        </Terminal>
+      </div>
+      <p class="text-base text-muted text-center mt-8 max-w-lg mx-auto">
+        Next PR? Do it all again. And don't forget to tear everything down when you're done.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-4 sm:px-6 py-16 sm:py-28">
+    <div class="max-w-3xl mx-auto text-center">
+      <p class="text-sm uppercase tracking-wider text-muted mb-4">One command replaces all of that</p>
+      <div class="font-mono text-xl sm:text-2xl md:text-3xl text-white font-bold tracking-tight mb-10">gtl review 42 --start</div>
+      <div class="space-y-0 border-l-2 border-surface-border pl-4 max-w-md mx-auto text-left mb-8">
+        <div class="flex gap-3 pb-3">
+          <span class="text-accent text-sm font-bold shrink-0 mt-0.5">&#10003;</span>
+          <span class="text-base text-muted min-w-0">Fetched PR <strong class="text-white font-medium">#42</strong> <span class="text-muted">(Add OAuth login)</span></span>
+        </div>
+        <div class="flex gap-3 pb-3">
+          <span class="text-accent text-sm font-bold shrink-0 mt-0.5">&#10003;</span>
+          <span class="text-base text-muted min-w-0">Created worktree <strong class="text-white font-medium">myapp-pr-42</strong></span>
+        </div>
+        <div class="flex gap-3 pb-3">
+          <span class="text-accent text-sm font-bold shrink-0 mt-0.5">&#10003;</span>
+          <span class="text-base text-muted min-w-0">Allocated port <strong class="text-white font-medium">3020</strong></span>
+        </div>
+        <div class="flex gap-3 pb-3">
+          <span class="text-accent text-sm font-bold shrink-0 mt-0.5">&#10003;</span>
+          <span class="text-base text-muted min-w-0">Cloned database <strong class="text-white font-medium">myapp_dev_pr_42</strong></span>
+        </div>
+        <div class="flex gap-3 pb-3">
+          <span class="text-accent text-sm font-bold shrink-0 mt-0.5">&#10003;</span>
+          <span class="text-base text-muted min-w-0">Wrote <strong class="text-white font-medium">.env.local</strong>, ran setup commands</span>
+        </div>
+        <div class="flex gap-3 pb-3">
+          <span class="text-accent text-sm font-bold shrink-0 mt-0.5">&#10003;</span>
+          <span class="text-base text-muted min-w-0">Server running on <strong class="text-white font-medium">:3020</strong></span>
+        </div>
+        <div class="flex gap-3 items-baseline">
+          <span class="text-muted shrink-0 mt-0.5" aria-hidden="true">&rarr;</span>
+          <span class="text-base text-muted min-w-0 font-mono text-accent">https://myapp-pr-42.prt.dev</span>
+        </div>
+        <p class="text-muted text-xs mt-2 pl-7">named URL via gtl serve</p>
+      </div>
+      <p class="text-base text-muted max-w-md mx-auto">
+        Done reviewing? <code class="text-accent-light">gtl release --drop-db --remove-worktree</code> frees the allocated port, drops the cloned database, cleans up the env file, and removes the worktree directory in one step.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-6 sm:mb-4 text-balance">What this makes&nbsp;possible</h2>
+        <p class="text-base sm:text-lg text-muted max-w-2xl text-balance mx-auto mb-12">
+          Workflows tie isolation and networking together: one command should stand up a branch with resources, a URL, and a running process—and another command should tear it down cleanly. That is the bar this page documents end to end; <a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">Isolation</a> and <a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking</a> explain the underlying pieces.
+        </p>
+      </div>
+      <div class="grid gap-10 lg:grid-cols-3 lg:gap-12">
+        <BenefitCard>
+          <h3 class="text-white font-mono text-lg sm:text-xl mb-3 text-balance">Product and design review real apps</h3>
+          <p class="text-base text-muted leading-relaxed"><code class="text-accent-light">{"gtl review <PR> --start"}</code> gives stakeholders a running checkout without asking them to clone, install dependencies, or edit env files. Pair with <code class="text-accent-light">gtl serve</code> for a named HTTPS URL per branch so redirects and demos match what engineers see—no throwaway staging deploy required for a first look.</p>
+        </BenefitCard>
+        <BenefitCard>
+          <h3 class="text-white font-mono text-lg sm:text-xl mb-3 text-balance">QA exercises several branches at once</h3>
+          <p class="text-base text-muted leading-relaxed">Multiple PRs means multiple allocations: distinct ports, databases, and URLs. Test flows in parallel instead of serially reconfiguring one machine. When a branch is merged or obsolete, <code class="text-accent-light">gtl release --drop-db</code> (or <code class="text-accent-light">gtl prune --merged</code>) reclaims disk and registry entries explicitly.</p>
+        </BenefitCard>
+        <BenefitCard>
+          <h3 class="text-white font-mono text-lg sm:text-xl mb-3 text-balance">Agents and CI drive the same supervisor</h3>
+          <p class="text-base text-muted leading-relaxed">Humans use <code class="text-accent-light">gtl start</code> in a terminal; scripts and agents use <code class="text-accent-light">gtl restart</code> / <code class="text-accent-light">gtl stop</code> over the Unix socket—no PID files or signals to guess. Optional hooks in <code class="text-white">.treeline.yml</code> still bracket setup and teardown the same way for everyone.</p>
+        </BenefitCard>
+      </div>
+    </div>
+  </section>
+
+  <section class="px-4 sm:px-6 py-16 sm:py-28">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-12 text-balance">Start, stop, restart — no PID&nbsp;files</h2>
+      </div>
+      <div class="max-w-3xl mx-auto">
+        <Terminal label="feature-auth">
+          <div>
+            <div class="space-y-1 pb-4 mb-4 border-b border-surface-border">
+              <p class="text-xs uppercase tracking-wider text-muted mb-2">Your terminal</p>
+              <p><span class="text-accent-light">$</span> <span class="text-white">gtl start</span></p>
+              <p class="text-muted">Starting server on port <span class="text-accent">3010</span>&hellip;</p>
+              <p class="text-muted">[HMR] Listening on ws://localhost:3010</p>
+              <p class="text-muted">GET / 200 in 23ms</p>
+              <p class="text-muted">GET /api/auth 200 in 8ms</p>
+              <p class="text-yellow-400 mt-2">Restarting&hellip;</p>
+              <p class="text-muted">Starting server on port <span class="text-accent">3010</span>&hellip;</p>
+              <p class="text-muted">GET / 200 in 12ms</p>
+            </div>
+            <div class="space-y-1">
+              <p class="text-xs uppercase tracking-wider text-muted mb-2">Meanwhile — agent or CI</p>
+              <p><span class="text-accent-light">$</span> <span class="text-white">gtl restart</span></p>
+              <p class="text-muted text-accent">Server restarted.</p>
+              <p class="mt-3"><span class="text-accent-light">$</span> <span class="text-white">gtl stop</span></p>
+              <p class="text-muted text-accent">Server stopped.</p>
+            </div>
+          </div>
+        </Terminal>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8 mt-10 max-w-3xl mx-auto">
+        <div>
+          <h3 class="text-white font-mono text-lg sm:text-xl mb-2">Human interface</h3>
+          <p class="text-base text-muted"><code class="text-accent-light">gtl start</code> boots your <code class="text-accent-light">commands.start</code> and streams logs to your terminal. You see the output in real time. The supervisor injects allocated env vars directly into the child process.</p>
+        </div>
+        <div>
+          <h3 class="text-white font-mono text-lg sm:text-xl mb-2">Machine interface</h3>
+          <p class="text-base text-muted"><code class="text-accent-light">gtl restart</code> and <code class="text-accent-light">gtl stop</code> send commands over a Unix socket. No PID files, no signal guessing. Agents or scripts control the server without needing the foreground terminal.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-6 sm:mb-4 text-balance">Automation hooks and shortcuts</h2>
+        <p class="text-base sm:text-lg text-muted max-w-xl text-balance mx-auto mb-10">
+          Automation hooks live in <code class="text-accent-light">.treeline.yml</code>. Everything else is CLI for speed.
+        </p>
+      </div>
+      <div class="space-y-6 text-base text-muted">
+        <div>
+          <h3 class="text-white font-mono text-lg sm:text-xl mb-2">Lifecycle hooks</h3>
+          <p>
+            <code class="text-accent-light">pre_setup</code>, <code class="text-accent-light">post_setup</code>, <code class="text-accent-light">pre_release</code>, and <code class="text-accent-light">post_release</code> run around allocation and teardown. Pre-hooks abort the operation on failure; post-hooks log and continue. Setup: allocate → env → database → <code class="text-white">pre_setup</code> → <code class="text-white">commands.setup</code> → editor → <code class="text-white">post_setup</code>. Release: confirm → <code class="text-white">pre_release</code> → free/drop → <code class="text-white">post_release</code>.
+          </p>
+        </div>
+        <div>
+          <h3 class="text-white font-mono text-lg sm:text-xl mb-2">Clone and go</h3>
+          <p>
+            <code class="text-accent-light">{"gtl clone <repo-url>"}</code> runs <code class="text-white">git clone</code>, detects the framework, creates <code class="text-white">.treeline.yml</code> if missing, and runs <code class="text-white">gtl setup</code>. It does not start the dev server—cloning an untrusted repo and executing arbitrary start commands is a trust boundary.
+          </p>
+        </div>
+        <div>
+          <h3 class="text-white font-mono text-lg sm:text-xl mb-2">Open and await</h3>
+          <p>
+            <code class="text-accent-light">gtl open</code> opens the app in a browser—HTTPS on <code class="text-white">{"{project}-{branch}.prt.dev"}</code> when <code class="text-white">gtl serve</code> is running, otherwise <code class="text-white">{"http://localhost:{port}"}</code>. <code class="text-accent-light">gtl start --await</code> blocks until something listens on the allocated port (use <code class="text-accent-light">--await-timeout</code> for scripts and CI).
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="px-4 sm:px-6 py-16 sm:py-28">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-6 sm:mb-4 text-balance">Interactive terminal dashboard</h2>
+        <p class="text-base sm:text-lg text-muted max-w-xl text-balance mx-auto mb-10">
+          Run <code class="text-accent-light">gtl dashboard</code> (or <code class="text-accent-light">gtl dash</code> / <code class="text-accent-light">gtl ui</code>) for a full-screen terminal dashboard: all projects and worktrees in one place, refreshed every couple of seconds. Move with <kbd class="text-white font-mono text-sm">j</kbd>/<kbd class="text-white font-mono text-sm">k</kbd>; <kbd class="text-white font-mono text-sm">s</kbd> start/stop, <kbd class="text-white font-mono text-sm">o</kbd> open browser, <kbd class="text-white font-mono text-sm">d</kbd> release (confirm), <kbd class="text-white font-mono text-sm">/</kbd> filter.
+        </p>
+      </div>
+      <p class="text-center text-sm text-muted">
+        <a href="/docs/#tui-dashboard" class="text-accent-light hover:text-accent underline underline-offset-2">TUI reference in the docs &rarr;</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-10 text-center text-balance">Review commands</h2>
+      <div class="space-y-5">
+        <FeatureStrip label={"gtl review <PR>"}>
+          Fetch PR, create worktree, allocate resources, run setup.
+        </FeatureStrip>
+        <FeatureStrip label={"gtl review <PR> --start"}>
+          Same as above, plus boot the server via the supervisor.
+        </FeatureStrip>
+        <FeatureStrip label="gtl release --drop-db">
+          Free allocated resources, drop the cloned database, clean up env files.
+        </FeatureStrip>
+        <FeatureStrip label="gtl prune --merged">
+          Batch clean up all worktrees whose branches have been merged.
+        </FeatureStrip>
+      </div>
+    </div>
+  </section>
+
+  <section class="px-4 sm:px-6 py-16 sm:py-28 text-center">
+    <div class="max-w-2xl mx-auto">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-6 sm:mb-4 text-balance">Review your first&nbsp;PR</h2>
+      <p class="text-base text-muted mb-8">Requires <code class="text-accent-light">gh</code> CLI for PR fetching. Everything else is built in.</p>
+      <div class="flex justify-center max-w-md mx-auto mb-6">
+        <code class="text-accent-light text-sm">gtl review 42 --start</code>
+      </div>
+      <a href="/docs/#cli-reference" class="text-sm text-accent-light hover:text-accent underline underline-offset-2">Full CLI reference &rarr;</a>
+    </div>
+  </section>
+</BaseLayout>

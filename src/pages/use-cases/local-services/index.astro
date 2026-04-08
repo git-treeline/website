@@ -1,0 +1,171 @@
+---
+import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+import Terminal from '../../../components/Terminal.astro';
+---
+
+<ArticleLayout
+  title="Named URLs for every local service — Git Treeline"
+  description="Give Redis Commander, pgAdmin, Mailhog, and any other local service a named HTTPS URL through the same router that serves your app branches."
+  canonical="https://git-treeline.dev/use-cases/local-services/"
+  breadcrumb="Use cases"
+  breadcrumbHref="/use-cases/"
+  heading={'Named URLs for every local\u00a0service'}
+>
+  <p class="text-lg sm:text-xl text-gray-400 mb-10 leading-relaxed max-w-3xl">
+    You&rsquo;re running Redis Commander on <code class="text-white">:8081</code>, pgAdmin on <code class="text-white">:5050</code>, Mailhog on <code class="text-white">:8025</code>, and Sidekiq web on <code class="text-white">:9292</code>. Four port numbers to remember, none of them HTTPS. Treeline&rsquo;s router already maps branch names to ports &mdash; aliases let you route anything else through the same system.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">The scenario</h2>
+  <p class="text-muted mb-4">
+    Your app has sidecars — database UIs, mail catchers, job queues, monitoring dashboards. Each one listens on its own port. You bookmark <code class="text-white">localhost:8081</code>, but so does your teammate, and their Redis Commander is on <code class="text-white">:8083</code> because something else grabbed 8081. Port numbers are meaningless across machines. Named URLs aren't.
+  </p>
+  <p class="text-muted mb-8">
+    Since Treeline's HTTPS router is already running (via <code class="text-accent-light">gtl serve install</code>), giving a sidecar a name is one command. No extra infrastructure, no config files to share, no Docker networking.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Option A: Personal aliases (per machine)</h2>
+  <p class="text-muted mb-4">
+    Use <code class="text-accent-light">gtl serve alias</code> when the service is something <em>you</em> run locally that isn't part of the project config — your personal Grafana instance, a pgweb you installed via Homebrew, a monitoring tool on a custom port.
+  </p>
+
+  <div class="mb-6">
+    <Terminal label="add an alias">
+      <div class="space-y-2">
+        <p><span class="text-accent-light">$</span> <span class="text-white">gtl serve alias redis-ui 8081</span></p>
+        <p class="text-muted">Alias redis-ui.prt.dev → :8081</p>
+        <p class="text-muted">The router will pick this up on next refresh (~5s).</p>
+      </div>
+    </Terminal>
+  </div>
+
+  <p class="text-muted mb-4">
+    That's it. Open <code class="text-white">https://redis-ui.prt.dev</code> in your browser — trusted HTTPS, no port number, same certificate authority as your branch URLs.
+  </p>
+
+  <div class="mb-6">
+    <Terminal label="manage aliases">
+      <div class="space-y-4">
+        <div>
+          <p class="text-xs text-muted mb-1"># List all personal aliases</p>
+          <p><span class="text-accent-light">$</span> <span class="text-white">gtl serve alias</span></p>
+          <p class="text-muted">User aliases:</p>
+          <p class="text-muted">&nbsp; redis-ui → :8081</p>
+          <p class="text-muted">&nbsp; pgweb → :8082</p>
+          <p class="text-muted">&nbsp; grafana → :3100</p>
+        </div>
+        <div>
+          <p class="text-xs text-muted mb-1"># Remove an alias</p>
+          <p><span class="text-accent-light">$</span> <span class="text-white">gtl serve alias --remove redis-ui</span></p>
+          <p class="text-muted">Removed alias "redis-ui".</p>
+        </div>
+      </div>
+    </Terminal>
+  </div>
+
+  <p class="text-muted mb-4">
+    Personal aliases are stored in your user config (<code class="text-accent-light">~/.config/git-treeline/config.json</code>) under <code class="text-accent-light">router.aliases</code>:
+  </p>
+
+  <div class="mb-8">
+    <Terminal label="config.json">
+      <pre class="m-0 text-sm leading-relaxed font-mono"><code>{'{'}
+  "<span class="text-accent-light">router</span>": {'{'}
+    "<span class="text-accent-light">aliases</span>": {'{'}
+      "<span class="text-white">redis-ui</span>": <span class="text-white">8081</span>,
+      "<span class="text-white">pgweb</span>": <span class="text-white">8082</span>,
+      "<span class="text-white">grafana</span>": <span class="text-white">3100</span>
+    {'}'}
+  {'}'}
+{'}'}</code></pre>
+    </Terminal>
+  </div>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Option B: Project aliases (shared with your team)</h2>
+  <p class="text-muted mb-4">
+    When the sidecar is part of the project — everyone on the team needs a mail catcher, or the app ships with a Sidekiq dashboard — define the alias in <code class="text-accent-light">.treeline.yml</code>. The router picks up project-level aliases from every registered worktree automatically.
+  </p>
+
+  <div class="mb-6">
+    <Terminal label=".treeline.yml">
+      <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-accent-light">project</span>: myapp
+
+<span class="text-accent-light">aliases</span>:
+  <span class="text-white">mailhog</span>: 8025
+  <span class="text-white">sidekiq</span>: 9292
+
+<span class="text-accent-light">hooks</span>:
+  <span class="text-accent-light">post_setup</span>:
+    - mailhog &amp;
+    - bundle exec sidekiq &amp;</code></pre>
+    </Terminal>
+  </div>
+
+  <p class="text-muted mb-4">
+    After any teammate runs <code class="text-accent-light">gtl setup</code> or creates a worktree with <code class="text-accent-light">gtl new</code>, the router learns these aliases within ~5 seconds. Everyone on the team gets <code class="text-white">https://mailhog.prt.dev</code> and <code class="text-white">https://sidekiq.prt.dev</code> without any per-machine configuration.
+  </p>
+  <p class="text-muted mb-8">
+    This is the key difference: <strong class="text-white">personal aliases live in your user config and travel with you</strong>. <strong class="text-white">Project aliases live in <code class="text-accent-light">.treeline.yml</code> and travel with the repo.</strong> The router merges both.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">What this looks like in practice</h2>
+  <div class="mb-8">
+    <Terminal>
+      <div class="space-y-2">
+        <p><span class="text-accent-light">$</span> <span class="text-white">gtl serve status</span></p>
+        <p class="text-muted">Router: running on port 3001 (HTTPS)</p>
+        <p class="text-muted">CA: installed</p>
+        <p class="text-muted">Port forwarding: active (443 → router)</p>
+        <p class="text-muted"></p>
+        <p class="text-muted">Routes (5):</p>
+        <p class="text-muted">&nbsp; https://<span class="text-accent">myapp-main</span>.prt.dev → :3002</p>
+        <p class="text-muted">&nbsp; https://<span class="text-accent">myapp-feature-auth</span>.prt.dev → :3012</p>
+        <p class="text-muted"></p>
+        <p class="text-muted">Aliases (3):</p>
+        <p class="text-muted">&nbsp; https://<span class="text-accent-light">mailhog</span>.prt.dev → :8025 <span class="text-muted">(project)</span></p>
+        <p class="text-muted">&nbsp; https://<span class="text-accent-light">sidekiq</span>.prt.dev → :9292 <span class="text-muted">(project)</span></p>
+        <p class="text-muted">&nbsp; https://<span class="text-accent-light">grafana</span>.prt.dev → :3100 <span class="text-muted">(user)</span></p>
+      </div>
+    </Terminal>
+  </div>
+
+  <p class="text-muted mb-8">
+    Branch URLs, project sidecars, and personal tools — all in one route table, all HTTPS, all named. The service doesn't need to know about Treeline. It just listens on a port. The router handles the rest.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">When to use which</h2>
+  <div class="overflow-x-auto rounded-lg border border-surface-border mb-10">
+    <table class="w-full text-sm text-left border-collapse">
+      <thead>
+        <tr class="border-b border-surface-border bg-surface">
+          <th class="px-4 py-3 text-accent-light font-medium">Situation</th>
+          <th class="px-4 py-3 text-accent-light font-medium">Where to define it</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-border text-muted">
+        <tr>
+          <td class="px-4 py-3">Personal tool only you run (Grafana, pgweb)</td>
+          <td class="px-4 py-3"><code class="text-accent-light">gtl serve alias grafana 3100</code></td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3">Sidecar the whole team needs (Mailhog, Sidekiq)</td>
+          <td class="px-4 py-3"><code class="text-accent-light">aliases:</code> in <code class="text-accent-light">.treeline.yml</code></td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3">Service managed by another GTL project</td>
+          <td class="px-4 py-3"><code class="text-accent-light">{'{resolve:…}'}</code> — see <a href="/use-cases/multi-repo/" class="text-accent-light hover:text-accent underline underline-offset-2">multi-repo</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Read next</h2>
+  <ul class="text-muted space-y-3 list-disc pl-5 mb-8">
+    <li><a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking feature page</a> — how <code class="text-accent-light">serve</code>, <code class="text-accent-light">proxy</code>, <code class="text-accent-light">tunnel</code>, and <code class="text-accent-light">share</code> work together</li>
+    <li><a href="/docs/#net-serve" class="text-accent-light hover:text-accent underline underline-offset-2">Docs: gtl serve</a> — install, status, hosts sync, and alias reference</li>
+    <li><a href="/use-cases/integrations-urls/" class="text-accent-light hover:text-accent underline underline-offset-2">Why port 3000 stays free</a> — the proxy facade for OAuth, Stripe, and CORS</li>
+  </ul>
+
+  <p class="text-center">
+    <a href="/use-cases/" class="text-sm text-accent-light hover:text-accent">All use cases</a>
+  </p>
+</ArticleLayout>

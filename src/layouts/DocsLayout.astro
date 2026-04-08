@@ -1,0 +1,157 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+export interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  activePage?: string;
+  jsonLd?: string;
+}
+
+const { title, description, canonical, activePage, jsonLd: pageJsonLd } = Astro.props;
+
+const navGroups = [
+  {
+    heading: 'Reference',
+    items: [
+      { slug: 'getting-started', label: 'Getting started' },
+      { slug: 'configuration', label: 'Configuration' },
+      { slug: 'cli', label: 'CLI reference' },
+      { slug: 'troubleshooting', label: 'Troubleshooting' },
+    ],
+  },
+  {
+    heading: 'Guides',
+    items: [
+      { slug: 'lifecycle', label: 'Lifecycle' },
+      { slug: 'hooks', label: 'Hooks' },
+      { slug: 'networking', label: 'Networking' },
+      { slug: 'database', label: 'Database' },
+      { slug: 'editor', label: 'Editor' },
+      { slug: 'resolve', label: 'Resolve' },
+      { slug: 'supervisor', label: 'Supervisor' },
+      { slug: 'agents', label: 'AI agents' },
+    ],
+  },
+];
+
+const allItems = navGroups.flatMap((g) => g.items);
+
+const activeLabel = allItems.find((i) => i.slug === activePage)?.label ?? '';
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://git-treeline.dev" },
+    { "@type": "ListItem", position: 2, name: "Docs", item: "https://git-treeline.dev/docs/" },
+    ...(activePage ? [{ "@type": "ListItem", position: 3, name: activeLabel, item: canonical }] : []),
+  ],
+};
+
+const techArticleLd = activePage ? {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: title.replace(/ \| Git Treeline$/, ''),
+  description,
+  url: canonical,
+  author: { "@type": "Person", name: "Jonathan Simmons" },
+  publisher: { "@type": "Organization", name: "Git Treeline", url: "https://git-treeline.dev" },
+  mainEntityOfPage: canonical,
+} : null;
+
+const jsonLdBlocks = pageJsonLd
+  ? [pageJsonLd]
+  : [breadcrumbLd, techArticleLd].filter(Boolean).map((b) => JSON.stringify(b));
+
+const docsKeywords = 'git worktree, worktree provisioner, git-treeline, branch isolation, local dev environment, parallel development';
+---
+
+<style is:inline>
+  #docs-sidebar { display: none; }
+  #docs-sidebar > div { position: sticky; top: 4rem; }
+  #docs-mobile-nav { position: sticky; top: 3.5rem; z-index: 40; }
+  @media (min-width: 1024px) {
+    #docs-sidebar { display: block; }
+    #docs-layout { display: flex; }
+  }
+</style>
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  activeNav="docs"
+  installHref="/#get-started"
+  ogType={activePage ? 'article' : 'website'}
+  keywords={docsKeywords}
+  jsonLd={jsonLdBlocks}
+>
+  <div id="docs-layout" class="lg:max-w-5xl lg:mx-auto lg:gap-10 lg:px-6">
+    <aside id="docs-sidebar" class="w-48 shrink-0">
+      <div class="pt-24 pb-10 overflow-y-auto max-h-screen">
+        {navGroups.map((group) => (
+          <div class="mb-6">
+            <h4 class="text-xs uppercase tracking-wider text-muted font-medium mb-3">{group.heading}</h4>
+            <ul class="space-y-1">
+              {group.items.map((item) => (
+                <li>
+                  <a
+                    href={`/docs/${item.slug}/`}
+                    class={`text-sm text-muted hover:text-white transition-colors block py-1.5 pl-3 border-l-2 ${activePage === item.slug ? 'text-accent-light border-accent-light' : 'border-transparent'}`}
+                  >{item.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </aside>
+
+    <main class="flex-1 min-w-0 docs-content">
+      <nav
+        id="docs-mobile-nav"
+        class="lg:hidden bg-surface border-b border-surface-border px-4 sm:px-6 py-3"
+      >
+        <button
+          type="button"
+          onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-180')"
+          class="flex items-center gap-2 text-sm text-accent-light hover:text-accent transition-colors"
+        >
+          Navigation
+          <svg
+            class="w-3 h-3 transition-transform duration-150"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <div class="hidden mt-4 pb-2 space-y-4 text-sm" id="mobile-docs-nav">
+          {navGroups.map((group) => (
+            <div>
+              <h4 class="text-xs uppercase tracking-wider text-muted font-medium mb-2">{group.heading}</h4>
+              <ul class="space-y-1.5">
+                {group.items.map((item) => (
+                  <li>
+                    <a
+                      href={`/docs/${item.slug}/`}
+                      class={`block py-1 ${activePage === item.slug ? 'text-accent-light' : 'text-muted hover:text-white'} transition-colors`}
+                    >{item.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </nav>
+      <slot />
+    </main>
+  </div>
+</BaseLayout>

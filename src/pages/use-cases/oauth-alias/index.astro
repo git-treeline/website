@@ -1,0 +1,198 @@
+---
+import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+import Terminal from '../../../components/Terminal.astro';
+---
+
+<ArticleLayout
+  title="OAuth callbacks across worktrees &mdash; Git Treeline"
+  description="Register one OAuth callback URL and use start hooks to route it to whichever worktree you're testing. No provider dashboard changes per branch."
+  canonical="https://git-treeline.dev/use-cases/oauth-alias/"
+  breadcrumb="Use cases"
+  breadcrumbHref="/use-cases/"
+  heading="OAuth callbacks across&nbsp;worktrees"
+  lead='OAuth providers require a fixed callback URL. You register <code class="text-white">https://myapp-oauth.prt.dev/auth/callback</code> once and forget about it. A start hook points that alias at whichever branch you&rsquo;re testing. No provider dashboard changes per branch.'
+>
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-10">The problem</h2>
+  <p class="text-muted mb-4">
+    Every OAuth provider (Google, GitHub, Stripe Connect) needs a redirect URI registered in its dashboard. With one branch, that&rsquo;s easy: register <code class="text-white">https://myapp-main.prt.dev/auth/callback</code> and move on.
+  </p>
+  <p class="text-muted mb-4">
+    With worktrees, each branch gets a unique URL (<code class="text-white">myapp-feature-auth.prt.dev</code>, <code class="text-white">myapp-billing-v2.prt.dev</code>, etc.). You can&rsquo;t register a new redirect URI for every branch. You also can&rsquo;t use <code class="text-white">localhost:3000</code> as a callback because multiple worktrees share the machine.
+  </p>
+  <p class="text-muted mb-8">
+    You need one stable URL that always reaches the branch you&rsquo;re actively testing OAuth in.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">The solution: a stable alias + start hooks</h2>
+  <p class="text-muted mb-4">
+    Treeline&rsquo;s router alias system lets you create a name like <code class="text-white">myapp-oauth.prt.dev</code> that points at any port. Start hooks (v0.36.0) register and remove the alias automatically when you start and stop the server. Whichever branch starts with <code class="text-accent-light">--with oauth</code> last owns the callback URL.
+  </p>
+  <p class="text-muted mb-8">
+    Register <code class="text-white">https://myapp-oauth.prt.dev/auth/callback</code> in your provider dashboard once. Then use the hook to claim it per-session.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Step 1: Define the hook</h2>
+  <p class="text-muted mb-4">
+    In your project&rsquo;s <code class="text-accent-light">.treeline.yml</code>, add a named start hook. The <code class="text-accent-light">pre_start</code> command registers the alias before the server boots; <code class="text-accent-light">post_stop</code> removes it when the supervisor exits.
+  </p>
+
+  <div class="mb-6">
+    <Terminal label=".treeline.yml">
+      <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-accent-light">project</span>: myapp
+
+<span class="text-accent-light">env</span>:
+  <span class="text-white">PORT</span>: "<span class="text-accent-light">{'{port}'}</span>"
+  <span class="text-white">DATABASE_NAME</span>: "<span class="text-accent-light">{'{database}'}</span>"
+  <span class="text-white">REDIS_URL</span>: "<span class="text-accent-light">{'{redis_url}'}</span>"
+  <span class="text-white">OAUTH_CALLBACK_HOST</span>: "https://myapp-oauth.<span class="text-accent-light">{'{router_domain}'}</span>"
+  <span class="text-white">SESSION_COOKIE_DOMAIN</span>: ".<span class="text-accent-light">{'{router_domain}'}</span>"
+  <span class="text-white">APPLICATION_HOST</span>: "localhost:<span class="text-accent-light">{'{port}'}</span>"
+
+<span class="text-accent-light">hooks</span>:
+  <span class="text-accent-light">oauth</span>:
+    <span class="text-accent-light">pre_start</span>: "gtl serve alias myapp-oauth <span class="text-accent-light">{'{port}'}</span>"
+    <span class="text-accent-light">post_stop</span>: "gtl serve alias --remove myapp-oauth"</code></pre>
+    </Terminal>
+  </div>
+
+  <p class="text-muted mb-8">
+    The hook uses <code class="text-accent-light">{'{port}'}</code> interpolation. Whatever port Treeline allocated to this worktree is substituted at runtime. When the server stops (Ctrl+C), the alias is cleaned up so it doesn&rsquo;t point at a dead port.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Step 2: Configure your app</h2>
+  <p class="text-muted mb-4">
+    Your application needs to know about the callback host and accept requests from the router domain. Here&rsquo;s a Rails example. The same pattern works in any framework.
+  </p>
+
+  <div class="mb-6">
+    <Terminal label="config/initializers/omniauth.rb">
+      <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-muted"># Point OAuth callbacks at the stable alias URL</span>
+OmniAuth.config.full_host = ENV[<span class="text-accent-light">"OAUTH_CALLBACK_HOST"</span>]</code></pre>
+    </Terminal>
+  </div>
+
+  <div class="mb-6">
+    <Terminal label="config/initializers/session_store.rb">
+      <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-muted"># Share cookies across all *.prt.dev subdomains</span>
+Rails.application.config.session_store :cookie_store,
+  key: <span class="text-accent-light">"_myapp_session"</span>,
+  domain: ENV[<span class="text-accent-light">"SESSION_COOKIE_DOMAIN"</span>].presence</code></pre>
+    </Terminal>
+  </div>
+
+  <div class="mb-6">
+    <Terminal label="config/environments/development.rb">
+      <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-muted"># Allow requests from any *.prt.dev subdomain</span>
+config.hosts &lt;&lt; <span class="text-accent-light">{`".#{ENV['SESSION_COOKIE_DOMAIN']}"`}</span></code></pre>
+    </Terminal>
+  </div>
+
+  <div class="mb-6">
+    <Terminal label="config/initializers/forwarded_ssl.rb">
+      <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-muted"># Trust X-Forwarded-Proto from the local router</span>
+Rails.application.config.middleware.insert_before 0,
+  Rack::SslEnforcer, only_hosts: /\.prt\.dev\z/,
+  redirect_to: -&gt;(req) &#123; req.url.sub(<span class="text-accent-light">"http://"</span>, <span class="text-accent-light">"https://"</span>) &#125;</code></pre>
+    </Terminal>
+  </div>
+
+  <p class="text-muted mb-8">
+    The key insight: <code class="text-accent-light">{'{router_domain}'}</code> resolves to <code class="text-white">prt.dev</code> at setup time. The session cookie is scoped to <code class="text-white">.prt.dev</code>, so the user stays logged in when the browser redirects from <code class="text-white">myapp-oauth.prt.dev</code> back to <code class="text-white">myapp-feature-auth.prt.dev</code>. Treeline&rsquo;s router sets <code class="text-white">X-Forwarded-Proto: https</code> so the backend generates correct HTTPS redirect URIs.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Step 3: Start with the hook</h2>
+
+  <div class="mb-6">
+    <Terminal>
+      <div class="space-y-2">
+        <p><span class="text-accent-light">$</span> <span class="text-white">gtl start --with oauth</span></p>
+        <p class="text-muted"><span class="text-accent">[hook:oauth]</span> Running pre_start: gtl serve alias myapp-oauth 3010</p>
+        <p class="text-muted">Alias myapp-oauth.prt.dev &rarr; :3010</p>
+        <p class="text-muted"><span class="text-accent">[supervisor]</span> Starting bin/dev...</p>
+        <p class="text-muted">&#9656; Rails booting on :3010</p>
+      </div>
+    </Terminal>
+  </div>
+
+  <p class="text-muted mb-4">
+    Now <code class="text-white">https://myapp-oauth.prt.dev</code> routes to this worktree&rsquo;s server. When the provider redirects to <code class="text-white">https://myapp-oauth.prt.dev/auth/google/callback</code>, Rails receives the request on the correct branch.
+  </p>
+  <p class="text-muted mb-4">
+    When you Ctrl+C the supervisor, the <code class="text-accent-light">post_stop</code> hook removes the alias:
+  </p>
+
+  <div class="mb-8">
+    <Terminal>
+      <div class="space-y-2">
+        <p class="text-muted">^C</p>
+        <p class="text-muted"><span class="text-accent">[supervisor]</span> Shutting down...</p>
+        <p class="text-muted"><span class="text-accent">[hook:oauth]</span> Running post_stop: gtl serve alias --remove myapp-oauth</p>
+        <p class="text-muted">Removed alias "myapp-oauth".</p>
+      </div>
+    </Terminal>
+  </div>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">How it works</h2>
+  <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
+    <table class="w-full text-sm text-left">
+      <thead>
+        <tr class="border-b border-surface-border bg-surface">
+          <th class="px-4 py-3 text-accent-light">Piece</th>
+          <th class="px-4 py-3 text-accent-light">Role</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-border text-muted">
+        <tr>
+          <td class="px-4 py-3 text-white">myapp-oauth.prt.dev</td>
+          <td class="px-4 py-3">Stable alias registered in the OAuth provider. Never changes.</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3"><code class="text-accent-light">pre_start</code> hook</td>
+          <td class="px-4 py-3">Points the alias at this worktree&rsquo;s allocated port</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3"><code class="text-accent-light">post_stop</code> hook</td>
+          <td class="px-4 py-3">Removes the alias so it doesn&rsquo;t point at a dead port</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3"><code class="text-accent-light">{'{router_domain}'}</code></td>
+          <td class="px-4 py-3">Env token that resolves to <code class="text-white">prt.dev</code>, used for cookie domain and host matching</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3"><code class="text-accent-light">--with oauth</code></td>
+          <td class="px-4 py-3">Activates the hook for this session. Only the branch that runs it gets the alias.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Why this is worktree provisioning</h2>
+  <p class="text-muted mb-4">
+    This isn&rsquo;t just port allocation. The <code class="text-accent-light">.treeline.yml</code> file declares the full environment a worktree needs to function: ports, databases, routing aliases, session boundaries, SSL forwarding, and OAuth integration. When a new developer clones the repo and runs <code class="text-accent-light">gtl start --with oauth</code>, everything is provisioned. No README steps to follow, no manual provider configuration, no &ldquo;ask Sarah how she set up her local OAuth.&rdquo;
+  </p>
+  <p class="text-muted mb-8">
+    The hook is opt-in (<code class="text-accent-light">--with oauth</code>) because only one branch should own the callback URL at a time. If you want it to activate automatically on every <code class="text-accent-light">gtl start</code>, add <code class="text-accent-light">auto: true</code> to the hook config.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Adapting for other frameworks</h2>
+  <p class="text-muted mb-4">
+    The pattern is framework-agnostic. The three things any app needs:
+  </p>
+  <ol class="text-muted space-y-2 list-decimal pl-5 mb-8">
+    <li><strong class="text-white">Callback host override.</strong> Point your OAuth library at <code class="text-accent-light">OAUTH_CALLBACK_HOST</code> instead of inferring from the request.</li>
+    <li><strong class="text-white">Cookie domain.</strong> Scope session cookies to <code class="text-accent-light">.prt.dev</code> so the login survives the redirect from the alias URL back to the branch URL.</li>
+    <li><strong class="text-white">Host allowlist.</strong> Accept requests from <code class="text-accent-light">*.prt.dev</code> subdomains (Rails <code class="text-white">config.hosts</code>, Django <code class="text-white">ALLOWED_HOSTS</code>, Express CORS origins).</li>
+  </ol>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Read next</h2>
+  <ul class="text-muted space-y-3 list-disc pl-5 mb-8">
+    <li><a href="/use-cases/local-services/" class="text-accent-light hover:text-accent underline underline-offset-2">Named URLs for local services</a>: how <code class="text-accent-light">gtl serve alias</code> works outside of hooks</li>
+    <li><a href="/use-cases/integrations-urls/" class="text-accent-light hover:text-accent underline underline-offset-2">Why port 3000 stays free</a>: the proxy facade for integrations that demand a fixed port</li>
+    <li><a href="/docs/#hooks" class="text-accent-light hover:text-accent underline underline-offset-2">Docs: Lifecycle hooks</a>: full reference for <code class="text-accent-light">pre_start</code>, <code class="text-accent-light">post_stop</code>, and <code class="text-accent-light">auto</code></li>
+    <li><a href="/features/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking feature page</a>: how serve, proxy, tunnel, and share fit together</li>
+  </ul>
+
+  <p class="text-center">
+    <a href="/use-cases/" class="text-sm text-accent-light hover:text-accent">All use cases</a>
+  </p>
+</ArticleLayout>

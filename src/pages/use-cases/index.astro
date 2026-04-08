@@ -1,0 +1,428 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Use cases — Git Treeline"
+  description="How teams use Git Treeline: multi-repo frontends and APIs, OAuth and webhooks, PR review with stakeholders, and agent-driven automation."
+  canonical="https://git-treeline.dev/use-cases/"
+  activeNav="use-cases"
+>
+  <section class="px-4 sm:px-6 pt-28 sm:pt-36 pb-12 sm:pb-16 text-center">
+    <p class="text-sm uppercase tracking-wider text-muted mb-4">Use cases</p>
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6 text-balance">
+      What provisioning looks like in&nbsp;practice
+    </h1>
+    <p
+      class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto mb-4 leading-relaxed"
+    >
+      Git Treeline provisions complete environments per worktree: ports, databases, routing, env,
+      lifecycle hooks. These guides show what that means for real workflows.
+    </p>
+    <p class="text-base text-muted max-w-2xl mx-auto leading-relaxed">
+      For full depth on each pillar, start with <a
+        href="/features/isolation/"
+        class="text-accent-light hover:text-accent underline underline-offset-2">Isolation</a
+      >, <a
+        href="/features/networking/"
+        class="text-accent-light hover:text-accent underline underline-offset-2">Networking</a
+      >, <a
+        href="/features/workflows/"
+        class="text-accent-light hover:text-accent underline underline-offset-2">Workflows</a
+      >, or <a
+        href="/features/agents/"
+        class="text-accent-light hover:text-accent underline underline-offset-2">AI Agents</a
+      >; use this page when you already know <em>which</em> problem you are solving.
+    </p>
+  </section>
+
+  <section class="px-4 sm:px-6 pb-10 sm:pb-14">
+    <a
+      href="/use-cases/first-time-setup/"
+      class="group flex flex-col rounded-lg border border-accent/20 bg-surface-raised p-6 sm:p-8 hover:border-accent/40 transition-colors text-left h-full sm:col-span-2 sm:flex-row sm:items-start sm:gap-10 max-w-5xl mx-auto"
+    >
+      <div class="flex-1">
+        <p class="text-xs uppercase tracking-wider text-accent-light mb-3 font-mono">Start here</p>
+        <h2
+          class="text-white font-mono text-xl sm:text-2xl mb-3 group-hover:text-accent-light transition-colors"
+        >
+          First-time setup: a guided&nbsp;tour
+        </h2>
+        <p class="text-base text-muted leading-relaxed mb-4">
+          Install <code class="text-accent-light">gtl</code>, run <code class="text-accent-light"
+            >gtl init</code
+          >, and walk through every section of the config &mdash; ports, databases, env files,
+          commands, hooks, aliases, and editor integration. Ends with your first running worktree.
+        </p>
+      </div>
+      <div class="mt-auto pt-5 border-t border-surface-border">
+        <span class="block text-xs text-muted uppercase tracking-wider mb-2">Covers</span>
+        <div class="flex flex-wrap gap-1.5 mb-4">
+          <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+            >.treeline.yml</span
+          >
+          <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+            >config.json</span
+          >
+          <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+            >gtl init</span
+          >
+        </div>
+        <span class="text-sm font-mono text-accent-light group-hover:text-accent transition-colors"
+          >Read the guide &rarr;</span
+        >
+      </div>
+    </a>
+  </section>
+
+  <section class="px-4 sm:px-6 pb-24 sm:pb-32">
+    <div class="max-w-5xl mx-auto">
+      <div class="flex flex-wrap gap-2 mb-6" id="uc-filters">
+        <button
+          type="button"
+          data-filter="all"
+          class="text-sm font-mono px-4 py-1.5 rounded-full border transition-colors bg-accent/10 border-accent text-accent-light"
+          >All</button
+        >
+        <button
+          type="button"
+          data-filter="isolation"
+          class="text-sm font-mono px-4 py-1.5 rounded-full border transition-colors border-surface-border text-muted hover:text-white hover:border-white/30"
+          >Isolation</button
+        >
+        <button
+          type="button"
+          data-filter="networking"
+          class="text-sm font-mono px-4 py-1.5 rounded-full border transition-colors border-surface-border text-muted hover:text-white hover:border-white/30"
+          >Networking</button
+        >
+        <button
+          type="button"
+          data-filter="workflows"
+          class="text-sm font-mono px-4 py-1.5 rounded-full border transition-colors border-surface-border text-muted hover:text-white hover:border-white/30"
+          >Workflows</button
+        >
+        <button
+          type="button"
+          data-filter="agents"
+          class="text-sm font-mono px-4 py-1.5 rounded-full border transition-colors border-surface-border text-muted hover:text-white hover:border-white/30"
+          >AI Agents</button
+        >
+      </div>
+
+      <div class="flex flex-col gap-3" id="uc-list">
+        <a
+          href="/use-cases/oauth-alias/"
+          data-tags="networking"
+          class="group flex items-center gap-4 sm:gap-6 px-5 sm:px-6 py-4 sm:py-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors text-left"
+        >
+          <div class="flex-1 min-w-0">
+            <span
+              class="text-white font-mono text-sm sm:text-base group-hover:text-accent-light transition-colors"
+              >OAuth callbacks across worktrees</span
+            >
+            <p class="text-base text-muted leading-snug mt-1">
+              One redirect URI, any branch. Start hooks claim the alias per-session.
+            </p>
+          </div>
+          <div class="hidden md:flex flex-wrap gap-1.5 shrink-0">
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+              >Networking</span
+            >
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+              >start hooks</span
+            >
+          </div>
+          <svg
+            class="w-4 h-4 text-accent-light/50 group-hover:text-accent shrink-0 transition-colors"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"></path></svg
+          >
+        </a>
+
+        <a
+          href="/use-cases/database-per-branch/"
+          data-tags="isolation"
+          class="group flex items-center gap-4 sm:gap-6 px-5 sm:px-6 py-4 sm:py-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors text-left"
+        >
+          <div class="flex-1 min-w-0">
+            <span
+              class="text-white font-mono text-sm sm:text-base group-hover:text-accent-light transition-colors"
+              >Database per branch, no shared state</span
+            >
+            <p class="text-base text-muted leading-snug mt-1">
+              Clone from a PostgreSQL template, seed from hooks, or copy a SQLite file.
+            </p>
+          </div>
+          <div class="hidden md:flex flex-wrap gap-1.5 shrink-0">
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+              >Isolation</span
+            >
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+              >gtl db</span
+            >
+          </div>
+          <svg
+            class="w-4 h-4 text-accent-light/50 group-hover:text-accent shrink-0 transition-colors"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"></path></svg
+          >
+        </a>
+
+        <a
+          href="/use-cases/multi-repo/"
+          data-tags="isolation"
+          class="group flex items-center gap-4 sm:gap-6 px-5 sm:px-6 py-4 sm:py-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors text-left"
+        >
+          <div class="flex-1 min-w-0">
+            <span
+              class="text-white font-mono text-sm sm:text-base group-hover:text-accent-light transition-colors"
+              >Frontend + API, different repos</span
+            >
+            <p class="text-base text-muted leading-snug mt-1">
+              <code class="text-accent-light">{'{'}resolve:&hellip;{'}'}</code> tracks the right branch
+              across projects automatically.
+            </p>
+          </div>
+          <div class="hidden md:flex flex-wrap gap-1.5 shrink-0">
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+              >Isolation</span
+            >
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+              >resolve / link</span
+            >
+          </div>
+          <svg
+            class="w-4 h-4 text-accent-light/50 group-hover:text-accent shrink-0 transition-colors"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"></path></svg
+          >
+        </a>
+
+        <a
+          href="/use-cases/integrations-urls/"
+          data-tags="networking"
+          class="group flex items-center gap-4 sm:gap-6 px-5 sm:px-6 py-4 sm:py-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors text-left"
+        >
+          <div class="flex-1 min-w-0">
+            <span
+              class="text-white font-mono text-sm sm:text-base group-hover:text-accent-light transition-colors"
+              >Why port 3000 stays free</span
+            >
+            <p class="text-base text-muted leading-snug mt-1">
+              Treeline reserves common ports so OAuth, Stripe, and CORS never break.
+            </p>
+          </div>
+          <div class="hidden md:flex flex-wrap gap-1.5 shrink-0">
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+              >Networking</span
+            >
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+              >proxy</span
+            >
+          </div>
+          <svg
+            class="w-4 h-4 text-accent-light/50 group-hover:text-accent shrink-0 transition-colors"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"></path></svg
+          >
+        </a>
+
+        <a
+          href="/use-cases/local-services/"
+          data-tags="networking"
+          class="group flex items-center gap-4 sm:gap-6 px-5 sm:px-6 py-4 sm:py-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors text-left"
+        >
+          <div class="flex-1 min-w-0">
+            <span
+              class="text-white font-mono text-sm sm:text-base group-hover:text-accent-light transition-colors"
+              >Named URLs for local services</span
+            >
+            <p class="text-base text-muted leading-snug mt-1">
+              One command gives Redis Commander, pgAdmin, or Mailhog a named HTTPS URL.
+            </p>
+          </div>
+          <div class="hidden md:flex flex-wrap gap-1.5 shrink-0">
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+              >Networking</span
+            >
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+              >serve alias</span
+            >
+          </div>
+          <svg
+            class="w-4 h-4 text-accent-light/50 group-hover:text-accent shrink-0 transition-colors"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"></path></svg
+          >
+        </a>
+
+        <a
+          href="/use-cases/onboarding/"
+          data-tags="workflows"
+          class="group flex items-center gap-4 sm:gap-6 px-5 sm:px-6 py-4 sm:py-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors text-left"
+        >
+          <div class="flex-1 min-w-0">
+            <span
+              class="text-white font-mono text-sm sm:text-base group-hover:text-accent-light transition-colors"
+              >New developer, one command</span
+            >
+            <p class="text-base text-muted leading-snug mt-1">
+              Ports, database, env, dependencies, and a running server under a minute.
+            </p>
+          </div>
+          <div class="hidden md:flex flex-wrap gap-1.5 shrink-0">
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+              >Workflows</span
+            >
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+              >gtl new</span
+            >
+          </div>
+          <svg
+            class="w-4 h-4 text-accent-light/50 group-hover:text-accent shrink-0 transition-colors"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"></path></svg
+          >
+        </a>
+
+        <a
+          href="/use-cases/platform-pr/"
+          data-tags="workflows networking"
+          class="group flex items-center gap-4 sm:gap-6 px-5 sm:px-6 py-4 sm:py-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors text-left"
+        >
+          <div class="flex-1 min-w-0">
+            <span
+              class="text-white font-mono text-sm sm:text-base group-hover:text-accent-light transition-colors"
+              >Product and QA on a PR branch</span
+            >
+            <p class="text-base text-muted leading-snug mt-1">
+              <code class="text-accent-light">gtl review</code> stands up an isolated worktree with a
+              branch URL.
+            </p>
+          </div>
+          <div class="hidden md:flex flex-wrap gap-1.5 shrink-0">
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+              >Workflows</span
+            >
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+              >Networking</span
+            >
+          </div>
+          <svg
+            class="w-4 h-4 text-accent-light/50 group-hover:text-accent shrink-0 transition-colors"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"></path></svg
+          >
+        </a>
+
+        <a
+          href="/use-cases/agents-automation/"
+          data-tags="agents"
+          class="group flex items-center gap-4 sm:gap-6 px-5 sm:px-6 py-4 sm:py-5 rounded-lg border border-surface-border bg-surface-raised hover:border-accent/40 transition-colors text-left"
+        >
+          <div class="flex-1 min-w-0">
+            <span
+              class="text-white font-mono text-sm sm:text-base group-hover:text-accent-light transition-colors"
+              >Local agent awareness</span
+            >
+            <p class="text-base text-muted leading-snug mt-1">
+              MCP server and <code class="text-accent-light">--json</code> flags give agents structured
+              worktree context.
+            </p>
+          </div>
+          <div class="hidden md:flex flex-wrap gap-1.5 shrink-0">
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+              >AI Agents</span
+            >
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-surface-border text-accent-light"
+              >MCP</span
+            >
+          </div>
+          <svg
+            class="w-4 h-4 text-accent-light/50 group-hover:text-accent shrink-0 transition-colors"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"></path></svg
+          >
+        </a>
+      </div>
+    </div>
+
+    <script is:inline>
+      (function () {
+        var active = 'bg-accent/10 border-accent text-accent-light';
+        var inactive = 'border-surface-border text-muted hover:text-white hover:border-white/30';
+        var buttons = document.querySelectorAll('#uc-filters button');
+        var rows = document.querySelectorAll('#uc-list > a');
+
+        buttons.forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var filter = btn.dataset.filter;
+
+            buttons.forEach(function (b) {
+              b.className =
+                'text-sm font-mono px-4 py-1.5 rounded-full border transition-colors ' +
+                (b === btn ? active : inactive);
+            });
+
+            rows.forEach(function (row) {
+              if (filter === 'all' || row.dataset.tags.indexOf(filter) !== -1) {
+                row.style.display = '';
+              } else {
+                row.style.display = 'none';
+              }
+            });
+          });
+        });
+      })();
+    </script>
+  </section>
+</BaseLayout>

@@ -1,0 +1,309 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import Terminal from '../../../components/Terminal.astro';
+import DocsPagination from '../../../components/DocsPagination.astro';
+---
+
+<DocsLayout
+  title="Hooks — Git Treeline Docs"
+  description="How Git Treeline's hook system works: setup hooks, release hooks, and start hooks. Lifecycle, configuration, interpolation, and edge cases."
+  canonical="https://git-treeline.dev/docs/hooks/"
+  activePage="hooks"
+>
+  <header class="pt-20 sm:pt-24 pb-2 sm:pb-4 px-4 sm:px-6 lg:px-0">
+    <p class="text-sm text-muted mb-4"><a href="/docs/" class="text-accent-light hover:text-accent">Docs</a> / Hooks</p>
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-6 text-balance">Lifecycle hooks</h1>
+    <p class="text-lg sm:text-xl text-gray-400 mb-10 leading-relaxed max-w-3xl">
+      Hooks run shell commands at specific points in the worktree lifecycle. They're the mechanism for provisioning anything that isn't a port, database, or env file: registering aliases, seeding data, setting debug flags, cleaning up on exit.
+    </p>
+  </header>
+  <div class="docs-guide px-4 sm:px-6 lg:px-0 pb-20">
+    <h2>Why hooks exist</h2>
+    <p class="text-muted mb-4">
+      GTL allocates resources (ports, databases, env files) declaratively. But some setup steps can't be expressed as config fields. You might need to run a migration, install dependencies, register a router alias, or seed test data. Hooks give you shell access at the right moment in the lifecycle without requiring you to remember a sequence of manual commands.
+    </p>
+    <p class="text-muted mb-8">
+      There are two categories of hooks, designed for different lifecycle moments.
+    </p>
+
+    <h2>Setup &amp; release hooks</h2>
+    <p class="text-muted mb-4">
+      These run during worktree creation and teardown. They're for one-time provisioning: installing dependencies, running migrations, copying credentials, cleaning up artifacts.
+    </p>
+
+    <div class="overflow-x-auto rounded-lg border border-surface-border mb-6">
+      <table
+        class="w-full min-w-[480px] text-sm text-left font-sans [&_td:first-child]:whitespace-nowrap [&_th:first-child]:whitespace-nowrap [&_code]:bg-surface [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded"
+      >
+        <thead class="uppercase tracking-wider">
+          <tr class="border-b border-surface-border bg-surface">
+            <th class="px-4 py-3 text-accent-light">Hook</th>
+            <th class="px-4 py-3 text-accent-light">When it runs</th>
+            <th class="px-4 py-3 text-accent-light">On failure</th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-surface-border text-muted [&>tr]:bg-surface-raised [&>tr]:transition-colors [&>tr:hover]:bg-surface"
+        >
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">pre_setup</td>
+            <td class="px-4 py-3">Before <code class="text-accent-light">commands.setup</code>, after env file is written</td>
+            <td class="px-4 py-3">Setup aborts</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">post_setup</td>
+            <td class="px-4 py-3">After <code class="text-accent-light">commands.setup</code> and editor config</td>
+            <td class="px-4 py-3">Warns, continues</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">pre_release</td>
+            <td class="px-4 py-3">After release confirmation, before freeing resources</td>
+            <td class="px-4 py-3">Release aborts</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">post_release</td>
+            <td class="px-4 py-3">After resources are freed</td>
+            <td class="px-4 py-3">Warns, continues</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="text-muted mb-4">
+      These are defined as array-valued entries under the <code class="text-accent-light">hooks:</code> block in <code class="text-accent-light">.treeline.yml</code>. They sit alongside named start hooks in the same block; the parser distinguishes them by value type (arrays vs maps).
+    </p>
+
+    <div class="mb-8">
+      <Terminal label=".treeline.yml">
+        <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-accent-light">hooks</span>:
+  <span class="text-accent-light">pre_setup</span>:
+    - cp .env.template .env.local
+  <span class="text-accent-light">post_release</span>:
+    - rm -rf tmp/cache</code></pre>
+      </Terminal>
+    </div>
+
+    <p class="text-muted mb-8">
+      Triggers: <code class="text-accent-light">gtl new</code>, <code class="text-accent-light">gtl setup</code>, <code class="text-accent-light">gtl release</code>, <code class="text-accent-light">gtl prune</code>. These hooks do not run during <code class="text-accent-light">gtl start</code> or <code class="text-accent-light">gtl restart</code>.
+    </p>
+
+    <h2>Start hooks</h2>
+    <p class="text-muted mb-4">
+      Start hooks (v0.36.0) run before the server boots and after it exits. They're for per-session provisioning that needs to happen every time you start work on a branch, not just when the worktree is first created.
+    </p>
+    <p class="text-muted mb-8">
+      The canonical example: registering a router alias before the server starts so an OAuth callback URL points at the right branch, then removing it on exit. The alias is session-scoped, not permanent.
+    </p>
+
+    <h3>Configuration</h3>
+    <p class="text-muted mb-4">
+      Start hooks are named entries under the <code class="text-accent-light">hooks:</code> key. Each entry can have <code class="text-accent-light">pre_start</code>, <code class="text-accent-light">post_stop</code>, and <code class="text-accent-light">auto</code>.
+    </p>
+
+    <div class="mb-6">
+      <Terminal label=".treeline.yml">
+        <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-accent-light">hooks</span>:
+  <span class="text-accent-light">oauth</span>:
+    <span class="text-accent-light">pre_start</span>: "gtl serve alias myapp-oauth <span class="text-accent-light">{'{port}'}</span>"
+    <span class="text-accent-light">post_stop</span>: "gtl serve alias --remove myapp-oauth"
+
+  <span class="text-accent-light">seed</span>:
+    <span class="text-accent-light">pre_start</span>:
+      - bin/rails db:seed
+      - bin/rails cache:clear
+    <span class="text-accent-light">auto</span>: true</code></pre>
+      </Terminal>
+    </div>
+
+    <p class="text-muted mb-4">
+      Each <code class="text-accent-light">pre_start</code> and <code class="text-accent-light">post_stop</code> field accepts a single string or an array of strings. A hook must have at least one command in either field to be recognized. Setting <code class="text-accent-light">auto: true</code> alone with no commands does nothing.
+    </p>
+
+    <h3>Activation</h3>
+    <p class="text-muted mb-4">
+      Hooks are activated in two ways:
+    </p>
+    <ul class="text-muted space-y-2 list-disc pl-5 mb-8">
+      <li><code class="text-accent-light">auto: true</code> runs the hook on every fresh <code class="text-accent-light">gtl start</code> without any flag.</li>
+      <li><code class="text-accent-light">gtl start --with oauth</code> activates a specific hook for this session. Accepts comma-separated names: <code class="text-accent-light">--with oauth,seed</code>.</li>
+    </ul>
+    <p class="text-muted mb-4">
+      When both are present, auto hooks run first, then <code class="text-accent-light">--with</code> hooks in the order specified on the command line. If a hook is both <code class="text-accent-light">auto: true</code> and named in <code class="text-accent-light">--with</code>, it runs once (deduplicated).
+    </p>
+    <p class="text-muted mb-8">
+      <strong class="text-white">Note:</strong> when multiple hooks have <code class="text-accent-light">auto: true</code>, their relative execution order is not guaranteed. If ordering matters between auto hooks, use a single hook with multiple commands in its <code class="text-accent-light">pre_start</code> array.
+    </p>
+
+    <h3>The lifecycle, step by step</h3>
+    <p class="text-muted mb-4">
+      Here's what happens when you run <code class="text-accent-light">gtl start --with oauth</code> on a fresh start (no supervisor running):
+    </p>
+
+    <ol class="text-muted space-y-3 list-decimal pl-5 mb-8">
+      <li>GTL resolves the active hooks: all <code class="text-accent-light">auto: true</code> hooks, plus any named in <code class="text-accent-light">--with</code>, deduplicated.</li>
+      <li>Each hook's <code class="text-accent-light">pre_start</code> commands run in sequence. Commands are executed with <code class="text-white">sh -c</code> in the worktree directory. Stdout and stderr are inherited (you see the output).</li>
+      <li><strong class="text-white">If any <code class="text-accent-light">pre_start</code> command fails, the start aborts.</strong> No server process launches. The error message identifies which hook and command failed.</li>
+      <li>On success, GTL writes a state file recording which hooks were activated. This file lives alongside the supervisor socket (e.g. <code class="text-white">/tmp/gtl-xxxxxxxx.hooks</code>).</li>
+      <li>The env file is regenerated, editor settings are synced, and the supervisor launches <code class="text-accent-light">commands.start</code>.</li>
+      <li>When the supervisor exits (Ctrl+C), GTL reads the hooks state file and runs each hook's <code class="text-accent-light">post_stop</code> commands <strong class="text-white">in reverse activation order</strong>.</li>
+      <li><code class="text-accent-light">post_stop</code> failures are logged to stderr but do not block shutdown. The state file is cleaned up regardless.</li>
+    </ol>
+
+    <div class="mb-8">
+      <Terminal>
+        <div class="space-y-2 text-sm leading-relaxed">
+          <p><span class="text-accent-light">$</span> <span class="text-white">gtl start --with oauth</span></p>
+          <p class="text-muted"><span class="text-accent">[hook:oauth]</span> Running pre_start: gtl serve alias myapp-oauth 3010</p>
+          <p class="text-muted">Alias myapp-oauth.prt.dev &rarr; :3010</p>
+          <p class="text-muted"><span class="text-accent">[hook:seed]</span> Running pre_start: bin/rails db:seed</p>
+          <p class="text-muted"><span class="text-accent">[hook:seed]</span> Running pre_start: bin/rails cache:clear</p>
+          <p class="text-muted"><span class="text-accent">[supervisor]</span> Starting bin/dev...</p>
+          <p class="text-muted">&#9656; Rails booting on :3010</p>
+          <p class="text-muted mt-3">... working ...</p>
+          <p class="text-muted mt-3">^C</p>
+          <p class="text-muted"><span class="text-accent">[supervisor]</span> Shutting down...</p>
+          <p class="text-muted"><span class="text-accent">[hook:seed]</span> No post_stop defined, skipping.</p>
+          <p class="text-muted"><span class="text-accent">[hook:oauth]</span> Running post_stop: gtl serve alias --remove myapp-oauth</p>
+          <p class="text-muted">Removed alias "myapp-oauth".</p>
+        </div>
+      </Terminal>
+    </div>
+
+    <h3>Interpolation</h3>
+    <p class="text-muted mb-4">
+      Hook commands support <code class="text-accent-light">{'{port}'}</code> interpolation. The allocated port for the current worktree is substituted at runtime. Multi-port projects also have <code class="text-accent-light">{'{port_2}'}</code> through <code class="text-accent-light">{'{port_10}'}</code>.
+    </p>
+    <p class="text-muted mb-8">
+      <strong class="text-white">Hooks do not support the full env token set.</strong> Tokens like <code class="text-accent-light">{'{router_domain}'}</code>, <code class="text-accent-light">{'{resolve:...}'}</code>, and <code class="text-accent-light">{'{database}'}</code> are not interpolated in hook commands. If your hook needs those values, read them from the env file that GTL writes, or reference the environment variables directly since they're already set by the time your server runs.
+    </p>
+
+    <h2>When hooks don't run</h2>
+    <p class="text-muted mb-4">
+      Start hooks are scoped to fresh starts. Several common scenarios skip them:
+    </p>
+
+    <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
+      <table
+        class="w-full min-w-[480px] text-sm text-left font-sans [&_td:first-child]:whitespace-nowrap [&_th:first-child]:whitespace-nowrap [&_code]:bg-surface [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded"
+      >
+        <thead class="uppercase tracking-wider">
+          <tr class="border-b border-surface-border bg-surface">
+            <th class="px-4 py-3 text-accent-light">Scenario</th>
+            <th class="px-4 py-3 text-accent-light">Hooks run?</th>
+            <th class="px-4 py-3 text-accent-light">Why</th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-surface-border text-muted [&>tr]:bg-surface-raised [&>tr]:transition-colors [&>tr:hover]:bg-surface"
+        >
+          <tr>
+            <td class="px-4 py-3 text-white">Fresh <code class="text-accent-light">gtl start</code></td>
+            <td class="px-4 py-3 text-accent">Yes</td>
+            <td class="px-4 py-3">No supervisor running. Full lifecycle.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white">Resume (<code class="text-accent-light">gtl start</code> with supervisor alive)</td>
+            <td class="px-4 py-3">No</td>
+            <td class="px-4 py-3">Supervisor is already running. GTL warns if <code class="text-accent-light">--with</code> was passed.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white"><code class="text-accent-light">gtl restart</code></td>
+            <td class="px-4 py-3">No</td>
+            <td class="px-4 py-3">Restart syncs env and restarts the server process but doesn't re-provision.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white"><code class="text-accent-light">gtl stop</code></td>
+            <td class="px-4 py-3">No post_stop</td>
+            <td class="px-4 py-3"><code class="text-accent-light">post_stop</code> runs when the supervisor process exits (Ctrl+C), not when the server is stopped remotely.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white"><code class="text-accent-light">gtl start --await</code></td>
+            <td class="px-4 py-3">pre_start only</td>
+            <td class="px-4 py-3"><code class="text-accent-light">pre_start</code> runs normally, but the calling process exits after the server is healthy. <code class="text-accent-light">post_stop</code> does not run from this process.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Hooks are not a process manager</h2>
+    <p class="text-muted mb-4">
+      Hooks run before and after the server. They're for quick provisioning steps, not for managing long-running processes. Don't put <code class="text-accent-light">bundle exec sidekiq &amp;</code> in a <code class="text-accent-light">pre_start</code> hook. If you need sidecars, put them in your <code class="text-accent-light">commands.start</code> (e.g. via Foreman, Overmind, or a Procfile) where the supervisor manages their lifecycle.
+    </p>
+    <p class="text-muted mb-8">
+      Good uses for hooks: registering a router alias, seeding a database, toggling a debug flag, warming a cache. Bad uses: starting Sidekiq, running a webpack watcher, launching Redis. If the process needs to stay alive while the server runs, it belongs in <code class="text-accent-light">commands.start</code>.
+    </p>
+
+    <h2>Edge cases</h2>
+    <ul class="text-muted space-y-3 list-disc pl-5 mb-8">
+      <li><strong class="text-white">Renaming a hook in YAML.</strong> If you rename a hook after a server was started with the old name, <code class="text-accent-light">post_stop</code> for the old name will be silently skipped on exit because the config no longer contains that hook name. Clean up manually if the hook registered external state (like an alias).</li>
+      <li><strong class="text-white">Multiple auto hooks.</strong> Go's map iteration order is non-deterministic. If you have two auto hooks and their order matters, combine them into one hook with multiple commands.</li>
+      <li><strong class="text-white">Failed pre_start.</strong> The hooks state file is only written after all <code class="text-accent-light">pre_start</code> commands succeed. If one fails, no state is persisted and <code class="text-accent-light">post_stop</code> will not run for any hook (since the server never started).</li>
+      <li><strong class="text-white">gtl stop vs Ctrl+C.</strong> <code class="text-accent-light">gtl stop</code> sends a signal to the supervisor from a separate process. The <code class="text-accent-light">post_stop</code> hooks run in the original <code class="text-accent-light">gtl start</code> process after the supervisor exits. If you ran <code class="text-accent-light">gtl start</code> in a terminal that's still open, post_stop will fire. If that terminal was closed, the hooks won't run.</li>
+    </ul>
+
+    <h2>Configuration reference</h2>
+    <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
+      <table
+        class="w-full min-w-[480px] text-sm text-left font-sans [&_td:first-child]:whitespace-nowrap [&_th:first-child]:whitespace-nowrap [&_code]:bg-surface [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded"
+      >
+        <thead class="uppercase tracking-wider">
+          <tr class="border-b border-surface-border bg-surface">
+            <th class="px-4 py-3 text-accent-light">Field</th>
+            <th class="px-4 py-3 text-accent-light">Type</th>
+            <th class="px-4 py-3 text-accent-light">Description</th>
+          </tr>
+        </thead>
+        <tbody
+          class="divide-y divide-surface-border text-muted [&>tr]:bg-surface-raised [&>tr]:transition-colors [&>tr:hover]:bg-surface"
+        >
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">hooks.&lt;name&gt;.pre_start</td>
+            <td class="px-4 py-3">string or list</td>
+            <td class="px-4 py-3">Commands to run before the supervisor launches.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">hooks.&lt;name&gt;.post_stop</td>
+            <td class="px-4 py-3">string or list</td>
+            <td class="px-4 py-3">Commands to run after the supervisor exits. Reverse order.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">hooks.&lt;name&gt;.auto</td>
+            <td class="px-4 py-3">bool</td>
+            <td class="px-4 py-3">Run this hook on every fresh <code class="text-accent-light">gtl start</code>. Default: <code class="text-accent-light">false</code>.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">hooks.pre_setup</td>
+            <td class="px-4 py-3">list</td>
+            <td class="px-4 py-3">Before <code class="text-accent-light">commands.setup</code>. Failure aborts setup.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">hooks.post_setup</td>
+            <td class="px-4 py-3">list</td>
+            <td class="px-4 py-3">After <code class="text-accent-light">commands.setup</code>. Failure warns only.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">hooks.pre_release</td>
+            <td class="px-4 py-3">list</td>
+            <td class="px-4 py-3">After confirmation, before resource teardown. Failure aborts release.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">hooks.post_release</td>
+            <td class="px-4 py-3">list</td>
+            <td class="px-4 py-3">After resource teardown. Failure warns only.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>See it in action</h2>
+    <ul class="text-muted space-y-3 list-disc pl-5 mb-8">
+      <li><a href="/use-cases/oauth-alias/" class="text-accent-light hover:text-accent underline underline-offset-2">OAuth callbacks across worktrees</a>: using <code class="text-accent-light">pre_start</code> and <code class="text-accent-light">post_stop</code> to register and remove a stable router alias for OAuth providers.</li>
+      <li><a href="/docs/configuration/" class="text-accent-light hover:text-accent underline underline-offset-2">Configuration reference</a>: all <code class="text-accent-light">.treeline.yml</code> fields.</li>
+    </ul>
+
+    <DocsPagination
+      prev={{ href: "/docs/lifecycle/", label: "Lifecycle" }}
+      next={{ href: "/docs/networking/", label: "Networking" }}
+    />
+  </div>
+</DocsLayout>

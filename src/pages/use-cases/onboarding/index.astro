@@ -1,0 +1,285 @@
+---
+import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+import Terminal from '../../../components/Terminal.astro';
+---
+
+<ArticleLayout
+  title="New developer, one command &mdash; Git Treeline"
+  description="A new teammate clones the repo, runs gtl init and gtl new, and has a fully isolated environment — ports, database, env, and a running server — in under a minute."
+  canonical="https://git-treeline.dev/use-cases/onboarding/"
+  breadcrumb="Use cases"
+  breadcrumbHref="/use-cases/"
+  heading="New developer, one&nbsp;command"
+  lead='A new teammate clones the repo. The README says &ldquo;run these 14 steps.&rdquo; Half are macOS-specific, two reference a database dump that doesn&rsquo;t exist yet, and the env example file is three months stale. With Treeline in the repo, the README says <code class="text-accent-light">gtl new main --start</code>.'
+>
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-10">The scenario</h2>
+  <p class="text-muted mb-4">
+    Typical onboarding for a Rails or Next.js project involves: install dependencies, create a database, load the schema, seed data, copy and edit an env file, find an available port, wire up Redis, and start the server. Each step can fail for reasons unique to the developer&rsquo;s machine. The <code class="text-accent-light">.treeline.yml</code> committed to the repo encodes all of this in a declarative config that <code class="text-accent-light">gtl new</code> executes in order.
+  </p>
+  <p class="text-muted mb-8">
+    The developer doesn&rsquo;t need to understand worktrees to benefit. Their first environment <em>is</em> a worktree &mdash; it just happens to be the one they work in.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Step 1: The project maintainer sets up once</h2>
+  <p class="text-muted mb-4">
+    Run <code class="text-accent-light">gtl init</code> in the project root. It auto-detects the framework, generates a <code class="text-accent-light">.treeline.yml</code>, prints diagnostics, and writes agent context to <code class="text-accent-light">AGENTS.md</code>. Commit the config.
+  </p>
+
+  <div class="mb-6">
+    <Terminal label="one-time setup by maintainer">
+      <div class="space-y-2">
+        <p><span class="text-accent-light">$</span> <span class="text-white">gtl init</span></p>
+        <p class="text-muted">Detected <span class="text-accent">Rails</span> project</p>
+        <p class="text-muted">Generated <span class="text-accent">.treeline.yml</span></p>
+        <p class="text-muted">Wrote agent context to <span class="text-accent">AGENTS.md</span></p>
+        <p class="text-muted"></p>
+        <p class="text-muted text-yellow-400">Diagnostics:</p>
+        <p class="text-muted">&nbsp; &check; dotenv-rails loaded via Gemfile</p>
+        <p class="text-muted">&nbsp; &check; PostgreSQL adapter detected</p>
+        <p class="text-muted">&nbsp; &check; bin/dev present and executable</p>
+      </div>
+    </Terminal>
+  </div>
+
+  <p class="text-muted mb-4">
+    The resulting config declares everything the project needs:
+  </p>
+
+  <div class="mb-8">
+    <Terminal label=".treeline.yml">
+      <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-accent-light">project</span>: myapp
+<span class="text-accent-light">port_count</span>: 2
+
+<span class="text-accent-light">env_file</span>: .env.local
+
+<span class="text-accent-light">database</span>:
+  <span class="text-accent-light">adapter</span>: postgresql
+  <span class="text-accent-light">template</span>: myapp_development
+  <span class="text-accent-light">pattern</span>: {`"{template}_{worktree}"`}
+
+<span class="text-accent-light">copy_files</span>:
+  - config/master.key
+
+<span class="text-accent-light">env</span>:
+  <span class="text-white">PORT</span>: {`"{port}"`}
+  <span class="text-white">DATABASE_NAME</span>: {`"{database}"`}
+  <span class="text-white">REDIS_URL</span>: {`"{redis_url}"`}
+  <span class="text-white">ESBUILD_PORT</span>: {`"{port_2}"`}
+  <span class="text-white">APPLICATION_HOST</span>: {`"localhost:{port}"`}
+
+<span class="text-accent-light">commands</span>:
+  <span class="text-accent-light">setup</span>:
+    - bundle install --quiet
+    - yarn install --silent
+  <span class="text-accent-light">start</span>: bin/dev</code></pre>
+    </Terminal>
+  </div>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Step 2: A new developer joins</h2>
+  <p class="text-muted mb-4">
+    The new developer installs <code class="text-accent-light">gtl</code>, clones the repo, and runs one command. No manual port selection, no env file editing, no database creation.
+  </p>
+
+  <div class="mb-6">
+    <Terminal label="new developer">
+      <div class="space-y-2">
+        <p><span class="text-accent-light">$</span> <span class="text-white">brew install git-treeline/tap/gtl</span></p>
+        <p><span class="text-accent-light">$</span> <span class="text-white">git clone git@github.com:acme/myapp.git</span></p>
+        <p><span class="text-accent-light">$</span> <span class="text-white">cd myapp</span></p>
+        <p><span class="text-accent-light">$</span> <span class="text-white">gtl new main --start</span></p>
+        <p class="text-muted">Creating worktree <span class="text-accent">main</span></p>
+        <p class="text-muted">Allocated ports <span class="text-accent">3002</span>, <span class="text-accent">3003</span></p>
+        <p class="text-muted">Cloned database <span class="text-accent">myapp_development_main</span></p>
+        <p class="text-muted">Wrote <span class="text-accent">.env.local</span></p>
+        <p class="text-muted">Copied <span class="text-accent">config/master.key</span></p>
+        <p class="text-muted">Running setup: bundle install --quiet</p>
+        <p class="text-muted">Running setup: yarn install --silent</p>
+        <p class="text-muted text-accent">==&gt; https://myapp-main.prt.dev</p>
+        <p class="text-muted">Starting: bin/dev (port 3002)</p>
+      </div>
+    </Terminal>
+  </div>
+
+  <p class="text-muted mb-8">
+    Everything in the config happened in order: port allocation, database clone, env file generation, file copies, setup commands, and server boot. The developer is looking at a running app.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">
+    What <code class="text-accent-light">gtl new</code> actually does
+  </h2>
+  <p class="text-muted mb-4">
+    One command, multiple steps &mdash; all derived from <code class="text-accent-light">.treeline.yml</code>:
+  </p>
+  <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
+    <table class="w-full text-sm text-left">
+      <thead>
+        <tr class="border-b border-surface-border bg-surface">
+          <th class="px-4 py-3 text-accent-light">Step</th>
+          <th class="px-4 py-3 text-accent-light">What happens</th>
+          <th class="px-4 py-3 text-accent-light">Config source</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-border text-muted">
+        <tr>
+          <td class="px-4 py-3 text-white">1</td>
+          <td class="px-4 py-3">Create git worktree</td>
+          <td class="px-4 py-3 font-mono text-xs"><code class="text-accent-light">git worktree add</code></td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3 text-white">2</td>
+          <td class="px-4 py-3">Allocate port block</td>
+          <td class="px-4 py-3 font-mono text-xs"><code class="text-accent-light">port_count</code> + user config range</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3 text-white">3</td>
+          <td class="px-4 py-3">Clone database (if configured)</td>
+          <td class="px-4 py-3 font-mono text-xs"><code class="text-accent-light">database.template</code></td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3 text-white">4</td>
+          <td class="px-4 py-3">Assign Redis namespace (if configured)</td>
+          <td class="px-4 py-3 font-mono text-xs">User config <code class="text-accent-light">redis.strategy</code></td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3 text-white">5</td>
+          <td class="px-4 py-3">Write env file with interpolated tokens</td>
+          <td class="px-4 py-3 font-mono text-xs"><code class="text-accent-light">env_file</code> + <code class="text-accent-light">env</code></td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3 text-white">6</td>
+          <td class="px-4 py-3">Copy files from main repo</td>
+          <td class="px-4 py-3 font-mono text-xs"><code class="text-accent-light">copy_files</code></td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3 text-white">7</td>
+          <td class="px-4 py-3">Run setup commands</td>
+          <td class="px-4 py-3 font-mono text-xs"><code class="text-accent-light">commands.setup</code></td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3 text-white">8</td>
+          <td class="px-4 py-3">Boot the server (if <code class="text-accent-light">--start</code>)</td>
+          <td class="px-4 py-3 font-mono text-xs"><code class="text-accent-light">commands.start</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">The post-checkout hook</h2>
+  <p class="text-muted mb-4">
+    After the first developer runs <code class="text-accent-light">gtl init</code>, Treeline installs a <code class="text-accent-light">post-checkout</code> git hook. Every subsequent <code class="text-accent-light">git checkout</code> &mdash; or <code class="text-accent-light">git worktree add</code> &mdash; triggers resource allocation automatically. New worktrees get their own port, database, and env file without the developer running <code class="text-accent-light">gtl setup</code> manually.
+  </p>
+  <p class="text-muted mb-8">
+    The hook is idempotent: if resources are already allocated for the worktree, it&rsquo;s a no-op.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Framework examples</h2>
+  <p class="text-muted mb-4">
+    <code class="text-accent-light">gtl init</code> auto-detects your framework and generates a tailored config. Here are common starting points:
+  </p>
+
+  <h3 class="text-white font-mono text-lg mb-3 mt-8">Next.js</h3>
+  <div class="mb-4">
+    <Terminal label=".treeline.yml">
+      <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-accent-light">project</span>: myapp
+<span class="text-accent-light">env_file</span>: .env.local
+
+<span class="text-accent-light">env</span>:
+  <span class="text-white">PORT</span>: {`"{port}"`}
+  <span class="text-white">NEXT_PUBLIC_APP_URL</span>: {`"http://localhost:{port}"`}
+
+<span class="text-accent-light">commands</span>:
+  <span class="text-accent-light">setup</span>:
+    - npm install
+  <span class="text-accent-light">start</span>: npm run dev</code></pre>
+    </Terminal>
+  </div>
+  <p class="text-muted text-base mb-8">
+    Next.js loads <code class="text-accent-light">.env.local</code> but doesn&rsquo;t use <code class="text-accent-light">PORT</code> for its listen port. Update your dev script: <code class="text-white">{'"dev": "next dev --port ${PORT:-3000}"'}</code>. <code class="text-accent-light">gtl init</code> prints this guidance automatically.
+  </p>
+
+  <h3 class="text-white font-mono text-lg mb-3">Vite (React, Vue, Svelte)</h3>
+  <div class="mb-4">
+    <Terminal label=".treeline.yml">
+      <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-accent-light">project</span>: website
+<span class="text-accent-light">env_file</span>: .env.local
+
+<span class="text-accent-light">env</span>:
+  <span class="text-white">PORT</span>: {`"{port}"`}
+
+<span class="text-accent-light">commands</span>:
+  <span class="text-accent-light">setup</span>:
+    - npm install
+  <span class="text-accent-light">start</span>: npx vite</code></pre>
+    </Terminal>
+  </div>
+  <p class="text-muted text-base mb-8">
+    Vite doesn&rsquo;t read <code class="text-accent-light">PORT</code> by default. Add <code class="text-white">{'server: { port: parseInt(env.PORT || \'5173\') }'}</code> to your <code class="text-accent-light">vite.config.js</code>. <code class="text-accent-light">gtl init</code> prints this warning if it detects Vite.
+  </p>
+
+  <h3 class="text-white font-mono text-lg mb-3">Express / Node</h3>
+  <div class="mb-8">
+    <Terminal label=".treeline.yml">
+      <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-accent-light">project</span>: myapi
+<span class="text-accent-light">env_file</span>: .env
+
+<span class="text-accent-light">env</span>:
+  <span class="text-white">PORT</span>: {`"{port}"`}
+
+<span class="text-accent-light">commands</span>:
+  <span class="text-accent-light">setup</span>:
+    - npm install
+  <span class="text-accent-light">start</span>: node server.js</code></pre>
+    </Terminal>
+  </div>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Lifecycle hooks for validation</h2>
+  <p class="text-muted mb-4">
+    If onboarding has prerequisites &mdash; a database dump must exist, or a secret must be in the keychain &mdash; use <code class="text-accent-light">hooks.pre_setup</code> to fail fast:
+  </p>
+  <div class="mb-8">
+    <Terminal label=".treeline.yml (partial)">
+      <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-accent-light">hooks</span>:
+  <span class="text-accent-light">pre_setup</span>:
+    - psql -lqt | grep myapp_development || echo "Template DB missing" && exit 1
+  <span class="text-accent-light">post_setup</span>:
+    - echo "Setup complete. Run gtl start to boot."</code></pre>
+    </Terminal>
+  </div>
+  <p class="text-muted mb-8">
+    <code class="text-accent-light">pre_setup</code> aborts on failure. <code class="text-accent-light">post_setup</code> warns but continues. Both run at setup time &mdash; before the server boots.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Verifying the setup</h2>
+  <div class="mb-8">
+    <Terminal>
+      <div class="space-y-2">
+        <p><span class="text-accent-light">$</span> <span class="text-white">gtl doctor</span></p>
+        <p class="text-muted">Config:</p>
+        <p class="text-muted">&nbsp; &check; .treeline.yml found</p>
+        <p class="text-muted">&nbsp; &check; User config loaded</p>
+        <p class="text-muted">Allocation:</p>
+        <p class="text-muted">&nbsp; &check; Ports 3002-3003 allocated</p>
+        <p class="text-muted">&nbsp; &check; Database myapp_development_main exists</p>
+        <p class="text-muted">Runtime:</p>
+        <p class="text-muted">&nbsp; &check; Server listening on :3002</p>
+        <p class="text-muted">&nbsp; &check; .env.local matches allocation</p>
+      </div>
+    </Terminal>
+  </div>
+
+  <p class="text-muted mb-8">
+    <code class="text-accent-light">gtl doctor</code> checks config, allocation, and runtime state. If something is wrong, it tells the developer exactly what to fix. Add <code class="text-accent-light">--json</code> for structured output that AI agents and CI can parse.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Read next</h2>
+  <ul class="text-muted space-y-3 list-disc pl-5 mb-8">
+    <li><a href="/use-cases/database-per-branch/" class="text-accent-light hover:text-accent underline underline-offset-2">Database per branch</a> &mdash; deep dive on clone, seed, and SQLite strategies</li>
+    <li><a href="/features/isolation/" class="text-accent-light hover:text-accent underline underline-offset-2">Isolation feature page</a> &mdash; ports, databases, Redis, and env files in detail</li>
+    <li><a href="/docs/#configuration" class="text-accent-light hover:text-accent underline underline-offset-2">Docs: configuration</a> &mdash; full <code class="text-accent-light">.treeline.yml</code> reference</li>
+    <li><a href="/docs/#framework-guides" class="text-accent-light hover:text-accent underline underline-offset-2">Docs: framework guides</a> &mdash; Next.js, Vite, Rails, Express, and more</li>
+  </ul>
+
+  <p class="text-center">
+    <a href="/use-cases/" class="text-sm text-accent-light hover:text-accent">All use cases</a>
+  </p>
+</ArticleLayout>

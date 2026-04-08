@@ -1,0 +1,40 @@
+---
+import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+---
+
+<ArticleLayout
+  title="Agents, scripts, CI — Git Treeline"
+  description="MCP, gtl env --json, gtl resolve --json, gtl start --await, shell completions, and structured status output."
+  canonical="https://git-treeline.dev/use-cases/agents-automation/"
+  breadcrumb="Use cases"
+  breadcrumbHref="/use-cases/"
+  heading="Scripts and agents do not read your terminal theme"
+>
+  <p class="text-lg sm:text-xl text-gray-400 mb-10 leading-relaxed max-w-3xl">
+    Automation needs stable contracts: which port, which database name, whether the process is listening, and when it is safe to hit HTTP. Treeline exposes that as structured data and socket-controlled lifecycle—not string parsing of <code class="text-white">gtl status</code> output.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Interfaces that scale</h2>
+  <ul class="text-muted space-y-3 mb-8">
+    <li><strong class="text-white">MCP</strong> — <code class="text-accent-light">gtl mcp</code> exposes start, stop, restart, port, status, and related tools to editors. Prefer this when the runtime speaks MCP.</li>
+    <li><strong class="text-white">JSON flags</strong> — <code class="text-accent-light">gtl status --json</code>, <code class="text-accent-light">gtl doctor --json</code>, <code class="text-accent-light">gtl port --json</code>, <code class="text-accent-light">gtl db name --json</code>, <code class="text-accent-light">gtl env --json</code>, <code class="text-accent-light">gtl resolve &lt;project&gt; --json</code> for anything that runs shell only.</li>
+    <li><strong class="text-white">Readiness</strong> — <code class="text-accent-light">gtl start --await</code> blocks until TCP accepts on the allocated port (with <code class="text-accent-light">--await-timeout</code>). Use after start in CI or agent loops.</li>
+    <li><strong class="text-white">Env inspection</strong> — <code class="text-accent-light">gtl env</code> prints the worktree env file; <code class="text-accent-light">--template</code> shows unresolved tokens.</li>
+    <li><strong class="text-white">Completions</strong> — <code class="text-accent-light">gtl completion bash|zsh|fish|powershell</code>; Homebrew installs completions on supported platforms.</li>
+  </ul>
+
+  <p class="text-muted mb-10">
+    <code class="text-accent-light">gtl init</code> writes an <code class="text-white">AGENTS.md</code> file with instructions for setup, teardown, and server management. Any MCP-compatible editor reads it as context. Cross-repo service URLs for agents follow the same <code class="text-accent-light">gtl resolve</code> contract as humans.
+  </p>
+
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Read next</h2>
+  <ul class="text-muted space-y-2 list-disc pl-5 mb-8">
+    <li><a href="/features/agents/" class="text-accent-light hover:text-accent underline underline-offset-2">AI Agents</a></li>
+    <li><a href="/docs/#ai-agents" class="text-accent-light hover:text-accent underline underline-offset-2">Docs: agents and MCP</a></li>
+    <li><a href="/docs/#cross-worktree" class="text-accent-light hover:text-accent underline underline-offset-2">Docs: resolve</a></li>
+  </ul>
+
+  <p class="text-center">
+    <a href="/use-cases/" class="text-sm text-accent-light hover:text-accent">All use cases</a>
+  </p>
+</ArticleLayout>

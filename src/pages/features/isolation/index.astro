@@ -1,0 +1,256 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Terminal from '../../../components/Terminal.astro';
+import BenefitCard from '../../../components/BenefitCard.astro';
+---
+
+<BaseLayout
+  title="Isolation — Git Treeline"
+  description="Every worktree gets its own port, database, Redis namespace, and env file. No collisions, no manual config. Declare once, isolate everywhere."
+  canonical="https://git-treeline.dev/features/isolation/"
+  activeNav="features"
+>
+  <section class="px-4 sm:px-6 pt-28 sm:pt-36 pb-16 sm:pb-20 text-center">
+    <p class="text-sm uppercase tracking-wider text-muted mb-4">Environment isolation</p>
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">Two branches. Two apps.<br />Zero conflicts.</h1>
+    <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
+      Not containers — separate ports, databases, Redis namespaces, and env files for every worktree. Declare what your project needs once in <code class="text-accent-light">.treeline.yml</code> and a git hook installed by <code class="text-accent-light">gtl init</code> allocates resources on every checkout.
+    </p>
+  </section>
+
+  <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-6 sm:mb-4 text-balance">The second worktree is always&nbsp;broken</h2>
+        <p class="text-base sm:text-lg text-muted max-w-2xl text-balance mx-auto mb-10">
+          You run <code class="text-white">git worktree add</code> and get a second checkout in seconds. Then you try to start it.
+        </p>
+      </div>
+      <div class="max-w-2xl mx-auto">
+        <Terminal label="~/worktrees/feature-b">
+          <div class="space-y-3">
+            <div>
+              <p><span class="text-accent-light">$</span> <span class="text-white">npm run dev</span></p>
+              <p class="text-red-400">Error: listen EADDRINUSE :::3000</p>
+            </div>
+            <div>
+              <p><span class="text-accent-light">$</span> <span class="text-white">rails db:create</span></p>
+              <p class="text-red-400">Database 'myapp_development' already exists</p>
+            </div>
+            <div>
+              <p><span class="text-accent-light">$</span> <span class="text-white">cat .env.local</span></p>
+              <p class="text-yellow-400">PORT=3000</p>
+              <p class="text-yellow-400">DATABASE_URL=postgres:///myapp_development</p>
+              <p class="text-muted text-xs mt-1"># Same as every other worktree.</p>
+            </div>
+          </div>
+        </Terminal>
+      </div>
+      <p class="text-base text-muted text-center mt-8 max-w-lg mx-auto">
+        Port collisions. Database conflicts. Shared env files. The checkout is fresh — everything around it is not.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-4 sm:px-6 py-16 sm:py-28">
+    <div class="max-w-4xl mx-auto">
+      <p class="text-sm uppercase tracking-wider text-muted text-center mb-4">One command changes everything</p>
+      <div class="font-mono text-xl sm:text-2xl md:text-3xl text-white font-bold tracking-tight text-center mb-10">gtl new feature-auth</div>
+      <div class="max-w-2xl mx-auto">
+        <Terminal>
+          <div class="space-y-1">
+            <p class="text-muted">Creating worktree <span class="text-accent">feature-auth</span></p>
+            <p class="text-muted">Allocated port <span class="text-accent">3010</span></p>
+            <p class="text-muted">Extra port <span class="text-accent">3011</span></p>
+            <p class="text-muted">Cloned database <span class="text-accent">myapp_dev_feature_auth</span></p>
+            <p class="text-muted">Assigned Redis namespace <span class="text-accent">myapp:feature-auth</span></p>
+            <p class="text-muted">Wrote <span class="text-accent">.env.local</span></p>
+            <p class="text-muted">Copied <span class="text-accent">config/master.key</span></p>
+            <p class="text-muted">Running setup commands&hellip;</p>
+            <p class="text-muted text-accent mt-2">Ready. cd ~/worktrees/feature-auth</p>
+          </div>
+        </Terminal>
+      </div>
+      <p class="text-base text-muted text-center mt-8 max-w-lg mx-auto">
+        The worktree has its own port, its own database (cloned with data), its own env file with interpolated values, and secrets copied from main. Boot immediately.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-6 sm:mb-4 text-balance">What this makes&nbsp;possible</h2>
+        <p class="text-base sm:text-lg text-muted max-w-2xl text-balance mx-auto mb-12">
+          Isolation is the contract: ports, databases, env, and cross-repo URLs are deterministic per worktree. Once <code class="text-accent-light">.treeline.yml</code> describes your app, <code class="text-accent-light">gtl new</code> and <code class="text-accent-light">gtl setup</code> apply the same rules everywhere—no manual editing after every branch switch.
+        </p>
+      </div>
+      <div class="grid gap-10 lg:grid-cols-3 lg:gap-12">
+        <BenefitCard>
+          <h3 class="text-white font-mono text-lg sm:text-xl mb-3 text-balance">Run several branches at full fidelity</h3>
+          <p class="text-base text-muted leading-relaxed">Main, a feature branch, and a PR review can run side by side with different ports and databases. You switch browser tabs—or editor windows with distinct title-bar colors—not terminal sessions, and you are not sharing one <code class="text-white">.env.local</code> between checkouts.</p>
+        </BenefitCard>
+        <BenefitCard>
+          <h3 class="text-white font-mono text-lg sm:text-xl mb-3 text-balance">Onboarding tracks the repo, not a wiki</h3>
+          <p class="text-base text-muted leading-relaxed">New developers clone the repo and run <code class="text-accent-light">gtl setup</code> in a worktree. Database clone, env interpolation, <code class="text-accent-light">commands.setup</code>, and hooks run in a predictable order—no one-off “change these three env vars” instructions that drift from reality.</p>
+        </BenefitCard>
+        <BenefitCard>
+          <h3 class="text-white font-mono text-lg sm:text-xl mb-3 text-balance">Agents and automation get a real sandbox</h3>
+          <p class="text-base text-muted leading-relaxed">A worktree created for an agent or script gets the same allocation rules as yours: isolated DB, env, and supervisor-controlled start/stop. Teardown via <code class="text-accent-light">gtl release</code> frees resources when the branch is done—see <a href="/features/agents/" class="text-accent-light hover:text-accent underline underline-offset-2">AI Agents</a> for MCP and JSON surfaces.</p>
+        </BenefitCard>
+      </div>
+    </div>
+  </section>
+
+  <section class="px-4 sm:px-6 py-16 sm:py-28">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-6 sm:mb-4 text-balance">Declare it once. Git Treeline handles the&nbsp;rest.</h2>
+        <p class="text-base sm:text-lg text-muted max-w-2xl text-balance mx-auto mb-12">
+          Everything is driven by <code class="text-accent-light">.treeline.yml</code> at the root of your project. The excerpt below is representative: ports and database, env seeding, <code class="text-accent-light">commands.setup</code> / <code class="text-accent-light">commands.start</code>, <strong class="text-white">lifecycle hooks</strong> (the same four keys the CLI implements), and editor chrome.
+        </p>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8 lg:gap-10 items-start">
+        <div class="rounded-lg border border-surface-border overflow-hidden">
+          <div class="px-4 py-2.5 border-b border-surface-border flex items-center gap-2 shrink-0">
+            <span class="w-2 h-2 rounded-full bg-accent/50"></span>
+            <span class="text-xs font-mono text-muted">.treeline.yml</span>
+          </div>
+          <pre
+            class="px-4 py-4 text-xs sm:text-sm leading-relaxed font-mono overflow-x-auto"><code><span class="text-blue-400">project</span>: <span class="text-accent-light">myapp</span>
+<span class="text-blue-400">port_count</span>: <span class="text-accent-light">2</span>
+
+<span class="text-muted"># Database</span>
+<span class="text-blue-400">database</span>:
+  <span class="text-blue-400">adapter</span>: <span class="text-accent-light">postgresql</span>
+  <span class="text-blue-400">template</span>: <span class="text-accent-light">myapp_dev</span>
+
+<span class="text-muted"># Environment</span>
+<span class="text-blue-400">env_file</span>: <span class="text-accent-light">.env.local</span>
+<span class="text-blue-400">copy_files</span>:
+  - <span class="text-accent-light">config/master.key</span>
+
+<span class="text-muted"># Commands + hooks (order matches runtime)</span>
+<span class="text-blue-400">commands</span>:
+  <span class="text-blue-400">setup</span>:
+    - <span class="text-accent-light">bin/setup</span>
+  <span class="text-blue-400">start</span>: <span class="text-accent-light">bin/dev</span>
+
+<span class="text-blue-400">hooks</span>:
+  <span class="text-blue-400">pre_setup</span>:
+    - <span class="text-accent-light">bin/check-toolchain</span>
+  <span class="text-blue-400">post_setup</span>:
+    - <span class="text-accent-light">bin/warm-cache</span>
+  <span class="text-blue-400">pre_release</span>:
+    - <span class="text-accent-light">bin/confirm-safe-to-drop</span>
+  <span class="text-blue-400">post_release</span>:
+    - <span class="text-accent-light">bin/notify-teardown</span>
+
+<span class="text-muted"># Editor</span>
+<span class="text-blue-400">editor</span>:
+  <span class="text-blue-400">color</span>: <span class="text-accent-light">auto</span></code></pre>
+        </div>
+        <div class="space-y-6 md:space-y-8">
+          <div>
+            <h3 class="text-white font-mono text-lg sm:text-xl mb-2">Ports</h3>
+            <p class="text-base text-muted">Every worktree gets a unique port automatically. <code class="text-accent-light">port_count: 2</code> reserves sequential ports for multi-process apps (Vite + API, for example). Allocated ports are written to your env file via <code class="text-white">{'{port}'}</code> tokens and available as <code class="text-white">$PORT</code> in setup/start commands.</p>
+          </div>
+          <div>
+            <h3 class="text-white font-mono text-lg sm:text-xl mb-2">Database</h3>
+            <p class="text-base text-muted"><code class="text-accent-light">database.adapter</code> picks the cloning strategy. PostgreSQL uses <code class="text-accent-light">createdb --template</code> for instant clones with seed data. SQLite is file-copied. Manage with <code class="text-accent-light">gtl db reset</code>, <code class="text-accent-light">gtl db restore</code>, or <code class="text-accent-light">gtl db reset --from &lt;source&gt;</code>.</p>
+          </div>
+          <div>
+            <h3 class="text-white font-mono text-lg sm:text-xl mb-2">Environment</h3>
+            <p class="text-base text-muted">Your env file is interpolated with allocated values — <code class="text-white">{'{port}'}</code>, <code class="text-white">{'{database}'}</code>, <code class="text-white">{'{redis_url}'}</code>. Secrets like <code class="text-accent-light">master.key</code> are copied from your main worktree via <code class="text-accent-light">copy_files</code>.</p>
+          </div>
+          <div>
+            <h3 class="text-white font-mono text-lg sm:text-xl mb-2">Editor</h3>
+            <p class="text-base text-muted"><code class="text-accent-light">editor.color: auto</code> gives each worktree a deterministic title bar color so you always know which branch you're looking at. Works in VS Code, Cursor, Zed, and JetBrains. Override with a hex value or set <code class="text-accent-light">editor.theme</code> for full theme switching.</p>
+          </div>
+          <div>
+            <h3 class="text-white font-mono text-lg sm:text-xl mb-2">Setup commands</h3>
+            <p class="text-base text-muted leading-relaxed"><code class="text-accent-light">commands.setup</code> runs after allocation, env write, and database clone. <code class="text-white">$PORT</code> and interpolated values are available. <code class="text-accent-light">commands.start</code> is what <code class="text-accent-light">gtl start</code> and <code class="text-accent-light">gtl review … --start</code> execute via the supervisor.</p>
+          </div>
+          <div>
+            <h3 class="text-white font-mono text-lg sm:text-xl mb-2">Lifecycle hooks</h3>
+            <p class="text-base text-muted leading-relaxed"><code class="text-accent-light">hooks.pre_setup</code> and <code class="text-accent-light">hooks.post_setup</code> wrap <code class="text-white">commands.setup</code>; <code class="text-accent-light">hooks.pre_release</code> and <code class="text-accent-light">hooks.post_release</code> wrap freeing ports and dropping databases on <code class="text-accent-light">gtl release</code>. Pre-hooks <strong class="text-white">abort</strong> the operation on non-zero exit; post-hooks <strong class="text-white">warn</strong> and continue. Full ordering and examples: <a href="/docs/#lifecycle-hooks" class="text-accent-light hover:text-accent underline underline-offset-2">Lifecycle hooks in the docs</a>.</p>
+          </div>
+        </div>
+      </div>
+      <div class="mt-12">
+        <div class="flex flex-wrap justify-center gap-4 sm:gap-6">
+          <div class="rounded-lg border border-surface-border overflow-hidden w-[min(100%,14rem)] shrink-0">
+            <div class="px-3 py-2 text-xs font-mono text-white text-center" style="background:#1a6b3c;">main</div>
+            <div class="p-4 space-y-2 bg-surface">
+              <div class="h-2 rounded bg-surface-border w-3/4"></div>
+              <div class="h-2 rounded bg-surface-border w-1/2"></div>
+              <div class="h-2 rounded bg-surface-border w-5/6"></div>
+            </div>
+          </div>
+          <div class="rounded-lg border border-surface-border overflow-hidden w-[min(100%,14rem)] shrink-0">
+            <div class="px-3 py-2 text-xs font-mono text-white text-center" style="background:#1a5276;">feature-auth</div>
+            <div class="p-4 space-y-2 bg-surface">
+              <div class="h-2 rounded bg-surface-border w-1/2"></div>
+              <div class="h-2 rounded bg-surface-border w-4/5"></div>
+              <div class="h-2 rounded bg-surface-border w-3/5"></div>
+            </div>
+          </div>
+          <div class="rounded-lg border border-surface-border overflow-hidden w-[min(100%,14rem)] shrink-0">
+            <div class="px-3 py-2 text-xs font-mono text-white text-center" style="background:#7b241c;">pr-42</div>
+            <div class="p-4 space-y-2 bg-surface">
+              <div class="h-2 rounded bg-surface-border w-5/6"></div>
+              <div class="h-2 rounded bg-surface-border w-1/3"></div>
+              <div class="h-2 rounded bg-surface-border w-2/3"></div>
+            </div>
+          </div>
+        </div>
+        <p class="text-xs text-muted text-center mt-4">Each worktree gets a distinct color. Know which branch you're in at a glance.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="px-4 sm:px-6 py-16 sm:py-28">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-6 sm:mb-4 text-balance">Multiple repositories, one&nbsp;machine</h2>
+        <p class="text-base sm:text-lg text-muted max-w-2xl text-balance mx-auto mb-10">
+          Your web app and your API are different clones. Hardcoding <code class="text-white">localhost:3030</code> in the frontend env file breaks as soon as Git Treeline re-allocates the API. The registry already knows every project’s port—you need a way to reference it by name.
+        </p>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8 items-start">
+        <div>
+          <h3 class="text-white font-mono text-lg sm:text-xl mb-3"><code class="text-accent-light">gtl resolve</code> and <code class="text-accent-light">{"{resolve:…}"}</code></h3>
+          <p class="text-base text-muted mb-4">
+            <code class="text-accent-light">gtl resolve api</code> prints the base URL for project <code class="text-white">api</code> on the <strong class="text-white">same branch name</strong> as your current worktree—no extra config when both repos track <code class="text-white">feature-auth</code>. In <code class="text-accent-light">.treeline.yml</code>, <code class="text-white">{"API_URL: \"" + "{resolve:api}" + "\""}</code> resolves at setup time. Use <code class="text-white">{"{resolve:api/main}"}</code> to pin a branch explicitly.
+          </p>
+          <p class="text-base text-muted">
+            If the frontend branch does not match the API branch you need, <code class="text-accent-light">gtl link api staging</code> stores an override, regenerates the env file, and restarts the server automatically (visible in <code class="text-accent-light">gtl status</code> and <code class="text-accent-light">gtl doctor</code>). <code class="text-accent-light">gtl unlink api</code> clears it. Setup fails with a clear error if the target is not allocated.
+          </p>
+        </div>
+        <Terminal label="web repo">
+          <div class="space-y-1 text-sm">
+            <p><span class="text-accent-light">$</span> <span class="text-white">gtl resolve api --json</span></p>
+            <p class="text-muted"># scripting / agents</p>
+            <p class="text-muted text-xs mt-3">env:</p>
+            <p class="text-white font-mono">{"API_URL: \"" + "{resolve:api}" + "\""}</p>
+          </div>
+        </Terminal>
+      </div>
+      <p class="text-base text-muted text-center mt-10">
+        <a href="/use-cases/multi-repo/" class="text-accent-light hover:text-accent underline underline-offset-2">Scenario: frontend + API</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised text-center">
+    <div class="max-w-2xl mx-auto">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-6 sm:mb-4 text-balance">Add isolation to your&nbsp;project</h2>
+      <p class="text-base text-muted mb-8">One file, committed to your repo. Teammates without gtl installed are unaffected—the config file has no effect on builds or deployments.</p>
+      <div class="flex justify-center max-w-md mx-auto mb-6">
+        <code class="text-accent-light text-sm">gtl init</code>
+      </div>
+      <p class="text-xs text-muted mb-6">Auto-detects your framework and creates <code class="text-accent-light">.treeline.yml</code> with sensible defaults.</p>
+      <a href="/docs/#configuration" class="text-sm text-accent-light hover:text-accent underline underline-offset-2">Full configuration reference &rarr;</a>
+    </div>
+  </section>
+</BaseLayout>

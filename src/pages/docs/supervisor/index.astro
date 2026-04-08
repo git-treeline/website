@@ -1,0 +1,104 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import Terminal from '../../../components/Terminal.astro';
+import DocsPagination from '../../../components/DocsPagination.astro';
+---
+
+<DocsLayout
+  title="Supervisor — Git Treeline"
+  description="The gtl start process supervisor, TUI dashboard, remote restart, and how the Unix socket works."
+  canonical="https://git-treeline.dev/docs/supervisor/"
+  activePage="supervisor"
+>
+  <div class="docs-guide pt-20 sm:pt-24 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-0">
+    <nav class="text-sm text-muted mb-6">
+      <a href="/docs/" class="hover:text-white transition-colors">Docs</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-white">Supervisor</span>
+    </nav>
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-mono font-bold text-white tracking-tight mb-4">
+      Process supervisor
+    </h1>
+    <p class="text-base sm:text-lg text-muted max-w-2xl mb-12">
+      <code class="text-accent-light">gtl start</code> runs your dev server under a Unix socket supervisor that injects allocated env vars, streams logs to your terminal, and accepts remote stop/restart commands from any other process.
+    </p>
+
+    <h2>How it works</h2>
+    <ol class="list-decimal list-inside text-muted space-y-2 mb-8 pl-2">
+      <li>You run <code class="text-accent-light">gtl start</code> in your terminal. The supervisor starts and launches your dev server.</li>
+      <li>Server output streams to your terminal. You see every log line.</li>
+      <li>An agent (or any process) calls <code class="text-accent-light">gtl restart</code> from another terminal. The supervisor bounces the server.</li>
+      <li>Logs resume in your original terminal. No detached sessions, no hidden processes.</li>
+      <li><kbd class="text-white">Ctrl+C</kbd> in your terminal fully exits the supervisor and the server.</li>
+    </ol>
+
+    <h2>Commands</h2>
+    <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
+      <table class="w-full text-sm text-left">
+        <thead>
+          <tr class="border-b border-surface-border bg-surface">
+            <th class="px-5 py-3 font-mono text-accent-light font-medium">Command</th>
+            <th class="px-5 py-3 text-accent-light font-medium">Behavior</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-border">
+          <tr>
+            <td class="px-5 py-3 font-mono text-white whitespace-nowrap">gtl start</td>
+            <td class="px-5 py-3 text-muted">Launches supervisor + server. If supervisor is already running, resumes the server process.</td>
+          </tr>
+          <tr>
+            <td class="px-5 py-3 font-mono text-white whitespace-nowrap">gtl stop</td>
+            <td class="px-5 py-3 text-muted">Stops the server process. Supervisor stays alive so the server can be resumed.</td>
+          </tr>
+          <tr>
+            <td class="px-5 py-3 font-mono text-white whitespace-nowrap">gtl restart</td>
+            <td class="px-5 py-3 text-muted">Atomic stop + start. Bounces the server in one step.</td>
+          </tr>
+          <tr>
+            <td class="px-5 py-3 font-mono text-white whitespace-nowrap">Ctrl+C</td>
+            <td class="px-5 py-3 text-muted">Fully exits the supervisor and the server. The socket is cleaned up.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Configuration</h2>
+    <p>
+      The supervisor uses the <code class="text-accent-light">commands.start</code> field from your <code class="text-accent-light">.treeline.yml</code>:
+    </p>
+    <div class="mb-8">
+      <Terminal label=".treeline.yml">
+        <pre class="text-sm"><span class="text-accent-light">commands</span><span class="text-muted">:</span>
+  <span class="text-accent-light">start</span><span class="text-muted">:</span> <span class="text-white">bin/dev</span></pre>
+      </Terminal>
+    </div>
+
+    <h2>Security</h2>
+    <p class="mb-10">
+      The supervisor communicates over a Unix socket with <code class="text-accent-light">0600</code> permissions (owner-only). Read deadlines and client timeouts prevent hung connections. The socket path is derived from a SHA-256 hash of the worktree path.
+    </p>
+
+    <h2>TUI dashboard</h2>
+    <p>
+      <code class="text-accent-light">gtl dashboard</code> (aliases: <code class="text-accent-light">gtl dash</code>, <code class="text-accent-light">gtl ui</code>) opens a full-screen terminal UI showing every worktree grouped by project with ports, supervisor state, and link overrides. Polls every two seconds for a live view.
+    </p>
+
+    <h3>Keyboard shortcuts</h3>
+    <ul class="text-muted text-base space-y-2 list-disc pl-5 mb-6">
+      <li><kbd class="text-white font-mono">j</kbd> / <kbd class="text-white font-mono">k</kbd> or arrow keys to move through the list</li>
+      <li><kbd class="text-white font-mono">Tab</kbd> to switch focus between list and detail panel</li>
+      <li><kbd class="text-white font-mono">s</kbd> start or stop the dev server for the selected worktree</li>
+      <li><kbd class="text-white font-mono">o</kbd> open the app in the browser</li>
+      <li><kbd class="text-white font-mono">r</kbd> restart the supervisor</li>
+      <li><kbd class="text-white font-mono">d</kbd> release the selected worktree (confirmation prompt)</li>
+      <li><kbd class="text-white font-mono">/</kbd> filter by project, branch, or worktree name</li>
+      <li><kbd class="text-white font-mono">?</kbd> toggle the full shortcut help overlay</li>
+      <li><kbd class="text-white font-mono">q</kbd> or <kbd class="text-white font-mono">Ctrl+C</kbd> quit</li>
+    </ul>
+
+    <DocsPagination
+      prev={{ href: "/docs/resolve/", label: "Resolve" }}
+      next={{ href: "/docs/agents/", label: "AI agents" }}
+    />
+  </div>
+</DocsLayout>

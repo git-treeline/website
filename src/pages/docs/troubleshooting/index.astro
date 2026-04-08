@@ -1,0 +1,244 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import Terminal from '../../../components/Terminal.astro';
+import DocsPagination from '../../../components/DocsPagination.astro';
+
+const issueGroup =
+  'mb-14 sm:mb-14 pt-8 sm:pt-0 border-t border-surface-border/50 sm:border-t-0 first:border-t-0 first:pt-0';
+---
+
+<DocsLayout
+  title="Troubleshooting — Git Treeline"
+  description="Common Git Treeline issues organized by symptom: HTTPS router, CSRF, ports, stale config, upgrades."
+  canonical="https://git-treeline.dev/docs/troubleshooting/"
+  activePage="troubleshooting"
+>
+  <div class="docs-guide pt-20 sm:pt-24 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-0">
+    <nav class="text-sm text-muted mb-6">
+      <a href="/docs/" class="hover:text-white transition-colors">Docs</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-white">Troubleshooting</span>
+    </nav>
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-mono font-bold text-white tracking-tight mb-4">
+      Troubleshooting
+    </h1>
+    <p class="text-base sm:text-lg text-muted max-w-2xl mb-12">
+      Common issues organized by symptom. Start with <code class="text-accent-light">gtl doctor</code>, which catches many of these automatically.
+    </p>
+
+    <h2>HTTPS router and certificates</h2>
+
+    <div class="space-y-6 mb-10">
+      <div>
+        <p class="text-white font-medium mb-1">Connection refused on <code class="text-accent-light">.prt.dev</code> URLs</p>
+        <p class="text-muted mb-2">The router isn&rsquo;t running, the CA certificate expired, or port forwarding (443 &rarr; 3001) is missing.</p>
+        <Terminal>
+          <div class="space-y-1">
+            <p>
+              <span class="text-accent-light">$</span>{' '}
+              <span class="text-white">gtl serve status</span>{' '}
+              <span class="text-muted"># check if the router is alive</span>
+            </p>
+            <p>
+              <span class="text-accent-light">$</span>{' '}
+              <span class="text-white">gtl serve install</span>{' '}
+              <span class="text-muted"># idempotent re-run</span>
+            </p>
+          </div>
+        </Terminal>
+      </div>
+
+      <div>
+        <p class="text-white font-medium mb-1">HTTPS worked before but suddenly stopped</p>
+        <p class="text-muted mb-2">The local CA certificate expires after one year. Treeline auto-renews when within 7 days of expiry, but if the router hasn&rsquo;t run in a while, the cert may have lapsed.</p>
+        <Terminal>
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl serve install</span>{' '}
+            <span class="text-muted"># regenerates CA if expired</span>
+          </p>
+        </Terminal>
+      </div>
+
+      <div>
+        <p class="text-white font-medium mb-1">Router version mismatch after upgrading the CLI</p>
+        <p class="text-muted mb-2">After <code class="text-accent-light">brew upgrade git-treeline</code>, the CLI is newer than the running router. <code class="text-accent-light">gtl serve status</code> and <code class="text-accent-light">gtl start</code> will warn. Re-run install to restart with the new binary.</p>
+        <Terminal>
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl serve install</span>
+          </p>
+        </Terminal>
+      </div>
+
+      <div>
+        <p class="text-white font-medium mb-1">Safari can&rsquo;t reach branch URLs</p>
+        <p class="text-muted mb-2">Safari does not resolve <code class="text-accent-light">*.localhost</code> to loopback. Switch to <code class="text-accent-light">prt.dev</code> (real DNS, works in all browsers) or sync hosts entries.</p>
+        <Terminal>
+          <div class="space-y-1">
+            <p>
+              <span class="text-accent-light">$</span>{' '}
+              <span class="text-white">gtl config set router.domain prt.dev</span>
+            </p>
+            <p>
+              <span class="text-accent-light">$</span>{' '}
+              <span class="text-white">gtl serve install</span>
+            </p>
+            <p class="text-muted text-sm mt-1"># Or keep localhost and sync /etc/hosts:</p>
+            <p>
+              <span class="text-accent-light">$</span>{' '}
+              <span class="text-white">gtl serve hosts sync</span>
+            </p>
+          </div>
+        </Terminal>
+      </div>
+    </div>
+
+    <h2>Sessions, CSRF, and login</h2>
+
+    <div class="space-y-6 mb-10">
+      <div>
+        <p class="text-white font-medium mb-1">Login fails / CSRF token mismatch through the router</p>
+        <p class="text-muted mb-2">Before v0.35.4, the proxy did not set <code class="text-accent-light">X-Forwarded-Proto</code>. Rails compared <code class="text-accent-light">Origin: https://</code> against <code class="text-accent-light">request.base_url</code> which returned <code class="text-accent-light">http://</code>, causing origin mismatches. Upgrade to v0.35.4+.</p>
+        <Terminal>
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">brew upgrade git-treeline</span>
+          </p>
+        </Terminal>
+      </div>
+
+      <div>
+        <p class="text-white font-medium mb-1">&ldquo;Blocked host&rdquo; error in Rails</p>
+        <p class="text-muted mb-2">Rails rejects requests whose <code class="text-accent-light">Host</code> header doesn&rsquo;t match <code class="text-accent-light">config.hosts</code>. Whitelist the router domain.</p>
+        <div class="space-y-2">
+          <Terminal label=".treeline.yml">
+            <pre class="text-sm"><span class="text-accent-light">env</span><span class="text-muted">:</span>
+  <span class="text-accent-light">ROUTER_DOMAIN</span><span class="text-muted">:</span> <span class="text-white">&quot;{'{'}router_domain{'}'}&quot;</span></pre>
+          </Terminal>
+          <Terminal label="config/environments/development.rb">
+            <pre class="text-sm"><span class="text-white">config.hosts &lt;&lt; &quot;.{'#'}{'{'}ENV.fetch('ROUTER_DOMAIN', 'prt.dev'){'}'}&quot;</span></pre>
+          </Terminal>
+        </div>
+      </div>
+
+      <div>
+        <p class="text-white font-medium mb-1">Vite / Django allowed hosts equivalent</p>
+        <p class="text-muted">Vite: add <code class="text-accent-light">server.allowedHosts: [&quot;.prt.dev&quot;]</code> to <code class="text-accent-light">vite.config.js</code>. Django: add <code class="text-accent-light">.prt.dev</code> to <code class="text-accent-light">ALLOWED_HOSTS</code>. <code class="text-accent-light">gtl tunnel</code> prints framework-specific hints when it detects a misconfiguration.</p>
+      </div>
+    </div>
+
+    <h2>Stale config and environment</h2>
+
+    <div class="space-y-6 mb-10">
+      <div>
+        <p class="text-white font-medium mb-1">Changed <code class="text-accent-light">.treeline.yml</code> but the env file has old values</p>
+        <p class="text-muted mb-2"><code class="text-accent-light">env:</code> changes sync automatically on <code class="text-accent-light">gtl start</code> and <code class="text-accent-light">gtl restart</code>. If you manage the server yourself, sync manually.</p>
+        <Terminal>
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl env sync</span>{' '}
+            <span class="text-muted"># re-writes env file + editor settings</span>
+          </p>
+        </Terminal>
+      </div>
+
+      <div>
+        <p class="text-white font-medium mb-1">Changed <code class="text-accent-light">commands.start</code> but the server runs the old command</p>
+        <p class="text-muted mb-2">The supervisor caches the start command at launch. Kill it and start fresh.</p>
+        <Terminal>
+          <div class="space-y-1">
+            <p class="text-muted text-sm"># In the terminal running gtl start:</p>
+            <p><span class="text-white">Ctrl+C</span> <span class="text-muted"># kills the supervisor</span></p>
+            <p>
+              <span class="text-accent-light">$</span>{' '}
+              <span class="text-white">gtl start</span>{' '}
+              <span class="text-muted"># picks up the new command</span>
+            </p>
+          </div>
+        </Terminal>
+      </div>
+
+      <div>
+        <p class="text-white font-medium mb-1"><code class="text-accent-light">gtl link</code> didn&rsquo;t update the running app</p>
+        <p class="text-muted">Since v0.33.0, <code class="text-accent-light">gtl link</code> automatically regenerates the env file and restarts the supervised server. On older versions, run <code class="text-accent-light">gtl env sync</code> and restart manually.</p>
+      </div>
+    </div>
+
+    <h2>Ports and allocation</h2>
+
+    <div class="space-y-6 mb-10">
+      <div>
+        <p class="text-white font-medium mb-1">&ldquo;Port already in use&rdquo;</p>
+        <p class="text-muted mb-2">Another process grabbed the port since the last allocation. Treeline detects this at setup time (v0.28.0+) and re-allocates. For existing worktrees, refresh.</p>
+        <Terminal>
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl refresh</span>{' '}
+            <span class="text-muted"># re-allocates all worktrees with current config</span>
+          </p>
+        </Terminal>
+      </div>
+
+      <div>
+        <p class="text-white font-medium mb-1">Browser says ERR_UNSAFE_PORT</p>
+        <p class="text-muted">Browsers refuse connections to ports on the <a href="https://fetch.spec.whatwg.org/#bad-port" class="text-accent-light hover:text-accent underline underline-offset-2">WHATWG blocked list</a> (e.g. 6000, 6665&ndash;6669). Since v0.30.0, the allocator skips these. Run <code class="text-accent-light">gtl refresh</code> to re-allocate.</p>
+      </div>
+
+      <div>
+        <p class="text-white font-medium mb-1">App starts but on the wrong port</p>
+        <p class="text-muted mb-2">Some frameworks (Vite, Next.js, Django) don&rsquo;t read <code class="text-accent-light">PORT</code> for their listen port. Wire it into the start command. <code class="text-accent-light">gtl doctor</code> detects this.</p>
+        <div class="space-y-2">
+          <Terminal label=".treeline.yml — Next.js">
+            <pre class="text-sm"><span class="text-accent-light">commands</span><span class="text-muted">:</span>
+  <span class="text-accent-light">start</span><span class="text-muted">:</span> <span class="text-white">next dev --port {'{'}port{'}'}</span></pre>
+          </Terminal>
+          <Terminal label=".treeline.yml — Vite">
+            <pre class="text-sm"><span class="text-accent-light">commands</span><span class="text-muted">:</span>
+  <span class="text-accent-light">start</span><span class="text-muted">:</span> <span class="text-white">npx vite --port {'{'}port{'}'}</span></pre>
+          </Terminal>
+        </div>
+      </div>
+    </div>
+
+    <h2>Upgrades and config migration</h2>
+
+    <div class="space-y-6 mb-10">
+      <div>
+        <p class="text-white font-medium mb-1">Deprecation warnings about old config keys</p>
+        <p class="text-muted">Treeline auto-migrates renamed keys on first load: <code class="text-accent-light">setup_commands</code> &rarr; <code class="text-accent-light">commands.setup</code>, <code class="text-accent-light">start_command</code> &rarr; <code class="text-accent-light">commands.start</code>, <code class="text-accent-light">default_branch</code> &rarr; <code class="text-accent-light">merge_target</code>, <code class="text-accent-light">ports_needed</code> &rarr; <code class="text-accent-light">port_count</code>. The old key is rewritten automatically.</p>
+      </div>
+
+      <div>
+        <p class="text-white font-medium mb-1">Typo in <code class="text-accent-light">.treeline.yml</code> or <code class="text-accent-light">config.json</code></p>
+        <p class="text-muted">Since v0.30.0, <code class="text-accent-light">gtl doctor</code> and <code class="text-accent-light">gtl init</code> detect unrecognized keys and suggest corrections with &ldquo;did you mean?&rdquo; based on edit distance.</p>
+      </div>
+
+      <div>
+        <p class="text-white font-medium mb-1">Existing ports conflict with new defaults after upgrade</p>
+        <p class="text-muted">v0.31.0 changed <code class="text-accent-light">port.base</code> from 3000 to 3002 and <code class="text-accent-light">port.increment</code> from 10 to 2. Existing allocations keep their ports. Run <code class="text-accent-light">gtl refresh</code> to re-allocate with the new defaults.</p>
+      </div>
+    </div>
+
+    <h2>General</h2>
+
+    <div class="space-y-6">
+      <div>
+        <p class="text-white font-medium mb-1">508 Loop Detected from the router</p>
+        <p class="text-muted">The router counts proxy hops via <code class="text-accent-light">X-Gtl-Hops</code> and returns 508 after 5. This usually means a circular route. Check your <code class="text-accent-light">{'{'}resolve:*{'}'}</code> links for cycles.</p>
+      </div>
+
+      <div>
+        <p class="text-white font-medium mb-1">Long branch name can&rsquo;t be routed</p>
+        <p class="text-muted">DNS labels are limited to 63 characters. Since v0.30.0, Treeline auto-truncates long route keys with a deterministic hash suffix. On older versions, shorten the branch name or upgrade.</p>
+      </div>
+
+      <div>
+        <p class="text-white font-medium mb-1">Stale supervisor socket</p>
+        <p class="text-muted">If a previous supervisor crashed without cleanup, the socket file may linger. Since v0.30.0, <code class="text-accent-light">gtl start</code> detects this and reports the conflict. Remove the stale socket or kill the orphan process.</p>
+      </div>
+    </div>
+
+    <DocsPagination prev={{ href: "/docs/cli/", label: "CLI reference" }} />
+  </div>
+</DocsLayout>

@@ -1,0 +1,658 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import DocsPagination from '../../../components/DocsPagination.astro';
+---
+
+<DocsLayout
+  title="CLI Reference — Git Treeline Docs"
+  description="Complete CLI reference for Git Treeline. Every command, flag, and subcommand."
+  canonical="https://git-treeline.dev/docs/cli/"
+  activePage="cli"
+>
+  <header class="pt-20 sm:pt-24 pb-2 sm:pb-4 px-4 sm:px-6 lg:px-0">
+    <p class="text-sm text-muted mb-4">
+      <a href="/docs/" class="text-accent-light hover:text-accent">Docs</a> / CLI
+    </p>
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-6 text-balance">CLI reference</h1>
+    <p class="text-lg sm:text-xl text-gray-400 mb-10 leading-relaxed max-w-3xl">
+      Invoked as <code class="text-accent-light">git-treeline</code>, <code class="text-accent-light"
+        >git treeline</code
+      >, or <code class="text-accent-light">gtl</code>. All three are equivalent.
+    </p>
+  </header>
+
+  <div class="docs-guide px-4 sm:px-6 lg:px-0 pb-20">
+    <h2>Worktree lifecycle</h2>
+
+    <div class="rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 mb-8">
+      <div class="space-y-0">
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">init</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--project</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--template-db</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--skip-agent-config</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Generate <code class="text-accent-light">.treeline.yml</code> with self-documenting template.
+            Auto-detects framework, writes <code class="text-accent-light">AGENTS.md</code> section, detects
+            editor.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">new &lt;branch&gt;</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--base</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--path</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--start</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--open</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--dry-run</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Create worktree + allocate resources + run setup in one step. <code class="text-accent-light"
+              >--start</code
+            > boots the app after setup. <code class="text-accent-light">--open</code> opens in browser. Works
+            without a <code class="text-accent-light">.treeline.yml</code>: detects framework and prompts to init
+            for server projects, or creates a plain worktree for non-server projects. Must be run from the main
+            repo.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">review &lt;PR#&gt;</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--path</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--start</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--open</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Fetch a GitHub PR into a new worktree with full setup. Requires <code class="text-accent-light"
+              >gh</code
+            > CLI. Must be run from the main repo.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">switch &lt;branch-or-PR#&gt;</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--setup</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--restart</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Switch a worktree to a different branch or PR. Fetches, checks out, updates registry, refreshes env. <code
+              class="text-accent-light">--setup</code
+            > re-runs setup commands. <code class="text-accent-light">--restart</code> bounces the supervised server.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">setup [path]</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--main-repo</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--dry-run</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Full provisioning: allocate ports, copy files, write env, clone DB, run setup commands. Idempotent. When
+            reusing an allocation, verifies ports are still free and valid; if not, re-allocates and warns.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">refresh</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--dry-run</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--force</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Re-allocate all worktrees with current config and reservations. Restarts supervised servers automatically.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">release [path]</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--drop-db</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--remove-worktree</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--project</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--all</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--force</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--dry-run</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Free allocated resources. <code class="text-accent-light">--drop-db</code> removes the cloned database. <code
+              class="text-accent-light">--remove-worktree</code
+            > deletes the directory. <code class="text-accent-light">--all</code> releases everything. Warns on unpushed
+            commits.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">prune</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--stale</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--merged</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--drop-db</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--remove-worktree</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--force</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Clean orphaned allocations. <code class="text-accent-light">--stale</code>: worktrees whose directory no
+            longer exists. <code class="text-accent-light">--merged</code>: branches merged to <code
+              class="text-accent-light">merge_target</code
+            >.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">clone &lt;repo&gt;</span>
+          <p class="text-base text-muted mt-2">
+            Clone, detect framework, generate <code class="text-accent-light">.treeline.yml</code> if missing, run
+            setup. Does not auto-start.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h2>Server management</h2>
+
+    <div class="rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 mb-8">
+      <div class="space-y-0">
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">start</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--with &lt;hooks&gt;</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--await</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--await-timeout</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            <strong class="text-white">Fresh start</strong> (no supervisor): runs <a
+              href="/docs/hooks/"
+              class="text-accent-light hover:text-accent underline underline-offset-2">start hooks</a
+            >, syncs env, refreshes editor, launches supervisor. <strong class="text-white">Resume</strong> (supervisor
+            alive): sends start signal. No env sync, no hooks. <code class="text-accent-light">--await</code> blocks
+            until TCP accepts on the port. On graceful exit, <code class="text-accent-light">post_stop</code> hooks run
+            in reverse.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">stop</span>
+          <p class="text-base text-muted mt-2">
+            Stop the server process. Supervisor stays alive for resume with <code class="text-accent-light">gtl start</code
+            >. To fully exit: Ctrl+C the supervisor terminal.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">restart</span>
+          <p class="text-base text-muted mt-2">
+            Sync env, push updated vars to supervisor, restart server. Warns if <code class="text-accent-light"
+              >commands.start</code
+            > differs from what the supervisor is running.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">port</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--json</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Print allocated port for the current worktree. For agents and scripts.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">open</span>
+          <p class="text-base text-muted mt-2">
+            Open in browser: HTTPS branch URL when <code class="text-accent-light">gtl serve</code> is running, else <code
+              class="text-accent-light">http://localhost:{'{port}'}</code
+            >.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h2>Networking</h2>
+    <p class="text-muted mb-4">
+      See <a href="/docs/networking/" class="text-accent-light hover:text-accent underline underline-offset-2"
+        >Networking guide</a
+      > for architecture and design rationale.
+    </p>
+
+    <div class="rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 mb-8">
+      <div class="space-y-0">
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">serve install</span>
+          <p class="text-base text-muted mt-2">
+            Generate CA, trust it, add port forwarding (443 → router), register background service. Also upgrades an
+            existing router. <a
+              href="/docs/networking/#the-https-router-gtl-serve"
+              class="text-accent-light hover:text-accent underline underline-offset-2">Details</a
+            >
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">serve status</span>
+          <p class="text-base text-muted mt-2">
+            Show router state, CA status, port forwarding, and all active routes.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">serve alias &lt;name&gt; &lt;port&gt;</span>
+          <p class="text-base text-muted mt-2">
+            Register a custom hostname on the router. <code class="text-accent-light">--remove &lt;name&gt;</code> to
+            unregister. Hot-reloaded within 5 seconds.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">serve uninstall</span>
+          <p class="text-base text-muted mt-2">Remove service, port forwarding, and CA trust.</p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">proxy &lt;port&gt; [target]</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--tls</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Bind a well-known port and forward to the current worktree. Target defaults to the first allocated port. <a
+              href="/docs/networking/#the-port-proxy-gtl-proxy"
+              class="text-accent-light hover:text-accent underline underline-offset-2">Details</a
+            >
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">tunnel [port]</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--domain</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--tunnel</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Public HTTPS via Cloudflare. <code class="text-accent-light">tunnel setup</code> for named configs. <code
+              class="text-accent-light">tunnel default</code
+            > sets the active tunnel. <code class="text-accent-light">tunnel remove</code> deletes.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">share [port]</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--tunnel</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--tailscale</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Ephemeral share URL (token-gated Cloudflare or <code class="text-accent-light">--tailscale</code> for
+            tailnet-only). Torn down on Ctrl+C.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h2>Cross-worktree</h2>
+
+    <div class="rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 mb-8">
+      <div class="space-y-0">
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">resolve &lt;project&gt; [branch]</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--json</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Look up another project's base URL from the registry. Same-branch default; optional explicit branch.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">link &lt;project&gt; &lt;branch&gt;</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--json</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Override <code class="text-accent-light">{'{resolve:project}'}</code> to a fixed branch. Regenerates env and
+            restarts server. <code class="text-accent-light">gtl link</code> lists links.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">unlink &lt;project&gt;</span>
+          <p class="text-base text-muted mt-2">Remove a link override.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2>Environment &amp; database</h2>
+
+    <div class="rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 mb-8">
+      <div class="space-y-0">
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">env show</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--json</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--template</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Print env file. Treeline-managed keys marked <code class="text-white">[treeline]</code>. <code
+              class="text-accent-light">--template</code
+            > shows unresolved tokens. <code class="text-accent-light">gtl env</code> defaults to <code
+              class="text-accent-light">show</code
+            >.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">env sync</span>
+          <p class="text-base text-muted mt-2">
+            Re-read env from <code class="text-accent-light">.treeline.yml</code>, update env file, refresh editor.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">db name</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--json</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">Print the worktree's database name.</p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">db reset</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--from &lt;db&gt;</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Drop and re-clone from template. <code class="text-accent-light">--from</code> overrides the source.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">db restore &lt;file&gt;</span>
+          <p class="text-base text-muted mt-2">
+            Drop and restore from a <code class="text-accent-light">pg_dump</code> file. Auto-detects format.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">db drop</span>
+          <p class="text-base text-muted mt-2">Drop the worktree's database without re-cloning.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2>Navigation &amp; status</h2>
+
+    <div class="rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 mb-8">
+      <div class="space-y-0">
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">status</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--project</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--json</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--check</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--watch</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--interval</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Show all allocations. <code class="text-accent-light">--check</code> probes ports. <code
+              class="text-accent-light">--watch</code
+            > auto-refreshes. <code class="text-accent-light">--json</code> for structured output.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">dashboard</span>
+          <p class="text-base text-muted mt-2">
+            Interactive TUI (Bubble Tea). Browse worktrees by project with live updates. Aliases: <code
+              class="text-accent-light">gtl dash</code
+            >, <code class="text-accent-light">gtl ui</code>.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">worktrees</span>
+          <p class="text-base text-muted mt-2">
+            Interactive TUI picker. Arrow keys to navigate, Enter to print path. Alias: <code class="text-accent-light"
+              >gtl wt</code
+            >.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">where &lt;branch&gt;</span>
+          <p class="text-base text-muted mt-2">
+            Print filesystem path to a worktree by branch. <code class="text-accent-light">project/branch</code> to
+            disambiguate.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">doctor</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--json</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Check config, allocation, runtime, and framework diagnostics.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h2>Config &amp; editor</h2>
+
+    <div class="rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 mb-8">
+      <div class="space-y-0">
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">config list</span>
+          <p class="text-base text-muted mt-2">Dump all user-level settings.</p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">config get &lt;key&gt;</span>
+          <p class="text-base text-muted mt-2">Read a setting by dot-notation key.</p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">config set &lt;key&gt; &lt;value&gt;</span>
+          <p class="text-base text-muted mt-2">Write a setting and persist to disk.</p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">config path</span>
+          <p class="text-base text-muted mt-2">Print config file location.</p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">config edit</span>
+          <p class="text-base text-muted mt-2">
+            Open config in <code class="text-accent-light">$EDITOR</code>.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">editor refresh</span>
+          <p class="text-base text-muted mt-2">
+            Re-apply editor title, color, and theme for the current worktree.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">completion bash|zsh|fish|powershell</span>
+          <p class="text-base text-muted mt-2">
+            Print shell completion script. Includes dynamic completions for config keys and project names.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h2>Agent integration</h2>
+
+    <div class="rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 mb-8">
+      <div class="space-y-0">
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">mcp</span>
+          <p class="text-base text-muted mt-2">
+            Start the MCP server (stdio transport). Used by editors, not invoked directly. See <a
+              href="/docs/#mcp-server"
+              class="text-accent-light hover:text-accent underline underline-offset-2">MCP setup</a
+            >.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">version</span>
+          <p class="text-base text-muted mt-2">Print version.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2>Related</h2>
+    <ul class="text-muted space-y-3 list-disc pl-5 mb-8">
+      <li>
+        <a href="/docs/configuration/" class="text-accent-light hover:text-accent underline underline-offset-2"
+          >Configuration reference</a
+        >: every <code class="text-accent-light">.treeline.yml</code> field and user config key.
+      </li>
+      <li>
+        <a href="/docs/hooks/" class="text-accent-light hover:text-accent underline underline-offset-2">Hooks guide</a>:
+        start hooks lifecycle and edge cases.
+      </li>
+      <li>
+        <a href="/docs/networking/" class="text-accent-light hover:text-accent underline underline-offset-2"
+          >Networking guide</a
+        >: port allocation, routing, aliases, proxy, tunnels.
+      </li>
+    </ul>
+
+    <p class="text-center mt-16">
+      <a href="/docs/" class="text-sm text-accent-light hover:text-accent">Back to docs</a>
+    </p>
+
+    <DocsPagination
+      prev={{ href: "/docs/configuration/", label: "Configuration" }}
+      next={{ href: "/docs/troubleshooting/", label: "Troubleshooting" }}
+    />
+  </div>
+</DocsLayout>

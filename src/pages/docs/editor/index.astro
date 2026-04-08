@@ -1,0 +1,122 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+import Terminal from '../../../components/Terminal.astro';
+import DocsPagination from '../../../components/DocsPagination.astro';
+---
+
+<DocsLayout
+  title="Editor — Git Treeline Docs"
+  description="Per-worktree editor customization: window titles, title bar colors, themes, and IDE-specific behavior for VS Code, Cursor, JetBrains, and Zed."
+  canonical="https://git-treeline.dev/docs/editor/"
+  activePage="editor"
+>
+  <header class="pt-20 sm:pt-24 pb-2 sm:pb-4 px-4 sm:px-6 lg:px-0">
+    <p class="text-sm text-muted mb-4">
+      <a href="/docs/" class="text-accent-light hover:text-accent">Docs</a> / Editor
+    </p>
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-6 text-balance">Editor customization</h1>
+    <p class="text-lg sm:text-xl text-gray-400 mb-10 leading-relaxed max-w-3xl">
+      Git Treeline can stamp each worktree into your editor: window title, accent color, and optional theme. That reduces mistakes when several branches are open at once.
+    </p>
+  </header>
+  <div class="docs-guide px-4 sm:px-6 lg:px-0 pb-20">
+    <h2>Why customize per worktree</h2>
+    <p class="text-base text-muted mb-8">
+      With multiple worktrees, default window titles and chrome look identical. A distinct title, color, or theme per branch makes the active context obvious at a glance.
+    </p>
+
+    <h2>Project config</h2>
+    <p class="text-base text-muted mb-4">
+      In <code class="text-accent-light">.treeline.yml</code>, optional keys under <code class="text-accent-light">editor</code>:
+    </p>
+    <ul class="text-base text-muted space-y-2 list-disc pl-5 mb-4">
+      <li><code class="text-accent-light">editor.title</code>: template string for the window title</li>
+      <li><code class="text-accent-light">editor.color</code>: <code class="text-white">"auto"</code> or a hex color for the title/status bar</li>
+      <li><code class="text-accent-light">editor.theme</code>: IDE color theme name (for example <code class="text-white">Monokai</code>)</li>
+    </ul>
+    <p class="text-base text-muted mb-4">
+      Title tokens: <code class="text-white">{'{project}'}</code>, <code class="text-white">{'{port}'}</code>, <code class="text-white">{'{branch}'}</code>, <code class="text-white">{'{url}'}</code> (HTTP URL with the allocated port, for example <code class="text-white">http://localhost:3010</code>), and <code class="text-white">{'{router_url}'}</code> (HTTPS URL on your configured router domain, derived from project and branch for <code class="text-accent-light">gtl serve</code> routing).
+    </p>
+    <div class="mb-8">
+      <Terminal label=".treeline.yml">
+        <pre class="m-0 text-base leading-relaxed font-mono"><code><span class="text-accent-light">editor</span>:
+  <span class="text-accent-light">title</span>: <span class="text-white">"{'{project}'} @ {'{branch}'} ({'{url}'})"</span>
+  <span class="text-accent-light">color</span>: <span class="text-white">auto</span>
+  <span class="text-accent-light">theme</span>: <span class="text-white">GitHub Dark</span></code></pre>
+      </Terminal>
+    </div>
+
+    <h2>Color modes</h2>
+    <p class="text-base text-muted mb-8">
+      <code class="text-white">"auto"</code> picks a stable hex color from the branch name. Alternatively set a literal value such as <code class="text-white">"#1a5276"</code>.
+    </p>
+
+    <h2>IDE support</h2>
+    <p class="text-base text-muted mb-4">
+      <strong class="text-white">VS Code and Cursor:</strong> settings are written to <code class="text-white">.vscode/settings.json</code>, or to a <code class="text-white">.code-workspace</code> file when one is present.
+    </p>
+    <p class="text-base text-muted mb-4">
+      <strong class="text-white">JetBrains:</strong> if <code class="text-white">.idea/</code> exists, <code class="text-accent-light">editor.color</code> updates the project header color in <code class="text-white">workspace.xml</code> (IDEs 2023.2 and newer).
+    </p>
+    <p class="text-base text-muted mb-8">
+      <strong class="text-white">Zed:</strong> <code class="text-accent-light">gtl init</code> can detect Zed for labels such as &ldquo;Open in Editor&rdquo;, but Git Treeline does not write Zed-specific project files for title, color, or theme. The implementation targets VS Code or Cursor (<code class="text-white">.vscode</code> / workspace) plus JetBrains header color when <code class="text-white">.idea</code> is present.
+    </p>
+
+    <h2>Per-branch overrides (user config)</h2>
+    <p class="text-base text-muted mb-4">
+      In user <code class="text-accent-light">config.json</code>, maps <code class="text-accent-light">editor.themes</code> and <code class="text-accent-light">editor.colors</code> override project defaults. Keys are <code class="text-white">project</code> or <code class="text-white">project/branch</code>. User values win over <code class="text-accent-light">.treeline.yml</code>.
+    </p>
+    <div class="mb-8">
+      <Terminal>
+        <div class="space-y-2 text-base">
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl config set editor.themes.myapp "Monokai"</span>
+          </p>
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl config set editor.colors.myapp/staging "#7b241c"</span>
+          </p>
+        </div>
+      </Terminal>
+    </div>
+
+    <h2>When editor config applies</h2>
+    <p class="text-base text-muted mb-8">
+      Editor files are updated during a full <code class="text-accent-light">gtl start</code> (after setup), <code class="text-accent-light">gtl env sync</code> with editor refresh, and <code class="text-accent-light">gtl editor refresh</code>. Editing <code class="text-accent-light">.treeline.yml</code> alone does not rewrite IDE files until you run one of those commands.
+    </p>
+
+    <h2><code class="text-accent-light">gtl editor refresh</code></h2>
+    <p class="text-base text-muted mb-4">
+      Re-applies <code class="text-accent-light">editor.*</code> from the current worktree&rsquo;s <code class="text-accent-light">.treeline.yml</code> and user overrides without starting the app server. Useful after a branch switch or config edit.
+    </p>
+    <div class="mb-8">
+      <Terminal>
+        <div class="space-y-2 text-base">
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl editor refresh</span>
+          </p>
+        </div>
+      </Terminal>
+    </div>
+
+    <h2>See also</h2>
+    <ul class="text-base text-muted space-y-2 list-disc pl-5 mb-4">
+      <li>
+        <a href="/docs/configuration/" class="text-accent-light hover:text-accent underline underline-offset-2">Configuration reference</a> (<code class="text-accent-light">editor.*</code>)
+      </li>
+      <li>
+        <a href="/docs/#editor" class="text-accent-light hover:text-accent underline underline-offset-2">Editor section</a> on the main docs page
+      </li>
+      <li>
+        <a href="/docs/hooks/" class="text-accent-light hover:text-accent underline underline-offset-2">Hooks guide</a> (git hook runs <code class="text-accent-light">gtl editor refresh</code> on branch changes in worktrees)
+      </li>
+    </ul>
+
+    <DocsPagination
+      prev={{ href: "/docs/database/", label: "Database" }}
+      next={{ href: "/docs/resolve/", label: "Resolve" }}
+    />
+  </div>
+</DocsLayout>

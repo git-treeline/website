@@ -1,0 +1,72 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+export interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  breadcrumb?: string;
+  breadcrumbHref?: string;
+  heading: string;
+  lead?: string;
+  keywords?: string;
+}
+
+const { title, description, canonical, breadcrumb, breadcrumbHref, heading, lead, keywords } = Astro.props;
+
+const breadcrumbLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://git-treeline.dev" },
+    ...(breadcrumbHref ? [{ "@type": "ListItem", position: 2, name: breadcrumb, item: `https://git-treeline.dev${breadcrumbHref}` }] : []),
+    { "@type": "ListItem", position: breadcrumbHref ? 3 : 2, name: heading, item: canonical },
+  ],
+});
+
+const articleLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: heading,
+  description,
+  url: canonical,
+  author: { "@type": "Person", name: "Jonathan Simmons" },
+  publisher: { "@type": "Organization", name: "Git Treeline", url: "https://git-treeline.dev" },
+  mainEntityOfPage: canonical,
+});
+
+const defaultKeywords = 'git worktree, worktree provisioner, git-treeline, branch isolation, local dev environment';
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  activeNav="use-cases"
+  installHref="/#get-started"
+  ogType="article"
+  keywords={keywords ?? defaultKeywords}
+  jsonLd={[breadcrumbLd, articleLd]}
+>
+  <article
+    class="max-w-3xl lg:max-w-4xl mx-auto px-4 sm:px-6 pt-28 sm:pt-36 pb-20 sm:pb-28"
+  >
+    {
+      breadcrumb && (
+        <p class="text-sm text-muted mb-4">
+          <a href={breadcrumbHref} class="text-accent-light hover:text-accent">{breadcrumb}</a>
+        </p>
+      )
+    }
+    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-6 text-balance">{heading}</h1>
+    {
+      lead && (
+        <p
+          class="text-lg sm:text-xl text-gray-400 mb-10 leading-relaxed max-w-3xl [&_code]:text-white"
+          set:html={lead}
+        />
+      )
+    }
+    <slot />
+  </article>
+</BaseLayout>
