@@ -1,0 +1,244 @@
+---
+import MenuletDemo from './MenuletDemo.astro';
+import TuiDemo from './TuiDemo.astro';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<div class={`dashboard-carousel ${className}`} data-carousel>
+  <!-- Pill tabs -->
+  <div class="flex justify-center mb-8">
+    <div class="inline-flex bg-surface-raised border border-surface-border rounded-full p-1">
+      <button
+        type="button"
+        class="carousel-tab px-4 py-2 text-sm font-medium rounded-full transition-colors"
+        data-tab="menulet"
+        data-active="true"
+      >
+        <span class="hidden sm:inline">Menu Bar App</span>
+        <span class="sm:hidden">Menu Bar</span>
+      </button>
+      <button
+        type="button"
+        class="carousel-tab px-4 py-2 text-sm font-medium rounded-full transition-colors"
+        data-tab="tui"
+      >
+        <span class="hidden sm:inline">Terminal Dashboard</span>
+        <span class="sm:hidden">Terminal</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Carousel container -->
+  <div class="relative overflow-hidden">
+    <!-- Navigation arrows (desktop) -->
+    <button
+      type="button"
+      class="carousel-prev hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center bg-surface-raised/80 hover:bg-surface-raised border border-surface-border rounded-full text-muted hover:text-white transition-colors"
+      aria-label="Previous"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+      </svg>
+    </button>
+    <button
+      type="button"
+      class="carousel-next hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center bg-surface-raised/80 hover:bg-surface-raised border border-surface-border rounded-full text-muted hover:text-white transition-colors"
+      aria-label="Next"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </button>
+
+    <!-- Slides -->
+    <div class="carousel-track flex transition-transform duration-300 ease-out" style="touch-action: pan-y;">
+      <!-- Menulet slide -->
+      <div class="carousel-slide flex-shrink-0 w-full px-4 md:px-12" data-slide="menulet">
+        <div class="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+          <div class="lg:w-1/2 text-center lg:text-left">
+            <p class="text-xs uppercase tracking-wider text-accent-light mb-2 font-mono">macOS</p>
+            <h3 class="text-xl sm:text-2xl font-bold text-white mb-3">Menu bar app</h3>
+            <p class="text-base text-muted mb-4 leading-relaxed">
+              See all your worktrees grouped by project. Click any branch to open its URL. No terminal required.
+            </p>
+            <div class="flex flex-wrap gap-3 justify-center lg:justify-start">
+              <a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg" class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-accent text-surface text-sm font-mono font-semibold hover:bg-accent-light transition-colors">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                Download
+              </a>
+              <a href="/menulet/" class="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-surface-border text-white text-sm font-mono hover:border-accent/40 transition-colors">
+                Learn more
+              </a>
+            </div>
+          </div>
+          <div class="lg:w-1/2 flex justify-center">
+            <MenuletDemo class="transform scale-[0.85] sm:scale-90 origin-top" />
+          </div>
+        </div>
+      </div>
+
+      <!-- TUI slide -->
+      <div class="carousel-slide flex-shrink-0 w-full px-4 md:px-12" data-slide="tui">
+        <div class="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+          <div class="lg:w-1/2 text-center lg:text-left">
+            <p class="text-xs uppercase tracking-wider text-accent-light mb-2 font-mono">Terminal</p>
+            <h3 class="text-xl sm:text-2xl font-bold text-white mb-3">Interactive dashboard</h3>
+            <p class="text-base text-muted mb-4 leading-relaxed">
+              <code class="text-accent-light">gtl dashboard</code> opens a full-screen TUI. Navigate with <kbd class="text-white">j</kbd>/<kbd class="text-white">k</kbd>, start/stop with <kbd class="text-white">s</kbd>, open in browser with <kbd class="text-white">o</kbd>.
+            </p>
+            <div class="flex flex-wrap gap-3 justify-center lg:justify-start">
+              <a href="/docs/supervisor/" class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-accent text-surface text-sm font-mono font-semibold hover:bg-accent-light transition-colors">
+                Supervisor docs
+              </a>
+            </div>
+          </div>
+          <div class="lg:w-1/2 flex justify-center">
+            <TuiDemo class="transform scale-[0.85] sm:scale-100 origin-top" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dots indicator (mobile) -->
+  <div class="flex justify-center gap-2 mt-6 md:hidden">
+    <button type="button" class="carousel-dot w-2 h-2 rounded-full transition-colors" data-dot="menulet" aria-label="Menu bar app"></button>
+    <button type="button" class="carousel-dot w-2 h-2 rounded-full transition-colors" data-dot="tui" aria-label="Terminal dashboard"></button>
+  </div>
+</div>
+
+<style>
+  .carousel-tab[data-active="true"] {
+    background: var(--color-accent, #22c55e);
+    color: var(--color-surface, #0d1117);
+  }
+  .carousel-tab:not([data-active="true"]) {
+    color: var(--color-muted, #8b949e);
+  }
+  .carousel-tab:not([data-active="true"]):hover {
+    color: white;
+  }
+  .carousel-dot[data-active="true"] {
+    background: var(--color-accent, #22c55e);
+  }
+  .carousel-dot:not([data-active="true"]) {
+    background: var(--color-surface-border, #30363d);
+  }
+</style>
+
+<script>
+  function initCarousels() {
+    document.querySelectorAll('[data-carousel]').forEach((carousel) => {
+      const tabs = carousel.querySelectorAll('.carousel-tab') as NodeListOf<HTMLElement>;
+      const dots = carousel.querySelectorAll('.carousel-dot') as NodeListOf<HTMLElement>;
+      const track = carousel.querySelector('.carousel-track') as HTMLElement;
+      const slides = carousel.querySelectorAll('.carousel-slide') as NodeListOf<HTMLElement>;
+      const prevBtn = carousel.querySelector('.carousel-prev') as HTMLElement;
+      const nextBtn = carousel.querySelector('.carousel-next') as HTMLElement;
+      
+      let currentIndex = 0;
+      let autoRotateInterval: ReturnType<typeof setInterval> | null = null;
+      const slideNames = ['menulet', 'tui'];
+
+      function goToSlide(index: number) {
+        currentIndex = index;
+        track.style.transform = `translateX(-${index * 100}%)`;
+        
+        tabs.forEach((tab) => {
+          tab.dataset.active = tab.dataset.tab === slideNames[index] ? 'true' : '';
+        });
+        dots.forEach((dot) => {
+          dot.dataset.active = dot.dataset.dot === slideNames[index] ? 'true' : '';
+        });
+      }
+
+      function next() {
+        goToSlide((currentIndex + 1) % slides.length);
+      }
+
+      function prev() {
+        goToSlide((currentIndex - 1 + slides.length) % slides.length);
+      }
+
+      function startAutoRotate() {
+        stopAutoRotate();
+        autoRotateInterval = setInterval(next, 6000);
+      }
+
+      function stopAutoRotate() {
+        if (autoRotateInterval) {
+          clearInterval(autoRotateInterval);
+          autoRotateInterval = null;
+        }
+      }
+
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          const index = slideNames.indexOf(tab.dataset.tab || '');
+          if (index >= 0) {
+            goToSlide(index);
+            stopAutoRotate();
+          }
+        });
+      });
+
+      dots.forEach((dot) => {
+        dot.addEventListener('click', () => {
+          const index = slideNames.indexOf(dot.dataset.dot || '');
+          if (index >= 0) {
+            goToSlide(index);
+            stopAutoRotate();
+          }
+        });
+      });
+
+      prevBtn?.addEventListener('click', () => {
+        prev();
+        stopAutoRotate();
+      });
+
+      nextBtn?.addEventListener('click', () => {
+        next();
+        stopAutoRotate();
+      });
+
+      // Touch/swipe support
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      track.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      track.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) {
+            next();
+          } else {
+            prev();
+          }
+          stopAutoRotate();
+        }
+      }, { passive: true });
+
+      // Pause on hover
+      carousel.addEventListener('mouseenter', stopAutoRotate);
+      carousel.addEventListener('mouseleave', startAutoRotate);
+
+      // Start auto-rotate
+      startAutoRotate();
+      goToSlide(0);
+    });
+  }
+
+  // Initialize on page load and after Astro navigation
+  document.addEventListener('DOMContentLoaded', initCarousels);
+  document.addEventListener('astro:page-load', initCarousels);
+</script>

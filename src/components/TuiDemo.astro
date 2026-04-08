@@ -1,0 +1,147 @@
+---
+export interface Worktree {
+  project: string;
+  branch: string;
+  ports: number[];
+  database?: string;
+  supervisor: 'running' | 'stopped' | 'not running';
+  listening: boolean;
+  links?: Record<string, string>;
+  worktreePath: string;
+  envFile?: string;
+}
+
+interface Props {
+  worktrees?: Worktree[];
+  selectedIndex?: number;
+  projectCount?: number;
+  runningCount?: number;
+  serveStatus?: 'active' | 'inactive';
+  class?: string;
+}
+
+const defaultWorktrees: Worktree[] = [
+  { project: 'API-DOCS', branch: 'main', ports: [3000], supervisor: 'running', listening: true, worktreePath: '/code/api-docs', envFile: '.env.local' },
+  { project: 'ASSESSMENT-PLATFORM', branch: 'main', ports: [3080], supervisor: 'running', listening: true, worktreePath: '/code/assessment-platform', envFile: '.env.local', database: 'assessment_dev' },
+  { project: 'GIT-TREELINE', branch: 'feature-tui', ports: [3010], supervisor: 'running', listening: true, worktreePath: '/code/git-treeline-feature-tui', envFile: '.env.local' },
+  { project: 'SALT', branch: 'production', ports: [3090, 3091], supervisor: 'running', listening: true, worktreePath: '/code/salt', database: 'salt_production', envFile: '.env.local', links: { 'wildlife-api': 'main' } },
+  { project: 'SALT', branch: 'staging', ports: [3110, 3111], supervisor: 'stopped', listening: false, worktreePath: '/code/salt-staging', database: 'salt_staging', envFile: '.env.local' },
+];
+
+const {
+  worktrees = defaultWorktrees,
+  selectedIndex = 3,
+  projectCount = 4,
+  runningCount = 4,
+  serveStatus = 'active',
+  class: className = '',
+} = Astro.props;
+
+const groupedByProject = worktrees.reduce((acc, wt) => {
+  if (!acc[wt.project]) acc[wt.project] = [];
+  acc[wt.project].push(wt);
+  return acc;
+}, {} as Record<string, Worktree[]>);
+
+const selected = worktrees[selectedIndex];
+let flatIndex = 0;
+---
+
+<div class={`tui-demo select-none font-mono text-xs ${className}`}>
+  <div class="tui-window rounded-lg overflow-hidden border border-gray-700" style="background: #1a1b26; max-width: 600px;">
+    
+    <!-- Panels -->
+    <div class="flex">
+      <!-- Left panel: worktree list -->
+      <div class="w-2/5 border-r border-cyan-500/50 p-3" style="min-height: 280px;">
+        <div class="text-cyan-400 font-bold mb-2">WORKTREES</div>
+        <div class="space-y-0.5">
+          {Object.entries(groupedByProject).map(([project, wts]) => (
+            <>
+              <div class="text-gray-500 text-[10px] uppercase tracking-wider mt-2 first:mt-0">{project}</div>
+              {wts.map((wt) => {
+                const isSelected = wt === selected;
+                const currentIndex = flatIndex++;
+                return (
+                  <div class={`flex items-center gap-2 py-0.5 px-1 rounded ${isSelected ? 'bg-cyan-500/20' : ''}`}>
+                    <span class={`w-1.5 h-1.5 rounded-full ${wt.listening ? 'bg-green-400' : wt.supervisor === 'running' ? 'bg-yellow-400' : 'border border-gray-500'}`}></span>
+                    <span class="text-purple-400">:{wt.ports[0]}</span>
+                    <span class={`truncate ${isSelected ? 'text-white' : 'text-gray-300'}`}>{wt.branch}</span>
+                    {wt.links && Object.keys(wt.links).length > 0 && (
+                      <span class="text-cyan-400">⇄</span>
+                    )}
+                  </div>
+                );
+              })}
+            </>
+          ))}
+        </div>
+      </div>
+
+      <!-- Right panel: detail -->
+      <div class="w-3/5 p-3 border-l border-gray-700" style="min-height: 280px;">
+        {selected ? (
+          <>
+            <div class="text-cyan-400 font-bold mb-3">{selected.project} / {selected.branch}</div>
+            <div class="space-y-1.5 text-gray-300">
+              <div class="flex">
+                <span class="w-20 text-gray-500">Port</span>
+                <span class="text-white">{selected.ports.join(', ')}</span>
+              </div>
+              <div class="flex">
+                <span class="w-20 text-gray-500">Database</span>
+                <span class="text-white">{selected.database || '—'}</span>
+              </div>
+              <div class="flex">
+                <span class="w-20 text-gray-500">Supervisor</span>
+                <span class={selected.supervisor === 'running' ? 'text-green-400' : 'text-gray-500'}>{selected.supervisor}</span>
+              </div>
+              <div class="flex">
+                <span class="w-20 text-gray-500">Listening</span>
+                <span class={selected.listening ? 'text-green-400' : 'text-red-400'}>{selected.listening ? 'yes' : 'no'}</span>
+              </div>
+              <div class="flex">
+                <span class="w-20 text-gray-500">Env file</span>
+                <span class="text-white">{selected.envFile || '—'}</span>
+              </div>
+              <div class="flex">
+                <span class="w-20 text-gray-500">Worktree</span>
+                <span class="text-white truncate">{selected.worktreePath}</span>
+              </div>
+              {selected.links && Object.keys(selected.links).length > 0 && (
+                <>
+                  <div class="mt-2 text-gray-500">Links</div>
+                  {Object.entries(selected.links).map(([proj, branch]) => (
+                    <div class="flex pl-2">
+                      <span class="text-cyan-400">⇄ {proj}</span>
+                      <span class="text-gray-400 mx-1">→</span>
+                      <span class="text-white">{branch}</span>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          </>
+        ) : (
+          <div class="text-gray-500">Select a worktree</div>
+        )}
+      </div>
+    </div>
+
+    <!-- Status bar -->
+    <div class="border-t border-gray-700 px-3 py-1.5 text-[10px] space-y-0.5" style="background: #15161e;">
+      <div class="text-gray-400">
+        {projectCount} projects · {worktrees.length} worktrees · {runningCount} running · serve: <span class={serveStatus === 'active' ? 'text-green-400' : 'text-gray-500'}>{serveStatus}</span>
+      </div>
+      <div class="flex gap-3 text-gray-500">
+        <span><span class="text-yellow-400">s</span>:start/stop</span>
+        <span><span class="text-yellow-400">o</span>:open</span>
+        <span><span class="text-yellow-400">r</span>:restart</span>
+        <span><span class="text-yellow-400">d</span>:release</span>
+        <span><span class="text-yellow-400">/</span>:filter</span>
+        <span><span class="text-yellow-400">?</span>:help</span>
+        <span><span class="text-yellow-400">q</span>:quit</span>
+      </div>
+    </div>
+  </div>
+</div>
