@@ -11,24 +11,24 @@ const { class: className = '' } = Astro.props;
 
 <div class={`dashboard-carousel ${className}`} data-carousel>
   <!-- Pill tabs -->
-  <div class="flex justify-center mb-8">
+  <div class="flex justify-center mb-6 sm:mb-8">
     <div class="inline-flex bg-surface-raised border border-surface-border rounded-full p-1">
       <button
         type="button"
         class="carousel-tab px-4 py-2 text-sm font-medium rounded-full transition-colors"
-        data-tab="menulet"
+        data-tab="tui"
         data-active="true"
       >
-        <span class="hidden sm:inline">Menu Bar App</span>
-        <span class="sm:hidden">Menu Bar</span>
+        <span class="hidden sm:inline">Terminal Dashboard</span>
+        <span class="sm:hidden">Terminal</span>
       </button>
       <button
         type="button"
         class="carousel-tab px-4 py-2 text-sm font-medium rounded-full transition-colors"
-        data-tab="tui"
+        data-tab="menulet"
       >
-        <span class="hidden sm:inline">Terminal Dashboard</span>
-        <span class="sm:hidden">Terminal</span>
+        <span class="hidden sm:inline">Menu Bar App</span>
+        <span class="sm:hidden">Menu Bar</span>
       </button>
     </div>
   </div>
@@ -38,7 +38,7 @@ const { class: className = '' } = Astro.props;
     <!-- Navigation arrows (desktop) -->
     <button
       type="button"
-      class="carousel-prev hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center bg-surface-raised/80 hover:bg-surface-raised border border-surface-border rounded-full text-muted hover:text-white transition-colors"
+      class="carousel-prev hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center bg-surface-raised/80 hover:bg-surface-raised border border-surface-border rounded-full text-muted hover:text-white transition-colors"
       aria-label="Previous"
     >
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,7 +47,7 @@ const { class: className = '' } = Astro.props;
     </button>
     <button
       type="button"
-      class="carousel-next hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center bg-surface-raised/80 hover:bg-surface-raised border border-surface-border rounded-full text-muted hover:text-white transition-colors"
+      class="carousel-next hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center bg-surface-raised/80 hover:bg-surface-raised border border-surface-border rounded-full text-muted hover:text-white transition-colors"
       aria-label="Next"
     >
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,13 +57,39 @@ const { class: className = '' } = Astro.props;
 
     <!-- Slides -->
     <div class="carousel-track flex transition-transform duration-300 ease-out" style="touch-action: pan-y;">
-      <!-- Menulet slide -->
-      <div class="carousel-slide flex-shrink-0 w-full px-4 md:px-12" data-slide="menulet">
-        <div class="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
-          <div class="lg:w-1/2 text-center lg:text-left">
+      <!-- TUI slide (first) -->
+      <div class="carousel-slide flex-shrink-0 w-full px-2 sm:px-4 lg:px-12" data-slide="tui">
+        <div class="flex flex-col items-center gap-6 lg:flex-row lg:gap-10">
+          <!-- Demo first on mobile for better visual -->
+          <div class="w-full lg:w-3/5 flex justify-center order-1 lg:order-2 overflow-x-auto">
+            <TuiDemo class="transform scale-[0.75] sm:scale-[0.85] lg:scale-100 origin-top" />
+          </div>
+          <div class="lg:w-2/5 text-center lg:text-left order-2 lg:order-1">
+            <p class="text-xs uppercase tracking-wider text-accent-light mb-2 font-mono">Terminal</p>
+            <h3 class="text-xl sm:text-2xl font-bold text-white mb-3">Interactive dashboard</h3>
+            <p class="text-sm sm:text-base text-muted mb-4 leading-relaxed">
+              <code class="text-accent-light">gtl dashboard</code> opens a full-screen TUI. Navigate with <kbd class="text-white">j</kbd>/<kbd class="text-white">k</kbd>, start/stop with <kbd class="text-white">s</kbd>, open in browser with <kbd class="text-white">o</kbd>.
+            </p>
+            <div class="flex flex-wrap gap-3 justify-center lg:justify-start">
+              <a href="/docs/supervisor/" class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-accent text-surface text-sm font-mono font-semibold hover:bg-accent-light transition-colors">
+                Supervisor docs
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Menulet slide (second) -->
+      <div class="carousel-slide flex-shrink-0 w-full px-2 sm:px-4 lg:px-12" data-slide="menulet">
+        <div class="flex flex-col items-center gap-6 lg:flex-row lg:gap-12">
+          <!-- Demo first on mobile -->
+          <div class="w-full lg:w-1/2 flex justify-center order-1 lg:order-2">
+            <MenuletDemo class="transform scale-[0.85] sm:scale-90 lg:scale-100 origin-top" />
+          </div>
+          <div class="lg:w-1/2 text-center lg:text-left order-2 lg:order-1">
             <p class="text-xs uppercase tracking-wider text-accent-light mb-2 font-mono">macOS</p>
             <h3 class="text-xl sm:text-2xl font-bold text-white mb-3">Menu bar app</h3>
-            <p class="text-base text-muted mb-4 leading-relaxed">
+            <p class="text-sm sm:text-base text-muted mb-4 leading-relaxed">
               See all your worktrees grouped by project. Click any branch to open its URL. No terminal required.
             </p>
             <div class="flex flex-wrap gap-3 justify-center lg:justify-start">
@@ -76,39 +102,15 @@ const { class: className = '' } = Astro.props;
               </a>
             </div>
           </div>
-          <div class="lg:w-1/2 flex justify-center">
-            <MenuletDemo class="transform scale-[0.85] sm:scale-90 origin-top" />
-          </div>
-        </div>
-      </div>
-
-      <!-- TUI slide -->
-      <div class="carousel-slide flex-shrink-0 w-full px-4 md:px-12" data-slide="tui">
-        <div class="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
-          <div class="lg:w-1/2 text-center lg:text-left">
-            <p class="text-xs uppercase tracking-wider text-accent-light mb-2 font-mono">Terminal</p>
-            <h3 class="text-xl sm:text-2xl font-bold text-white mb-3">Interactive dashboard</h3>
-            <p class="text-base text-muted mb-4 leading-relaxed">
-              <code class="text-accent-light">gtl dashboard</code> opens a full-screen TUI. Navigate with <kbd class="text-white">j</kbd>/<kbd class="text-white">k</kbd>, start/stop with <kbd class="text-white">s</kbd>, open in browser with <kbd class="text-white">o</kbd>.
-            </p>
-            <div class="flex flex-wrap gap-3 justify-center lg:justify-start">
-              <a href="/docs/supervisor/" class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-accent text-surface text-sm font-mono font-semibold hover:bg-accent-light transition-colors">
-                Supervisor docs
-              </a>
-            </div>
-          </div>
-          <div class="lg:w-1/2 flex justify-center">
-            <TuiDemo class="transform scale-[0.85] sm:scale-100 origin-top" />
-          </div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Dots indicator (mobile) -->
-  <div class="flex justify-center gap-2 mt-6 md:hidden">
-    <button type="button" class="carousel-dot w-2 h-2 rounded-full transition-colors" data-dot="menulet" aria-label="Menu bar app"></button>
+  <div class="flex justify-center gap-2 mt-6 lg:hidden">
     <button type="button" class="carousel-dot w-2 h-2 rounded-full transition-colors" data-dot="tui" aria-label="Terminal dashboard"></button>
+    <button type="button" class="carousel-dot w-2 h-2 rounded-full transition-colors" data-dot="menulet" aria-label="Menu bar app"></button>
   </div>
 </div>
 
@@ -143,7 +145,7 @@ const { class: className = '' } = Astro.props;
       
       let currentIndex = 0;
       let autoRotateInterval: ReturnType<typeof setInterval> | null = null;
-      const slideNames = ['menulet', 'tui'];
+      const slideNames = ['tui', 'menulet'];
 
       function goToSlide(index: number) {
         currentIndex = index;

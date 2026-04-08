@@ -2,38 +2,40 @@
 export interface Worktree {
   project: string;
   branch: string;
-  ports: number[];
+  port: number;
   database?: string;
-  supervisor: 'running' | 'stopped' | 'not running';
+  redis?: string;
+  supervisor: string;
   listening: boolean;
-  links?: Record<string, string>;
-  worktreePath: string;
   envFile?: string;
+  worktreePath: string;
 }
 
 interface Props {
   worktrees?: Worktree[];
   selectedIndex?: number;
-  projectCount?: number;
-  runningCount?: number;
-  serveStatus?: 'active' | 'inactive';
   class?: string;
 }
 
 const defaultWorktrees: Worktree[] = [
-  { project: 'API-DOCS', branch: 'main', ports: [3000], supervisor: 'running', listening: true, worktreePath: '/code/api-docs', envFile: '.env.local' },
-  { project: 'ASSESSMENT-PLATFORM', branch: 'main', ports: [3080], supervisor: 'running', listening: true, worktreePath: '/code/assessment-platform', envFile: '.env.local', database: 'assessment_dev' },
-  { project: 'GIT-TREELINE', branch: 'feature-tui', ports: [3010], supervisor: 'running', listening: true, worktreePath: '/code/git-treeline-feature-tui', envFile: '.env.local' },
-  { project: 'SALT', branch: 'production', ports: [3090, 3091], supervisor: 'running', listening: true, worktreePath: '/code/salt', database: 'salt_production', envFile: '.env.local', links: { 'wildlife-api': 'main' } },
-  { project: 'SALT', branch: 'staging', ports: [3110, 3111], supervisor: 'stopped', listening: false, worktreePath: '/code/salt-staging', database: 'salt_staging', envFile: '.env.local' },
+  { project: 'api-docs', branch: 'main', port: 3000, supervisor: 'not running', listening: true, envFile: '.env.local', worktreePath: '/Users/jonathansimmons/git/truherd/api-docs' },
+  { project: 'assessment-platform', branch: 'main', port: 3080, supervisor: 'not running', listening: false, worktreePath: '/Users/jonathansimmons/git/truherd/assessment-platform' },
+  { project: 'git-treeline', branch: 'feature-tui-dashboard', port: 3010, supervisor: 'running', listening: true, worktreePath: '/Users/jonathansimmons/git/git-treeline/git-treeline' },
+  { project: 'salt', branch: 'staging', port: 3110, supervisor: 'not running', listening: false, worktreePath: '/Users/jonathansimmons/git/truherd/salt-staging' },
+  { project: 'salt', branch: 'production', port: 3090, supervisor: 'running', listening: true, worktreePath: '/Users/jonathansimmons/git/truherd/salt' },
+  { project: 'salt', branch: 'feature/renters-category', port: 3130, supervisor: 'running', listening: true, worktreePath: '/Users/jonathansimmons/git/truherd/salt-renters' },
+  { project: 'website', branch: 'main', port: 3070, supervisor: 'not running', listening: false, worktreePath: '/Users/jonathansimmons/git/git-treeline/website' },
+  { project: 'wildlife_platform', branch: 'feature/mobile-responsive', port: 3030, supervisor: 'not running', listening: false, worktreePath: '/Users/jonathansimmons/git/truherd/wildlife-mobile' },
+  { project: 'wildlife_platform', branch: 'develop', port: 3050, supervisor: 'not running', listening: false, worktreePath: '/Users/jonathansimmons/git/truherd/wildlife-develop' },
+  { project: 'wildlife_platform', branch: 'feature/new-feature', port: 3060, supervisor: 'not running', listening: false, worktreePath: '/Users/jonathansimmons/git/truherd/wildlife-new' },
+  { project: 'wildlife_platform', branch: 'claude/review-localization-prd-nb0Ht', port: 3120, supervisor: 'not running', listening: false, worktreePath: '/Users/jonathansimmons/git/truherd/wildlife-review' },
+  { project: 'wildlife_platform', branch: 'jonathansimmons/shanghai', port: 3100, supervisor: 'not running', listening: false, worktreePath: '/Users/jonathansimmons/git/truherd/wildlife-shanghai' },
+  { project: 'wildlife_platform', branch: 'feature/api-v2-profile-update', port: 3020, supervisor: 'running', listening: true, worktreePath: '/Users/jonathansimmons/git/truherd/wildlife-api-v2' },
 ];
 
 const {
   worktrees = defaultWorktrees,
-  selectedIndex = 3,
-  projectCount = 4,
-  runningCount = 4,
-  serveStatus = 'active',
+  selectedIndex = 0,
   class: className = '',
 } = Astro.props;
 
@@ -43,33 +45,30 @@ const groupedByProject = worktrees.reduce((acc, wt) => {
   return acc;
 }, {} as Record<string, Worktree[]>);
 
+const projectCount = Object.keys(groupedByProject).length;
+const runningCount = worktrees.filter(w => w.listening).length;
 const selected = worktrees[selectedIndex];
-let flatIndex = 0;
 ---
 
-<div class={`tui-demo select-none font-mono text-xs ${className}`}>
-  <div class="tui-window rounded-lg overflow-hidden border border-gray-700" style="background: #1a1b26; max-width: 600px;">
+<div class={`tui-demo select-none font-mono text-[11px] leading-tight ${className}`}>
+  <div class="tui-window rounded overflow-hidden shadow-2xl" style="background: #1e2127; max-width: 620px; border: 1px solid #3b4048;">
     
     <!-- Panels -->
-    <div class="flex">
+    <div class="flex" style="min-height: 320px;">
       <!-- Left panel: worktree list -->
-      <div class="w-2/5 border-r border-cyan-500/50 p-3" style="min-height: 280px;">
-        <div class="text-cyan-400 font-bold mb-2">WORKTREES</div>
-        <div class="space-y-0.5">
+      <div class="w-[42%] p-2.5 border-r" style="border-color: #56b6c2;">
+        <div class="mb-2" style="color: #56b6c2;">WORKTREES</div>
+        <div class="space-y-0">
           {Object.entries(groupedByProject).map(([project, wts]) => (
             <>
-              <div class="text-gray-500 text-[10px] uppercase tracking-wider mt-2 first:mt-0">{project}</div>
-              {wts.map((wt) => {
+              <div class="mt-1.5 first:mt-0 mb-0.5" style="color: #abb2bf;">{project}</div>
+              {wts.map((wt, idx) => {
                 const isSelected = wt === selected;
-                const currentIndex = flatIndex++;
                 return (
-                  <div class={`flex items-center gap-2 py-0.5 px-1 rounded ${isSelected ? 'bg-cyan-500/20' : ''}`}>
-                    <span class={`w-1.5 h-1.5 rounded-full ${wt.listening ? 'bg-green-400' : wt.supervisor === 'running' ? 'bg-yellow-400' : 'border border-gray-500'}`}></span>
-                    <span class="text-purple-400">:{wt.ports[0]}</span>
-                    <span class={`truncate ${isSelected ? 'text-white' : 'text-gray-300'}`}>{wt.branch}</span>
-                    {wt.links && Object.keys(wt.links).length > 0 && (
-                      <span class="text-cyan-400">⇄</span>
-                    )}
+                  <div class={`flex items-center gap-1.5 py-px pl-1 ${isSelected ? 'bg-[#3e4451]' : ''}`}>
+                    <span class={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${wt.listening ? 'bg-green-400' : 'border border-orange-400'}`}></span>
+                    <span style="color: #c678dd;">:{wt.port}</span>
+                    <span class="truncate" style={`color: ${isSelected ? '#ffffff' : '#abb2bf'};`}>{wt.branch}</span>
                   </div>
                 );
               })}
@@ -79,68 +78,58 @@ let flatIndex = 0;
       </div>
 
       <!-- Right panel: detail -->
-      <div class="w-3/5 p-3 border-l border-gray-700" style="min-height: 280px;">
-        {selected ? (
+      <div class="flex-1 p-2.5" style="border-left: 1px solid #3b4048;">
+        {selected && (
           <>
-            <div class="text-cyan-400 font-bold mb-3">{selected.project} / {selected.branch}</div>
-            <div class="space-y-1.5 text-gray-300">
+            <div class="mb-3" style="color: #56b6c2;">{selected.project} / {selected.branch}</div>
+            <div class="space-y-0.5" style="color: #abb2bf;">
               <div class="flex">
-                <span class="w-20 text-gray-500">Port</span>
-                <span class="text-white">{selected.ports.join(', ')}</span>
+                <span class="w-24" style="color: #5c6370;">Port</span>
+                <span style="color: #e5c07b;">{selected.port}</span>
               </div>
               <div class="flex">
-                <span class="w-20 text-gray-500">Database</span>
-                <span class="text-white">{selected.database || '—'}</span>
+                <span class="w-24" style="color: #5c6370;">Database</span>
+                <span style="color: #5c6370;">{selected.database || '—'}</span>
               </div>
               <div class="flex">
-                <span class="w-20 text-gray-500">Supervisor</span>
-                <span class={selected.supervisor === 'running' ? 'text-green-400' : 'text-gray-500'}>{selected.supervisor}</span>
+                <span class="w-24" style="color: #5c6370;">Redis</span>
+                <span style="color: #5c6370;">{selected.redis || '—'}</span>
               </div>
               <div class="flex">
-                <span class="w-20 text-gray-500">Listening</span>
-                <span class={selected.listening ? 'text-green-400' : 'text-red-400'}>{selected.listening ? 'yes' : 'no'}</span>
+                <span class="w-24" style="color: #5c6370;">Supervisor</span>
+                <span style={`color: ${selected.supervisor === 'running' ? '#98c379' : '#5c6370'};`}>{selected.supervisor}</span>
               </div>
               <div class="flex">
-                <span class="w-20 text-gray-500">Env file</span>
-                <span class="text-white">{selected.envFile || '—'}</span>
+                <span class="w-24" style="color: #5c6370;">Listening</span>
+                <span style={`color: ${selected.listening ? '#98c379' : '#e06c75'};`}>{selected.listening ? 'yes' : 'no'}</span>
               </div>
               <div class="flex">
-                <span class="w-20 text-gray-500">Worktree</span>
-                <span class="text-white truncate">{selected.worktreePath}</span>
+                <span class="w-24" style="color: #5c6370;">Env file</span>
+                <span style="color: #abb2bf;">{selected.envFile || '—'}</span>
               </div>
-              {selected.links && Object.keys(selected.links).length > 0 && (
-                <>
-                  <div class="mt-2 text-gray-500">Links</div>
-                  {Object.entries(selected.links).map(([proj, branch]) => (
-                    <div class="flex pl-2">
-                      <span class="text-cyan-400">⇄ {proj}</span>
-                      <span class="text-gray-400 mx-1">→</span>
-                      <span class="text-white">{branch}</span>
-                    </div>
-                  ))}
-                </>
-              )}
+              <div class="flex">
+                <span class="w-24" style="color: #5c6370;">Worktree</span>
+                <span class="truncate" style="color: #abb2bf;">{selected.worktreePath}</span>
+              </div>
             </div>
           </>
-        ) : (
-          <div class="text-gray-500">Select a worktree</div>
         )}
       </div>
     </div>
 
     <!-- Status bar -->
-    <div class="border-t border-gray-700 px-3 py-1.5 text-[10px] space-y-0.5" style="background: #15161e;">
-      <div class="text-gray-400">
-        {projectCount} projects · {worktrees.length} worktrees · {runningCount} running · serve: <span class={serveStatus === 'active' ? 'text-green-400' : 'text-gray-500'}>{serveStatus}</span>
+    <div class="px-2.5 py-1.5 space-y-0.5" style="background: #282c34; border-top: 1px solid #3b4048;">
+      <div style="color: #5c6370;">
+        {projectCount} projects · {worktrees.length} worktrees · {runningCount} running · serve: <span style="color: #98c379;">active</span>
       </div>
-      <div class="flex gap-3 text-gray-500">
-        <span><span class="text-yellow-400">s</span>:start/stop</span>
-        <span><span class="text-yellow-400">o</span>:open</span>
-        <span><span class="text-yellow-400">r</span>:restart</span>
-        <span><span class="text-yellow-400">d</span>:release</span>
-        <span><span class="text-yellow-400">/</span>:filter</span>
-        <span><span class="text-yellow-400">?</span>:help</span>
-        <span><span class="text-yellow-400">q</span>:quit</span>
+      <div class="flex gap-2" style="color: #5c6370;">
+        <span><span style="color: #e5c07b;">s</span>:start/stop</span>
+        <span><span style="color: #e5c07b;">o</span>:open</span>
+        <span><span style="color: #e5c07b;">r</span>:restart</span>
+        <span><span style="color: #e5c07b;">d</span>:release</span>
+        <span><span style="color: #e5c07b;">/</span>:filter</span>
+        <span><span style="color: #e5c07b;">?</span>:help</span>
+        <span><span style="color: #e5c07b;">q</span>:quit</span>
       </div>
     </div>
   </div>
