@@ -23,48 +23,36 @@ interface Props {
 
 const defaultProjects: Project[] = [
   {
-    name: 'API-DOCS',
+    name: 'ACME-API',
     expanded: true,
     worktrees: [
       { branch: 'main', ports: [3000], status: 'running' },
+      { branch: 'feature/auth-v2', ports: [3010], status: 'running' },
+      { branch: 'fix/rate-limiting', ports: [3020], status: 'idle' },
     ],
   },
   {
-    name: 'ASSESSMENT-PLATFORM',
+    name: 'ACME-WEB',
     expanded: true,
     worktrees: [
-      { branch: 'main', ports: [3080], status: 'idle' },
+      { branch: 'main', ports: [3080], status: 'running' },
+      { branch: 'feature/dashboard', ports: [3090], status: 'idle' },
+      { branch: 'feature/onboarding', ports: [3100], status: 'running' },
     ],
   },
   {
-    name: 'GIT-TREELINE',
+    name: 'ACME-DOCS',
     expanded: true,
     worktrees: [
-      { branch: 'feature-tui-dashboard', path: 'git-treeline-feature-tui-dashboard', ports: [3010], status: 'running' },
+      { branch: 'main', ports: [3050], status: 'idle' },
     ],
   },
   {
-    name: 'SALT',
+    name: 'SHARED-UI',
     expanded: true,
     worktrees: [
-      { branch: 'production', ports: [3090, 3091], status: 'running' },
-      { branch: 'staging', path: 'karachi', ports: [3110, 3111], status: 'idle' },
-      { branch: 'feature/renters-category', ports: [3130], status: 'running' },
-    ],
-  },
-  {
-    name: 'WEBSITE',
-    expanded: true,
-    worktrees: [
-      { branch: 'main', ports: [3070], status: 'idle' },
-    ],
-  },
-  {
-    name: 'WILDLIFE_PLATFORM',
-    expanded: true,
-    worktrees: [
-      { branch: 'develop', ports: [3050], status: 'idle' },
-      { branch: 'feature/api-v2-profile-update', ports: [3020], status: 'running' },
+      { branch: 'main', ports: [3110], status: 'running' },
+      { branch: 'feature/dark-mode', ports: [3120], status: 'idle' },
     ],
   },
 ];
@@ -73,7 +61,7 @@ const {
   projects = defaultProjects,
   routerStatus = 'running',
   runningCount = 5,
-  idleCount = 8,
+  idleCount = 4,
   showUpdate = true,
   class: className = '',
 } = Astro.props;
@@ -82,7 +70,7 @@ const totalWorktrees = (p: Project) => p.worktrees.length;
 ---
 
 <div class={`menulet-demo select-none ${className}`}>
-  <div class="menulet-window rounded-xl overflow-hidden shadow-2xl border border-white/10" style="background: linear-gradient(180deg, #f5f5f7 0%, #e8e8ed 100%); max-width: 340px;">
+  <div class="menulet-window rounded-xl overflow-hidden shadow-2xl border border-white/10" style="background: linear-gradient(180deg, #f5f5f7 0%, #e8e8ed 100%); max-width: 320px;">
     
     <!-- Header -->
     <div class="px-4 py-3 flex items-center justify-between border-b border-black/5">
@@ -104,7 +92,7 @@ const totalWorktrees = (p: Project) => p.worktrees.length;
     </div>
 
     <!-- Project list -->
-    <div class="max-h-[360px] overflow-y-auto">
+    <div class="max-h-[320px] overflow-y-auto">
       {projects.map((project) => (
         <div class="border-b border-black/5 last:border-b-0">
           <!-- Project header -->

@@ -3,12 +3,8 @@ export interface Worktree {
   project: string;
   branch: string;
   port: number;
-  database?: string;
-  redis?: string;
   supervisor: string;
   listening: boolean;
-  envFile?: string;
-  worktreePath: string;
 }
 
 interface Props {
@@ -18,24 +14,20 @@ interface Props {
 }
 
 const defaultWorktrees: Worktree[] = [
-  { project: 'api-docs', branch: 'main', port: 3000, supervisor: 'not running', listening: true, envFile: '.env.local', worktreePath: '/Users/jonathansimmons/git/truherd/api-docs' },
-  { project: 'assessment-platform', branch: 'main', port: 3080, supervisor: 'not running', listening: false, worktreePath: '/Users/jonathansimmons/git/truherd/assessment-platform' },
-  { project: 'git-treeline', branch: 'feature-tui-dashboard', port: 3010, supervisor: 'running', listening: true, worktreePath: '/Users/jonathansimmons/git/git-treeline/git-treeline' },
-  { project: 'salt', branch: 'staging', port: 3110, supervisor: 'not running', listening: false, worktreePath: '/Users/jonathansimmons/git/truherd/salt-staging' },
-  { project: 'salt', branch: 'production', port: 3090, supervisor: 'running', listening: true, worktreePath: '/Users/jonathansimmons/git/truherd/salt' },
-  { project: 'salt', branch: 'feature/renters-category', port: 3130, supervisor: 'running', listening: true, worktreePath: '/Users/jonathansimmons/git/truherd/salt-renters' },
-  { project: 'website', branch: 'main', port: 3070, supervisor: 'not running', listening: false, worktreePath: '/Users/jonathansimmons/git/git-treeline/website' },
-  { project: 'wildlife_platform', branch: 'feature/mobile-responsive', port: 3030, supervisor: 'not running', listening: false, worktreePath: '/Users/jonathansimmons/git/truherd/wildlife-mobile' },
-  { project: 'wildlife_platform', branch: 'develop', port: 3050, supervisor: 'not running', listening: false, worktreePath: '/Users/jonathansimmons/git/truherd/wildlife-develop' },
-  { project: 'wildlife_platform', branch: 'feature/new-feature', port: 3060, supervisor: 'not running', listening: false, worktreePath: '/Users/jonathansimmons/git/truherd/wildlife-new' },
-  { project: 'wildlife_platform', branch: 'claude/review-localization-prd-nb0Ht', port: 3120, supervisor: 'not running', listening: false, worktreePath: '/Users/jonathansimmons/git/truherd/wildlife-review' },
-  { project: 'wildlife_platform', branch: 'jonathansimmons/shanghai', port: 3100, supervisor: 'not running', listening: false, worktreePath: '/Users/jonathansimmons/git/truherd/wildlife-shanghai' },
-  { project: 'wildlife_platform', branch: 'feature/api-v2-profile-update', port: 3020, supervisor: 'running', listening: true, worktreePath: '/Users/jonathansimmons/git/truherd/wildlife-api-v2' },
+  { project: 'acme-api', branch: 'main', port: 3000, supervisor: 'running', listening: true },
+  { project: 'acme-api', branch: 'feature/auth-v2', port: 3010, supervisor: 'running', listening: true },
+  { project: 'acme-api', branch: 'fix/rate-limiting', port: 3020, supervisor: 'not running', listening: false },
+  { project: 'acme-web', branch: 'main', port: 3080, supervisor: 'running', listening: true },
+  { project: 'acme-web', branch: 'feature/dashboard', port: 3090, supervisor: 'not running', listening: false },
+  { project: 'acme-web', branch: 'feature/onboarding', port: 3100, supervisor: 'running', listening: true },
+  { project: 'acme-docs', branch: 'main', port: 3050, supervisor: 'not running', listening: false },
+  { project: 'shared-ui', branch: 'main', port: 3110, supervisor: 'running', listening: true },
+  { project: 'shared-ui', branch: 'feature/dark-mode', port: 3120, supervisor: 'not running', listening: false },
 ];
 
 const {
   worktrees = defaultWorktrees,
-  selectedIndex = 0,
+  selectedIndex = 1,
   class: className = '',
 } = Astro.props;
 
@@ -50,25 +42,36 @@ const runningCount = worktrees.filter(w => w.listening).length;
 const selected = worktrees[selectedIndex];
 ---
 
-<div class={`tui-demo select-none font-mono text-[11px] leading-tight ${className}`}>
-  <div class="tui-window rounded overflow-hidden shadow-2xl" style="background: #1e2127; max-width: 620px; border: 1px solid #3b4048;">
+<div class={`tui-demo select-none ${className}`}>
+  <!-- macOS window chrome -->
+  <div class="rounded-lg overflow-hidden shadow-2xl" style="background: #1e2127; max-width: 520px; border: 1px solid #3b4048;">
+    
+    <!-- Title bar -->
+    <div class="flex items-center gap-2 px-3 py-2" style="background: #282c34; border-bottom: 1px solid #3b4048;">
+      <div class="flex gap-1.5">
+        <span class="w-3 h-3 rounded-full bg-[#ff5f56]"></span>
+        <span class="w-3 h-3 rounded-full bg-[#ffbd2e]"></span>
+        <span class="w-3 h-3 rounded-full bg-[#27c93f]"></span>
+      </div>
+      <span class="flex-1 text-center text-xs font-mono" style="color: #5c6370;">acme-api — gtl dashboard</span>
+    </div>
     
     <!-- Panels -->
-    <div class="flex" style="min-height: 320px;">
+    <div class="flex font-mono text-[10px] leading-tight" style="min-height: 220px;">
       <!-- Left panel: worktree list -->
-      <div class="w-[42%] p-2.5 border-r" style="border-color: #56b6c2;">
-        <div class="mb-2" style="color: #56b6c2;">WORKTREES</div>
+      <div class="w-[40%] p-2 border-r" style="border-color: #56b6c2;">
+        <div class="mb-1.5" style="color: #56b6c2; font-size: 9px;">WORKTREES</div>
         <div class="space-y-0">
           {Object.entries(groupedByProject).map(([project, wts]) => (
             <>
-              <div class="mt-1.5 first:mt-0 mb-0.5" style="color: #abb2bf;">{project}</div>
-              {wts.map((wt, idx) => {
+              <div class="mt-1 first:mt-0 mb-0.5" style="color: #abb2bf; font-size: 9px;">{project}</div>
+              {wts.map((wt) => {
                 const isSelected = wt === selected;
                 return (
-                  <div class={`flex items-center gap-1.5 py-px pl-1 ${isSelected ? 'bg-[#3e4451]' : ''}`}>
-                    <span class={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${wt.listening ? 'bg-green-400' : 'border border-orange-400'}`}></span>
-                    <span style="color: #c678dd;">:{wt.port}</span>
-                    <span class="truncate" style={`color: ${isSelected ? '#ffffff' : '#abb2bf'};`}>{wt.branch}</span>
+                  <div class={`flex items-center gap-1 py-px pl-0.5 ${isSelected ? 'bg-[#3e4451]' : ''}`}>
+                    <span class={`w-1 h-1 rounded-full flex-shrink-0 ${wt.listening ? 'bg-green-400' : 'border border-orange-400'}`}></span>
+                    <span style="color: #c678dd; font-size: 9px;">:{wt.port}</span>
+                    <span class="truncate" style={`color: ${isSelected ? '#ffffff' : '#abb2bf'}; font-size: 9px;`}>{wt.branch}</span>
                   </div>
                 );
               })}
@@ -78,38 +81,34 @@ const selected = worktrees[selectedIndex];
       </div>
 
       <!-- Right panel: detail -->
-      <div class="flex-1 p-2.5" style="border-left: 1px solid #3b4048;">
+      <div class="flex-1 p-2" style="border-left: 1px solid #3b4048;">
         {selected && (
           <>
-            <div class="mb-3" style="color: #56b6c2;">{selected.project} / {selected.branch}</div>
-            <div class="space-y-0.5" style="color: #abb2bf;">
+            <div class="mb-2" style="color: #56b6c2; font-size: 9px;">{selected.project} / {selected.branch}</div>
+            <div class="space-y-0.5" style="color: #abb2bf; font-size: 9px;">
               <div class="flex">
-                <span class="w-24" style="color: #5c6370;">Port</span>
+                <span class="w-16" style="color: #5c6370;">Port</span>
                 <span style="color: #e5c07b;">{selected.port}</span>
               </div>
               <div class="flex">
-                <span class="w-24" style="color: #5c6370;">Database</span>
-                <span style="color: #5c6370;">{selected.database || '—'}</span>
+                <span class="w-16" style="color: #5c6370;">Database</span>
+                <span style="color: #abb2bf;">acme_dev_auth_v2</span>
               </div>
               <div class="flex">
-                <span class="w-24" style="color: #5c6370;">Redis</span>
-                <span style="color: #5c6370;">{selected.redis || '—'}</span>
+                <span class="w-16" style="color: #5c6370;">Redis</span>
+                <span style="color: #5c6370;">—</span>
               </div>
               <div class="flex">
-                <span class="w-24" style="color: #5c6370;">Supervisor</span>
+                <span class="w-16" style="color: #5c6370;">Supervisor</span>
                 <span style={`color: ${selected.supervisor === 'running' ? '#98c379' : '#5c6370'};`}>{selected.supervisor}</span>
               </div>
               <div class="flex">
-                <span class="w-24" style="color: #5c6370;">Listening</span>
+                <span class="w-16" style="color: #5c6370;">Listening</span>
                 <span style={`color: ${selected.listening ? '#98c379' : '#e06c75'};`}>{selected.listening ? 'yes' : 'no'}</span>
               </div>
               <div class="flex">
-                <span class="w-24" style="color: #5c6370;">Env file</span>
-                <span style="color: #abb2bf;">{selected.envFile || '—'}</span>
-              </div>
-              <div class="flex">
-                <span class="w-24" style="color: #5c6370;">Worktree</span>
-                <span class="truncate" style="color: #abb2bf;">{selected.worktreePath}</span>
+                <span class="w-16" style="color: #5c6370;">Env file</span>
+                <span style="color: #abb2bf;">.env.local</span>
               </div>
             </div>
           </>
@@ -118,11 +117,11 @@ const selected = worktrees[selectedIndex];
     </div>
 
     <!-- Status bar -->
-    <div class="px-2.5 py-1.5 space-y-0.5" style="background: #282c34; border-top: 1px solid #3b4048;">
+    <div class="px-2 py-1 font-mono" style="background: #282c34; border-top: 1px solid #3b4048; font-size: 9px;">
       <div style="color: #5c6370;">
         {projectCount} projects · {worktrees.length} worktrees · {runningCount} running · serve: <span style="color: #98c379;">active</span>
       </div>
-      <div class="flex gap-2" style="color: #5c6370;">
+      <div class="flex gap-1.5 flex-wrap" style="color: #5c6370;">
         <span><span style="color: #e5c07b;">s</span>:start/stop</span>
         <span><span style="color: #e5c07b;">o</span>:open</span>
         <span><span style="color: #e5c07b;">r</span>:restart</span>
