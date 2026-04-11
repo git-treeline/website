@@ -101,7 +101,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </thead>
         <tbody class="divide-y divide-surface-border">
           <tr><td class="px-5 py-3 font-mono text-xs"><code>start</code></td><td class="px-5 py-3 text-muted">Start or resume the supervised dev server</td></tr>
-          <tr><td class="px-5 py-3 font-mono text-xs"><code>stop</code></td><td class="px-5 py-3 text-muted">Stop the dev server (supervisor stays alive for quick resume)</td></tr>
+          <tr><td class="px-5 py-3 font-mono text-xs"><code>stop</code></td><td class="px-5 py-3 text-muted">Stop the dev server (supervisor stays alive for quick resume). Pass <code>kill: true</code> to shut down the supervisor entirely.</td></tr>
           <tr><td class="px-5 py-3 font-mono text-xs"><code>restart</code></td><td class="px-5 py-3 text-muted">Restart the dev server (re-evaluates env including resolve links)</td></tr>
         </tbody>
       </table>

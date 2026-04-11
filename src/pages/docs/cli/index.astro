@@ -64,6 +64,9 @@ import DocsPagination from '../../../components/DocsPagination.astro';
               >--open</span
             ><span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--force</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
               >--dry-run</span
             >
           </div>
@@ -72,8 +75,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
               >--start</code
             > boots the app after setup. <code class="text-accent-light">--open</code> opens in browser. Works
             without a <code class="text-accent-light">.treeline.yml</code>: detects framework and prompts to init
-            for server projects, or creates a plain worktree for non-server projects. Must be run from the main
-            repo.
+            for server projects, or creates a plain worktree for non-server projects. Can be run from inside a worktree; prompts for confirmation unless <code class="text-accent-light">--force</code> is passed.
           </p>
         </div>
 
@@ -249,9 +251,15 @@ import DocsPagination from '../../../components/DocsPagination.astro';
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
           <span class="font-mono text-white text-base font-semibold">stop</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--kill</span
+            >
+          </div>
           <p class="text-base text-muted mt-2">
             Stop the server process. Supervisor stays alive for resume with <code class="text-accent-light">gtl start</code
-            >. To fully exit: Ctrl+C the supervisor terminal.
+            >. <code class="text-accent-light">--kill</code> shuts down the supervisor entirely instead of keeping it alive.
           </p>
         </div>
 

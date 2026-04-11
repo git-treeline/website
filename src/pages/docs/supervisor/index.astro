@@ -51,6 +51,10 @@ import DocsPagination from '../../../components/DocsPagination.astro';
             <td class="px-5 py-3 text-muted">Stops the server process. Supervisor stays alive so the server can be resumed.</td>
           </tr>
           <tr>
+            <td class="px-5 py-3 font-mono text-white whitespace-nowrap">gtl stop --kill</td>
+            <td class="px-5 py-3 text-muted">Shuts down the supervisor entirely. Equivalent to Ctrl+C from a remote process.</td>
+          </tr>
+          <tr>
             <td class="px-5 py-3 font-mono text-white whitespace-nowrap">gtl restart</td>
             <td class="px-5 py-3 text-muted">Atomic stop + start. Bounces the server in one step.</td>
           </tr>
@@ -80,7 +84,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
 
     <h2>TUI dashboard</h2>
     <p>
-      <code class="text-accent-light">gtl dashboard</code> (aliases: <code class="text-accent-light">gtl dash</code>, <code class="text-accent-light">gtl ui</code>) opens a full-screen terminal UI showing every worktree grouped by project with ports, supervisor state, and link overrides. Polls every two seconds for a live view.
+      <code class="text-accent-light">gtl dashboard</code> (aliases: <code class="text-accent-light">gtl dash</code>, <code class="text-accent-light">gtl ui</code>) opens a full-screen terminal UI showing every worktree grouped by project. The detail panel displays ports, database name, supervisor state, link overrides, router URLs, and tunnel URLs when configured. Polls every two seconds for a live view.
     </p>
 
     <h3>Keyboard shortcuts</h3>
@@ -90,6 +94,8 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       <li><kbd class="text-white font-mono">s</kbd> start or stop the dev server for the selected worktree</li>
       <li><kbd class="text-white font-mono">o</kbd> open the app in the browser</li>
       <li><kbd class="text-white font-mono">r</kbd> restart the supervisor</li>
+      <li><kbd class="text-white font-mono">e</kbd> sync env file from <code class="text-accent-light">.treeline.yml</code></li>
+      <li><kbd class="text-white font-mono">n</kbd> create a new worktree (prompts for branch name)</li>
       <li><kbd class="text-white font-mono">d</kbd> release the selected worktree (confirmation prompt)</li>
       <li><kbd class="text-white font-mono">/</kbd> filter by project, branch, or worktree name</li>
       <li><kbd class="text-white font-mono">?</kbd> toggle the full shortcut help overlay</li>

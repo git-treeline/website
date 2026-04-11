@@ -80,8 +80,11 @@ gtl new feature/payments --start</code></pre>
     <p class="text-base text-muted mb-4">
       <code class="text-accent-light">gtl restart</code> bounces the dev server: it syncs env (and updates the supervisor environment), then restarts the child. Use this after env or hook changes when you do not need a full new supervisor.
     </p>
-    <p class="text-base text-muted mb-8">
+    <p class="text-base text-muted mb-4">
       <code class="text-accent-light">gtl stop</code> stops the server process but leaves the supervisor alive. The next <code class="text-accent-light">gtl start</code> may <strong class="text-white">resume</strong> with the previously loaded start command rather than re-provisioning from disk.
+    </p>
+    <p class="text-base text-muted mb-8">
+      <code class="text-accent-light">gtl stop --kill</code> shuts down the supervisor entirely, equivalent to Ctrl+C in the terminal. Use this from agents or scripts that need to fully terminate the supervisor process remotely.
     </p>
 
     <h2><code class="text-accent-light">gtl switch</code></h2>
