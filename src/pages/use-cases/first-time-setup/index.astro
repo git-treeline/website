@@ -5,7 +5,7 @@ import Terminal from '../../../components/Terminal.astro';
 
 <ArticleLayout
   title="First-time setup: a guided tour &mdash; Git Treeline"
-  description="Install Git Treeline, run gtl init, understand every section of .treeline.yml and config.json, create your first worktree, and verify everything works."
+  description="Install Git Treeline, run gtl install, understand every section of .treeline.yml and config.json, create your first worktree, and verify everything works."
   canonical="https://git-treeline.dev/use-cases/first-time-setup/"
   breadcrumb="Use cases"
   breadcrumbHref="/use-cases/"
@@ -18,11 +18,11 @@ import Terminal from '../../../components/Terminal.astro';
       <div class="space-y-4">
         <div>
           <p class="text-xs text-muted mb-1"># macOS / Linux (Homebrew)</p>
-          <p><span class="text-accent-light">$</span> <span class="text-white">brew install git-treeline/tap/gtl</span></p>
+          <p><span class="text-accent-light">$</span> <span class="text-white">brew install git-treeline/tap/git-treeline</span></p>
         </div>
         <div>
           <p class="text-xs text-muted mb-1"># or from source</p>
-          <p><span class="text-accent-light">$</span> <span class="text-white">go install github.com/git-treeline/git-treeline/cmd/gtl@latest</span></p>
+          <p><span class="text-accent-light">$</span> <span class="text-white">go install github.com/git-treeline/git-treeline@latest</span></p>
         </div>
       </div>
     </Terminal>
@@ -31,34 +31,39 @@ import Terminal from '../../../components/Terminal.astro';
     Treeline is a single binary with no runtime dependencies. It works on macOS and Linux. Windows is supported for core features (ports, env, databases); the HTTPS subdomain router (<code class="text-accent-light">gtl serve</code>) is macOS/Linux only.
   </p>
 
-  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">2. Run <code class="text-accent-light">gtl init</code></h2>
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">2. Run <code class="text-accent-light">gtl install</code></h2>
   <div class="mb-6">
     <Terminal>
       <div class="space-y-2">
         <p><span class="text-accent-light">$</span> <span class="text-white">cd your-project</span></p>
-        <p><span class="text-accent-light">$</span> <span class="text-white">gtl init</span></p>
+        <p><span class="text-accent-light">$</span> <span class="text-white">gtl install</span></p>
         <p class="text-muted">Detected <span class="text-accent">Rails</span> project</p>
-        <p class="text-muted">Generated <span class="text-accent">.treeline.yml</span></p>
-        <p class="text-muted">Wrote agent context to <span class="text-accent">AGENTS.md</span></p>
-        <p class="text-muted"></p>
-        <p class="text-muted text-yellow-400">Diagnostics:</p>
-        <p class="text-muted">&nbsp; &check; dotenv-rails loaded via Gemfile</p>
-        <p class="text-muted">&nbsp; &check; PostgreSQL adapter detected</p>
-        <p class="text-muted">&nbsp; &check; bin/dev present and executable</p>
-        <p class="text-muted">&nbsp; &check; post-checkout hook installed</p>
+        <p class="text-muted">Wrote <span class="text-accent">.treeline.yml</span></p>
+        <p class="text-muted">Created user config at <span class="text-accent">~/.config/git-treeline/config.yml</span></p>
+        <p class="text-muted">Post-checkout hook: <span class="text-accent">.git/hooks/post-checkout</span></p>
+        <p class="text-muted">Allocated port <span class="text-accent">3000</span></p>
+        <p class="text-muted">Wrote <span class="text-accent">.env.local</span></p>
+        <p class="text-muted mt-2">Local HTTPS routing lets you access worktrees at <span class="text-accent">https://myapp-main.prt.dev</span></p>
+        <p class="text-muted">HTTPS router setup: <span class="text-accent">Yes, install now</span></p>
+        <p class="text-muted text-accent mt-1">Ready. Run <span class="text-white">gtl start</span> to start your server.</p>
       </div>
     </Terminal>
   </div>
   <p class="text-muted mb-4">
-    <code class="text-accent-light">init</code> does three things:
+    <code class="text-accent-light">gtl install</code> handles the full setup in one step:
   </p>
   <ol class="text-muted space-y-2 list-decimal pl-5 mb-4">
-    <li><strong class="text-white">Detects your framework</strong> (Next.js, Vite, Rails, Express, Python, Rust, Go) and generates a tailored <code class="text-accent-light">.treeline.yml</code></li>
-    <li><strong class="text-white">Writes agent context</strong> to <code class="text-accent-light">AGENTS.md</code> (or appends to <code class="text-accent-light">CLAUDE.md</code> if that exists) so AI agents know to use <code class="text-accent-light">gtl port</code> instead of assuming port 3000</li>
-    <li><strong class="text-white">Runs diagnostics</strong> &mdash; checks for dotenv support, port wiring, database adapters, and prints actionable warnings</li>
+    <li><strong class="text-white">Generates config</strong> &mdash; detects your framework (Next.js, Vite, Rails, Express, Python, Rust, Go) and creates a tailored <code class="text-accent-light">.treeline.yml</code> with agent context in <code class="text-accent-light">AGENTS.md</code></li>
+    <li><strong class="text-white">Creates user config</strong> if this is your first project on the machine</li>
+    <li><strong class="text-white">Installs the post-checkout hook</strong> so future checkouts auto-allocate resources</li>
+    <li><strong class="text-white">Allocates ports and writes env</strong> for the current worktree</li>
+    <li><strong class="text-white">Offers HTTPS routing</strong> (optional) &mdash; trusts a local CA and sets up port forwarding. Skip this if you only need localhost.</li>
   </ol>
+  <p class="text-muted mb-4">
+    Every step is idempotent &mdash; safe to re-run any time. If you already have a <code class="text-accent-light">.treeline.yml</code>, it skips config generation and goes straight to allocation and setup.
+  </p>
   <p class="text-muted mb-8">
-    Use <code class="text-accent-light">--project myapp</code> to set the project name explicitly. Use <code class="text-accent-light">--template-db myapp_dev</code> to pre-fill the database template. Use <code class="text-accent-light">--skip-agent-config</code> if you don&rsquo;t want agent context generated.
+    For fine-grained control, <code class="text-accent-light">gtl init</code> generates just the config file without running setup. Use <code class="text-accent-light">--project myapp</code> to set the project name, <code class="text-accent-light">--template-db myapp_dev</code> for database template, or <code class="text-accent-light">--skip-agent-config</code> to skip agent context.
   </p>
 
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">3. Tour the generated config</h2>
@@ -311,7 +316,7 @@ import Terminal from '../../../components/Terminal.astro';
     <li><strong class="text-white">Windows:</strong> <code class="text-accent-light">%APPDATA%/git-treeline/config.json</code></li>
   </ul>
   <p class="text-muted mb-4">
-    <code class="text-accent-light">gtl init</code> creates this automatically if it doesn&rsquo;t exist. You can also run <code class="text-accent-light">gtl config</code> to see or modify it. Here are the key sections:
+    <code class="text-accent-light">gtl install</code> creates this automatically if it doesn&rsquo;t exist. You can also run <code class="text-accent-light">gtl config</code> to see or modify it. Here are the key sections:
   </p>
 
   <h3 class="text-white font-mono text-lg mb-3 mt-8">Port allocation</h3>
@@ -392,7 +397,7 @@ import Terminal from '../../../components/Terminal.astro';
     One command: worktree created, ports allocated, database cloned, env file written, files copied, setup commands run, server booted. The <code class="text-accent-light">--start</code> flag kicks off the server under the supervisor immediately.
   </p>
   <p class="text-muted mb-8">
-    If you already have a worktree (e.g. from <code class="text-accent-light">git worktree add</code>), use <code class="text-accent-light">gtl setup &lt;path&gt;</code> to allocate resources for it. Going forward, the post-checkout hook installed by <code class="text-accent-light">gtl init</code> handles this automatically for new checkouts.
+    If you already have a worktree (e.g. from <code class="text-accent-light">git worktree add</code>), use <code class="text-accent-light">gtl setup &lt;path&gt;</code> to allocate resources for it. Going forward, the post-checkout hook installed by <code class="text-accent-light">gtl install</code> handles this automatically for new checkouts.
   </p>
 
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">6. Verify everything works</h2>

@@ -5,7 +5,7 @@ import Terminal from '../../../components/Terminal.astro';
 
 <ArticleLayout
   title="New developer, one command &mdash; Git Treeline"
-  description="A new teammate clones the repo, runs gtl init and gtl new, and has a fully isolated environment — ports, database, env, and a running server — in under a minute."
+  description="A new teammate clones the repo, runs gtl install and gtl new, and has a fully isolated environment — ports, database, env, and a running server — in under a minute."
   canonical="https://git-treeline.dev/use-cases/onboarding/"
   breadcrumb="Use cases"
   breadcrumbHref="/use-cases/"
@@ -22,21 +22,20 @@ import Terminal from '../../../components/Terminal.astro';
 
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Step 1: The project maintainer sets up once</h2>
   <p class="text-muted mb-4">
-    Run <code class="text-accent-light">gtl init</code> in the project root. It auto-detects the framework, generates a <code class="text-accent-light">.treeline.yml</code>, prints diagnostics, and writes agent context to <code class="text-accent-light">AGENTS.md</code>. Commit the config.
+    Run <code class="text-accent-light">gtl install</code> in the project root. It detects the framework, generates a <code class="text-accent-light">.treeline.yml</code>, creates user config, installs the post-checkout hook, allocates ports, writes env, and optionally sets up HTTPS routing. Commit the config.
   </p>
 
   <div class="mb-6">
     <Terminal label="one-time setup by maintainer">
       <div class="space-y-2">
-        <p><span class="text-accent-light">$</span> <span class="text-white">gtl init</span></p>
+        <p><span class="text-accent-light">$</span> <span class="text-white">gtl install</span></p>
         <p class="text-muted">Detected <span class="text-accent">Rails</span> project</p>
-        <p class="text-muted">Generated <span class="text-accent">.treeline.yml</span></p>
-        <p class="text-muted">Wrote agent context to <span class="text-accent">AGENTS.md</span></p>
-        <p class="text-muted"></p>
-        <p class="text-muted text-yellow-400">Diagnostics:</p>
-        <p class="text-muted">&nbsp; &check; dotenv-rails loaded via Gemfile</p>
-        <p class="text-muted">&nbsp; &check; PostgreSQL adapter detected</p>
-        <p class="text-muted">&nbsp; &check; bin/dev present and executable</p>
+        <p class="text-muted">Wrote <span class="text-accent">.treeline.yml</span></p>
+        <p class="text-muted">Created user config at <span class="text-accent">~/.config/git-treeline/config.yml</span></p>
+        <p class="text-muted">Post-checkout hook: <span class="text-accent">.git/hooks/post-checkout</span></p>
+        <p class="text-muted">Allocated port <span class="text-accent">3000</span></p>
+        <p class="text-muted">Wrote <span class="text-accent">.env.local</span></p>
+        <p class="text-muted text-accent mt-1">Ready. Run <span class="text-white">gtl start</span> to start your server.</p>
       </div>
     </Terminal>
   </div>
@@ -83,7 +82,7 @@ import Terminal from '../../../components/Terminal.astro';
   <div class="mb-6">
     <Terminal label="new developer">
       <div class="space-y-2">
-        <p><span class="text-accent-light">$</span> <span class="text-white">brew install git-treeline/tap/gtl</span></p>
+        <p><span class="text-accent-light">$</span> <span class="text-white">brew install git-treeline/tap/git-treeline</span></p>
         <p><span class="text-accent-light">$</span> <span class="text-white">git clone git@github.com:acme/myapp.git</span></p>
         <p><span class="text-accent-light">$</span> <span class="text-white">cd myapp</span></p>
         <p><span class="text-accent-light">$</span> <span class="text-white">gtl new main --start</span></p>
@@ -166,7 +165,7 @@ import Terminal from '../../../components/Terminal.astro';
 
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">The post-checkout hook</h2>
   <p class="text-muted mb-4">
-    After the first developer runs <code class="text-accent-light">gtl init</code>, Treeline installs a <code class="text-accent-light">post-checkout</code> git hook. Every subsequent <code class="text-accent-light">git checkout</code> &mdash; or <code class="text-accent-light">git worktree add</code> &mdash; triggers resource allocation automatically. New worktrees get their own port, database, and env file without the developer running <code class="text-accent-light">gtl setup</code> manually.
+    <code class="text-accent-light">gtl install</code> sets up a <code class="text-accent-light">post-checkout</code> git hook. Every subsequent <code class="text-accent-light">git checkout</code> &mdash; or <code class="text-accent-light">git worktree add</code> &mdash; triggers resource allocation automatically. New worktrees get their own port, database, and env file without the developer running <code class="text-accent-light">gtl setup</code> manually.
   </p>
   <p class="text-muted mb-8">
     The hook is idempotent: if resources are already allocated for the worktree, it&rsquo;s a no-op.
@@ -174,7 +173,7 @@ import Terminal from '../../../components/Terminal.astro';
 
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Framework examples</h2>
   <p class="text-muted mb-4">
-    <code class="text-accent-light">gtl init</code> auto-detects your framework and generates a tailored config. Here are common starting points:
+    <code class="text-accent-light">gtl install</code> auto-detects your framework and generates a tailored config. Here are common starting points:
   </p>
 
   <h3 class="text-white font-mono text-lg mb-3 mt-8">Next.js</h3>
@@ -194,7 +193,7 @@ import Terminal from '../../../components/Terminal.astro';
     </Terminal>
   </div>
   <p class="text-muted text-base mb-8">
-    Next.js loads <code class="text-accent-light">.env.local</code> but doesn&rsquo;t use <code class="text-accent-light">PORT</code> for its listen port. Update your dev script: <code class="text-white">{'"dev": "next dev --port ${PORT:-3000}"'}</code>. <code class="text-accent-light">gtl init</code> prints this guidance automatically.
+    Next.js loads <code class="text-accent-light">.env.local</code> but doesn&rsquo;t use <code class="text-accent-light">PORT</code> for its listen port. Update your dev script: <code class="text-white">{'"dev": "next dev --port ${PORT:-3000}"'}</code>. <code class="text-accent-light">gtl install</code> prints this guidance automatically.
   </p>
 
   <h3 class="text-white font-mono text-lg mb-3">Vite (React, Vue, Svelte)</h3>
@@ -209,11 +208,11 @@ import Terminal from '../../../components/Terminal.astro';
 <span class="text-accent-light">commands</span>:
   <span class="text-accent-light">setup</span>:
     - npm install
-  <span class="text-accent-light">start</span>: npx vite</code></pre>
+  <span class="text-accent-light">start</span>: npx vite --port {'{port}'}</code></pre>
     </Terminal>
   </div>
   <p class="text-muted text-base mb-8">
-    Vite doesn&rsquo;t read <code class="text-accent-light">PORT</code> by default. Add <code class="text-white">{'server: { port: parseInt(env.PORT || \'5173\') }'}</code> to your <code class="text-accent-light">vite.config.js</code>. <code class="text-accent-light">gtl init</code> prints this warning if it detects Vite.
+    Vite ignores the <code class="text-accent-light">PORT</code> env var, so the start command passes <code class="text-accent-light">{'{port}'}</code> directly. <code class="text-accent-light">gtl install</code> detects Vite and generates this automatically.
   </p>
 
   <h3 class="text-white font-mono text-lg mb-3">Express / Node</h3>

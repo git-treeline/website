@@ -22,10 +22,20 @@ import DocsPagination from '../../../components/DocsPagination.astro';
   </header>
 
   <div class="docs-guide px-4 sm:px-6 lg:px-0 pb-20">
-    <h2>Worktree lifecycle</h2>
+    <h2>Setup</h2>
 
     <div class="rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 mb-8">
       <div class="space-y-0">
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">install</span>
+          <p class="text-base text-muted mt-2">
+            One command to get a developer productive. Creates <code class="text-accent-light">.treeline.yml</code> if
+            missing, creates user config, installs the post-checkout hook, allocates ports, writes env, and optionally
+            enables the local HTTPS router. Safe to re-run — every step is idempotent. Recommended over the
+            separate <code class="text-accent-light">init</code> → <code class="text-accent-light">setup</code> flow.
+          </p>
+        </div>
+
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
           <span class="font-mono text-white text-base font-semibold">init</span>
           <div class="flex flex-wrap gap-1.5 mt-2">
@@ -96,7 +106,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           <p class="text-base text-muted mt-2">
             Fetch a GitHub PR into a new worktree with full setup. Requires <code class="text-accent-light"
               >gh</code
-            > CLI. Must be run from the main repo.
+            > CLI. From inside a worktree, prompts to switch the current worktree to the PR branch.
           </p>
         </div>
 
@@ -337,9 +347,9 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">serve alias &lt;name&gt; &lt;port&gt;</span>
+          <span class="font-mono text-white text-base font-semibold">serve alias &lt;name&gt; [port]</span>
           <p class="text-base text-muted mt-2">
-            Register a custom hostname on the router. <code class="text-accent-light">--remove &lt;name&gt;</code> to
+            Register a custom hostname on the router. From a worktree directory, port is auto-detected from the allocation. <code class="text-accent-light">--remove &lt;name&gt;</code> to
             unregister. Hot-reloaded within 5 seconds.
           </p>
         </div>
@@ -347,6 +357,18 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
           <span class="font-mono text-white text-base font-semibold">serve uninstall</span>
           <p class="text-base text-muted mt-2">Remove service, port forwarding, and CA trust.</p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">serve hosts sync</span>
+          <p class="text-base text-muted mt-2">
+            Write entries for all active routes to <code class="text-accent-light">/etc/hosts</code>. Required for Safari on macOS with <code class="text-accent-light">localhost</code> domain.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">serve hosts clean</span>
+          <p class="text-base text-muted mt-2">Remove managed entries from <code class="text-accent-light">/etc/hosts</code>.</p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
@@ -377,9 +399,10 @@ import DocsPagination from '../../../components/DocsPagination.astro';
             >
           </div>
           <p class="text-base text-muted mt-2">
-            Public HTTPS via Cloudflare. <code class="text-accent-light">tunnel setup</code> for named configs. <code
+            Public HTTPS via Cloudflare. Subcommands: <code class="text-accent-light">tunnel setup</code> for named
+            configs, <code class="text-accent-light">tunnel status</code> for connection state, <code
               class="text-accent-light">tunnel default</code
-            > sets the active tunnel. <code class="text-accent-light">tunnel remove</code> deletes.
+            > to set the active tunnel, <code class="text-accent-light">tunnel remove</code> to delete.
           </p>
         </div>
 
@@ -567,6 +590,13 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">worktree</span>
+          <p class="text-base text-muted mt-2">
+            Print the filesystem path of the current worktree. For scripting and agent tooling.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
           <span class="font-mono text-white text-base font-semibold">doctor</span>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
@@ -639,6 +669,13 @@ import DocsPagination from '../../../components/DocsPagination.astro';
               href="/docs/agents/#mcp-server"
               class="text-accent-light hover:text-accent underline underline-offset-2">MCP setup</a
             >.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">mcp-config</span>
+          <p class="text-base text-muted mt-2">
+            Print the JSON config block for adding the Git Treeline MCP server to your editor. Supports <code class="text-accent-light">--cursor</code>, <code class="text-accent-light">--vscode</code>, <code class="text-accent-light">--zed</code>, and <code class="text-accent-light">--windsurf</code>.
           </p>
         </div>
 

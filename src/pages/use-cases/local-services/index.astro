@@ -20,7 +20,7 @@ import Terminal from '../../../components/Terminal.astro';
     Your app has sidecars — database UIs, mail catchers, job queues, monitoring dashboards. Each one listens on its own port. You bookmark <code class="text-white">localhost:8081</code>, but so does your teammate, and their Redis Commander is on <code class="text-white">:8083</code> because something else grabbed 8081. Port numbers are meaningless across machines. Named URLs aren't.
   </p>
   <p class="text-muted mb-8">
-    Since Treeline's HTTPS router is already running (via <code class="text-accent-light">gtl serve install</code>), giving a sidecar a name is one command. No extra infrastructure, no config files to share, no Docker networking.
+    If the HTTPS router is running (set up during <code class="text-accent-light">gtl install</code> or via <code class="text-accent-light">gtl serve install</code>), giving a sidecar a name is one command. No extra infrastructure, no config files to share, no Docker networking.
   </p>
 
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Option A: Personal aliases (per machine)</h2>

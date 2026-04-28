@@ -6,7 +6,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
 
 <DocsLayout
   title="Getting started — Git Treeline"
-  description="Install Git Treeline, set up the HTTPS router, initialize your first project, and create a worktree in under five minutes."
+  description="Install Git Treeline, run gtl install to set up your project, and create your first worktree in under five minutes."
   canonical="https://git-treeline.dev/docs/getting-started/"
   activePage="getting-started"
 >
@@ -23,7 +23,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       Git Treeline is a <strong class="text-white">worktree provisioner</strong>: a single CLI that declaratively provisions ports, databases, routing, env files, editor config, and lifecycle hooks for every git worktree. Nothing from Treeline runs inside your app's process or bundle. It writes per-worktree env at setup time.
     </p>
 
-    <h2>Install</h2>
+    <h2>Install the CLI</h2>
     <p>Homebrew (macOS and Linux):</p>
     <div class="mb-6">
       <Terminal>
@@ -53,39 +53,10 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       The binary installs as <code class="text-accent-light">git-treeline</code> with a short alias <code class="text-accent-light">gtl</code>. It also works as <code class="text-accent-light">git treeline</code>.
     </p>
 
-    <h2>Local HTTPS router</h2>
-    <p>
-      Run this once after install. It sets up a background router and trusts a local certificate authority so browsers accept HTTPS for your router domain without warnings. New installs use <code class="text-accent-light">prt.dev</code> by default (wildcard DNS to 127.0.0.1).
+    <h2>Set up a project</h2>
+    <p class="mb-4">
+      From the root of any repo:
     </p>
-    <div class="mb-6">
-      <Terminal>
-        <div class="space-y-2">
-          <p>
-            <span class="text-accent-light">$</span>{' '}
-            <span class="text-white">gtl serve install</span>
-          </p>
-        </div>
-      </Terminal>
-    </div>
-    <p>
-      The CLI prints what each <code class="text-white">sudo</code> prompt is for before asking. Typically two separate steps, each of which may request your password:
-    </p>
-    <ul class="text-muted space-y-2 mb-4 list-disc pl-5">
-      <li>
-        <strong class="text-white">Trust the local CA</strong> in the system keychain so Chrome, Safari, and Firefox accept HTTPS.
-      </li>
-      <li>
-        <strong class="text-white">Port forwarding</strong> so port 443 forwards to the router (no explicit port in URLs).
-      </li>
-    </ul>
-    <p>
-      The installer registers a persistent service (e.g. launchd on macOS) so the router survives reboots. Check status any time with <code class="text-accent-light">gtl serve status</code>.
-    </p>
-    <p class="mb-10">
-      <code class="text-accent-light">gtl serve</code> is not supported on native Windows yet (WSL works). See the <a href="/docs/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking guide</a> for the full picture on routing, proxy, tunnel, and share.
-    </p>
-
-    <h2>Initialize a project</h2>
     <div class="mb-6">
       <Terminal>
         <div class="space-y-2">
@@ -95,7 +66,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           </p>
           <p>
             <span class="text-accent-light">$</span>{' '}
-            <span class="text-white">gtl init --project myapp</span>
+            <span class="text-white">gtl install</span>
           </p>
           <p class="text-muted">
             Detected <span class="text-accent">Rails</span> project
@@ -104,13 +75,42 @@ import DocsPagination from '../../../components/DocsPagination.astro';
             Wrote <span class="text-accent">.treeline.yml</span>
           </p>
           <p class="text-muted">
-            Wrote <span class="text-accent">AGENTS.md</span> (treeline section)
+            Created user config at <span class="text-accent">~/.config/git-treeline/config.yml</span>
+          </p>
+          <p class="text-muted">
+            Post-checkout hook: <span class="text-accent">.git/hooks/post-checkout</span>
+          </p>
+          <p class="text-muted">
+            Allocated port <span class="text-accent">3000</span>
+          </p>
+          <p class="text-muted">
+            Wrote <span class="text-accent">.env.local</span>
+          </p>
+          <p class="text-muted mt-2">
+            Local HTTPS routing lets you access worktrees at <span class="text-accent">https://myapp-main.prt.dev</span>
+          </p>
+          <p class="text-muted">HTTPS router setup: <span class="text-accent">Yes, install now</span></p>
+          <p class="text-muted mt-1 text-accent">
+            Ready. Run <span class="text-white">gtl start</span> to start your server.
           </p>
         </div>
       </Terminal>
     </div>
+    <p>
+      <code class="text-accent-light">gtl install</code> does everything in one step:
+    </p>
+    <ol class="text-muted space-y-2 mb-4 list-decimal pl-5">
+      <li>Creates <code class="text-accent-light">.treeline.yml</code> if missing (auto-detects framework, writes <code class="text-accent-light">AGENTS.md</code>)</li>
+      <li>Creates user config if this is your first project</li>
+      <li>Installs the post-checkout hook for automatic worktree setup</li>
+      <li>Allocates ports and writes the env file for the current worktree</li>
+      <li>Offers to enable the <strong class="text-white">local HTTPS router</strong> (optional)</li>
+    </ol>
+    <p class="mb-4">
+      Every step is idempotent — safe to re-run any time. If you already have a <code class="text-accent-light">.treeline.yml</code>, it skips config generation and goes straight to allocation and setup.
+    </p>
     <p class="mb-10">
-      <code class="text-accent-light">gtl init</code> auto-detects your framework (Rails, Next.js, Vite, Express, Python, Rust, Go) and generates a tailored <code class="text-accent-light">.treeline.yml</code> with commented-out optional config so available features are discoverable. It also writes a treeline section to <code class="text-accent-light">AGENTS.md</code> so MCP-compatible editors know to use <code class="text-accent-light">gtl port</code>. Pass <code class="text-accent-light">--skip-agent-config</code> to skip the agent context file.
+      The HTTPS router prompt (step 5) requires <code class="text-white">sudo</code> to trust a local CA certificate and set up port forwarding. You can skip it and use localhost-only workflows — core commands like <code class="text-accent-light">setup</code>, <code class="text-accent-light">new</code>, <code class="text-accent-light">clone</code>, and <code class="text-accent-light">review</code> work without it. You can always run <code class="text-accent-light">gtl serve install</code> later. See the <a href="/docs/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking guide</a> for the full picture on routing, proxy, tunnel, and share.
     </p>
 
     <h2>Create your first worktree</h2>
@@ -167,7 +167,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       </Terminal>
     </div>
     <p class="mb-10">
-      Requires the <a href="https://cli.github.com/" class="text-accent-light hover:text-accent underline underline-offset-2">GitHub CLI</a> (<code class="text-accent-light">gh</code>). Both <code class="text-accent-light">review</code> and <code class="text-accent-light">new</code> must be run from the main repo, not from inside a worktree.
+      Requires the <a href="https://cli.github.com/" class="text-accent-light hover:text-accent underline underline-offset-2">GitHub CLI</a> (<code class="text-accent-light">gh</code>). From inside a worktree, <code class="text-accent-light">review</code> prompts to switch the current worktree to the PR branch.
     </p>
 
     <h2>Switch branches</h2>

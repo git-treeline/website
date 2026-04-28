@@ -50,9 +50,9 @@ const jsonLd = JSON.stringify({
       </a>
     </div>
     <p class="hidden sm:block text-sm text-muted mt-4">
-      <span class="font-mono text-white/40 mr-2">v0.38.0</span>
-      One-time setup (<code class="text-accent-light">gtl serve install</code>) enables branch-named HTTPS URLs on macOS/Linux.
-      <a href="/use-cases/first-time-setup/" class="text-accent-light hover:text-accent underline underline-offset-2">Full walkthrough&nbsp;&rarr;</a>
+      <span class="font-mono text-white/40 mr-2">v0.39.0</span>
+      Single command setup: <code class="text-accent-light">gtl install</code> handles config, hooks, ports, and optional HTTPS routing.
+      <a href="/docs/getting-started/" class="text-accent-light hover:text-accent underline underline-offset-2">Get started&nbsp;&rarr;</a>
     </p>
   </section>
 
@@ -150,7 +150,7 @@ const jsonLd = JSON.stringify({
 
       <!-- Isolation -->
       <FeatureCard title="Two branches. Two apps. Zero conflicts." link="/features/isolation/" linkText="How isolation works →">
-        <p>Not containers — separate ports, databases, and config for every worktree. Declare what each branch needs in <code class="text-accent-light">.treeline.yml</code> and a git hook installed by <code class="text-accent-light">gtl init</code> allocates resources on every checkout.</p>
+        <p>Not containers — separate ports, databases, and config for every worktree. Declare what each branch needs in <code class="text-accent-light">.treeline.yml</code> and a git hook installed by <code class="text-accent-light">gtl install</code> allocates resources on every checkout.</p>
         <Fragment slot="demo">
           <p class="text-base uppercase tracking-wider text-accent-light mb-2">Environment isolation</p>
           <Terminal>

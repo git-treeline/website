@@ -201,6 +201,13 @@ import DocsPagination from '../../../components/DocsPagination.astro';
             <td class="px-4 py-3">env</td>
           </tr>
           <tr>
+            <td class="px-4 py-3 font-mono text-white">{'{tunnel_host}'}</td>
+            <td class="px-4 py-3">
+              Bare tunnel domain (e.g. <code class="text-white">gtltunnel.dev</code>). For cookie domains, CORS wildcards, or any config that needs the tunnel base without the project-branch subdomain.
+            </td>
+            <td class="px-4 py-3">env</td>
+          </tr>
+          <tr>
             <td class="px-4 py-3 font-mono text-white">{'{resolve:project}'}</td>
             <td class="px-4 py-3">
               Base URL (<code class="text-white">{'http://127.0.0.1:{port}'}</code>) of another project. Default branch matches current worktree; <code class="text-accent-light">gtl link</code> overrides.
@@ -303,8 +310,13 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         <CmdRef name="router.aliases" flags={['default: {}']}>
           <p>User-defined alias name to target port. Managed via <code class="text-accent-light">gtl serve alias</code>.</p>
         </CmdRef>
+        <CmdRef name="router.mode" flags={['default: prompt']}>
+          <p>
+            Controls HTTPS router intent. <code class="text-accent-light">prompt</code> offers router setup during <code class="text-accent-light">gtl install</code>. <code class="text-accent-light">enabled</code> auto-repairs the router when needed. <code class="text-accent-light">disabled</code> suppresses prompts and uses localhost-only workflows.
+          </p>
+        </CmdRef>
         <CmdRef name="editor.name" flags={['auto-detected']}>
-          <p>Detected editor (Cursor, VS Code, Zed, JetBrains). Set by <code class="text-accent-light">gtl init</code>.</p>
+          <p>Detected editor (Cursor, VS Code, Zed, JetBrains). Set by <code class="text-accent-light">gtl install</code> or <code class="text-accent-light">gtl init</code>.</p>
         </CmdRef>
         <CmdRef name="editor.themes" flags={['default: {}']}>
           <p>
