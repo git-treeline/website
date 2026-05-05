@@ -23,7 +23,7 @@ const issueGroup =
       Troubleshooting
     </h1>
     <p class="text-base sm:text-lg text-muted max-w-2xl mb-12">
-      Common issues organized by symptom. Start with <code class="text-accent-light">gtl doctor</code>, which catches many of these automatically.
+      Common issues organized by symptom. Start with <code class="text-accent-light">gtl doctor</code>, which catches many of these automatically. <code class="text-accent-light">gtl doctor --fix</code> applies the remediations the doctor would otherwise just print as hints.
     </p>
 
     <h2>HTTPS router and certificates</h2>
@@ -62,12 +62,39 @@ const issueGroup =
 
       <div>
         <p class="text-white font-medium mb-1">Router version mismatch after upgrading the CLI</p>
-        <p class="text-muted mb-2">After <code class="text-accent-light">brew upgrade git-treeline</code>, the CLI is newer than the running router. <code class="text-accent-light">gtl serve status</code> and <code class="text-accent-light">gtl start</code> will warn. Re-run install to restart with the new binary.</p>
+        <p class="text-muted mb-2">Since v0.40.1, <code class="text-accent-light">brew upgrade git-treeline</code> auto-bounces the router via brew&rsquo;s <code class="text-accent-light">post_install</code>. If the warning still appears (older brew formula, manual install, or a non-brew install), bounce it explicitly. <code class="text-accent-light">gtl serve restart</code> is the fast path &mdash; no sudo, no plist rewrite.</p>
         <Terminal>
-          <p>
-            <span class="text-accent-light">$</span>{' '}
-            <span class="text-white">gtl serve install</span>
-          </p>
+          <div class="space-y-1">
+            <p>
+              <span class="text-accent-light">$</span>{' '}
+              <span class="text-white">gtl serve restart</span>{' '}
+              <span class="text-muted"># fast launchctl bounce</span>
+            </p>
+            <p class="text-muted text-sm mt-1"># Or, if the plist itself needs to be regenerated:</p>
+            <p>
+              <span class="text-accent-light">$</span>{' '}
+              <span class="text-white">gtl serve install</span>
+            </p>
+          </div>
+        </Terminal>
+      </div>
+
+      <div>
+        <p class="text-white font-medium mb-1">Branch URLs broke after a reboot</p>
+        <p class="text-muted mb-2">macOS&rsquo;s built-in pf service loads <code class="text-accent-light">pf.conf</code> at boot but does not enable pf, so the 443&rarr;3001 redirect silently disappeared after every restart. v0.40.1 ships a LaunchDaemon that re-enables pf at boot &mdash; existing installs need to re-run install once to pick it up. <code class="text-accent-light">gtl doctor</code> warns when the daemon is missing.</p>
+        <Terminal>
+          <div class="space-y-1">
+            <p>
+              <span class="text-accent-light">$</span>{' '}
+              <span class="text-white">gtl serve install</span>{' '}
+              <span class="text-muted"># installs the boot-time pf reloader</span>
+            </p>
+            <p class="text-muted text-sm mt-1"># Just need to reload pf right now without a full reinstall?</p>
+            <p>
+              <span class="text-accent-light">$</span>{' '}
+              <span class="text-white">gtl serve reload-pf</span>
+            </p>
+          </div>
         </Terminal>
       </div>
 
@@ -215,8 +242,57 @@ const issueGroup =
       </div>
 
       <div>
+        <p class="text-white font-medium mb-1"><code class="text-accent-light">createdb: ERROR: syntax error at or near &quot;-&quot;</code></p>
+        <p class="text-muted mb-2">A dash in <code class="text-accent-light">project:</code> or <code class="text-accent-light">database.template:</code> flows through <code class="text-accent-light">{'{project}'}</code>/<code class="text-accent-light">{'{template}'}</code> substitution and lands in an identifier Postgres rejects. v0.40.2 validates these at config load and prints a <code class="text-accent-light">gtl rename &lt;suggested&gt;</code> hint. <code class="text-accent-light">gtl rename</code> updates the registry, drops the old DBs, and re-runs setup so worktrees come back up under the sanitized name.</p>
+        <Terminal>
+          <p>
+            <span class="text-accent-light">$</span>{' '}
+            <span class="text-white">gtl rename fitter_app</span>{' '}
+            <span class="text-muted"># sanitized form of fitter-app</span>
+          </p>
+        </Terminal>
+      </div>
+
+      <div>
         <p class="text-white font-medium mb-1">Existing ports conflict with new defaults after upgrade</p>
         <p class="text-muted">v0.31.0 changed <code class="text-accent-light">port.base</code> from 3000 to 3002 and <code class="text-accent-light">port.increment</code> from 10 to 2. Existing allocations keep their ports. Run <code class="text-accent-light">gtl refresh</code> to re-allocate with the new defaults.</p>
+      </div>
+
+      <div>
+        <p class="text-white font-medium mb-1">Registry references worktrees that no longer exist</p>
+        <p class="text-muted mb-2">When directories get deleted outside of <code class="text-accent-light">gtl release</code>, the registry is left holding orphan entries. v0.40.0 adds an audit and safe automatic repair that backs up the registry before pruning.</p>
+        <Terminal>
+          <div class="space-y-1">
+            <p>
+              <span class="text-accent-light">$</span>{' '}
+              <span class="text-white">gtl registry validate</span>{' '}
+              <span class="text-muted"># dry-run audit</span>
+            </p>
+            <p>
+              <span class="text-accent-light">$</span>{' '}
+              <span class="text-white">gtl registry repair</span>{' '}
+              <span class="text-muted"># prune orphans (writes a backup first)</span>
+            </p>
+          </div>
+        </Terminal>
+      </div>
+
+      <div>
+        <p class="text-white font-medium mb-1">Many worktrees lost their allocation after a major upgrade</p>
+        <p class="text-muted mb-2"><code class="text-accent-light">gtl reallocate</code> bulk re-runs setup. Defaults to dry-run; pass <code class="text-accent-light">--force</code> to apply. Useful after registry repair or a Conductor-wide rebuild.</p>
+        <Terminal>
+          <div class="space-y-1">
+            <p>
+              <span class="text-accent-light">$</span>{' '}
+              <span class="text-white">gtl reallocate --all-registry</span>
+            </p>
+            <p>
+              <span class="text-accent-light">$</span>{' '}
+              <span class="text-white">gtl reallocate --from ~/conductor/workspaces</span>{' '}
+              <span class="text-muted"># scan a Conductor-style layout</span>
+            </p>
+          </div>
+        </Terminal>
       </div>
     </div>
 

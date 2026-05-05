@@ -340,6 +340,11 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         <CmdRef name="warnings.safari" flags={['default: true']}>
           <p>Show Safari resolution warnings. Rarely needed with <code class="text-accent-light">prt.dev</code>.</p>
         </CmdRef>
+        <CmdRef name="review.skip_switch_confirm" flags={['default: false']}>
+          <p>
+            When <code class="text-accent-light">true</code>, <code class="text-accent-light">gtl review &lt;PR&gt;</code> from inside an existing worktree switches the current worktree to the PR branch without prompting. For users who always want to switch.
+          </p>
+        </CmdRef>
       </div>
     </div>
 
