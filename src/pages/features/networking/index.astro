@@ -158,7 +158,7 @@ import BenefitCard from '../../../components/BenefitCard.astro';
             <h3 class="text-white font-mono text-lg sm:text-xl mb-2">gtl tunnel</h3>
             <p class="text-base uppercase tracking-wider text-muted mb-3">Public HTTPS on your domain</p>
             <p class="text-base text-muted mb-4">
-              Exposes the worktree at <code class="text-white">{"{route-key}.your-domain"}</code> via Cloudflare. Same route key as <code class="text-accent-light">gtl serve</code>. Multiple named tunnel configs are supported; set a default with <code class="text-accent-light">gtl tunnel default &lt;name&gt;</code> and pass <code class="text-accent-light">--tunnel &lt;name&gt;</code> to override.
+              Exposes the worktree at <code class="text-white">{"{route-key}.your-domain"}</code> via Cloudflare. Same route key as <code class="text-accent-light">gtl serve</code>. Multiple named tunnel configs are supported; set a default with <code class="text-accent-light">gtl tunnel default &lt;name&gt;</code> and pass <code class="text-accent-light">--tunnel &lt;name&gt;</code> to override. Run it from multiple worktrees at once on the same named tunnel and they multiplex through a single <code class="text-accent-light">cloudflared</code> with merged ingress.
             </p>
             <p class="text-base text-muted">
               <strong class="text-white">Best for:</strong> OAuth redirect URIs, webhooks, and any integration that needs a predictable public hostname.

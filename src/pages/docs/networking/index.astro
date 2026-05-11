@@ -281,6 +281,9 @@ import DocsPagination from '../../../components/DocsPagination.astro';
     <p class="text-muted mb-4">
       <strong class="text-white">Named mode</strong> (your domain): after running <code class="text-accent-light">gtl tunnel setup</code>, every <code class="text-accent-light">gtl tunnel</code> maps to <code class="text-white">{'{routeKey}.yourdomain.dev'}</code> using the same route key convention as the local router. Stable, predictable, and branch-specific. Multiple Cloudflare domains are supported.
     </p>
+    <p class="text-muted mb-4">
+      Running <code class="text-accent-light">gtl tunnel</code> from two worktrees at once on the same named tunnel is safe: the first invocation forks a lazy per-tunnel-name daemon under <code class="text-white">~/.cloudflared/</code> (socket mode 0600), subsequent invocations register their hostname+port with it, and the daemon owns the single <code class="text-accent-light">cloudflared</code> with a merged multi-host ingress. The daemon idle-exits about 5s after the last client disconnects; an unexpected <code class="text-accent-light">cloudflared</code> exit propagates a real error to every client instead of leaving you staring at a dead URL.
+    </p>
 
     <h3>gtl share</h3>
     <p class="text-muted mb-4">

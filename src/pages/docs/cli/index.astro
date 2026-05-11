@@ -469,7 +469,9 @@ import DocsPagination from '../../../components/DocsPagination.astro';
             Public HTTPS via Cloudflare. Subcommands: <code class="text-accent-light">tunnel setup</code> for named
             configs, <code class="text-accent-light">tunnel status</code> for connection state, <code
               class="text-accent-light">tunnel default</code
-            > to set the active tunnel, <code class="text-accent-light">tunnel remove</code> to delete.
+            > to set the active tunnel, <code class="text-accent-light">tunnel remove</code> to delete. Concurrent
+            invocations on the same named tunnel multiplex through a lazy-start per-tunnel daemon, so multiple worktrees
+            can share one <code class="text-accent-light">cloudflared</code> with merged multi-host ingress.
           </p>
         </div>
 
