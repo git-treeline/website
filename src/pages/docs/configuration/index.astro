@@ -59,6 +59,17 @@ import DocsPagination from '../../../components/DocsPagination.astro';
             Naming pattern for cloned databases. Tokens: <code class="text-accent-light">{'{template}'}</code>, <code class="text-accent-light">{'{worktree}'}</code>.
           </p>
         </CmdRef>
+        <CmdRef name="database.host" type="string">
+          <p>
+            Explicit host for database connections (e.g. <code class="text-accent-light">localhost</code>). Forces TCP instead of Unix socket connections. Required when GTL is spawned from a native macOS app (e.g. Treeline.app) to avoid Postgres.app's bundle-authorization dialog.
+          </p>
+        </CmdRef>
+        <CmdRef name="database.port" type="int">
+          <p>Database port. Only needed when your PostgreSQL instance runs on a non-default port.</p>
+        </CmdRef>
+        <CmdRef name="database.user" type="string">
+          <p>Database user for connections and <code class="text-accent-light">createdb</code>/<code class="text-accent-light">dropdb</code> operations. Defaults to the current OS user.</p>
+        </CmdRef>
         <CmdRef name="copy_files" type="list" flags={['requires gtl setup']}>
           <p>
             Files to copy from the main worktree. Secrets, credentials, local config that aren't in git. Run during provisioning only.
