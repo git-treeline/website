@@ -234,7 +234,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           <p class="text-base text-muted mt-2">
             Free allocated resources. <code class="text-accent-light">--drop-db</code> removes the cloned database. <code
               class="text-accent-light">--remove-worktree</code
-            > deletes the directory. <code class="text-accent-light">--all</code> releases everything. Warns on unpushed
+            > deletes the directory — works on unmanaged worktrees (created with <code class="text-accent-light">git worktree add</code> directly), respects <code class="text-accent-light">--force</code> and <code class="text-accent-light">--dry-run</code>. <code class="text-accent-light">--all</code> releases everything. Warns on unpushed
             commits.
           </p>
         </div>
@@ -300,7 +300,8 @@ import DocsPagination from '../../../components/DocsPagination.astro';
               href="/docs/hooks/"
               class="text-accent-light hover:text-accent underline underline-offset-2">start hooks</a
             >, syncs env, refreshes editor, launches supervisor. <strong class="text-white">Resume</strong> (supervisor
-            alive): sends start signal. No env sync, no hooks. <code class="text-accent-light">--await</code> blocks
+            alive): sends start signal. No env sync, no hooks. If a server is already running in another terminal,
+            prompts interactively to stop it, restart under the new terminal, or cancel — non-TTY callers (agents, pipes) get a plain error. <code class="text-accent-light">--await</code> blocks
             until TCP accepts on the port. On graceful exit, <code class="text-accent-light">post_stop</code> hooks run
             in reverse.
           </p>
@@ -469,7 +470,9 @@ import DocsPagination from '../../../components/DocsPagination.astro';
             Public HTTPS via Cloudflare. Subcommands: <code class="text-accent-light">tunnel setup</code> for named
             configs, <code class="text-accent-light">tunnel status</code> for connection state, <code
               class="text-accent-light">tunnel default</code
-            > to set the active tunnel, <code class="text-accent-light">tunnel remove</code> to delete. Concurrent
+            > to set the active tunnel, <code class="text-accent-light">tunnel remove</code> to delete, <code
+              class="text-accent-light">tunnel reset</code
+            > to clear all tunnel state (configs, certs, credentials) — accepts <code class="text-accent-light">-y</code> to skip confirmation. Concurrent
             invocations on the same named tunnel multiplex through a lazy-start per-tunnel daemon, so multiple worktrees
             can share one <code class="text-accent-light">cloudflared</code> with merged multi-host ingress.
           </p>

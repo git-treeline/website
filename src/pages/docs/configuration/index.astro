@@ -194,9 +194,23 @@ import DocsPagination from '../../../components/DocsPagination.astro';
             <td class="px-4 py-3">env</td>
           </tr>
           <tr>
-            <td class="px-4 py-3 font-mono text-white">{'{router_domain}'}</td>
+            <td class="px-4 py-3 font-mono text-white">{'{router_host}'}</td>
             <td class="px-4 py-3">
               Router domain only (e.g. <code class="text-white">prt.dev</code>). For host whitelisting and cookie domains.
+            </td>
+            <td class="px-4 py-3">env</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">{'{router_domain}'}</td>
+            <td class="px-4 py-3">
+              Deprecated alias for <code class="text-white">{'{router_host}'}</code>. Kept for backwards compatibility — use <code class="text-white">{'{router_host}'}</code> in new configs.
+            </td>
+            <td class="px-4 py-3">env</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">{'{tunnel_url}'}</td>
+            <td class="px-4 py-3">
+              Full tunnel URL (e.g. <code class="text-white">https://myapp-feature.gtltunnel.dev</code>). Requires a named tunnel via <code class="text-accent-light">gtl tunnel setup</code>.
             </td>
             <td class="px-4 py-3">env</td>
           </tr>
@@ -234,7 +248,10 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         <code class="text-accent-light">{'{router_url}'}</code> is the HTTPS branch URL (e.g. <code class="text-white">https://myapp-feature.prt.dev</code>). Use when a value specifically needs the routed HTTPS origin: CORS allowed origins, CSP directives, or OAuth redirect URIs. Depends on <code class="text-accent-light">gtl serve</code>.
       </p>
       <p>
-        <code class="text-accent-light">{'{router_domain}'}</code> is just the domain (e.g. <code class="text-white">prt.dev</code>). Use for host whitelisting, cookie domains, or wildcard CSP entries. Required if your framework validates the <code class="text-accent-light">Host</code> header.
+        <code class="text-accent-light">{'{router_host}'}</code> is just the domain (e.g. <code class="text-white">prt.dev</code>). Use for host whitelisting, cookie domains, or wildcard CSP entries. Required if your framework validates the <code class="text-accent-light">Host</code> header. (<code class="text-accent-light">{'{router_domain}'}</code> is a deprecated alias for the same value.)
+      </p>
+      <p>
+        <code class="text-accent-light">{'{tunnel_url}'}</code> is the full public tunnel URL (e.g. <code class="text-white">https://myapp-feature.gtltunnel.dev</code>). Use when you need to inject the tunnel origin into your app config — for example, an allowed redirect URI or webhook endpoint that outside services should call. Requires a named tunnel configured via <code class="text-accent-light">gtl tunnel setup</code>.
       </p>
       <p class="text-xs border-t border-surface-border pt-3">
         See <a href="/use-cases/oauth-alias/" class="text-accent-light hover:text-accent underline underline-offset-2">OAuth callbacks across worktrees</a> for a full walkthrough.

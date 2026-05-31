@@ -164,6 +164,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       <li>Per-hostname TLS certificates are issued on demand (SAN includes the hostname + localhost + loopback IPs). No wildcard certs are used due to Safari/Chromium issues with <code class="text-white">*.localhost</code>.</li>
       <li>Incoming requests match by subdomain, and the router reverse-proxies to the target port on loopback. The original <code class="text-white">Host</code> header is preserved. <code class="text-white">X-Forwarded-Proto</code> and <code class="text-white">X-Forwarded-For</code> are set.</li>
       <li>Loop detection: an <code class="text-white">X-Gtl-Hops</code> header is incremented on each pass. At 5 hops, the router returns HTTP 508 with debugging hints (common with Vite, webpack, or Next.js dev servers that proxy back to themselves).</li>
+      <li><strong class="text-white">State-aware status pages</strong>: when a branch URL is hit but the server isn't ready, the router returns a styled HTML page instead of a bare error — <em>Starting</em> (supervisor up, port not listening yet — auto-refreshes every 2s), <em>Not started</em> (supervisor not running — auto-refreshes every 10s), <em>Stopped</em> (supervisor alive but child crashed), or <em>Unreachable</em> (port listening but connection dropped / 502). Dark-mode aware.</li>
     </ol>
 
     <h3>The prt.dev domain</h3>
@@ -279,10 +280,13 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       <strong class="text-white">Quick mode</strong> (no account): generates a disposable <code class="text-white">*.trycloudflare.com</code> URL. No setup, no config, but the URL changes every run.
     </p>
     <p class="text-muted mb-4">
-      <strong class="text-white">Named mode</strong> (your domain): after running <code class="text-accent-light">gtl tunnel setup</code>, every <code class="text-accent-light">gtl tunnel</code> maps to <code class="text-white">{'{routeKey}.yourdomain.dev'}</code> using the same route key convention as the local router. Stable, predictable, and branch-specific. Multiple Cloudflare domains are supported.
+      <strong class="text-white">Named mode</strong> (your domain): after running <code class="text-accent-light">gtl tunnel setup</code>, every <code class="text-accent-light">gtl tunnel</code> maps to <code class="text-white">{'{routeKey}.yourdomain.dev'}</code> using the same route key convention as the local router. Stable, predictable, and branch-specific. Multiple Cloudflare domains are supported. <code class="text-accent-light">gtl tunnel setup</code> validates that credentials exist locally before proceeding.
     </p>
     <p class="text-muted mb-4">
       Running <code class="text-accent-light">gtl tunnel</code> from two worktrees at once on the same named tunnel is safe: the first invocation forks a lazy per-tunnel-name daemon under <code class="text-white">~/.cloudflared/</code> (socket mode 0600), subsequent invocations register their hostname+port with it, and the daemon owns the single <code class="text-accent-light">cloudflared</code> with a merged multi-host ingress. The daemon idle-exits about 5s after the last client disconnects; an unexpected <code class="text-accent-light">cloudflared</code> exit propagates a real error to every client instead of leaving you staring at a dead URL.
+    </p>
+    <p class="text-muted mb-4">
+      <strong class="text-white">Reset:</strong> <code class="text-accent-light">gtl tunnel reset</code> clears all local tunnel state — configs, certs, and credentials. Pass <code class="text-accent-light">-y</code> to skip confirmation. Use this to start fresh if a tunnel is in a broken state.
     </p>
 
     <h3>gtl share</h3>
@@ -370,13 +374,23 @@ import DocsPagination from '../../../components/DocsPagination.astro';
             <td class="px-4 py-3">env, commands.start, hooks</td>
           </tr>
           <tr>
-            <td class="px-4 py-3 text-white font-mono">{'{router_domain}'}</td>
+            <td class="px-4 py-3 text-white font-mono">{'{router_host}'}</td>
             <td class="px-4 py-3">The configured router domain (e.g. <code class="text-white">prt.dev</code>)</td>
+            <td class="px-4 py-3">env only</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">{'{router_domain}'}</td>
+            <td class="px-4 py-3">Deprecated alias for <code class="text-white">{'{router_host}'}</code>. Use <code class="text-white">{'{router_host}'}</code> in new configs.</td>
             <td class="px-4 py-3">env only</td>
           </tr>
           <tr>
             <td class="px-4 py-3 text-white font-mono">{'{router_url}'}</td>
             <td class="px-4 py-3"><code class="text-white">{'https://{routeKey}.{domain}'}</code></td>
+            <td class="px-4 py-3">env only</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-white font-mono">{'{tunnel_url}'}</td>
+            <td class="px-4 py-3">Full tunnel URL (e.g. <code class="text-white">{'https://myapp-feature.gtltunnel.dev'}</code>). Requires a named tunnel configured via <code class="text-white">gtl tunnel setup</code>.</td>
             <td class="px-4 py-3">env only</td>
           </tr>
           <tr>
