@@ -70,6 +70,35 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         <CmdRef name="database.user" type="string">
           <p>Database user for connections and <code class="text-accent-light">createdb</code>/<code class="text-accent-light">dropdb</code> operations. Defaults to the current OS user.</p>
         </CmdRef>
+        <CmdRef name="database.sync_on_create" type="bool" flags={['default: false']}>
+          <p>
+            When <code class="text-accent-light">true</code>, pulls <code class="text-accent-light">merge_target</code> and runs <code class="text-accent-light">commands.migrate</code> in the root repo before cloning a new worktree database. Ensures every new worktree starts with a current schema. Only fires on fresh database clones — refresh, reallocate, and rename flows are unaffected. Requires <code class="text-accent-light">commands.migrate</code>.
+          </p>
+        </CmdRef>
+        <CmdRef name="database.sources" type="map">
+          <p>
+            Named remote sources for <code class="text-accent-light">gtl db pull &lt;env&gt;</code>. Each key is an env name (e.g. <code class="text-accent-light">production</code>, <code class="text-accent-light">staging</code>). Three source types — all store only a variable name or app reference, never a raw URL:
+          </p>
+          <ul class="mt-2 space-y-2 text-sm list-none">
+            <li>
+              <code class="text-accent-light">via: fly</code> — fetches the URL from a Fly app's environment via <code class="text-accent-light">fly ssh console</code>. Requires <code class="text-accent-light">app:</code>. Optional <code class="text-accent-light">var:</code> overrides the env var read on the remote (default <code class="text-accent-light">DATABASE_URL</code>).
+            </li>
+            <li>
+              <code class="text-accent-light">via: heroku</code> — fetches via <code class="text-accent-light">heroku config:get &lt;var&gt; -a &lt;app&gt;</code>. Requires <code class="text-accent-light">app:</code>. Optional <code class="text-accent-light">var:</code> (default <code class="text-accent-light">DATABASE_URL</code>).
+            </li>
+            <li>
+              <code class="text-accent-light">via: env</code> — reads a <code class="text-accent-light">postgres://</code> URL from a local environment variable. Requires <code class="text-accent-light">var:</code> (the env var name, not the URL). Use for platforms without native support: 1Password-injected env, bastion tunnels, Neon, RDS, etc.
+            </li>
+          </ul>
+          <pre class="mt-3 text-xs bg-surface rounded p-3 overflow-x-auto text-muted"><code>database:
+  sources:
+    production:
+      via: fly          # or heroku
+      app: my-fly-app
+    staging:
+      via: env
+      var: STAGING_DATABASE_URL   # name of a local env var</code></pre>
+        </CmdRef>
         <CmdRef name="copy_files" type="list" flags={['requires gtl setup']}>
           <p>
             Files to copy from the main worktree. Secrets, credentials, local config that aren't in git. Run during provisioning only.
@@ -83,6 +112,11 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         <CmdRef name="aliases" type="map">
           <p>
             Project-level router aliases. Map of alias name to port offset. Resolved per-worktree. See <a href="/docs/networking/#aliases" class="text-accent-light hover:text-accent underline underline-offset-2">Networking: Aliases</a>.
+          </p>
+        </CmdRef>
+        <CmdRef name="commands.migrate" type="string">
+          <p>
+            Migration command run by <code class="text-accent-light">gtl db template update</code> and when <code class="text-accent-light">database.sync_on_create</code> is true. Example: <code class="text-accent-light">bin/rails db:migrate</code>.
           </p>
         </CmdRef>
         <CmdRef name="commands.setup" type="list" flags={['requires gtl setup']}>

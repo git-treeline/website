@@ -60,7 +60,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
           <span class="font-mono text-white text-base font-semibold">rename &lt;new-name&gt;</span>
           <p class="text-base text-muted mt-2">
-            Rename a project everywhere it appears: <code class="text-accent-light">.treeline.yml</code>, the registry, and user-config keys (port reservations, editor themes and colors, including <code class="text-accent-light">project/branch</code> variants). Drops the old worktree databases and re-runs setup so each worktree comes back up under the new name with a freshly cloned DB. Names must match <code class="text-accent-light">[a-zA-Z_][a-zA-Z0-9_]*</code> (Postgres identifier rules); the command suggests a sanitized form when given an invalid name.
+            Rename a project: updates <code class="text-accent-light">.treeline.yml</code> in the current branch and migrates user-config keys (port reservations, editor themes and colors, including <code class="text-accent-light">project/branch</code> variants), then prints the list of worktrees that need re-provisioning. Each worktree self-heals on the next <code class="text-accent-light">gtl setup</code> after rebasing — setup detects the name mismatch, drops the old database, releases the stale registry entry, and allocates fresh under the new name. Names must match <code class="text-accent-light">[a-zA-Z_][a-zA-Z0-9_]*</code> (Postgres identifier rules); the command suggests a sanitized form when given an invalid name.
           </p>
         </div>
 
@@ -179,11 +179,11 @@ import DocsPagination from '../../../components/DocsPagination.astro';
               >--all-registry</span
             ><span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
-              >--force</span
+              >--apply</span
             >
           </div>
           <p class="text-base text-muted mt-2">
-            Bulk re-runs setup across many worktrees. Three modes: explicit paths, <code class="text-accent-light">--from &lt;dir&gt;</code> to scan a Conductor-style layout, or <code class="text-accent-light">--all-registry</code> for every entry whose directory still exists. Defaults to dry-run; pass <code class="text-accent-light">--force</code> to apply.
+            Bulk re-runs setup across many worktrees. Three modes: explicit paths, <code class="text-accent-light">--from &lt;dir&gt;</code> to scan a Conductor-style layout, or <code class="text-accent-light">--all-registry</code> for every entry whose directory still exists. Defaults to dry-run; pass <code class="text-accent-light">--apply</code> to run setup.
           </p>
         </div>
 
@@ -415,10 +415,9 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">serve alias &lt;name&gt; [port]</span>
+          <span class="font-mono text-white text-base font-semibold">serve alias [name] [port]</span>
           <p class="text-base text-muted mt-2">
-            Register a custom hostname on the router. From a worktree directory, port is auto-detected from the allocation. <code class="text-accent-light">--remove &lt;name&gt;</code> to
-            unregister. Hot-reloaded within 5 seconds.
+            Add, remove, or list static subdomain aliases on the router. From a worktree directory, port is auto-detected from the allocation. Pass <code class="text-accent-light">--remove</code> to unregister. With no arguments, lists all aliases. Hot-reloaded within 5 seconds.
           </p>
         </div>
 
@@ -575,6 +574,48 @@ import DocsPagination from '../../../components/DocsPagination.astro';
             >
           </div>
           <p class="text-base text-muted mt-2">Print the worktree's database name.</p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">db pull &lt;env&gt;</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--dry-run</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--force</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--debug</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Resolve a remote source from <code class="text-accent-light">database.sources</code> in <code class="text-accent-light">.treeline.yml</code> (<code class="text-accent-light">via: fly</code>, <code class="text-accent-light">via: heroku</code>, or <code class="text-accent-light">via: env</code>), pg_dump it, and restore into the worktree database. The dump is retained locally — run <code class="text-accent-light">db refresh</code> to reset from it without re-downloading.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">db refresh [env]</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--force</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--debug</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Drop and re-import from a previously pulled sample. No network access. With no argument, refreshes from the most recently pulled env.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">db template update</span>
+          <p class="text-base text-muted mt-2">
+            Advance the root template database: pulls <code class="text-accent-light">merge_target</code> in the root repo, then runs <code class="text-accent-light">commands.migrate</code>. The root repo must have a clean working tree. Existing worktree databases are not affected — run <code class="text-accent-light">gtl db reset</code> in a worktree to re-clone from the updated template.
+          </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
@@ -750,7 +791,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
           <span class="font-mono text-white text-base font-semibold">mcp-config</span>
           <p class="text-base text-muted mt-2">
-            Print the JSON config block for adding the Git Treeline MCP server to your editor. Supports <code class="text-accent-light">--cursor</code>, <code class="text-accent-light">--vscode</code>, <code class="text-accent-light">--zed</code>, and <code class="text-accent-light">--windsurf</code>.
+            Print the MCP server config block for all supported editors (Cursor, Claude Code, and more). Copy the relevant snippet into your editor's MCP config.
           </p>
         </div>
 
