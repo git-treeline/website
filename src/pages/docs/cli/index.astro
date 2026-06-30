@@ -797,7 +797,15 @@ import DocsPagination from '../../../components/DocsPagination.astro';
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
           <span class="font-mono text-white text-base font-semibold">version</span>
-          <p class="text-base text-muted mt-2">Print version.</p>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--json</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Print version. <code class="text-accent-light">--json</code> outputs <code class="text-accent-light">{"{"}"cli": "0.43.15", "router": "0.43.15"{"}"}</code> — or <code class="text-accent-light">"router": null</code> when no router is running. Designed as a stable contract for tooling to read the running router version without scraping human-readable output.
+          </p>
         </div>
       </div>
     </div>

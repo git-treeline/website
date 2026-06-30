@@ -77,9 +77,25 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       </Terminal>
     </div>
 
+    <h2>Resilience</h2>
+    <p class="text-muted mb-4">
+      <code class="text-accent-light">gtl start</code> handles several edge cases automatically so you don&rsquo;t have to track down orphaned processes:
+    </p>
+    <ul class="text-muted space-y-3 list-disc pl-5 mb-10">
+      <li>
+        <strong class="text-white">Terminal closed mid-session.</strong> The supervisor handles SIGHUP and exits cleanly when a terminal window closes, rather than surviving as an unresponsive zombie. If you re-run <code class="text-accent-light">gtl start</code> and the old supervisor is alive but its server is stopped, Treeline kills the orphaned supervisor and starts fresh in the current terminal so output appears where you&rsquo;re looking.
+      </li>
+      <li>
+        <strong class="text-white">Port already occupied.</strong> Before launching, <code class="text-accent-light">gtl start</code> checks whether the allocated port is already in use. If it identifies the process via <code class="text-accent-light">tmp/pids/server.pid</code> as the culprit, it prompts to kill it — rather than letting your framework fail with a cryptic address-in-use error.
+      </li>
+      <li>
+        <strong class="text-white">Unresponsive supervisor.</strong> If the supervisor process exists but its socket is unresponsive, <code class="text-accent-light">gtl stop --kill</code> falls back to force-killing via the PID file.
+      </li>
+    </ul>
+
     <h2>Security</h2>
     <p class="mb-10">
-      The supervisor communicates over a Unix socket with <code class="text-accent-light">0600</code> permissions (owner-only). Read deadlines and client timeouts prevent hung connections. The socket path is derived from a SHA-256 hash of the worktree path.
+      The supervisor communicates over a Unix socket with <code class="text-accent-light">0600</code> permissions (owner-only). Read deadlines and client timeouts prevent hung connections from holding the supervisor&rsquo;s internal lock. The socket path is derived from a SHA-256 hash of the worktree path.
     </p>
 
     <h2>TUI dashboard</h2>

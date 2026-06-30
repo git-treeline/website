@@ -310,8 +310,8 @@ const issueGroup =
       </div>
 
       <div>
-        <p class="text-white font-medium mb-1">Stale supervisor socket</p>
-        <p class="text-muted">If a previous supervisor crashed without cleanup, the socket file may linger. Since v0.30.0, <code class="text-accent-light">gtl start</code> detects this and reports the conflict. Remove the stale socket or kill the orphan process.</p>
+        <p class="text-white font-medium mb-1">Stale supervisor socket or orphaned process</p>
+        <p class="text-muted">Since v0.43.13, <code class="text-accent-light">gtl start</code> handles most orphaned-supervisor cases automatically: if the supervisor is alive but unresponsive, it kills it and starts fresh. If the allocated port is already occupied and <code class="text-accent-light">tmp/pids/server.pid</code> points to the culprit, it prompts to kill the process before starting. For a supervisor that exists but won&rsquo;t respond to stop commands, <code class="text-accent-light">gtl stop --kill</code> falls back to the PID file directly.</p>
       </div>
     </div>
 
