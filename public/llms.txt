@@ -1,0 +1,225 @@
+# git-treeline
+
+> git-treeline (CLI alias: `gtl`) is a **worktree provisioner** for developers who run multiple git branches simultaneously. It declaratively allocates ports, databases, routing, env files, editor config, and lifecycle hooks for every git worktree — one CLI, one YAML file. Nothing from Treeline runs inside your app's process or bundle.
+
+## Overview
+
+git-treeline solves a specific problem: git worktrees are easy to create (`git worktree add` takes seconds) but hard to run because every checkout shares the same ports, databases, and config. Treeline provisions each worktree with isolated resources so you can run a feature branch, a PR review, a bugfix, and main — all at the same time.
+
+Install:
+```
+brew install git-treeline/tap/git-treeline
+```
+
+Or: `go install github.com/git-treeline/git-treeline@latest`
+
+Binary releases: https://github.com/git-treeline/git-treeline/releases
+
+Current version: v0.43.10
+
+Invoked as `git-treeline`, `git treeline`, or `gtl`. All three are equivalent.
+
+## Core workflow
+
+1. **Install**: `gtl install` — one-time setup per project. Creates `.treeline.yml`, installs the post-checkout hook, allocates ports, writes env file, optionally enables local HTTPS router.
+2. **New worktree**: `gtl new feature-auth` — creates a git worktree, allocates a port, clones the database, writes `.env.local`, runs setup commands.
+3. **Start server**: `gtl start` — runs your app under a managed supervisor. Syncs env on fresh start.
+4. **PR review**: `gtl review 42 --start` — fetches PR #42 into a worktree with full setup, starts server.
+5. **Switch branch**: `gtl switch feature-payments` — fetches, checks out, refreshes env.
+6. **Release**: `gtl release --drop-db --remove-worktree` — frees port, drops database, removes directory.
+
+## Key concepts
+
+- **Provisioning**: On `gtl new` or `gtl setup`, Treeline allocates ports, clones the PostgreSQL or SQLite database, copies files, writes env, and runs setup commands. All idempotent.
+- **Env file**: Treeline writes a `.env.local` (or configured path) with interpolated values: `{port}`, `{database}`, `{router_url}`, `{resolve:project}`, etc.
+- **Registry**: A local file tracking all worktree allocations (project → branch → port + database). `gtl status` shows it; `gtl registry validate/repair` audits it.
+- **Supervisor**: `gtl start` runs your `commands.start` under a Unix socket supervisor. `gtl stop`, `gtl restart`, `gtl dashboard` all operate through it.
+- **HTTPS router** (`gtl serve`): Optional local CA + reverse proxy that serves each worktree at a named HTTPS URL like `https://myapp-feature-auth.prt.dev`. One-time `sudo` setup.
+- **Resolve / link**: `{resolve:project}` in env expands to the base URL of another project's current worktree. `gtl link` overrides which branch of another project you connect to.
+
+## Config file: .treeline.yml
+
+Lives at project root, committed to git. Key fields:
+
+```yaml
+project: myapp           # namespace for ports and DB names
+port_count: 1            # ports per worktree (default 1)
+env_file: .env.local     # where to write allocated env
+
+database:
+  adapter: postgresql    # or sqlite
+  template: myapp_dev    # source DB to clone from
+  pattern: "{template}_{worktree}"
+  sync_on_create: false  # pull merge_target + migrate before cloning
+  sources:               # for gtl db pull
+    production:
+      via: fly
+      app: my-fly-app
+    staging:
+      via: env
+      var: STAGING_DATABASE_URL
+
+copy_files:
+  - config/master.key    # copied from main worktree at setup
+
+env:                     # written to env_file, supports tokens
+  PORT: "{port}"
+  DATABASE_URL: "postgresql://localhost/{database}"
+  APP_URL: "http://localhost:{port}"
+
+commands:
+  setup:
+    - bundle install
+    - bin/rails db:migrate
+  start: bin/rails server -p {port}
+  migrate: bin/rails db:migrate  # used by db template update + sync_on_create
+
+editor:
+  title: "{project} · {branch} :{port}"
+  color: auto            # or hex, e.g. "#3b82f6"
+
+hooks:
+  post_setup:
+    - echo "Ready on port {port}"
+  oauth:                 # named start hook
+    pre_start: gtl serve alias myapp-oauth {port}
+    post_stop: gtl serve alias myapp-oauth --remove
+    auto: false
+```
+
+## Interpolation tokens (used in env map)
+
+| Token | Value |
+|-------|-------|
+| `{port}` | Primary allocated port |
+| `{port_2}` … `{port_10}` | Additional ports (when port_count > 1) |
+| `{database}` | Cloned database name |
+| `{redis_url}` | Redis URL with namespace |
+| `{redis_prefix}` | Redis key prefix |
+| `{project}` | Project name |
+| `{worktree}` | Worktree directory name |
+| `{branch}` | Branch name (editor.title only) |
+| `{router_url}` | HTTPS URL, e.g. `https://myapp-feature.prt.dev` |
+| `{router_host}` | Router domain only, e.g. `prt.dev` |
+| `{tunnel_url}` | Public tunnel URL |
+| `{tunnel_host}` | Tunnel base domain |
+| `{resolve:project}` | Base URL of another project's worktree |
+| `{resolve:project/branch}` | Same, pinned to a specific branch |
+
+## CLI reference (summary)
+
+### Setup
+- `install` — full one-step setup for new developers
+- `init` — generate `.treeline.yml` only (auto-detects framework, writes AGENTS.md)
+- `rename <new-name>` — rename project, migrate registry
+- `new <branch>` [--base] [--start] [--open] — create worktree + provision + optional start
+- `review <PR#>` [--start] [--open] — fetch GitHub PR into worktree
+- `switch <branch-or-PR#>` [--setup] [--restart] — switch branch in current worktree
+- `setup [path]` [--dry-run] — full provisioning (idempotent)
+- `refresh` — re-allocate all worktrees
+- `reallocate [paths]` [--all-registry] [--apply] — bulk re-run setup
+- `release [path]` [--drop-db] [--remove-worktree] [--all] — free resources
+- `prune` [--stale] [--merged] [--drop-db] [--remove-worktree] — clean orphans
+- `clone <repo>` — clone + detect + setup
+- `registry validate / repair / forget <path>` — audit and repair the allocation registry
+
+### Server management
+- `start` [--with <hooks>] [--await] — fresh start or resume supervisor
+- `stop` [--kill] — stop server (supervisor stays alive unless --kill)
+- `restart` — sync env, push vars, restart server
+- `port` [--json] — print allocated port
+- `open` — open in browser
+- `routes` [--json] — print all routing URLs
+- `dashboard` / `dash` / `ui` — TUI showing all worktrees and server state
+
+### Networking (HTTPS router)
+- `serve install` — generate CA, trust, port-forward 443→router, register background service
+- `serve status` — show router state and routes
+- `serve restart` [--if-installed] — bounce router (no sudo needed)
+- `serve reload-pf` — re-apply pf rules after reboot
+- `serve alias [name] [port]` [--remove] — manage subdomain aliases
+- `serve uninstall` — remove service, port forwarding, CA
+- `serve hosts sync / clean` — manage /etc/hosts entries
+- `proxy <port> [target]` [--tls] — forward a local port to another local port with optional TLS
+- `tunnel setup / start / status` — Cloudflare named tunnel for public access
+- `share` — quick public URL via anonymous tunnel (no setup)
+
+### Environment & database
+- `env sync` — rewrite env file from current config
+- `env get <key>` / `env set <key> <val>` — read/write env vars
+- `db name` — print current database name
+- `db reset` — drop and re-clone database from template
+- `db restore <file>` — restore from a dump file
+- `db drop` — drop database without re-clone
+- `db refresh` — pull latest from template without dropping (PostgreSQL only)
+- `db pull <env>` — pull a production/staging database (via fly, heroku, or env var)
+- `db template update` — migrate template database to latest schema (uses commands.migrate)
+
+### Navigation & status
+- `status` — show all allocations for current project
+- `list` [--json] — list all worktrees with ports, databases, and server state
+- `where <project> [branch]` — print path to a worktree
+- `cd <branch>` — print path to a worktree (for shell `cd $(gtl cd ...)` patterns)
+- `doctor` — check config, env, ports, supervisor, framework guidance
+
+### Config & editor
+- `config list / get / set / path / edit` — manage user config
+- `editor refresh` — re-apply editor config (title, color, theme) to current worktree
+- `mcp-config` — print MCP server config block for your editor
+
+### Cross-worktree
+- `resolve <project> [branch]` — print URL of another project's worktree
+- `link <project> [branch]` — pin another project's branch for resolve in this worktree
+- `unlink <project>` — remove link override
+
+### Agent integration
+- `--json` flag on most commands for structured output
+- `gtl mcp` — start the MCP server (Model Context Protocol) for AI agent integration
+- MCP tools: `status`, `list`, `port`, `db_name`, `routes`, `resolve`, `env`, `where`, `doctor`, `config_get`, `new`, `setup`, `link`, `unlink`, `env_sync`, `config_set`, `start`, `stop`, `restart`
+- MCP resources: `gtl://allocations`, `gtl://config/user`
+- `gtl init` writes an `AGENTS.md` section with project-specific context for AI agents
+
+## Networking architecture
+
+- **Port allocation**: Each worktree gets N consecutive ports (default 1) from a shared registry. Base port default: 3002, increment: 2. Ports 3000 and 3001 reserved for proxy and router.
+- **HTTPS router** (`gtl serve`): Reverse proxy + local CA. Serves `https://{project}-{branch}.{domain}` (default domain: `prt.dev`). macOS: uses pf for 443→router forwarding + LaunchDaemon for boot persistence. Linux: systemd user service.
+- **Route key**: `{project}-{branch}` sanitized. Long names auto-truncated with hash suffix (DNS label limit 63 chars).
+- **Aliases**: Named subdomains pointing at any port. Static (per config) or dynamic (via `gtl serve alias`). Hot-reloaded within 5 seconds.
+- **Port proxy** (`gtl proxy`): Forward a local port to another target port, with optional TLS. Listens on 3000 by default.
+- **Tunnels**: Named Cloudflare tunnels (`gtl tunnel`) for permanent public access; `gtl share` for anonymous one-shot tunnels.
+
+## Database management
+
+- PostgreSQL: databases cloned with `createdb --template`. Pattern default: `{template}_{worktree}`.
+- SQLite: `.sqlite` file copied from template path.
+- `database.sources` configures remote pull targets (Fly, Heroku, or local env var holding a postgres:// URL).
+- `database.sync_on_create: true` pulls merge_target and runs `commands.migrate` in the root repo before cloning each new worktree's database — keeps new worktrees current.
+- `gtl db template update` migrates the template database itself (for keeping the source up to date).
+
+## User config
+
+Per-machine settings at `~/Library/Application Support/git-treeline/` (macOS) or `~/.config/git-treeline/` (Linux). Key settings:
+
+- `port.base` (default 3002), `port.increment` (default 2)
+- `port.reservations`: pin specific projects/branches to fixed ports
+- `redis.strategy`: `prefixed` (key namespacing) or `database` (separate Redis DBs)
+- `router.domain` (default `prt.dev`), `router.port` (default 3001), `router.mode` (prompt/enabled/disabled)
+- `worktree.path`: where `gtl new` creates worktrees, supports `{project}` and `{branch}` tokens
+- `editor.name`, `editor.themes`, `editor.colors`: per-project or per-branch overrides
+- `tunnel.name`, `tunnel.domain`: Cloudflare tunnel config
+- `review.skip_switch_confirm`: skip confirmation when `gtl review` switches current worktree
+
+## Docs
+
+- [Getting started](https://git-treeline.dev/docs/getting-started/)
+- [Lifecycle](https://git-treeline.dev/docs/lifecycle/)
+- [Configuration reference](https://git-treeline.dev/docs/configuration/)
+- [CLI reference](https://git-treeline.dev/docs/cli/)
+- [Database](https://git-treeline.dev/docs/database/)
+- [Networking](https://git-treeline.dev/docs/networking/)
+- [Hooks](https://git-treeline.dev/docs/hooks/)
+- [Supervisor](https://git-treeline.dev/docs/supervisor/)
+- [Editor customization](https://git-treeline.dev/docs/editor/)
+- [Cross-worktree resolve](https://git-treeline.dev/docs/resolve/)
+- [AI agent integration](https://git-treeline.dev/docs/agents/)
+- [Troubleshooting](https://git-treeline.dev/docs/troubleshooting/)
