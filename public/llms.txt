@@ -15,7 +15,7 @@ Or: `go install github.com/git-treeline/git-treeline@latest`
 
 Binary releases: https://github.com/git-treeline/git-treeline/releases
 
-Current version: v0.43.15
+Current version: v0.43.16
 
 Invoked as `git-treeline`, `git treeline`, or `gtl`. All three are equivalent.
 
@@ -166,7 +166,7 @@ hooks:
 - `config list / get / set / path / edit` — manage user config
 - `editor refresh` — re-apply editor config (title, color, theme) to current worktree
 - `mcp-config` — print MCP server config block for your editor
-- `version` [--json] — print CLI version; `--json` returns `{"cli": "0.43.15", "router": "0.43.15"}` (router is null when not running)
+- `version` [--json] — print CLI version; `--json` returns `{"cli": "0.43.16", "router": "0.43.16"}` (router is null when not running)
 
 ### Cross-worktree
 - `resolve <project> [branch]` — print URL of another project's worktree
