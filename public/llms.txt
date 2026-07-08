@@ -15,7 +15,7 @@ Or: `go install github.com/git-treeline/git-treeline@latest`
 
 Binary releases: https://github.com/git-treeline/git-treeline/releases
 
-Current version: v0.43.16
+Current version: v0.45.0
 
 Invoked as `git-treeline`, `git treeline`, or `gtl`. All three are equivalent.
 
@@ -113,8 +113,8 @@ hooks:
 - `init` — generate `.treeline.yml` only (auto-detects framework, writes AGENTS.md)
 - `rename <new-name>` — rename project, migrate registry
 - `new <branch>` [--base] [--start] [--open] — create worktree + provision + optional start
-- `review <PR#>` [--start] [--open] — fetch GitHub PR into worktree
-- `switch <branch-or-PR#>` [--setup] [--restart] — switch branch in current worktree
+- `review <[#]PR#>` [--start] [--open] — fetch GitHub PR into worktree (leading `#` accepted, e.g. `gtl review #42`)
+- `switch <branch-or-[#]PR#>` [--setup] [--restart] — switch branch in current worktree (leading `#` on PR numbers accepted)
 - `setup [path]` [--dry-run] — full provisioning (idempotent)
 - `refresh` — re-allocate all worktrees
 - `reallocate [paths]` [--all-registry] [--apply] — bulk re-run setup
@@ -156,7 +156,7 @@ hooks:
 - `db template update` — migrate template database to latest schema (uses commands.migrate)
 
 ### Navigation & status
-- `status` — show all allocations for current project
+- `status` — show all allocations for current project; `--json` includes `related[]` cross-worktree relationships
 - `list` [--json] — list all worktrees with ports, databases, and server state
 - `where <project> [branch]` — print path to a worktree
 - `cd <branch>` — print path to a worktree (for shell `cd $(gtl cd ...)` patterns)
@@ -166,12 +166,14 @@ hooks:
 - `config list / get / set / path / edit` — manage user config
 - `editor refresh` — re-apply editor config (title, color, theme) to current worktree
 - `mcp-config` — print MCP server config block for your editor
-- `version` [--json] — print CLI version; `--json` returns `{"cli": "0.43.16", "router": "0.43.16"}` (router is null when not running)
+- `version` [--json] — print CLI version; `--json` returns `{"cli": "0.45.0", "router": "0.45.0"}` (router is null when not running)
 
 ### Cross-worktree
 - `resolve <project> [branch]` — print URL of another project's worktree
 - `link <project> [branch]` — pin another project's branch for resolve in this worktree
 - `unlink <project>` — remove link override
+- `relate <path>` — create a durable cross-worktree relationship (persists in registry; appears in `status --json` as `related[]`)
+- `unrelate <path>` — remove a cross-worktree relationship
 
 ### Agent integration
 - `--json` flag on most commands for structured output
