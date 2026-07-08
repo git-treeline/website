@@ -97,7 +97,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">review &lt;PR#&gt;</span>
+          <span class="font-mono text-white text-base font-semibold">review &lt;[#]PR#&gt;</span>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -113,12 +113,12 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           <p class="text-base text-muted mt-2">
             Fetch a GitHub PR into a new worktree with full setup. Requires <code class="text-accent-light"
               >gh</code
-            > CLI. From inside a worktree, prompts to switch the current worktree to the PR branch.
+            > CLI. From inside a worktree, prompts to switch the current worktree to the PR branch. Leading <code class="text-accent-light">#</code> is accepted (<code class="text-accent-light">gtl review #42</code>).
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">switch &lt;branch-or-PR#&gt;</span>
+          <span class="font-mono text-white text-base font-semibold">switch &lt;branch-or-[#]PR#&gt;</span>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -131,7 +131,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           <p class="text-base text-muted mt-2">
             Switch a worktree to a different branch or PR. Fetches, checks out, updates registry, refreshes env. <code
               class="text-accent-light">--setup</code
-            > re-runs setup commands. <code class="text-accent-light">--restart</code> bounces the supervised server.
+            > re-runs setup commands. <code class="text-accent-light">--restart</code> bounces the supervised server. Leading <code class="text-accent-light">#</code> on PR numbers is accepted.
           </p>
         </div>
 
@@ -531,6 +531,18 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           <span class="font-mono text-white text-base font-semibold">unlink &lt;project&gt;</span>
           <p class="text-base text-muted mt-2">Remove a link override.</p>
         </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">relate &lt;path&gt;</span>
+          <p class="text-base text-muted mt-2">
+            Create a durable relationship between the current worktree and another worktree at <code class="text-accent-light">&lt;path&gt;</code>. Relationships persist in the registry and appear in <code class="text-accent-light">status --json</code> as <code class="text-accent-light">related[]</code>.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">unrelate &lt;path&gt;</span>
+          <p class="text-base text-muted mt-2">Remove a cross-worktree relationship.</p>
+        </div>
       </div>
     </div>
 
@@ -672,7 +684,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           <p class="text-base text-muted mt-2">
             Show all allocations. <code class="text-accent-light">--check</code> probes ports. <code
               class="text-accent-light">--watch</code
-            > auto-refreshes. <code class="text-accent-light">--json</code> for structured output.
+            > auto-refreshes. <code class="text-accent-light">--json</code> for structured output; includes a <code class="text-accent-light">related[]</code> array of cross-worktree relationships.
           </p>
         </div>
 
