@@ -202,8 +202,14 @@ import DocsPagination from '../../../components/DocsPagination.astro';
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
           <span class="font-mono text-white text-base font-semibold">registry validate</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--json</span
+            >
+          </div>
           <p class="text-base text-muted mt-2">
-            Read-only audit of the worktree registry. Reports orphans (entries pointing at directories that no longer exist) and other inconsistencies without changing anything.
+            Read-only audit of the worktree registry. Reports orphans (entries pointing at directories that no longer exist) and other inconsistencies without changing anything. <code class="text-accent-light">--json</code> emits structured output for tooling.
           </p>
         </div>
 
@@ -285,6 +291,22 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           <p class="text-base text-muted mt-2">
             Clone, detect framework, generate <code class="text-accent-light">.treeline.yml</code> if missing, run
             setup. Does not auto-start.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">nuke</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--force</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--dry-run</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Machine-wide recovery. Stops all supervised servers, kills any stale supervisor processes, and cleans up orphaned state across all projects registered on this machine. Prompts for confirmation; pass <code class="text-accent-light">--force</code> to skip. <code class="text-accent-light">--dry-run</code> shows what would be affected without acting.
           </p>
         </div>
       </div>
@@ -431,6 +453,13 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           <span class="font-mono text-white text-base font-semibold">serve alias [name] [port]</span>
           <p class="text-base text-muted mt-2">
             Add, remove, or list static subdomain aliases on the router. From a worktree directory, port is auto-detected from the allocation. Pass <code class="text-accent-light">--remove</code> to unregister. With no arguments, lists all aliases. Hot-reloaded within 5 seconds.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">serve logs</span>
+          <p class="text-base text-muted mt-2">
+            Stream or print recent router logs. Useful for diagnosing routing failures and TLS errors without tailing a file manually.
           </p>
         </div>
 
@@ -649,23 +678,47 @@ import DocsPagination from '../../../components/DocsPagination.astro';
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
               >--from &lt;db&gt;</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--force</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--dry-run</span
             >
           </div>
           <p class="text-base text-muted mt-2">
-            Drop and re-clone from template. <code class="text-accent-light">--from</code> overrides the source.
+            Drop and re-clone from template. <code class="text-accent-light">--from</code> overrides the source. Prompts for confirmation; pass <code class="text-accent-light">--force</code> to skip or <code class="text-accent-light">--dry-run</code> to preview.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
           <span class="font-mono text-white text-base font-semibold">db restore &lt;file&gt;</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--force</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--dry-run</span
+            >
+          </div>
           <p class="text-base text-muted mt-2">
-            Drop and restore from a <code class="text-accent-light">pg_dump</code> file. Auto-detects format.
+            Drop and restore from a <code class="text-accent-light">pg_dump</code> file. Auto-detects format. Prompts for confirmation; pass <code class="text-accent-light">--force</code> to skip.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
           <span class="font-mono text-white text-base font-semibold">db drop</span>
-          <p class="text-base text-muted mt-2">Drop the worktree's database without re-cloning.</p>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--force</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--dry-run</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">Drop the worktree's database without re-cloning. Prompts for confirmation; pass <code class="text-accent-light">--force</code> to skip.</p>
         </div>
       </div>
     </div>
@@ -793,7 +846,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
           <span class="font-mono text-white text-base font-semibold">completion bash|zsh|fish|powershell</span>
           <p class="text-base text-muted mt-2">
-            Print shell completion script. Includes dynamic completions for config keys and project names.
+            Print shell completion script. Works for all three invocation forms (<code class="text-accent-light">gtl</code>, <code class="text-accent-light">git-treeline</code>, <code class="text-accent-light">git treeline</code>). Includes dynamic completions for config keys and project names.
           </p>
         </div>
       </div>

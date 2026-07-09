@@ -15,7 +15,7 @@ Or: `go install github.com/git-treeline/git-treeline@latest`
 
 Binary releases: https://github.com/git-treeline/git-treeline/releases
 
-Current version: v0.47.0
+Current version: v0.48.0
 
 Invoked as `git-treeline`, `git treeline`, or `gtl`. All three are equivalent.
 
@@ -131,7 +131,8 @@ hooks:
 - `release [path]` [--drop-db] [--remove-worktree] [--all] — free resources
 - `prune` [--stale] [--merged] [--drop-db] [--remove-worktree] — clean orphans
 - `clone <repo>` — clone + detect + setup
-- `registry validate / repair / forget <path>` — audit and repair the allocation registry
+- `nuke` [--force] [--dry-run] — machine-wide recovery: stop all supervised servers, kill stale supervisors, clean orphaned state across all projects; prompts for confirmation
+- `registry validate` [--json] / `repair` / `forget <path>` — audit and repair the allocation registry
 
 ### Server management
 - `start` [--with <hooks>] [--await] — fresh start or resume supervisor
@@ -148,6 +149,7 @@ hooks:
 - `serve restart` [--if-installed] — bounce router (no sudo needed)
 - `serve reload-pf` — re-apply pf rules after reboot
 - `serve alias [name] [port]` [--remove] — manage subdomain aliases
+- `serve logs` — stream or print recent router logs
 - `serve uninstall` — remove service, port forwarding, CA
 - `serve hosts sync / clean` — manage /etc/hosts entries
 - `proxy <port> [target]` [--tls] — forward a local port to another local port with optional TLS
@@ -158,9 +160,9 @@ hooks:
 - `env sync` — rewrite env file from current config
 - `env get <key>` / `env set <key> <val>` — read/write env vars
 - `db name` — print current database name
-- `db reset` — drop and re-clone database from template
-- `db restore <file>` — restore from a dump file
-- `db drop` — drop database without re-clone
+- `db reset` [--from <db>] [--force] [--dry-run] — drop and re-clone database from template; prompts for confirmation
+- `db restore <file>` [--force] [--dry-run] — restore from a dump file; prompts for confirmation
+- `db drop` [--force] [--dry-run] — drop database without re-clone; prompts for confirmation
 - `db refresh` — pull latest from template without dropping (PostgreSQL only)
 - `db pull <env>` — pull a production/staging database (via fly, heroku, or env var)
 - `db template update` — migrate template database to latest schema (uses commands.migrate)
@@ -170,7 +172,7 @@ hooks:
 - `list` [--json] — list all worktrees with ports, databases, and server state
 - `where <project> [branch]` — print path to a worktree
 - `cd <branch>` — print path to a worktree (for shell `cd $(gtl cd ...)` patterns)
-- `doctor` — check config, env, ports, supervisor, framework guidance
+- `doctor` [--json] — check config, env, ports, supervisor, framework guidance; `--json` emits structured diagnostics
 
 ### Config & editor
 - `config list / get / set / path / edit` — manage user config
