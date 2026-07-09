@@ -99,6 +99,44 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       via: env
       var: STAGING_DATABASE_URL   # name of a local env var</code></pre>
         </CmdRef>
+        <CmdRef name="provision" type="section">
+          <p>
+            Host-level baseline for <code class="text-accent-light">gtl provision</code>. Declaring the section (even partially) opts the repo in: a provision run then also installs pinned language runtimes via <a href="https://mise.jdx.dev" class="text-accent-light hover:text-accent underline underline-offset-2">mise</a> — those come from the repo&rsquo;s own version files (<code class="text-accent-light">.ruby-version</code>, <code class="text-accent-light">.tool-versions</code>), never from yml. No <code class="text-accent-light">provision:</code> section means <code class="text-accent-light">gtl provision</code> is a friendly no-op. Provision commands run non-interactively (stdin is EOF; passwordless sudo expected on remote hosts).
+          </p>
+        </CmdRef>
+        <CmdRef name="provision.apt" type="list">
+          <p>
+            apt packages to install before <code class="text-accent-light">gtl setup</code>. Linux only — skipped with a note on macOS. Runs <code class="text-accent-light">apt-get update</code> lazily before the first install. Each package is checked via <code class="text-accent-light">dpkg</code> before installing; already-installed packages are skipped. Requires sudo.
+          </p>
+          <pre class="mt-3 text-xs bg-surface rounded p-3 overflow-x-auto text-muted"><code>provision:
+  apt: [libvips, imagemagick]</code></pre>
+        </CmdRef>
+        <CmdRef name="provision.services" type="list">
+          <p>
+            Services to apt-install and enable via <code class="text-accent-light">systemctl enable --now</code>. Linux only. Each entry is both the package name and the service unit name. Installed and enabled only if not already active.
+          </p>
+          <pre class="mt-3 text-xs bg-surface rounded p-3 overflow-x-auto text-muted"><code>provision:
+  services: [redis-server]</code></pre>
+        </CmdRef>
+        <CmdRef name="provision.database.template" type="string">
+          <p>
+            Optional override for the template database name. Defaults to the top-level <code class="text-accent-light">database.template</code> — the same database <code class="text-accent-light">gtl setup</code> clones each worktree&rsquo;s database from, so provision creates exactly what setup consumes. When neither <code class="text-accent-light">source</code> nor <code class="text-accent-light">hydrate</code> is declared, a missing template is created empty with a warning.
+          </p>
+        </CmdRef>
+        <CmdRef name="provision.database.source" type="string">
+          <p>
+            Named source (from <code class="text-accent-light">database.sources</code>) to hydrate the template database from. Reuses the same <code class="text-accent-light">gtl db pull</code> machinery — pg_dump from the remote, restore into the template. Skipped for non-PostgreSQL adapters.
+          </p>
+        </CmdRef>
+        <CmdRef name="provision.database.hydrate" type="string">
+          <p>
+            Fallback command to populate the template database when no <code class="text-accent-light">source</code> is configured or available. Runs in the repo directory via <code class="text-accent-light">sh -c</code>, like setup commands, and must be non-interactive. Example: <code class="text-accent-light">bin/rails db:schema:load db:seed</code>. Skipped if the template database already exists.
+          </p>
+          <pre class="mt-3 text-xs bg-surface rounded p-3 overflow-x-auto text-muted"><code>provision:
+  database:
+    source: production             # hydrate from a named remote source
+    hydrate: "bin/rails db:schema:load db:seed"  # fallback</code></pre>
+        </CmdRef>
         <CmdRef name="copy_files" type="list" flags={['requires gtl setup']}>
           <p>
             Files to copy from the main worktree. Secrets, credentials, local config that aren't in git. Run during provisioning only.

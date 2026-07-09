@@ -15,7 +15,7 @@ Or: `go install github.com/git-treeline/git-treeline@latest`
 
 Binary releases: https://github.com/git-treeline/git-treeline/releases
 
-Current version: v0.45.0
+Current version: v0.47.0
 
 Invoked as `git-treeline`, `git treeline`, or `gtl`. All three are equivalent.
 
@@ -58,6 +58,15 @@ database:
     staging:
       via: env
       var: STAGING_DATABASE_URL
+
+provision:               # host-level baseline (gtl provision); declaring it also
+                         # opts in mise runtime installs from .ruby-version/.tool-versions
+  apt: [libvips, imagemagick]   # Linux packages (needs sudo)
+  services: [redis-server]      # apt-install + systemctl enable --now
+  database:
+    template: myapp_development # optional; defaults to database.template
+    source: production          # hydrate template DB from named source
+    hydrate: "bin/rails db:schema:load db:seed"  # fallback; non-interactive, runs in repo dir
 
 copy_files:
   - config/master.key    # copied from main worktree at setup
@@ -110,6 +119,7 @@ hooks:
 
 ### Setup
 - `install` — full one-step setup for new developers
+- `provision` [--dry-run] — bring a host up to the repo's declared baseline (apt packages, systemd services, mise runtimes, template database hydration) before `gtl setup` can succeed; idempotent, Linux-only for apt/services steps
 - `init` — generate `.treeline.yml` only (auto-detects framework, writes AGENTS.md)
 - `rename <new-name>` — rename project, migrate registry
 - `new <branch>` [--base] [--start] [--open] — create worktree + provision + optional start
