@@ -37,6 +37,19 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">provision</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--dry-run</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Bring a host up to the repo&rsquo;s declared baseline so that <code class="text-accent-light">gtl setup</code> can succeed. Reads the <code class="text-accent-light">provision:</code> section of <code class="text-accent-light">.treeline.yml</code> and runs an ordered, idempotent plan: apt packages, systemd services, language runtimes via <a href="https://mise.jdx.dev" class="text-accent-light hover:text-accent underline underline-offset-2">mise</a>, and template database hydration. Each step probes before acting, so re-running is a no-op. apt and services steps are Linux-only and skipped with a note on macOS. <code class="text-accent-light">--dry-run</code> prints the ordered plan without executing anything. See <a href="/docs/configuration/" class="text-accent-light hover:text-accent underline underline-offset-2">provision config</a>.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
           <span class="font-mono text-white text-base font-semibold">init</span>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
