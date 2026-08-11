@@ -15,7 +15,7 @@ Or: `go install github.com/git-treeline/git-treeline@latest`
 
 Binary releases: https://github.com/git-treeline/git-treeline/releases
 
-Current version: v0.48.0
+Current version: v0.54.2
 
 Invoked as `git-treeline`, `git treeline`, or `gtl`. All three are equivalent.
 
@@ -122,13 +122,14 @@ hooks:
 - `provision` [--dry-run] — bring a host up to the repo's declared baseline (apt packages, systemd services, mise runtimes, template database hydration) before `gtl setup` can succeed; idempotent, Linux-only for apt/services steps
 - `init` — generate `.treeline.yml` only (auto-detects framework, writes AGENTS.md)
 - `rename <new-name>` — rename project, migrate registry
-- `new <branch>` [--base] [--start] [--open] — create worktree + provision + optional start
-- `review <[#]PR#>` [--start] [--open] — fetch GitHub PR into worktree (leading `#` accepted, e.g. `gtl review #42`)
+- `new <branch>` [--base] [--start] [--open] [--no-setup] — create worktree + provision + optional start; `--no-setup` skips setup commands; default base branch respects `worktree_base` config
+- `claim <branch>` [--start] [--open] [--no-setup] — register an existing worktree directory with Treeline (allocates resources without creating a new git worktree)
+- `review <[#]PR#>` [--start] [--open] [--no-setup] — fetch GitHub PR into worktree (leading `#` accepted, e.g. `gtl review #42`)
 - `switch <branch-or-[#]PR#>` [--setup] [--restart] — switch branch in current worktree (leading `#` on PR numbers accepted)
-- `setup [path]` [--dry-run] — full provisioning (idempotent)
+- `setup [path]` [--dry-run] — full provisioning (idempotent); preserves worktree on setup-command failure, exits with code 2
 - `refresh` — re-allocate all worktrees
 - `reallocate [paths]` [--all-registry] [--apply] — bulk re-run setup
-- `release [path]` [--drop-db] [--remove-worktree] [--all] — free resources
+- `release [path]` [--drop-db] [--remove-worktree] [--all] [--force] — free resources; release hooks run on every release path; `--force` overrides hook failures
 - `prune` [--stale] [--merged] [--drop-db] [--remove-worktree] — clean orphans
 - `clone <repo>` — clone + detect + setup
 - `nuke` [--force] [--dry-run] — machine-wide recovery: stop all supervised servers, kill stale supervisors, clean orphaned state across all projects; prompts for confirmation
@@ -145,7 +146,7 @@ hooks:
 
 ### Networking (HTTPS router)
 - `serve install` — generate CA, trust, port-forward 443→router, register background service
-- `serve status` — show router state and routes
+- `serve status` — show router state and routes; router self-heals pf.conf if a macOS update reverts it
 - `serve restart` [--if-installed] — bounce router (no sudo needed)
 - `serve reload-pf` — re-apply pf rules after reboot
 - `serve alias [name] [port]` [--remove] — manage subdomain aliases
@@ -165,7 +166,7 @@ hooks:
 - `db drop` [--force] [--dry-run] — drop database without re-clone; prompts for confirmation
 - `db refresh` — pull latest from template without dropping (PostgreSQL only)
 - `db pull <env>` — pull a production/staging database (via fly, heroku, or env var)
-- `db template update` — migrate template database to latest schema (uses commands.migrate)
+- `db template update` — migrate template database to latest schema: pulls origin/HEAD via --ff-only (errors on diverged branches with actionable message), then runs commands.migrate
 
 ### Navigation & status
 - `status` — show all allocations for current project; `--json` includes `related[]` cross-worktree relationships

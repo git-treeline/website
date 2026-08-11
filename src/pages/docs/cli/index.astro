@@ -94,6 +94,9 @@ import DocsPagination from '../../../components/DocsPagination.astro';
               >--open</span
             ><span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--no-setup</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
               >--force</span
             ><span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -103,9 +106,28 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           <p class="text-base text-muted mt-2">
             Create worktree + allocate resources + run setup in one step. <code class="text-accent-light"
               >--start</code
-            > boots the app after setup. <code class="text-accent-light">--open</code> opens in browser. Works
+            > boots the app after setup. <code class="text-accent-light">--open</code> opens in browser. <code class="text-accent-light">--no-setup</code> skips setup commands (allocates resources but does not run <code class="text-accent-light">commands.setup</code>). Default base branch respects <code class="text-accent-light">worktree_base</code> from config. Works
             without a <code class="text-accent-light">.treeline.yml</code>: detects framework and prompts to init
             for server projects, or creates a plain worktree for non-server projects. Can be run from inside a worktree; prompts for confirmation unless <code class="text-accent-light">--force</code> is passed.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">claim &lt;branch&gt;</span>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--no-setup</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--start</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--open</span
+            >
+          </div>
+          <p class="text-base text-muted mt-2">
+            Register an existing worktree directory with Treeline — allocates ports, clones the database, and writes env without creating a new git worktree. Useful when a worktree was created with <code class="text-accent-light">git worktree add</code> directly. <code class="text-accent-light">--no-setup</code> skips setup commands after provisioning.
           </p>
         </div>
 
@@ -121,12 +143,15 @@ import DocsPagination from '../../../components/DocsPagination.astro';
             ><span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
               >--open</span
+            ><span
+              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
+              >--no-setup</span
             >
           </div>
           <p class="text-base text-muted mt-2">
             Fetch a GitHub PR into a new worktree with full setup. Requires <code class="text-accent-light"
               >gh</code
-            > CLI. From inside a worktree, prompts to switch the current worktree to the PR branch. Leading <code class="text-accent-light">#</code> is accepted (<code class="text-accent-light">gtl review #42</code>).
+            > CLI. From inside a worktree, prompts to switch the current worktree to the PR branch. Leading <code class="text-accent-light">#</code> is accepted (<code class="text-accent-light">gtl review #42</code>). <code class="text-accent-light">--no-setup</code> skips setup commands.
           </p>
         </div>
 
@@ -161,7 +186,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           </div>
           <p class="text-base text-muted mt-2">
             Full provisioning: allocate ports, copy files, write env, clone DB, run setup commands. Idempotent. When
-            reusing an allocation, verifies ports are still free and valid; if not, re-allocates and warns.
+            reusing an allocation, verifies ports are still free and valid; if not, re-allocates and warns. If a setup command fails the worktree is preserved (not removed); exits with code 2 so callers can distinguish a setup failure from other errors.
           </p>
         </div>
 
@@ -253,8 +278,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           <p class="text-base text-muted mt-2">
             Free allocated resources. <code class="text-accent-light">--drop-db</code> removes the cloned database. <code
               class="text-accent-light">--remove-worktree</code
-            > deletes the directory — works on unmanaged worktrees (created with <code class="text-accent-light">git worktree add</code> directly), respects <code class="text-accent-light">--force</code> and <code class="text-accent-light">--dry-run</code>. <code class="text-accent-light">--all</code> releases everything. Warns on unpushed
-            commits.
+            > deletes the directory — works on unmanaged worktrees (created with <code class="text-accent-light">git worktree add</code> directly), respects <code class="text-accent-light">--force</code> and <code class="text-accent-light">--dry-run</code>. <code class="text-accent-light">--all</code> releases everything. Warns on unpushed commits. Release hooks run on every release path; <code class="text-accent-light">--force</code> overrides hook failures.
           </p>
         </div>
 
@@ -425,7 +449,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
           <span class="font-mono text-white text-base font-semibold">serve status</span>
           <p class="text-base text-muted mt-2">
-            Show router state, CA status, port forwarding, and all active routes. Reads pf state from the kernel rather than <code class="text-accent-light">pf.conf</code> on disk, so &ldquo;active&rdquo; means actually loaded.
+            Show router state, CA status, port forwarding, and all active routes. Reads pf state from the kernel rather than <code class="text-accent-light">pf.conf</code> on disk, so &ldquo;active&rdquo; means actually loaded. The router self-heals <code class="text-accent-light">pf.conf</code> if a macOS update reverts it.
           </p>
         </div>
 
@@ -668,7 +692,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
           <span class="font-mono text-white text-base font-semibold">db template update</span>
           <p class="text-base text-muted mt-2">
-            Advance the root template database: pulls <code class="text-accent-light">merge_target</code> in the root repo, then runs <code class="text-accent-light">commands.migrate</code>. The root repo must have a clean working tree. Existing worktree databases are not affected — run <code class="text-accent-light">gtl db reset</code> in a worktree to re-clone from the updated template.
+            Advance the root template database: pulls <code class="text-accent-light">origin/HEAD</code> (resolved dynamically, not hardcoded to <code class="text-accent-light">main</code>) in the root repo using fast-forward-only — errors with an actionable message if the branch has diverged — then runs <code class="text-accent-light">commands.migrate</code>. The root repo must have a clean working tree. Existing worktree databases are not affected — run <code class="text-accent-light">gtl db reset</code> in a worktree to re-clone from the updated template.
           </p>
         </div>
 
