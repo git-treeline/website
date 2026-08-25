@@ -15,7 +15,7 @@ Or: `go install github.com/git-treeline/git-treeline@latest`
 
 Binary releases: https://github.com/git-treeline/git-treeline/releases
 
-Current version: v0.54.2
+Current version: v0.55.0
 
 Invoked as `git-treeline`, `git treeline`, or `gtl`. All three are equivalent.
 
@@ -153,7 +153,7 @@ hooks:
 - `serve logs` — stream or print recent router logs
 - `serve uninstall` — remove service, port forwarding, CA
 - `serve hosts sync / clean` — manage /etc/hosts entries
-- `proxy <port> [target]` [--tls] — forward a local port to another local port with optional TLS
+- `proxy <port> [target]` [--tls] — forward a local port to another local port with optional TLS; --tls enables HTTP/2
 - `tunnel setup / start / status` — Cloudflare named tunnel for public access
 - `share` — quick public URL via anonymous tunnel (no setup)
 
