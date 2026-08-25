@@ -99,6 +99,17 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       via: env
       var: STAGING_DATABASE_URL   # name of a local env var</code></pre>
         </CmdRef>
+        <CmdRef name="database.extra" type="map">
+          <p>
+            Auxiliary databases to clone per-worktree alongside the primary one. Each key is an identifier used as the database name suffix; each value is a map with the same fields as the top-level <code class="text-accent-light">database</code> block (<code class="text-accent-light">template</code>, <code class="text-accent-light">pattern</code>, <code class="text-accent-light">adapter</code>). Useful when an app needs a secondary database (e.g. a separate analytics or queue database).
+          </p>
+          <pre class="mt-3 text-xs bg-surface rounded p-3 overflow-x-auto text-muted"><code>database:
+  extra:
+    queue:
+      adapter: postgresql
+      template: myapp_queue_template
+      pattern: myapp_queue_{'{worktree}'}</code></pre>
+        </CmdRef>
         <CmdRef name="provision" type="section">
           <p>
             Host-level baseline for <code class="text-accent-light">gtl provision</code>. Declaring the section (even partially) opts the repo in: a provision run then also installs pinned language runtimes via <a href="https://mise.jdx.dev" class="text-accent-light hover:text-accent underline underline-offset-2">mise</a> — those come from the repo&rsquo;s own version files (<code class="text-accent-light">.ruby-version</code>, <code class="text-accent-light">.tool-versions</code>), never from yml. No <code class="text-accent-light">provision:</code> section means <code class="text-accent-light">gtl provision</code> is a friendly no-op. Provision commands run non-interactively (stdin is EOF; passwordless sudo expected on remote hosts).

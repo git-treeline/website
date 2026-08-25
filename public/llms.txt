@@ -15,7 +15,7 @@ Or: `go install github.com/git-treeline/git-treeline@latest`
 
 Binary releases: https://github.com/git-treeline/git-treeline/releases
 
-Current version: v0.55.0
+Current version: v0.56.1
 
 Invoked as `git-treeline`, `git treeline`, or `gtl`. All three are equivalent.
 
@@ -210,6 +210,7 @@ hooks:
 - SQLite: `.sqlite` file copied from template path.
 - `database.sources` configures remote pull targets (Fly, Heroku, or local env var holding a postgres:// URL).
 - `database.sync_on_create: true` pulls merge_target and runs `commands.migrate` in the root repo before cloning each new worktree's database — keeps new worktrees current.
+- `database.extra` declares auxiliary per-worktree databases cloned alongside the primary one. Each key is an identifier; value is a map with `adapter`, `template`, and `pattern` fields (same as the top-level `database` block).
 - `gtl db template update` migrates the template database itself (for keeping the source up to date).
 
 ## User config
