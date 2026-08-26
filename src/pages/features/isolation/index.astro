@@ -107,7 +107,7 @@ import BenefitCard from '../../../components/BenefitCard.astro';
       <div class="text-center">
         <h2 class="text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-6 sm:mb-4 text-balance">Declare it once. Git Treeline handles the&nbsp;rest.</h2>
         <p class="text-base sm:text-lg text-muted max-w-2xl text-balance mx-auto mb-12">
-          Everything is driven by <code class="text-accent-light">.treeline.yml</code> at the root of your project. The excerpt below is representative: ports and database, env seeding, <code class="text-accent-light">commands.setup</code> / <code class="text-accent-light">commands.start</code>, <strong class="text-white">lifecycle hooks</strong> (the same four keys the CLI implements), and editor chrome.
+          Everything is driven by <code class="text-accent-light">.treeline.yml</code> at the root of your project. The excerpt below is representative: ports and database, env seeding, <code class="text-accent-light">commands.setup</code> / <code class="text-accent-light">commands.start</code>, <strong class="text-white">lifecycle hooks</strong>, and editor chrome.
         </p>
       </div>
       <div class="grid md:grid-cols-2 gap-8 lg:gap-10 items-start">
@@ -157,7 +157,7 @@ import BenefitCard from '../../../components/BenefitCard.astro';
           </div>
           <div>
             <h3 class="text-white font-mono text-lg sm:text-xl mb-2">Database</h3>
-            <p class="text-base text-muted"><code class="text-accent-light">database.adapter</code> picks the cloning strategy. PostgreSQL uses <code class="text-accent-light">createdb --template</code> for instant clones with seed data. SQLite is file-copied. Manage with <code class="text-accent-light">gtl db reset</code>, <code class="text-accent-light">gtl db restore</code>, or <code class="text-accent-light">gtl db reset --from &lt;source&gt;</code>.</p>
+            <p class="text-base text-muted"><code class="text-accent-light">database.adapter</code> picks the cloning strategy. PostgreSQL uses <code class="text-accent-light">createdb --template</code> for instant clones with seed data. SQLite is file-copied. Need multiple databases per worktree? <code class="text-accent-light">database.extra</code> declares auxiliary databases cloned alongside the primary one. Manage with <code class="text-accent-light">gtl db reset</code>, <code class="text-accent-light">gtl db restore</code>, or <code class="text-accent-light">gtl db reset --from &lt;source&gt;</code>.</p>
           </div>
           <div>
             <h3 class="text-white font-mono text-lg sm:text-xl mb-2">Environment</h3>
@@ -173,7 +173,7 @@ import BenefitCard from '../../../components/BenefitCard.astro';
           </div>
           <div>
             <h3 class="text-white font-mono text-lg sm:text-xl mb-2">Lifecycle hooks</h3>
-            <p class="text-base text-muted leading-relaxed"><code class="text-accent-light">hooks.pre_setup</code> and <code class="text-accent-light">hooks.post_setup</code> wrap <code class="text-white">commands.setup</code>; <code class="text-accent-light">hooks.pre_release</code> and <code class="text-accent-light">hooks.post_release</code> wrap freeing ports and dropping databases on <code class="text-accent-light">gtl release</code>. Pre-hooks <strong class="text-white">abort</strong> the operation on non-zero exit; post-hooks <strong class="text-white">warn</strong> and continue. Full ordering and examples: <a href="/docs/hooks/" class="text-accent-light hover:text-accent underline underline-offset-2">Hooks guide</a>.</p>
+            <p class="text-base text-muted leading-relaxed">Two hook families. <strong class="text-white">Worktree hooks</strong> — <code class="text-accent-light">pre_setup</code>, <code class="text-accent-light">post_setup</code>, <code class="text-accent-light">pre_release</code>, <code class="text-accent-light">post_release</code> — run once at worktree creation and teardown. <strong class="text-white">Start hooks</strong> (named, e.g. <code class="text-accent-light">hooks.oauth</code>) run per-session via <code class="text-accent-light">gtl start --with oauth</code>: a <code class="text-accent-light">pre_start</code> command fires before the server boots and <code class="text-accent-light">post_stop</code> fires when it exits — useful for claiming routing aliases or registering dynamic resources that should only be held while the branch is actively running. Pre-hooks <strong class="text-white">abort</strong> on non-zero exit; post-hooks <strong class="text-white">warn</strong> and continue. Full ordering and examples: <a href="/docs/hooks/" class="text-accent-light hover:text-accent underline underline-offset-2">Hooks guide</a>.</p>
           </div>
         </div>
       </div>

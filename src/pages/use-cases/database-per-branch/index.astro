@@ -124,6 +124,31 @@ import Terminal from '../../../components/Terminal.astro';
     </Terminal>
   </div>
 
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Option D: Auxiliary databases (<code class="font-mono">database.extra</code>)</h2>
+  <p class="text-muted mb-4">
+    Some apps need more than one database per worktree — a primary Postgres DB and a separate queue DB, or a main DB alongside an analytics store. <code class="text-accent-light">database.extra</code> declares additional databases that are cloned alongside the primary one. Each entry follows the same <code class="text-accent-light">adapter</code>, <code class="text-accent-light">template</code>, and <code class="text-accent-light">pattern</code> fields as the top-level <code class="text-accent-light">database</code> block.
+  </p>
+
+  <div class="mb-8">
+    <Terminal label=".treeline.yml">
+      <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-accent-light">project</span>: myapp
+
+<span class="text-accent-light">database</span>:
+  <span class="text-accent-light">adapter</span>: postgresql
+  <span class="text-accent-light">template</span>: myapp_development
+
+  <span class="text-accent-light">extra</span>:
+    <span class="text-accent-light">queue</span>:
+      <span class="text-accent-light">adapter</span>: postgresql
+      <span class="text-accent-light">template</span>: myapp_queue_template
+      <span class="text-accent-light">pattern</span>: {'"{template}_{worktree}"'}</code></pre>
+    </Terminal>
+  </div>
+
+  <p class="text-muted mb-8">
+    Each worktree gets <code class="text-accent-light">myapp_development_feature_auth</code> (primary) and <code class="text-accent-light">myapp_queue_template_feature_auth</code> (auxiliary) cloned in one <code class="text-accent-light">gtl setup</code> run. The extra databases are released together with the primary on <code class="text-accent-light">gtl release --drop-db</code>.
+  </p>
+
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Port-dependent data</h2>
   <p class="text-muted mb-4">
     If your database stores URLs that include the port &mdash; OAuth redirect URIs, webhook endpoints, asset URLs &mdash; the cloned data will have stale values pointing to the template&rsquo;s port. Use <code class="text-accent-light">commands.setup</code> to patch them after cloning:

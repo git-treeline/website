@@ -137,7 +137,7 @@ import BenefitCard from '../../../components/BenefitCard.astro';
               Treeline never allocates common dev ports like 3000, 4000, 5000, or 8080 &mdash; they stay free on purpose. <code class="text-accent-light">gtl proxy 3000</code> claims that port and routes traffic to whichever worktree you&rsquo;re in. OAuth callbacks, Stripe webhooks, Mapbox origin checks, and CORS policies all stay registered to <code class="text-white">localhost:3000</code>. You configure them once and never touch a dashboard again.
             </p>
             <p class="text-base text-muted mb-4">
-              Run from a worktree directory and it infers the target port, or specify both explicitly. Optional TLS (requires a local cert tool like mkcert).
+              Run from a worktree directory and it infers the target port, or specify both explicitly. Optional TLS with HTTP/2 via <code class="text-accent-light">--tls</code>.
             </p>
             <p class="text-base text-muted">
               <strong class="text-white">Best for:</strong> Any third-party service hardcoded to a specific <code class="text-white">localhost</code> port &mdash; OAuth providers, webhook endpoints, mapping APIs, CORS allowlists. <a href="/use-cases/integrations-urls/" class="text-accent-light hover:text-accent underline underline-offset-2">Full use case &rarr;</a>

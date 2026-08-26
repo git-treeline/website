@@ -173,6 +173,12 @@ import FeatureStrip from '../../../components/FeatureStrip.astro';
           </p>
         </div>
         <div>
+          <h3 class="text-white font-mono text-lg sm:text-xl mb-2">Start hooks</h3>
+          <p>
+            Named hook blocks (e.g. <code class="text-accent-light">hooks.oauth</code>) run per-session rather than per-worktree-creation. Each block has a <code class="text-accent-light">pre_start</code> command (fires before the server boots) and <code class="text-accent-light">post_stop</code> command (fires when the server exits). Activate with <code class="text-accent-light">gtl start --with oauth</code>, or set <code class="text-accent-light">auto: true</code> to run on every start. Common use: claiming a named routing alias while a branch is actively running, then releasing it on stop — so only one branch holds the alias at a time.
+          </p>
+        </div>
+        <div>
           <h3 class="text-white font-mono text-lg sm:text-xl mb-2">Clone and go</h3>
           <p>
             <code class="text-accent-light">{"gtl clone <repo-url>"}</code> runs <code class="text-white">git clone</code>, detects the framework, creates <code class="text-white">.treeline.yml</code> if missing, and runs <code class="text-white">gtl setup</code>. It does not start the dev server—cloning an untrusted repo and executing arbitrary start commands is a trust boundary.

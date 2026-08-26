@@ -232,7 +232,7 @@ import Terminal from '../../../components/Terminal.astro';
     <li><strong class="text-white">pattern:</strong> naming pattern for cloned databases. <code class="text-accent-light">{'{template}_{worktree}'}</code> produces names like <code class="text-white">myapp_development_feature_auth</code></li>
   </ul>
   <p class="text-muted mb-8">
-    The template database is never modified. Use <code class="text-accent-light">gtl db reset</code> to re-clone, <code class="text-accent-light">gtl db restore dump.sql</code> to load from a dump, and <code class="text-accent-light">--drop-db</code> with <code class="text-accent-light">gtl release</code> to clean up. For a deep dive, see <a href="/use-cases/database-per-branch/" class="text-accent-light hover:text-accent underline underline-offset-2">Database per branch</a>.
+    The template database is never modified. Use <code class="text-accent-light">gtl db reset</code> to re-clone, <code class="text-accent-light">gtl db restore dump.sql</code> to load from a dump, and <code class="text-accent-light">--drop-db</code> with <code class="text-accent-light">gtl release</code> to clean up. Need more than one database per worktree? <code class="text-accent-light">database.extra</code> declares auxiliary databases — each with its own adapter, template, and pattern — cloned alongside the primary one. For a deep dive, see <a href="/use-cases/database-per-branch/" class="text-accent-light hover:text-accent underline underline-offset-2">Database per branch</a>.
   </p>
 
   <h3 class="text-white font-mono text-lg mb-3">copy_files</h3>
@@ -252,9 +252,9 @@ import Terminal from '../../../components/Terminal.astro';
 
   <h3 class="text-white font-mono text-lg mb-3">hooks</h3>
   <p class="text-muted mb-4">
-    Lifecycle hooks for validation and cleanup. Four hook points:
+    Two hook families. <strong class="text-white">Worktree hooks</strong> fire once at creation or teardown; <strong class="text-white">start hooks</strong> fire per-session when the server starts and stops.
   </p>
-  <div class="overflow-x-auto rounded-lg border border-surface-border mb-8">
+  <div class="overflow-x-auto rounded-lg border border-surface-border mb-4">
     <table class="w-full text-sm text-left">
       <thead>
         <tr class="border-b border-surface-border bg-surface">
@@ -284,11 +284,21 @@ import Terminal from '../../../components/Terminal.astro';
           <td class="px-4 py-3">After resource release</td>
           <td class="px-4 py-3">Warns, continues</td>
         </tr>
+        <tr class="border-t-2 border-surface-border/60">
+          <td class="px-4 py-3 font-mono"><code class="text-accent-light">hooks.&lt;name&gt;.pre_start</code></td>
+          <td class="px-4 py-3">Before server boots (per-session, opt-in via <code class="text-accent-light">--with &lt;name&gt;</code>)</td>
+          <td class="px-4 py-3 text-white">Aborts start</td>
+        </tr>
+        <tr>
+          <td class="px-4 py-3 font-mono"><code class="text-accent-light">hooks.&lt;name&gt;.post_stop</code></td>
+          <td class="px-4 py-3">After server exits (same session)</td>
+          <td class="px-4 py-3">Warns, continues</td>
+        </tr>
       </tbody>
     </table>
   </div>
   <p class="text-muted mb-8">
-    Use <code class="text-accent-light">pre_setup</code> to gate on prerequisites (template database must exist, secrets must be present). Use <code class="text-accent-light">post_release</code> for cleanup like notifying a monitoring service or removing cloud resources.
+    Use <code class="text-accent-light">pre_setup</code> to gate on prerequisites (template database must exist, secrets must be present). Use <code class="text-accent-light">post_release</code> for cleanup. Start hooks are useful for claiming a named routing alias on <code class="text-accent-light">gtl start</code> and releasing it on stop — add <code class="text-accent-light">auto: true</code> to activate on every start without <code class="text-accent-light">--with</code>. See <a href="/use-cases/oauth-alias/" class="text-accent-light hover:text-accent underline underline-offset-2">OAuth callbacks across worktrees</a> for a full example.
   </p>
 
   <h3 class="text-white font-mono text-lg mb-3">aliases</h3>
@@ -305,6 +315,14 @@ import Terminal from '../../../components/Terminal.astro';
     <li><strong class="text-white">color:</strong> title/status bar color. Set <code class="text-accent-light">"auto"</code> for a deterministic color derived from the branch name, or a hex value like <code class="text-white">"#1a5276"</code>.</li>
     <li><strong class="text-white">theme:</strong> full IDE theme override per worktree (e.g. <code class="text-white">"Monokai"</code>, <code class="text-white">"GitHub Dark"</code>).</li>
   </ul>
+
+  <h3 class="text-white font-mono text-lg mb-3">provision (optional)</h3>
+  <p class="text-muted mb-4">
+    Declaring a <code class="text-accent-light">provision:</code> block opts the repo into host-level baseline management. When a new machine runs <code class="text-accent-light">gtl provision</code>, Treeline installs apt packages, starts systemd services, pins language runtimes via <a href="https://mise.jdx.dev" class="text-accent-light hover:text-accent underline underline-offset-2">mise</a>, and hydrates the template database — all from the config. After provisioning, <code class="text-accent-light">gtl setup</code> is guaranteed to succeed. Omit the block entirely if teammates set up their own machines manually.
+  </p>
+  <p class="text-muted mb-8">
+    apt and services steps are Linux-only and silently skipped on macOS. All steps are idempotent — re-running is safe. Use <code class="text-accent-light">gtl provision --dry-run</code> to preview what would run.
+  </p>
 
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">4. Your machine config</h2>
   <p class="text-muted mb-4">
