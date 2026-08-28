@@ -15,7 +15,7 @@ Or: `go install github.com/git-treeline/git-treeline@latest`
 
 Binary releases: https://github.com/git-treeline/git-treeline/releases
 
-Current version: v0.56.1
+Current version: v0.57.0
 
 Invoked as `git-treeline`, `git treeline`, or `gtl`. All three are equivalent.
 
@@ -102,7 +102,9 @@ hooks:
 |-------|-------|
 | `{port}` | Primary allocated port |
 | `{port_2}` … `{port_10}` | Additional ports (when port_count > 1) |
-| `{database}` | Cloned database name |
+| `{database}` | Primary cloned database name (bare alias for `{database.name}`) |
+| `{database.name}` | Primary cloned database name (dotted path form) |
+| `{database.extra.<key>}` | Auxiliary database name (e.g. `{database.extra.queue}`) |
 | `{redis_url}` | Redis URL with namespace |
 | `{redis_prefix}` | Redis key prefix |
 | `{project}` | Project name |
@@ -120,7 +122,7 @@ hooks:
 ### Setup
 - `install` — full one-step setup for new developers
 - `provision` [--dry-run] — bring a host up to the repo's declared baseline (apt packages, systemd services, mise runtimes, template database hydration) before `gtl setup` can succeed; idempotent, Linux-only for apt/services steps
-- `init` — generate `.treeline.yml` only (auto-detects framework, writes AGENTS.md)
+- `init` — generate `.treeline.yml` only (auto-detects framework, writes AGENTS.md); must be run inside a git repository
 - `rename <new-name>` — rename project, migrate registry
 - `new <branch>` [--base] [--start] [--open] [--no-setup] — create worktree + provision + optional start; `--no-setup` skips setup commands; default base branch respects `worktree_base` config
 - `claim <branch>` [--start] [--open] [--no-setup] — register an existing worktree directory with Treeline (allocates resources without creating a new git worktree)
@@ -210,7 +212,7 @@ hooks:
 - SQLite: `.sqlite` file copied from template path.
 - `database.sources` configures remote pull targets (Fly, Heroku, or local env var holding a postgres:// URL).
 - `database.sync_on_create: true` pulls merge_target and runs `commands.migrate` in the root repo before cloning each new worktree's database — keeps new worktrees current.
-- `database.extra` declares auxiliary per-worktree databases cloned alongside the primary one. Each key is an identifier; value is a map with `adapter`, `template`, and `pattern` fields (same as the top-level `database` block).
+- `database.extra` declares auxiliary per-worktree databases cloned alongside the primary one. Each key is an identifier; value is a map with `adapter`, `template`, and `name` (pattern) fields. Accessible in env via `{database.extra.<key>}` dotted tokens. `database.name` replaces the legacy `database.pattern` key (old key still accepted as fallback).
 - `gtl db template update` migrates the template database itself (for keeping the source up to date).
 
 ## User config

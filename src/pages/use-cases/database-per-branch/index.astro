@@ -141,12 +141,16 @@ import Terminal from '../../../components/Terminal.astro';
     <span class="text-accent-light">queue</span>:
       <span class="text-accent-light">adapter</span>: postgresql
       <span class="text-accent-light">template</span>: myapp_queue_template
-      <span class="text-accent-light">pattern</span>: {'"{template}_{worktree}"'}</code></pre>
+      <span class="text-accent-light">name</span>: {'myapp_queue_{worktree}'}
+
+<span class="text-accent-light">env</span>:
+  <span class="text-accent-light">DATABASE_URL</span>: {`"postgresql://localhost/{database}"`}
+  <span class="text-accent-light">QUEUE_DATABASE_URL</span>: {`"postgresql://localhost/{database.extra.queue}"`}</code></pre>
     </Terminal>
   </div>
 
   <p class="text-muted mb-8">
-    Each worktree gets <code class="text-accent-light">myapp_development_feature_auth</code> (primary) and <code class="text-accent-light">myapp_queue_template_feature_auth</code> (auxiliary) cloned in one <code class="text-accent-light">gtl setup</code> run. The extra databases are released together with the primary on <code class="text-accent-light">gtl release --drop-db</code>.
+    Each worktree gets both databases cloned in one <code class="text-accent-light">gtl setup</code> run. Reference extra databases in env using the dotted token <code class="text-accent-light">{'{database.extra.queue}'}</code> — replace <code class="text-accent-light">queue</code> with the key name. All extra databases are released with <code class="text-accent-light">gtl release --drop-db</code>. Note: use <code class="text-accent-light">name:</code> rather than the legacy <code class="text-accent-light">pattern:</code> key in new configs.
   </p>
 
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Port-dependent data</h2>

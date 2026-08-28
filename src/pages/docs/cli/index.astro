@@ -66,7 +66,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           <p class="text-base text-muted mt-2">
             Generate <code class="text-accent-light">.treeline.yml</code> with self-documenting template.
             Auto-detects framework, writes <code class="text-accent-light">AGENTS.md</code> section, detects
-            editor. Project name is derived from <code class="text-accent-light">git remote get-url origin</code> (basename, <code class="text-accent-light">.git</code> stripped) and sanitized to a valid identifier &mdash; a <code class="text-accent-light">fitter-app</code> repo lands as <code class="text-accent-light">fitter_app</code>. Warns when <code class="text-accent-light">config/database.yml</code> has a non-identifier database name.
+            editor. Project name is derived from <code class="text-accent-light">git remote get-url origin</code> (basename, <code class="text-accent-light">.git</code> stripped) and sanitized to a valid identifier &mdash; a <code class="text-accent-light">fitter-app</code> repo lands as <code class="text-accent-light">fitter_app</code>. Warns when <code class="text-accent-light">config/database.yml</code> has a non-identifier database name. Must be run inside a git repository; exits with an error otherwise.
           </p>
         </div>
 
@@ -108,7 +108,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
               >--start</code
             > boots the app after setup. <code class="text-accent-light">--open</code> opens in browser. <code class="text-accent-light">--no-setup</code> skips setup commands (allocates resources but does not run <code class="text-accent-light">commands.setup</code>). Default base branch respects <code class="text-accent-light">worktree_base</code> from config. Works
             without a <code class="text-accent-light">.treeline.yml</code>: detects framework and prompts to init
-            for server projects, or creates a plain worktree for non-server projects. Can be run from inside a worktree; prompts for confirmation unless <code class="text-accent-light">--force</code> is passed.
+            for server projects, or creates a plain worktree for non-server projects. Can be run from inside a worktree; prompts for confirmation unless <code class="text-accent-light">--force</code> is passed. If the configured template database does not exist yet, creation proceeds without a database clone rather than failing.
           </p>
         </div>
 

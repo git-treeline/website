@@ -54,9 +54,9 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         <CmdRef name="database.template" type="string">
           <p>Source database to clone from. For PostgreSQL, used with <code class="text-accent-light">createdb --template</code>.</p>
         </CmdRef>
-        <CmdRef name="database.pattern" type="string">
+        <CmdRef name="database.name" type="string">
           <p>
-            Naming pattern for cloned databases. Tokens: <code class="text-accent-light">{'{template}'}</code>, <code class="text-accent-light">{'{worktree}'}</code>.
+            Naming pattern for cloned databases. Tokens: <code class="text-accent-light">{'{template}'}</code>, <code class="text-accent-light">{'{worktree}'}</code>. Formerly <code class="text-accent-light">database.pattern</code> — old key is still accepted as a fallback. The resolved name is available in env as <code class="text-accent-light">{'{database}'}</code> or <code class="text-accent-light">{'{database.name}'}</code>.
           </p>
         </CmdRef>
         <CmdRef name="database.host" type="string">
@@ -101,14 +101,17 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </CmdRef>
         <CmdRef name="database.extra" type="map">
           <p>
-            Auxiliary databases to clone per-worktree alongside the primary one. Each key is an identifier used as the database name suffix; each value is a map with the same fields as the top-level <code class="text-accent-light">database</code> block (<code class="text-accent-light">template</code>, <code class="text-accent-light">pattern</code>, <code class="text-accent-light">adapter</code>). Useful when an app needs a secondary database (e.g. a separate analytics or queue database).
+            Auxiliary databases to clone per-worktree alongside the primary one. Each key is an identifier; each value is a map with <code class="text-accent-light">adapter</code>, <code class="text-accent-light">template</code>, and <code class="text-accent-light">name</code> (pattern). Each extra database is accessible in env via the dotted token <code class="text-accent-light">{'{database.extra.queue}'}</code> (replace <code class="text-accent-light">queue</code> with the key name). Dotted tokens are paths to config fields; bare tokens like <code class="text-accent-light">{'{database}'}</code> are Treeline-minted aliases.
           </p>
           <pre class="mt-3 text-xs bg-surface rounded p-3 overflow-x-auto text-muted"><code>database:
   extra:
     queue:
       adapter: postgresql
       template: myapp_queue_template
-      pattern: myapp_queue_{'{worktree}'}</code></pre>
+      name: myapp_queue_{'{worktree}'}
+
+env:
+  QUEUE_DATABASE_URL: "postgresql://localhost/{'{database.extra.queue}'}"</code></pre>
         </CmdRef>
         <CmdRef name="provision" type="section">
           <p>
@@ -252,7 +255,17 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           </tr>
           <tr>
             <td class="px-4 py-3 font-mono text-white">{'{database}'}</td>
-            <td class="px-4 py-3">Cloned database name</td>
+            <td class="px-4 py-3">Primary cloned database name (bare alias for <code class="text-white">{'{database.name}'}</code>)</td>
+            <td class="px-4 py-3">env</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">{'{database.name}'}</td>
+            <td class="px-4 py-3">Primary cloned database name (dotted path form)</td>
+            <td class="px-4 py-3">env</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-mono text-white">{'{database.extra.<key>}'}</td>
+            <td class="px-4 py-3">Name of an auxiliary database declared in <code class="text-white">database.extra</code> (e.g. <code class="text-white">{'{database.extra.queue}'}</code>)</td>
             <td class="px-4 py-3">env</td>
           </tr>
           <tr>
