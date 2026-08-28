@@ -449,7 +449,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
           <span class="font-mono text-white text-base font-semibold">serve status</span>
           <p class="text-base text-muted mt-2">
-            Show router state, CA status, port forwarding, and all active routes. Reads pf state from the kernel rather than <code class="text-accent-light">pf.conf</code> on disk, so &ldquo;active&rdquo; means actually loaded. The router self-heals <code class="text-accent-light">pf.conf</code> if a macOS update reverts it.
+            Show router state, CA status, port forwarding, and all active routes. Reads pf state from the kernel rather than <code class="text-accent-light">pf.conf</code> on disk, so &ldquo;active&rdquo; means actually loaded. The router self-heals <code class="text-accent-light">pf.conf</code> if a macOS update reverts it. A router reachable only via the 443 port forward is treated as alive.
           </p>
         </div>
 
@@ -907,6 +907,13 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           </div>
           <p class="text-base text-muted mt-2">
             Print version. <code class="text-accent-light">--json</code> outputs <code class="text-accent-light">{"{"}"cli": "0.43.15", "router": "0.43.15"{"}"}</code> — or <code class="text-accent-light">"router": null</code> when no router is running. Designed as a stable contract for tooling to read the running router version without scraping human-readable output.
+          </p>
+        </div>
+
+        <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
+          <span class="font-mono text-white text-base font-semibold">update</span>
+          <p class="text-base text-muted mt-2">
+            Update the CLI to the latest release. Version-aware: checks the current version against the latest available and skips the download if already up to date. When a newer version is available but you haven&rsquo;t run <code class="text-accent-light">gtl update</code>, GTL passively notifies you after commands complete.
           </p>
         </div>
       </div>
