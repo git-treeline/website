@@ -86,7 +86,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         <strong class="text-white">Terminal closed mid-session.</strong> The supervisor handles SIGHUP and exits cleanly when a terminal window closes, rather than surviving as an unresponsive zombie. If you re-run <code class="text-accent-light">gtl start</code> and the old supervisor is alive but its server is stopped, Treeline kills the orphaned supervisor and starts fresh in the current terminal so output appears where you&rsquo;re looking.
       </li>
       <li>
-        <strong class="text-white">Port already occupied.</strong> Before launching, <code class="text-accent-light">gtl start</code> checks whether the allocated port is already in use. If it identifies the process via <code class="text-accent-light">tmp/pids/server.pid</code> as the culprit, it prompts to kill it — rather than letting your framework fail with a cryptic address-in-use error.
+        <strong class="text-white">Port already occupied.</strong> Before launching, <code class="text-accent-light">gtl start</code> checks whether the allocated port is already in use. If it identifies the process via <code class="text-accent-light">tmp/pids/server.pid</code> as the culprit, it prompts before terminating it. Cleanup requires an explicit yes; empty input or EOF leaves the process running.
       </li>
       <li>
         <strong class="text-white">Unresponsive supervisor.</strong> If the supervisor process exists but its socket is unresponsive, <code class="text-accent-light">gtl stop --kill</code> falls back to force-killing via the PID file.

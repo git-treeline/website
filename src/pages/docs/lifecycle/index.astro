@@ -30,7 +30,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
 
     <h2><code class="text-accent-light">gtl new</code></h2>
     <p class="text-base text-muted mb-4">
-      Creates a new git worktree and runs full setup against it. You must run <code class="text-accent-light">gtl new</code> from the <strong class="text-white">main</strong> repository checkout (not from inside another worktree), because Treeline uses the main repo as the source for allocation and shared files.
+      Creates a new git worktree and runs full setup against it. Treeline locates the main repository for project config and shared files. When run from another worktree, it shows the destination and asks for confirmation; <code class="text-accent-light">--force</code> skips that prompt.
     </p>
     <p class="text-base text-muted mb-4">
       Under the hood it combines <code class="text-accent-light">git worktree add</code> with the same provisioning path as <code class="text-accent-light">gtl setup</code>: allocate resources, copy files, write env, clone the database, run setup commands and hooks.
@@ -55,14 +55,14 @@ gtl new feature/payments --start</code></pre>
       <li>Allocate ports, database name, and Redis namespace (or reuse existing allocation).</li>
       <li><code class="text-accent-light">copy_files</code> from the main repo into the worktree.</li>
       <li>Write the env file with interpolated values (ports, DB name, tokens like <code class="text-accent-light">{'{port}'}</code>, <code class="text-accent-light">{'{database}'}</code>, resolve placeholders, etc.).</li>
-      <li>Clone the database from the template (skipped when allocations are reused and the DB already exists).</li>
+      <li>Refresh the template if <code class="text-accent-light">database.sync_on_create</code> is enabled, then clone the database (both are skipped for reused allocations).</li>
       <li><code class="text-accent-light">pre_setup</code> hooks.</li>
       <li><code class="text-accent-light">commands.setup</code>.</li>
       <li>Configure the editor (title, color) for this worktree.</li>
       <li><code class="text-accent-light">post_setup</code> hooks.</li>
     </ol>
     <p class="text-base text-muted mb-8">
-      If setup fails <strong class="text-white">after</strong> a new allocation was created, Treeline releases the registry entry so ports and names do not leak.
+      If provisioning fails after a new allocation was created, Treeline releases the registry entry. A failure in <code class="text-accent-light">commands.setup</code> preserves the worktree and allocation so you can fix the command and retry. Reused allocations are retained.
     </p>
 
     <h2><code class="text-accent-light">gtl start</code></h2>

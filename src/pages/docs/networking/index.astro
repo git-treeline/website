@@ -150,7 +150,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
     </div>
 
     <!-- CLI links here: gtl install prompts with this anchor when offering HTTPS setup -->
-    <h2>The HTTPS router (gtl serve)</h2>
+    <h2 id="the-https-router-gtl-serve">The HTTPS router (gtl serve)</h2>
     <p class="text-muted mb-4">
       The router is a pure Go reverse proxy that runs as a background service. It maps <code class="text-accent-light">{'{project}-{branch}.{domain}'}</code> subdomains to local ports, adding HTTPS with a locally-trusted CA.
     </p>
@@ -178,7 +178,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       If you're offline or behind a corporate DNS that blocks external resolution, you can switch to <code class="text-accent-light">router.domain localhost</code> via <code class="text-accent-light">gtl config</code>. The <code class="text-white">.localhost</code> TLD resolves locally by spec (RFC 6761), but some browsers handle it inconsistently.
     </p>
 
-    <h2>Aliases</h2>
+    <h2 id="aliases">Aliases</h2>
     <p class="text-muted mb-4">
       Aliases give a stable hostname to a port that isn't derived from a branch name. Two sources:
     </p>
@@ -193,7 +193,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       The most common use case for aliases is OAuth: register a stable alias like <code class="text-white">myapp-oauth.prt.dev</code> in your provider dashboard once, then use a start hook to point it at whichever branch you're testing. See <a href="/use-cases/oauth-alias/" class="text-accent-light hover:text-accent underline underline-offset-2">OAuth callbacks across worktrees</a> for the full walkthrough.
     </p>
 
-    <h2>The port proxy (gtl proxy)</h2>
+    <h2 id="the-port-proxy-gtl-proxy">The port proxy (gtl proxy)</h2>
     <p class="text-muted mb-4">
       The proxy binds a well-known port (like 3000) and forwards traffic to whichever worktree you run it from. It solves a different problem than the router: third-party services that are hardcoded to <code class="text-white">localhost:3000</code> and can't use branch-named subdomains.
     </p>
@@ -414,7 +414,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
     <h2>Edge cases and limitations</h2>
     <ul class="text-muted space-y-3 list-disc pl-5 mb-8">
       <li><strong class="text-white">Only the first port is routed.</strong> If your project uses <code class="text-accent-light">port_count: 3</code>, only the primary port gets a subdomain on the router. Secondary ports are accessible via <code class="text-white">localhost:{'{port_N}'}</code> directly.</li>
-      <li><strong class="text-white">Windows.</strong> <code class="text-accent-light">gtl serve install</code> does not support Windows (WSL2 planned). Windows users fall back to <code class="text-white">localhost:{'{port}'}</code> without branch-named HTTPS URLs.</li>
+      <li><strong class="text-white">Platforms.</strong> Current CLI releases support macOS and Linux. Native Windows is not a supported release target.</li>
       <li><strong class="text-white">Offline DNS.</strong> If <code class="text-white">prt.dev</code> DNS can't resolve (corporate firewall, no internet), branch URLs won't work unless <code class="text-white">/etc/hosts</code> entries cover them. Switching to <code class="text-accent-light">router.domain localhost</code> avoids this.</li>
       <li><strong class="text-white">gtl resolve vs {'{resolve:...}'}.</strong> The <code class="text-accent-light">gtl resolve</code> CLI command rewrites the output to the router URL if the router is running. The <code class="text-accent-light">{'{resolve:...}'}</code> env token always expands to <code class="text-white">{'http://127.0.0.1:{port}'}</code>. They're different by design: env tokens point directly at the backend, the CLI gives you the browsable URL.</li>
       <li><strong class="text-white">Alias precedence.</strong> If a registry route and an alias share the same name, the registry route wins. Aliases are intended for ports that don't have an automatic registry entry.</li>
@@ -461,7 +461,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           <tr>
             <td class="px-4 py-3 text-white font-mono">router.domain</td>
             <td class="px-4 py-3">prt.dev</td>
-            <td class="px-4 py-3">Base domain for branch-named URLs. Fresh installs default to <code class="text-white">prt.dev</code>.</td>
+            <td class="px-4 py-3">Base domain for branch-named URLs. Fresh installs default to <code class="text-white">prt.dev</code>. Must be <code class="text-white">localhost</code> or a valid narrow DNS suffix; IP addresses, wildcards, and public suffixes such as <code class="text-white">com</code> are rejected.</td>
           </tr>
           <tr>
             <td class="px-4 py-3 text-white font-mono">router.aliases</td>

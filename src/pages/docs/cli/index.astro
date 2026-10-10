@@ -1,6 +1,18 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
 import DocsPagination from '../../../components/DocsPagination.astro';
+import DocsContents from '../../../components/DocsContents.astro';
+
+const contents = [
+  { id: 'setup', label: 'Setup' },
+  { id: 'server-management', label: 'Server management' },
+  { id: 'networking', label: 'Networking' },
+  { id: 'cross-worktree', label: 'Cross-worktree' },
+  { id: 'environment-database', label: 'Environment & database' },
+  { id: 'navigation-status', label: 'Navigation & status' },
+  { id: 'config-editor', label: 'Config & editor' },
+  { id: 'agent-integration', label: 'Agent integration' },
+];
 ---
 
 <DocsLayout
@@ -19,15 +31,18 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         >git treeline</code
       >, or <code class="text-accent-light">gtl</code>. All three are equivalent.
     </p>
+    <p class="text-sm text-muted mb-6">Verified against CLI <a href="https://github.com/git-treeline/cli/releases/tag/v0.58.3" class="text-accent-light hover:text-accent underline underline-offset-4">v0.58.3</a></p>
   </header>
 
+  <DocsContents items={contents} />
+
   <div class="docs-guide px-4 sm:px-6 lg:px-0 pb-20">
-    <h2>Setup</h2>
+    <h2 id="setup"><a class="heading-link" href="#setup" aria-label="Link to Setup">Setup<span aria-hidden="true">#</span></a></h2>
 
     <div class="rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 mb-8">
       <div class="space-y-0">
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">install</span>
+          <h3 id="command-install" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-install" aria-label="Link to install">install<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             One command to get a developer productive. Creates <code class="text-accent-light">.treeline.yml</code> if
             missing, creates user config, installs the post-checkout hook, allocates ports, writes env, and optionally
@@ -37,7 +52,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">provision</span>
+          <h3 id="command-provision" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-provision" aria-label="Link to provision">provision<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -50,7 +65,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">init</span>
+          <h3 id="command-init" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-init" aria-label="Link to init">init<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -71,14 +86,14 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">rename &lt;new-name&gt;</span>
+          <h3 id="command-rename" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-rename" aria-label="Link to rename &lt;new-name&gt;">rename &lt;new-name&gt;<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Rename a project: updates <code class="text-accent-light">.treeline.yml</code> in the current branch and migrates user-config keys (port reservations, editor themes and colors, including <code class="text-accent-light">project/branch</code> variants), then prints the list of worktrees that need re-provisioning. Each worktree self-heals on the next <code class="text-accent-light">gtl setup</code> after rebasing — setup detects the name mismatch, drops the old database, releases the stale registry entry, and allocates fresh under the new name. Names must match <code class="text-accent-light">[a-zA-Z_][a-zA-Z0-9_]*</code> (Postgres identifier rules); the command suggests a sanitized form when given an invalid name.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">new &lt;branch&gt;</span>
+          <h3 id="command-new" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-new" aria-label="Link to new &lt;branch&gt;">new &lt;branch&gt;<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -106,33 +121,30 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           <p class="text-base text-muted mt-2">
             Create worktree + allocate resources + run setup in one step. <code class="text-accent-light"
               >--start</code
-            > boots the app after setup. <code class="text-accent-light">--open</code> opens in browser. <code class="text-accent-light">--no-setup</code> skips setup commands (allocates resources but does not run <code class="text-accent-light">commands.setup</code>). Default base branch respects <code class="text-accent-light">worktree_base</code> from config. Works
+            > boots the app after setup. <code class="text-accent-light">--open</code> opens in browser. <code class="text-accent-light">--no-setup</code> creates the worktree without allocation, env files, or setup commands; run <code class="text-accent-light">gtl setup</code> later. Default base branch respects <code class="text-accent-light">worktree_base</code> from config. Works
             without a <code class="text-accent-light">.treeline.yml</code>: detects framework and prompts to init
-            for server projects, or creates a plain worktree for non-server projects. Can be run from inside a worktree; prompts for confirmation unless <code class="text-accent-light">--force</code> is passed. If the configured template database does not exist yet, creation proceeds without a database clone rather than failing.
+            for server projects, or creates a plain worktree for non-server projects. Can be run from inside a worktree; prompts for confirmation unless <code class="text-accent-light">--force</code> is passed. If the configured template is missing, Treeline attempts to provision it, then falls back to an empty database with a warning. Use <code class="text-accent-light">--strict</code> to fail when a complete clone cannot be created.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">claim &lt;branch&gt;</span>
+          <h3 id="command-claim" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-claim" aria-label="Link to claim &lt;branch&gt;">claim &lt;branch&gt;<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
               >--no-setup</span
             ><span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
-              >--start</span
-            ><span
-              class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
-              >--open</span
+              >--path</span
             >
           </div>
           <p class="text-base text-muted mt-2">
-            Register an existing worktree directory with Treeline — allocates ports, clones the database, and writes env without creating a new git worktree. Useful when a worktree was created with <code class="text-accent-light">git worktree add</code> directly. <code class="text-accent-light">--no-setup</code> skips setup commands after provisioning.
+            Fetch an existing branch from origin, create or reuse its worktree, and fast-forward it when possible. Diverged branches are left unchanged with a warning. Prints only the worktree path to stdout for scripts. <code class="text-accent-light">--path</code> selects the destination; <code class="text-accent-light">--no-setup</code> skips explicit provisioning of a newly created worktree, but installed Git hooks can still run setup. Existing worktrees are still provisioned.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">review &lt;[#]PR#&gt;</span>
+          <h3 id="command-review" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-review" aria-label="Link to review &lt;[#]PR#&gt;">review &lt;[#]PR#&gt;<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -151,12 +163,12 @@ import DocsPagination from '../../../components/DocsPagination.astro';
           <p class="text-base text-muted mt-2">
             Fetch a GitHub PR into a new worktree with full setup. Requires <code class="text-accent-light"
               >gh</code
-            > CLI. From inside a worktree, prompts to switch the current worktree to the PR branch. Leading <code class="text-accent-light">#</code> is accepted (<code class="text-accent-light">gtl review #42</code>). <code class="text-accent-light">--no-setup</code> skips setup commands.
+            > CLI. From inside a worktree, prompts to switch the current worktree to the PR branch. Leading <code class="text-accent-light">#</code> is accepted (<code class="text-accent-light">gtl review &apos;#42&apos;</code>). <code class="text-accent-light">--no-setup</code> defers allocation, env files, and setup for a newly created worktree.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">switch &lt;branch-or-[#]PR#&gt;</span>
+          <h3 id="command-switch" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-switch" aria-label="Link to switch &lt;branch-or-[#]PR#&gt;">switch &lt;branch-or-[#]PR#&gt;<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -174,7 +186,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">setup [path]</span>
+          <h3 id="command-setup" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-setup" aria-label="Link to setup [path]">setup [path]<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -191,7 +203,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">refresh</span>
+          <h3 id="command-refresh" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-refresh" aria-label="Link to refresh">refresh<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -207,7 +219,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">reallocate [paths...]</span>
+          <h3 id="command-reallocate" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-reallocate" aria-label="Link to reallocate [paths...]">reallocate [paths...]<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -226,7 +238,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">registry validate</span>
+          <h3 id="command-registry-validate" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-registry-validate" aria-label="Link to registry validate">registry validate<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -239,21 +251,21 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">registry repair</span>
+          <h3 id="command-registry-repair" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-registry-repair" aria-label="Link to registry repair">registry repair<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Safe automatic repair: prunes orphaned entries after writing a backup of the previous registry. Pair with <code class="text-accent-light">registry validate</code> first.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">registry forget &lt;path&gt;</span>
+          <h3 id="command-registry-forget" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-registry-forget" aria-label="Link to registry forget &lt;path&gt;">registry forget &lt;path&gt;<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Remove a single registry entry without freeing resources. For tooling integrations that need a surgical edit when <code class="text-accent-light">release</code> is too heavy.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">release [path]</span>
+          <h3 id="command-release" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-release" aria-label="Link to release [path]">release [path]<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -283,7 +295,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">prune</span>
+          <h3 id="command-prune" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-prune" aria-label="Link to prune">prune<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -311,7 +323,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">clone &lt;repo&gt;</span>
+          <h3 id="command-clone" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-clone" aria-label="Link to clone &lt;repo&gt;">clone &lt;repo&gt;<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Clone, detect framework, generate <code class="text-accent-light">.treeline.yml</code> if missing, run
             setup. Does not auto-start.
@@ -319,7 +331,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">nuke</span>
+          <h3 id="command-nuke" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-nuke" aria-label="Link to nuke">nuke<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -336,12 +348,12 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       </div>
     </div>
 
-    <h2>Server management</h2>
+    <h2 id="server-management"><a class="heading-link" href="#server-management" aria-label="Link to Server management">Server management<span aria-hidden="true">#</span></a></h2>
 
     <div class="rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 mb-8">
       <div class="space-y-0">
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">start</span>
+          <h3 id="command-start" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-start" aria-label="Link to start">start<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -367,7 +379,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">stop</span>
+          <h3 id="command-stop" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-stop" aria-label="Link to stop">stop<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -381,7 +393,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">restart</span>
+          <h3 id="command-restart" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-restart" aria-label="Link to restart">restart<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Sync env, push updated vars to supervisor, restart server. Warns if <code class="text-accent-light"
               >commands.start</code
@@ -390,7 +402,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">port</span>
+          <h3 id="command-port" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-port" aria-label="Link to port">port<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -403,7 +415,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">open</span>
+          <h3 id="command-open" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-open" aria-label="Link to open">open<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Open in browser: HTTPS branch URL when <code class="text-accent-light">gtl serve</code> is running, else <code
               class="text-accent-light">http://localhost:{'{port}'}</code
@@ -412,7 +424,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">routes</span>
+          <h3 id="command-routes" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-routes" aria-label="Link to routes">routes<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -426,7 +438,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       </div>
     </div>
 
-    <h2>Networking</h2>
+    <h2 id="networking"><a class="heading-link" href="#networking" aria-label="Link to Networking">Networking<span aria-hidden="true">#</span></a></h2>
     <p class="text-muted mb-4">
       See <a href="/docs/networking/" class="text-accent-light hover:text-accent underline underline-offset-2"
         >Networking guide</a
@@ -436,7 +448,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
     <div class="rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 mb-8">
       <div class="space-y-0">
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">serve install</span>
+          <h3 id="command-serve-install" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-serve-install" aria-label="Link to serve install">serve install<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Generate CA, trust it, add port forwarding (443 → router), register background service. Also upgrades an
             existing router. <a
@@ -447,14 +459,14 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">serve status</span>
+          <h3 id="command-serve-status" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-serve-status" aria-label="Link to serve status">serve status<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Show router state, CA status, port forwarding, and all active routes. Reads pf state from the kernel rather than <code class="text-accent-light">pf.conf</code> on disk, so &ldquo;active&rdquo; means actually loaded. The router self-heals <code class="text-accent-light">pf.conf</code> if a macOS update reverts it. A router reachable only via the 443 port forward is treated as alive.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">serve restart</span>
+          <h3 id="command-serve-restart" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-serve-restart" aria-label="Link to serve restart">serve restart<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -467,45 +479,45 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">serve reload-pf</span>
+          <h3 id="command-serve-reload-pf" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-serve-reload-pf" aria-label="Link to serve reload-pf">serve reload-pf<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Targeted <code class="text-accent-light">pfctl</code> reload for the port-forwarding rules only. Use after a reboot dropped pf without paying the cost of a full <code class="text-accent-light">serve install</code>. (Most users won&rsquo;t need this &mdash; v0.40.1 installs a LaunchDaemon that re-applies rules at boot.)
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">serve alias [name] [port]</span>
+          <h3 id="command-serve-alias" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-serve-alias" aria-label="Link to serve alias [name] [port]">serve alias [name] [port]<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Add, remove, or list static subdomain aliases on the router. From a worktree directory, port is auto-detected from the allocation. Pass <code class="text-accent-light">--remove</code> to unregister. With no arguments, lists all aliases. Hot-reloaded within 5 seconds.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">serve logs</span>
+          <h3 id="command-serve-logs" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-serve-logs" aria-label="Link to serve logs">serve logs<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Stream or print recent router logs. Useful for diagnosing routing failures and TLS errors without tailing a file manually.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">serve uninstall</span>
+          <h3 id="command-serve-uninstall" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-serve-uninstall" aria-label="Link to serve uninstall">serve uninstall<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">Remove service, port forwarding, and CA trust.</p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">serve hosts sync</span>
+          <h3 id="command-serve-hosts-sync" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-serve-hosts-sync" aria-label="Link to serve hosts sync">serve hosts sync<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Write entries for all active routes to <code class="text-accent-light">/etc/hosts</code>. Required for Safari on macOS with <code class="text-accent-light">localhost</code> domain.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">serve hosts clean</span>
+          <h3 id="command-serve-hosts-clean" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-serve-hosts-clean" aria-label="Link to serve hosts clean">serve hosts clean<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">Remove managed entries from <code class="text-accent-light">/etc/hosts</code>.</p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">proxy &lt;port&gt; [target]</span>
+          <h3 id="command-proxy" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-proxy" aria-label="Link to proxy &lt;port&gt; [target]">proxy &lt;port&gt; [target]<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -521,7 +533,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">tunnel [port]</span>
+          <h3 id="command-tunnel" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-tunnel" aria-label="Link to tunnel [port]">tunnel [port]<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -544,7 +556,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">share [port]</span>
+          <h3 id="command-share" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-share" aria-label="Link to share [port]">share [port]<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -562,12 +574,12 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       </div>
     </div>
 
-    <h2>Cross-worktree</h2>
+    <h2 id="cross-worktree"><a class="heading-link" href="#cross-worktree" aria-label="Link to Cross-worktree">Cross-worktree<span aria-hidden="true">#</span></a></h2>
 
     <div class="rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 mb-8">
       <div class="space-y-0">
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">resolve &lt;project&gt; [branch]</span>
+          <h3 id="command-resolve" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-resolve" aria-label="Link to resolve &lt;project&gt; [branch]">resolve &lt;project&gt; [branch]<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -580,7 +592,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">link &lt;project&gt; &lt;branch&gt;</span>
+          <h3 id="command-link" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-link" aria-label="Link to link &lt;project&gt; &lt;branch&gt;">link &lt;project&gt; &lt;branch&gt;<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -594,30 +606,30 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">unlink &lt;project&gt;</span>
+          <h3 id="command-unlink" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-unlink" aria-label="Link to unlink &lt;project&gt;">unlink &lt;project&gt;<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">Remove a link override.</p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">relate &lt;path&gt;</span>
+          <h3 id="command-relate" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-relate" aria-label="Link to relate &lt;path&gt;">relate &lt;path&gt;<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Create a durable relationship between the current worktree and another worktree at <code class="text-accent-light">&lt;path&gt;</code>. Relationships persist in the registry and appear in <code class="text-accent-light">status --json</code> as <code class="text-accent-light">related[]</code>.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">unrelate &lt;path&gt;</span>
+          <h3 id="command-unrelate" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-unrelate" aria-label="Link to unrelate &lt;path&gt;">unrelate &lt;path&gt;<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">Remove a cross-worktree relationship.</p>
         </div>
       </div>
     </div>
 
-    <h2>Environment &amp; database</h2>
+    <h2 id="environment-database"><a class="heading-link" href="#environment-database" aria-label="Link to Environment &amp; database">Environment &amp; database<span aria-hidden="true">#</span></a></h2>
 
     <div class="rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 mb-8">
       <div class="space-y-0">
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">env show</span>
+          <h3 id="command-env-show" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-env-show" aria-label="Link to env show">env show<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -637,14 +649,14 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">env sync</span>
+          <h3 id="command-env-sync" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-env-sync" aria-label="Link to env sync">env sync<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Re-read env from <code class="text-accent-light">.treeline.yml</code>, update env file, refresh editor.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">db name</span>
+          <h3 id="command-db-name" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-db-name" aria-label="Link to db name">db name<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -655,7 +667,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">db pull &lt;env&gt;</span>
+          <h3 id="command-db-pull" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-db-pull" aria-label="Link to db pull &lt;env&gt;">db pull &lt;env&gt;<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -669,12 +681,12 @@ import DocsPagination from '../../../components/DocsPagination.astro';
             >
           </div>
           <p class="text-base text-muted mt-2">
-            Resolve a remote source from <code class="text-accent-light">database.sources</code> in <code class="text-accent-light">.treeline.yml</code> (<code class="text-accent-light">via: fly</code>, <code class="text-accent-light">via: heroku</code>, or <code class="text-accent-light">via: env</code>), pg_dump it, and restore into the worktree database. The dump is retained locally — run <code class="text-accent-light">db refresh</code> to reset from it without re-downloading.
+            Resolve a remote source from <code class="text-accent-light">database.sources</code> in <code class="text-accent-light">.treeline.yml</code> (<code class="text-accent-light">via: fly</code>, <code class="text-accent-light">via: heroku</code>, or <code class="text-accent-light">via: env</code>), pg_dump it, and restore into the worktree database. The dump is retained locally — run <code class="text-accent-light">db refresh</code> to reset from it without re-downloading. Refuses to overwrite the main worktree's template database.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">db refresh [env]</span>
+          <h3 id="command-db-refresh" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-db-refresh" aria-label="Link to db refresh [env]">db refresh [env]<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -685,19 +697,19 @@ import DocsPagination from '../../../components/DocsPagination.astro';
             >
           </div>
           <p class="text-base text-muted mt-2">
-            Drop and re-import from a previously pulled sample. No network access. With no argument, refreshes from the most recently pulled env.
+            Drop and re-import from a previously pulled sample. No network access. With no argument, refreshes from the most recently pulled env. Refuses to overwrite the main worktree's template database.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">db template update</span>
+          <h3 id="command-db-template-update" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-db-template-update" aria-label="Link to db template update">db template update<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
-            Advance the root template database: pulls <code class="text-accent-light">origin/HEAD</code> (resolved dynamically, not hardcoded to <code class="text-accent-light">main</code>) in the root repo using fast-forward-only — errors with an actionable message if the branch has diverged — then runs <code class="text-accent-light">commands.migrate</code>. The root repo must have a clean working tree. Existing worktree databases are not affected — run <code class="text-accent-light">gtl db reset</code> in a worktree to re-clone from the updated template.
+            Advance the root template database: fetches <code class="text-accent-light">merge_target</code> from <code class="text-accent-light">origin</code> and runs <code class="text-accent-light">commands.migrate</code> in a temporary detached checkout. Requires Git 2.29+ and an <code class="text-accent-light">env</code> mapping using <code class="text-accent-light">{'{database}'}</code>, <code class="text-accent-light">{'{database.name}'}</code>, or <code class="text-accent-light">{'{database_1}'}</code> to target the root template. Setup commands and hooks do not run; migration dependencies must be available or prepared by the migration command. Existing checkout branches and worktree databases stay unchanged. Run <code class="text-accent-light">gtl db reset</code> in a worktree to re-clone. See the <a href="/docs/database/#updating-the-template" class="text-accent-light hover:text-accent underline underline-offset-2">template update guide</a>.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">db reset</span>
+          <h3 id="command-db-reset" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-db-reset" aria-label="Link to db reset">db reset<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -716,7 +728,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">db restore &lt;file&gt;</span>
+          <h3 id="command-db-restore" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-db-restore" aria-label="Link to db restore &lt;file&gt;">db restore &lt;file&gt;<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -732,7 +744,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">db drop</span>
+          <h3 id="command-db-drop" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-db-drop" aria-label="Link to db drop">db drop<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -747,12 +759,12 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       </div>
     </div>
 
-    <h2>Navigation &amp; status</h2>
+    <h2 id="navigation-status"><a class="heading-link" href="#navigation-status" aria-label="Link to Navigation &amp; status">Navigation &amp; status<span aria-hidden="true">#</span></a></h2>
 
     <div class="rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 mb-8">
       <div class="space-y-0">
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">status</span>
+          <h3 id="command-status" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-status" aria-label="Link to status">status<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -779,7 +791,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">dashboard</span>
+          <h3 id="command-dashboard" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-dashboard" aria-label="Link to dashboard">dashboard<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Interactive TUI (Bubble Tea). Browse worktrees by project with live updates. Aliases: <code
               class="text-accent-light">gtl dash</code
@@ -788,7 +800,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">worktrees</span>
+          <h3 id="command-worktrees" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-worktrees" aria-label="Link to worktrees">worktrees<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Interactive TUI picker. Arrow keys to navigate, Enter to print path. Alias: <code class="text-accent-light"
               >gtl wt</code
@@ -797,7 +809,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">where &lt;branch&gt;</span>
+          <h3 id="command-where" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-where" aria-label="Link to where &lt;branch&gt;">where &lt;branch&gt;<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Print filesystem path to a worktree by branch. <code class="text-accent-light">project/branch</code> to
             disambiguate.
@@ -805,14 +817,14 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">worktree</span>
+          <h3 id="command-worktree" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-worktree" aria-label="Link to worktree">worktree<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Print the filesystem path of the current worktree. For scripting and agent tooling.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">doctor</span>
+          <h3 id="command-doctor" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-doctor" aria-label="Link to doctor">doctor<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -829,46 +841,46 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       </div>
     </div>
 
-    <h2>Config &amp; editor</h2>
+    <h2 id="config-editor"><a class="heading-link" href="#config-editor" aria-label="Link to Config &amp; editor">Config &amp; editor<span aria-hidden="true">#</span></a></h2>
 
     <div class="rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 mb-8">
       <div class="space-y-0">
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">config list</span>
+          <h3 id="command-config-list" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-config-list" aria-label="Link to config list">config list<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">Dump all user-level settings.</p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">config get &lt;key&gt;</span>
+          <h3 id="command-config-get" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-config-get" aria-label="Link to config get &lt;key&gt;">config get &lt;key&gt;<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">Read a setting by dot-notation key.</p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">config set &lt;key&gt; &lt;value&gt;</span>
+          <h3 id="command-config-set" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-config-set" aria-label="Link to config set &lt;key&gt; &lt;value&gt;">config set &lt;key&gt; &lt;value&gt;<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">Write a setting and persist to disk.</p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">config path</span>
+          <h3 id="command-config-path" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-config-path" aria-label="Link to config path">config path<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">Print config file location.</p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">config edit</span>
+          <h3 id="command-config-edit" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-config-edit" aria-label="Link to config edit">config edit<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Open config in <code class="text-accent-light">$EDITOR</code>.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">editor refresh</span>
+          <h3 id="command-editor-refresh" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-editor-refresh" aria-label="Link to editor refresh">editor refresh<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Re-apply editor title, color, and theme for the current worktree.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">completion bash|zsh|fish|powershell</span>
+          <h3 id="command-completion" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-completion" aria-label="Link to completion bash|zsh|fish|powershell">completion bash|zsh|fish|powershell<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Print shell completion script. Works for all three invocation forms (<code class="text-accent-light">gtl</code>, <code class="text-accent-light">git-treeline</code>, <code class="text-accent-light">git treeline</code>). Includes dynamic completions for config keys and project names.
           </p>
@@ -876,12 +888,12 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       </div>
     </div>
 
-    <h2>Agent integration</h2>
+    <h2 id="agent-integration"><a class="heading-link" href="#agent-integration" aria-label="Link to Agent integration">Agent integration<span aria-hidden="true">#</span></a></h2>
 
     <div class="rounded-lg border border-surface-border bg-surface-raised p-4 sm:p-6 mb-8">
       <div class="space-y-0">
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">mcp</span>
+          <h3 id="command-mcp" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-mcp" aria-label="Link to mcp">mcp<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Start the MCP server (stdio transport). Used by editors, not invoked directly. See <a
               href="/docs/agents/#mcp-server"
@@ -891,14 +903,14 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">mcp-config</span>
+          <h3 id="command-mcp-config" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-mcp-config" aria-label="Link to mcp-config">mcp-config<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Print the MCP server config block for all supported editors (Cursor, Claude Code, and more). Copy the relevant snippet into your editor's MCP config.
           </p>
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">version</span>
+          <h3 id="command-version" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-version" aria-label="Link to version">version<span aria-hidden="true">#</span></a></h3>
           <div class="flex flex-wrap gap-1.5 mt-2">
             <span
               class="font-mono text-xs text-yellow-400/80 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded"
@@ -911,7 +923,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
         </div>
 
         <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-          <span class="font-mono text-white text-base font-semibold">update</span>
+          <h3 id="command-update" class="reference-heading font-mono text-white text-base font-semibold"><a class="heading-link" href="#command-update" aria-label="Link to update">update<span aria-hidden="true">#</span></a></h3>
           <p class="text-base text-muted mt-2">
             Update the CLI to the latest release. Version-aware: checks the current version against the latest available and skips the download if already up to date. When a newer version is available but you haven&rsquo;t run <code class="text-accent-light">gtl update</code>, GTL passively notifies you after commands complete.
           </p>
@@ -919,7 +931,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       </div>
     </div>
 
-    <h2>Related</h2>
+    <h2 id="related"><a class="heading-link" href="#related" aria-label="Link to Related">Related<span aria-hidden="true">#</span></a></h2>
     <ul class="text-muted space-y-3 list-disc pl-5 mb-8">
       <li>
         <a href="/docs/configuration/" class="text-accent-light hover:text-accent underline underline-offset-2"

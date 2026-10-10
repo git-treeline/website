@@ -4,31 +4,45 @@
 
 ## Overview
 
-git-treeline solves a specific problem: git worktrees are easy to create (`git worktree add` takes seconds) but hard to run because every checkout shares the same ports, databases, and config. Treeline provisions each worktree with isolated resources so you can run a feature branch, a PR review, a bugfix, and main — all at the same time.
+git-treeline solves a specific problem: git worktrees are easy to create (`git worktree add` takes seconds) but hard to run because, without per-worktree configuration, checkouts can compete for the same ports and databases. Treeline provisions each worktree with isolated resources so you can run a feature branch, a PR review, a bugfix, and main — all at the same time.
 
 Install:
 ```
 brew install git-treeline/tap/git-treeline
 ```
 
-Or: `go install github.com/git-treeline/git-treeline@latest`
+Or (Go 1.26+): `go install github.com/git-treeline/cli/cmd/git-treeline@latest`
 
-Binary releases: https://github.com/git-treeline/git-treeline/releases
+Binary releases: https://github.com/git-treeline/cli/releases
 
-Current version: v0.58.0
+Current version: v0.58.3 (released 2026-10-10)
 
-Invoked as `git-treeline`, `git treeline`, or `gtl`. All three are equivalent.
+Runs on macOS and Linux. Homebrew installs `git-treeline` and the `gtl` alias. Go install provides `git-treeline`; use it instead of `gtl` in the examples below. `git treeline` also works. Git and the tools used by your database and setup commands must be installed.
+
+Upgrade with `gtl update`, then check `gtl version`. When upgrading from v0.58.0 or earlier, stop each older supervisor with `gtl stop --kill` from its original launch path (including symlink aliases), then run `gtl start`. Ctrl+C in the original terminal also works.
+
+Release notes: https://github.com/git-treeline/cli/releases/tag/v0.58.3
+
+## Before you start
+
+- Treeline supports macOS and Linux. Native Windows is not a supported release target.
+- Containers are not required. Apps can still use Docker when their own setup needs it.
+- PostgreSQL and SQLite cloning are optional and require a prepared template. Frameworks or setup commands create auxiliary databases.
+- Router URLs are local, not publicly reachable. Public access requires an explicitly started tunnel or sharing command.
+- Worktree resource isolation prevents development conflicts; it is not a security sandbox and does not restrict a process or agent's access to the machine.
 
 ## Core workflow
 
 1. **Install**: `gtl install` — one-time setup per project. Creates `.treeline.yml`, installs the post-checkout hook, allocates ports, writes env file, optionally enables local HTTPS router.
-2. **New worktree**: `gtl new feature-auth` — creates a git worktree, allocates a port, clones the database, writes `.env.local`, runs setup commands.
+2. **New worktree**: `gtl new feature-auth --start` — creates a git worktree, allocates a port, clones the database if configured, writes `.env.local`, runs setup commands, and starts the configured server.
 3. **Start server**: `gtl start` — runs your app under a managed supervisor. Syncs env on fresh start.
 4. **PR review**: `gtl review 42 --start` — fetches PR #42 into a worktree with full setup, starts server.
 5. **Switch branch**: `gtl switch feature-payments` — fetches, checks out, refreshes env.
 6. **Release**: `gtl release --drop-db --remove-worktree` — frees port, drops database, removes directory.
 
 ## Key concepts
+
+The installed Git hook provisions unallocated linked worktrees and refreshes editor settings on branch changes in an existing allocation. Setup hooks run when setup runs, including explicit retries.
 
 - **Provisioning**: On `gtl new` or `gtl setup`, Treeline allocates ports, clones the PostgreSQL or SQLite database, copies files, writes env, and runs setup commands. All idempotent.
 - **Env file**: Treeline writes a `.env.local` (or configured path) with interpolated values: `{port}`, `{database}`, `{router_url}`, `{resolve:project}`, etc.
@@ -49,8 +63,8 @@ env_file: .env.local     # where to write allocated env
 database:
   adapter: postgresql    # or sqlite
   template: myapp_dev    # source DB to clone from
-  pattern: "{template}_{worktree}"
-  sync_on_create: false  # pull merge_target + migrate before cloning
+  name: "{template}_{worktree}"
+  sync_on_create: false  # migrate template in detached checkout before cloning
   sources:               # for gtl db pull
     production:
       via: fly
@@ -64,7 +78,7 @@ provision:               # host-level baseline (gtl provision); declaring it als
   apt: [libvips, imagemagick]   # Linux packages (needs sudo)
   services: [redis-server]      # apt-install + systemctl enable --now
   database:
-    template: myapp_development # optional; defaults to database.template
+    template: myapp_dev         # optional; defaults to database.template
     source: production          # hydrate template DB from named source
     hydrate: "bin/rails db:schema:load db:seed"  # fallback; non-interactive, runs in repo dir
 
@@ -81,7 +95,7 @@ commands:
     - bundle install
     - bin/rails db:migrate
   start: bin/rails server -p {port}
-  migrate: bin/rails db:migrate  # used by db template update + sync_on_create
+  migrate: bundle install && bin/rails db:migrate  # fresh detached checkout
 
 editor:
   title: "{project} · {branch} :{port}"
@@ -95,6 +109,8 @@ hooks:
     post_stop: gtl serve alias myapp-oauth --remove
     auto: false
 ```
+
+Managed paths (`env_file.path`, `env_file.seed_from`, and `copy_files`) must be relative and stay within their project roots. Absolute paths, parent traversal, and escaping symlinks are rejected.
 
 ## Interpolation tokens (used in env map)
 
@@ -123,10 +139,10 @@ hooks:
 - `install` — full one-step setup for new developers
 - `provision` [--dry-run] — bring a host up to the repo's declared baseline (apt packages, systemd services, mise runtimes, template database hydration) before `gtl setup` can succeed; idempotent, Linux-only for apt/services steps
 - `init` — generate `.treeline.yml` only (auto-detects framework, writes AGENTS.md); must be run inside a git repository
-- `rename <new-name>` — rename project, migrate registry
-- `new <branch>` [--base] [--start] [--open] [--no-setup] — create worktree + provision + optional start; `--no-setup` skips setup commands; default base branch respects `worktree_base` config
-- `claim <branch>` [--start] [--open] [--no-setup] — register an existing worktree directory with Treeline (allocates resources without creating a new git worktree)
-- `review <[#]PR#>` [--start] [--open] [--no-setup] — fetch GitHub PR into worktree (leading `#` accepted, e.g. `gtl review #42`)
+- `rename <new-name>` — rename the project and update tracked names, env, and editor config; changed worktrees need `gtl setup` to provision new databases, and old databases are not dropped
+- `new <branch>` [--base] [--start] [--open] [--no-setup] — create worktree + provision + optional start; `--no-setup` skips allocation, env, and setup commands; default base branch respects `worktree_base` config
+- `claim <branch>` [--path <path>] [--no-setup] — adopt an existing branch into a new or reused worktree, fast-forward from origin, and provision it; `--no-setup` skips explicit provisioning of newly created worktrees; installed Git hooks can still run setup, and existing worktrees are still provisioned
+- `review <[#]PR#>` [--start] [--open] [--no-setup] — fetch GitHub PR into worktree (leading `#` accepted; quote it in shells where it starts a comment: `gtl review '#42'`); `--no-setup` skips allocation, env, and setup for a new worktree
 - `switch <branch-or-[#]PR#>` [--setup] [--restart] — switch branch in current worktree (leading `#` on PR numbers accepted)
 - `setup [path]` [--dry-run] — full provisioning (idempotent); preserves worktree on setup-command failure, exits with code 2
 - `refresh` — re-allocate all worktrees
@@ -138,7 +154,7 @@ hooks:
 - `registry validate` [--json] / `repair` / `forget <path>` — audit and repair the allocation registry
 
 ### Server management
-- `start` [--with <hooks>] [--await] — fresh start or resume supervisor
+- `start` [--with <hooks>] [--await] — fresh start or resume supervisor; a fresh `--await` starts a background supervisor and returns when ready. Port cleanup requires explicit yes; empty input or EOF declines
 - `stop` [--kill] — stop server (supervisor stays alive unless --kill)
 - `restart` — sync env, push vars, restart server
 - `port` [--json] — print allocated port
@@ -165,10 +181,10 @@ hooks:
 - `db name` — print current database name
 - `db reset` [--from <db>] [--force] [--dry-run] — drop and re-clone database from template; prompts for confirmation
 - `db restore <file>` [--force] [--dry-run] — restore from a dump file; prompts for confirmation
-- `db drop` [--force] [--dry-run] — drop database without re-clone; prompts for confirmation
-- `db refresh` — pull latest from template without dropping (PostgreSQL only)
-- `db pull <env>` — pull a production/staging database (via fly, heroku, or env var)
-- `db template update` — migrate template database to latest schema: pulls origin/HEAD via --ff-only (errors on diverged branches with actionable message), then runs commands.migrate
+- `db drop` [--force] [--dry-run] — drop the current allocation database without re-clone; in the main worktree this is the template itself. Destructive database prompts identify the target database, host, port, and user
+- `db refresh [env]` — drop and re-import from a retained sample without a network download (PostgreSQL only); refuses the main worktree
+- `db pull <env>` — pull a production/staging database (via fly, heroku, or env var); refuses the main worktree to protect the template
+- `db template update` — fetch remote merge_target and run commands.migrate in a temporary detached checkout, targeting the root template; Git 2.29+ and explicit primary database env binding required; existing checkout branches and worktree databases stay unchanged
 
 ### Navigation & status
 - `status` — show all allocations for current project; `--json` includes `related[]` cross-worktree relationships
@@ -181,7 +197,7 @@ hooks:
 - `config list / get / set / path / edit` — manage user config
 - `editor refresh` — re-apply editor config (title, color, theme) to current worktree
 - `mcp-config` — print MCP server config block for your editor
-- `version` [--json] — print CLI version; `--json` returns `{"cli": "0.45.0", "router": "0.45.0"}` (router is null when not running)
+- `version` [--json] — print CLI version; `--json` returns `{"cli": "0.58.3", "router": "0.58.3"}` (router is null when not running)
 - `update` — update the CLI to the latest release; version-aware (skips if already current); passively notifies after commands when a newer version is available
 
 ### Cross-worktree
@@ -200,11 +216,12 @@ hooks:
 
 ## Networking architecture
 
-- **Port allocation**: Each worktree gets N consecutive ports (default 1) from a shared registry. Base port default: 3002, increment: 2. Ports 3000 and 3001 reserved for proxy and router.
+- **Port allocation**: Each worktree gets N consecutive ports (default 1) from a shared registry. Base port default: 3002, increment: 2. Dynamic allocation skips common development ports; explicit reservations can use them. Ports 3000 and 3001 are reserved by default for proxy and router.
 - **HTTPS router** (`gtl serve`): Reverse proxy + local CA. Serves `https://{project}-{branch}.{domain}` (default domain: `prt.dev`). macOS: uses pf for 443→router forwarding + LaunchDaemon for boot persistence. Linux: systemd user service.
 - **Route key**: `{project}-{branch}` sanitized. Long names auto-truncated with hash suffix (DNS label limit 63 chars).
 - **Aliases**: Named subdomains pointing at any port. Static (per config) or dynamic (via `gtl serve alias`). Hot-reloaded within 5 seconds.
 - **Port proxy** (`gtl proxy`): Forward a local port to another target port, with optional TLS. Listens on 3000 by default.
+- **Webhooks**: Local HTTPS names and port proxies do not provide public access. Use `stripe listen --forward-to localhost:3000/webhooks` with `gtl proxy 3000` for local Stripe testing, or a public tunnel for remotely delivered webhooks.
 - **Tunnels**: Named Cloudflare tunnels (`gtl tunnel`) for permanent public access; `gtl share` for anonymous one-shot tunnels.
 
 ## Database management
@@ -212,8 +229,9 @@ hooks:
 - PostgreSQL: databases cloned with `createdb --template`. Pattern default: `{template}_{worktree}`.
 - SQLite: `.sqlite` file copied from template path.
 - `database.sources` configures remote pull targets (Fly, Heroku, or local env var holding a postgres:// URL).
-- `database.sync_on_create: true` pulls merge_target and runs `commands.migrate` in the root repo before cloning each new worktree's database — keeps new worktrees current.
-- `database.extra` declares auxiliary per-worktree databases cloned alongside the primary one. Each key is an identifier; value is a map with `adapter`, `template`, and `name` (pattern) fields. Accessible in env via `{database.extra.<key>}` dotted tokens. `database.name` replaces the legacy `database.pattern` key (old key still accepted as fallback).
+- `database.sync_on_create: true` fetches the remote merge_target and runs `commands.migrate` in a temporary detached checkout before a fresh clone. Requires Git 2.29+ and an env mapping using `{database}`, `{database.name}`, or `{database_1}`. Those tokens target the root template during migrations. Without a primary binding, automatic sync warns and uses the existing template; manual updates and strict setup fail.
+- Template updates leave existing checkout branches and worktree databases unchanged. The root template is intentionally migrated. `merge_target` defaults to origin/HEAD when available, otherwise main. Dependencies must be available or prepared by `commands.migrate`; normal setup commands and hooks do not run. Configured copies and the root env seed prepare the checkout. Unbound database URLs in common dotenv files and implicit auxiliary URL targets are rejected; any shadow database must be separate from the template.
+- `database.extra` declares auxiliary database naming patterns as a map of strings (for example, `queue: "{database.name}_queue"`) or list of strings. Treeline names and tracks these for cleanup; your framework or setup commands must create them. Only the primary database is cloned. Named extras are accessible via `{database.extra.<key>}`. `database.name` replaces the legacy `database.pattern` key (old key still accepted as fallback).
 - `gtl db template update` migrates the template database itself (for keeping the source up to date).
 
 ## User config
@@ -223,11 +241,15 @@ Per-machine settings at `~/Library/Application Support/git-treeline/` (macOS) or
 - `port.base` (default 3002), `port.increment` (default 2)
 - `port.reservations`: pin specific projects/branches to fixed ports
 - `redis.strategy`: `prefixed` (key namespacing) or `database` (separate Redis DBs)
-- `router.domain` (default `prt.dev`), `router.port` (default 3001), `router.mode` (prompt/enabled/disabled)
+- `router.domain` (default `prt.dev`; must be localhost or a valid narrow DNS suffix, not an IP address, wildcard, or public suffix), `router.port` (default 3001), `router.mode` (prompt/enabled/disabled)
 - `worktree.path`: where `gtl new` creates worktrees, supports `{project}` and `{branch}` tokens
 - `editor.name`, `editor.themes`, `editor.colors`: per-project or per-branch overrides
 - `tunnel.name`, `tunnel.domain`: Cloudflare tunnel config
 - `review.skip_switch_confirm`: skip confirmation when `gtl review` switches current worktree
+
+## Menu bar app
+
+Menulet v0.2.0 requires macOS 14+. Click a row to open the editor; Command-click opens its URL; Option-click copies it. It reads the allocation registry and supports opening worktrees, refreshing env, and releasing allocations. Its supervisor controls use the older socket path and are incompatible with CLI v0.58.1 and later; use CLI start/stop/restart commands.
 
 ## Docs
 

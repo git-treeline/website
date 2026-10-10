@@ -15,7 +15,7 @@ import FeatureStrip from '../../../components/FeatureStrip.astro';
     <p class="text-sm uppercase tracking-wider text-muted mb-4">Workflows</p>
     <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">Type a PR number.<br />Get a running app.</h1>
     <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
-      <code class="text-accent-light">gtl review</code> creates an isolated worktree, allocates resources, runs setup, and boots the server—all from a PR number. Requires the <code class="text-accent-light">gh</code> CLI for PR fetching; everything else is built in.
+      <code class="text-accent-light">gtl review 42 --start</code> creates an isolated worktree from the main repo, allocates resources, runs setup, and boots the server. Requires the <code class="text-accent-light">gh</code> CLI for PR fetching; everything else is built in.
     </p>
   </section>
 
@@ -80,7 +80,7 @@ import FeatureStrip from '../../../components/FeatureStrip.astro';
         </div>
         <div class="flex gap-3 items-baseline">
           <span class="text-muted shrink-0 mt-0.5" aria-hidden="true">&rarr;</span>
-          <span class="text-base text-muted min-w-0 font-mono text-accent">https://myapp-pr-42.prt.dev</span>
+          <span class="text-base text-muted min-w-0 font-mono text-accent">https://myapp-add-oauth-login.prt.dev</span>
         </div>
         <p class="text-muted text-xs mt-2 pl-7">named URL via gtl serve</p>
       </div>

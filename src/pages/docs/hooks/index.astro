@@ -28,7 +28,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
 
     <h2>Setup &amp; release hooks</h2>
     <p class="text-muted mb-4">
-      These run during worktree creation and teardown. They're for one-time provisioning: installing dependencies, running migrations, copying credentials, cleaning up artifacts.
+      These run during setup and release, including repeated setup runs. Use them to validate setup prerequisites, run migrations, and clean up artifacts. Keep setup hooks safe to re-run.
     </p>
 
     <div class="overflow-x-auto rounded-lg border border-surface-border mb-6">

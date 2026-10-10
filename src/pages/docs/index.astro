@@ -47,7 +47,7 @@ const guides = [
     </div>
 
     <p class="text-sm text-muted max-w-2xl mb-10">
-      That config gives every worktree its own port, database, HTTPS URL, and supervised dev server.
+      That config declares setup, server startup, and a PostgreSQL template. Add your app&rsquo;s port and database env mappings; named HTTPS URLs require the optional router.
       The guides below explain each subsystem in detail. Start here if you're new:
     </p>
 
@@ -60,6 +60,32 @@ const guides = [
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
       </svg>
     </a>
+
+    <section aria-labelledby="before-you-start" class="mb-12 border-y border-surface-border py-8">
+      <h2 id="before-you-start" class="text-xl font-semibold text-white mb-6">Before you start</h2>
+      <dl class="space-y-5 text-base">
+        <div>
+          <dt class="font-medium text-white mb-1">Which platforms are supported?</dt>
+          <dd class="text-muted">macOS and Linux. Install Git and your project&rsquo;s runtimes and tools; native Windows is not a supported release target.</dd>
+        </div>
+        <div>
+          <dt class="font-medium text-white mb-1">Do I need Docker?</dt>
+          <dd class="text-muted">No. Treeline provisions local worktrees and resources without requiring containers. Your app can still use Docker if its setup needs it.</dd>
+        </div>
+        <div>
+          <dt class="font-medium text-white mb-1">Which databases can I isolate?</dt>
+          <dd class="text-muted">PostgreSQL and SQLite. Treeline clones your configured template; your framework or setup commands create any auxiliary databases. <a href="/docs/database/" class="text-accent-light underline underline-offset-2">Database guide &rarr;</a></dd>
+        </div>
+        <div>
+          <dt class="font-medium text-white mb-1">Are branch URLs public?</dt>
+          <dd class="text-muted">No. The HTTPS router serves local URLs. Public access requires a tunnel or sharing command you start explicitly. <a href="/docs/networking/" class="text-accent-light underline underline-offset-2">Networking guide &rarr;</a></dd>
+        </div>
+        <div>
+          <dt class="font-medium text-white mb-1">Is a worktree a security sandbox?</dt>
+          <dd class="text-muted">No. Separate ports, databases, and env files prevent development conflicts; they do not restrict what a process or AI agent can access on your machine.</dd>
+        </div>
+      </dl>
+    </section>
 
     <section class="mb-12">
       <h2 class="text-lg font-semibold text-white mb-1">Reference</h2>

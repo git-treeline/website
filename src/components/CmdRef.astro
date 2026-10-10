@@ -1,11 +1,12 @@
 ---
 const { name, type, flags = [] } = Astro.props;
+const id = Astro.props.id ?? name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 ---
 <div class="py-6 sm:py-5 border-b border-surface-border last:border-b-0">
-  <div class="font-mono text-white text-base font-semibold">
-    {name}
+  <h3 id={id} class="reference-heading font-mono text-white text-base font-semibold">
+    <a class="heading-link" href={`#${id}`} aria-label={`Link to ${name}`}>{name}<span aria-hidden="true">#</span></a>
     {type && <span class="font-mono text-sm text-muted font-normal ml-2">{type}</span>}
-  </div>
+  </h3>
   {flags.length > 0 && (
     <div class="flex flex-wrap gap-1.5 mt-2">
       {flags.map((flag: string) => (

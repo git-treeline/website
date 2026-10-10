@@ -11,7 +11,7 @@ import ArticleLayout from '../../../layouts/ArticleLayout.astro';
   heading="Agents provision worktrees, not just query them"
 >
   <p class="text-lg sm:text-xl text-gray-400 mb-10 leading-relaxed max-w-3xl">
-    The MCP server exposes the full GTL toolset: create worktrees, allocate resources, wire up cross-repo dependencies, and control the dev server. AI agents work with real allocations instead of guessing ports and parsing stdout.
+    MCP tools let agents create worktrees, allocate resources, wire up cross-repo dependencies, and control the dev server. AI agents work with real allocations instead of guessing ports and parsing stdout.
   </p>
 
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">MCP: first-class automation interface</h2>
@@ -37,7 +37,7 @@ import ArticleLayout from '../../../layouts/ArticleLayout.astro';
 
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Agent context file</h2>
   <p class="text-muted mb-10">
-    <code class="text-accent-light">gtl install</code> writes an <code class="text-white">AGENTS.md</code> file with instructions for setup, teardown, and server management. Any MCP-compatible editor reads it as context. Cross-repo service URLs follow the same <code class="text-accent-light">gtl resolve</code> contract as humans.
+    <code class="text-accent-light">gtl install</code> writes an <code class="text-white">AGENTS.md</code> file with instructions for setup, teardown, and server management. Agents that support AGENTS.md can use it as project context. Cross-repo service URLs follow the same <code class="text-accent-light">gtl resolve</code> contract as humans.
   </p>
 
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Read next</h2>
