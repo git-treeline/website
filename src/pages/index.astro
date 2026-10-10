@@ -5,6 +5,7 @@ import FeatureCard from '../components/FeatureCard.astro';
 import FeatureDemo from '../components/FeatureDemo.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import DashboardCarousel from '../components/DashboardCarousel.astro';
+import InstallCommand from '../components/InstallCommand.astro';
 
 const jsonLd = JSON.stringify({
   "@context": "https://schema.org",
@@ -13,9 +14,10 @@ const jsonLd = JSON.stringify({
   alternateName: "Git Treeline",
   applicationCategory: "DeveloperApplication",
   operatingSystem: "macOS, Linux",
+  softwareVersion: "0.58.3",
   description: "CLI that gives every git worktree its own port, database, and URL. Isolated dev environments for parallel branch development.",
   url: "https://git-treeline.dev",
-  downloadUrl: "https://github.com/git-treeline/git-treeline/releases",
+  downloadUrl: "https://github.com/git-treeline/cli/releases",
   license: "https://opensource.org/licenses/MIT",
   author: { "@type": "Person", name: "Jonathan Simmons", url: "https://x.com/jonathansimmons" },
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
@@ -24,44 +26,39 @@ const jsonLd = JSON.stringify({
 
 <BaseLayout
   title="Git Treeline · Isolated dev environments for every git worktree"
-  description="Declarative worktree provisioning: ports, databases, routing, env, and lifecycle hooks for every git branch. One CLI, one config file."
+  description="Run Git worktrees without port or database conflicts. Git Treeline provisions each branch with its own ports, database, and environment config."
   canonical="https://git-treeline.dev"
   installHref="#get-started"
   jsonLd={jsonLd}
 >
   <!-- Hero -->
-  <section id="hero" class="flex flex-col items-center text-center px-4 sm:px-6 pt-28 sm:pt-40 md:pt-48 pb-12 sm:pb-24">
-    <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-2 sm:mb-3">git-treeline</h1>
-    <p class="hidden sm:block text-base font-mono uppercase tracking-widest text-muted mb-6">Worktree provisioner</p>
-    <p class="text-xl md:text-2xl text-accent-light max-w-2xl mb-3 sm:mb-4">Run every branch at the same time</p>
-    <p class="text-base sm:text-lg text-gray-400 max-w-2xl mb-6 sm:mb-12 leading-relaxed">
-      Declare what each branch needs in one YAML file: ports, databases, routing, env, lifecycle hooks. GTL provisions it. Three features, a bugfix, and a code review, all at&nbsp;once.
+  <section id="hero" class="flex flex-col items-center text-center px-4 sm:px-6 pt-24 sm:pt-28 pb-8 sm:pb-10">
+    <p class="text-sm font-mono uppercase tracking-widest text-accent-light mb-5">Git Treeline · Worktree provisioner</p>
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight max-w-5xl mb-6 text-balance">Run Git worktrees without port or database conflicts.</h1>
+    <p class="text-base sm:text-lg text-gray-400 max-w-2xl mb-7 leading-relaxed">
+      Give each branch its own ports, database, and environment config. Define your setup once in <code class="text-accent-light">.treeline.yml</code>, then create a ready-to-run worktree with one command.
     </p>
-    <div class="flex flex-col sm:flex-row items-center gap-4 mb-8 w-full max-w-2xl">
-      <div class="bg-surface-raised border border-surface-border rounded-lg px-3 sm:px-5 py-2.5 sm:py-3 font-mono text-base flex items-center justify-between gap-3 sm:gap-4 min-w-0 max-w-full overflow-x-auto">
-        <code class="text-accent-light whitespace-nowrap text-sm sm:text-base">brew install git-treeline/tap/git-treeline</code>
-        <button onclick="navigator.clipboard.writeText('brew install git-treeline/tap/git-treeline')" class="text-muted hover:text-white transition-colors" aria-label="Copy install command">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-        </button>
-      </div>
-      <a href="https://github.com/git-treeline/git-treeline" class="inline-flex items-center justify-center gap-3 whitespace-nowrap px-8 py-3.5 border border-surface-border rounded-none text-white hover:border-accent transition-colors">
-        <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-        View on GitHub
-      </a>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 mb-6">
+      <a href="/docs/getting-started/" class="inline-flex items-center justify-center px-5 py-3 rounded-md bg-accent text-surface text-sm sm:text-base font-mono font-semibold hover:bg-accent-light transition-colors">Set up your first worktree &rarr;</a>
+      <a href="https://github.com/git-treeline/cli" class="px-3 py-2 text-sm text-muted hover:text-white underline underline-offset-4 transition-colors">View on GitHub</a>
     </div>
-    <p class="hidden sm:block text-sm text-muted mt-4">
-      <span class="font-mono text-white/40 mr-2">v0.58.0</span>
-      Single command setup: <code class="text-accent-light">gtl install</code> handles config, hooks, ports, and optional HTTPS routing.
-      <a href="/docs/getting-started/" class="text-accent-light hover:text-accent underline underline-offset-2">Get started&nbsp;&rarr;</a>
+    <InstallCommand />
+    <p class="text-sm text-muted max-w-xl mt-1">
+      macOS &amp; Linux · PostgreSQL or SQLite · Optional local HTTPS
+    </p>
+    <p class="text-sm text-muted mt-3">
+      <a href="https://github.com/git-treeline/cli/releases/tag/v0.58.3" class="font-mono text-accent-light hover:text-white">v0.58.3</a>
+      <span aria-hidden="true" class="mx-2">·</span>
+      <a href="/docs/getting-started/#upgrading" class="hover:text-white underline underline-offset-4">Upgrade guide</a>
     </p>
   </section>
 
   <!-- Problem / Solution -->
-  <section id="problem-solution" class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised">
+  <section id="problem-solution" class="px-4 sm:px-6 py-12 bg-surface-raised">
     <div class="max-w-5xl mx-auto">
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-6 sm:mb-4 text-center text-balance">Worktrees are easy to create. Hard&nbsp;to&nbsp;run.</h2>
-      <p class="text-base sm:text-lg text-muted max-w-2xl text-balance text-center mx-auto mb-12">
-        A git worktree is a separate checkout of your repo in its own directory — <code class="text-accent-light">git worktree add</code> creates one in seconds. But every checkout shares the same ports, databases, and&nbsp;config.
+      <h2 class="text-2xl sm:text-3xl font-mono font-bold text-white mb-6 sm:mb-4 text-center text-balance">Worktrees are easy to create. Hard&nbsp;to&nbsp;run.</h2>
+      <p class="text-base sm:text-lg text-muted max-w-2xl text-balance text-center mx-auto mb-8">
+        A git worktree is a separate checkout of your repo in its own directory — <code class="text-accent-light">git worktree add</code> creates one in seconds. Without per-worktree configuration, those checkouts can compete for the same ports and databases.
       </p>
       <div class="grid md:grid-cols-2 gap-6">
         <Terminal label="without git-treeline">
@@ -104,7 +101,7 @@ const jsonLd = JSON.stringify({
     <div class="max-w-4xl mx-auto">
       <h2 class="text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-6 sm:mb-4 text-center text-balance">Port 3000 stays free. On&nbsp;purpose.</h2>
       <p class="text-base sm:text-lg text-muted max-w-2xl text-balance text-center mx-auto mb-12">
-        OAuth providers, Stripe webhooks, Mapbox, CORS policies &mdash; they&rsquo;re all registered to <code class="text-white">localhost:3000</code>. The moment a second branch takes that port, every integration breaks. Treeline never allocates common ports. It reserves them for the proxy.
+        OAuth callbacks, Mapbox allowlists, and CORS rules often depend on a fixed local origin. Treeline reserves port 3000 by default so <code class="text-white">gtl proxy</code> can forward that origin to the worktree you choose.
       </p>
 
       <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center max-w-3xl mx-auto mb-12">
@@ -113,14 +110,14 @@ const jsonLd = JSON.stringify({
             <p><span class="text-accent-light">$</span> <span class="text-white">gtl proxy 3000</span></p>
             <p class="text-muted">Proxying <span class="text-accent">:3000</span> &rarr; <span class="text-accent">:4010</span> <span class="text-muted">(feature-auth)</span></p>
             <p class="text-muted text-sm mt-3"># OAuth callback &rarr; :4010</p>
-            <p class="text-muted text-sm"># Stripe webhook &rarr; :4010</p>
+            <p class="text-muted text-sm"># Stripe CLI forwarding &rarr; :4010</p>
             <p class="text-muted text-sm"># Mapbox origin  &rarr; :4010</p>
           </div>
         </Terminal>
         <div class="space-y-5">
           <div class="border-l-2 border-accent/40 pl-4">
             <p class="text-white font-medium mb-1">Configure once, never again</p>
-            <p class="text-base text-muted">Register <code class="text-accent-light">localhost:3000/callback</code> in your OAuth dashboard. Register <code class="text-accent-light">localhost:3000/webhooks</code> in Stripe. Done.</p>
+            <p class="text-base text-muted">Use <code class="text-accent-light">http://localhost:3000/callback</code> where your OAuth provider allows localhost. For local Stripe webhooks, run <code class="text-accent-light">stripe listen --forward-to localhost:3000/webhooks</code>.</p>
           </div>
           <div class="border-l-2 border-accent/40 pl-4">
             <p class="text-white font-medium mb-1">Switch what&rsquo;s behind it</p>
@@ -128,7 +125,7 @@ const jsonLd = JSON.stringify({
           </div>
           <div class="border-l-2 border-accent/40 pl-4">
             <p class="text-white font-medium mb-1">Branch URLs for everything else</p>
-            <p class="text-base text-muted">Your browser uses <code class="text-accent-light">myapp-feature.prt.dev</code>. Third-party services use port 3000. Both work at the same time.</p>
+            <p class="text-base text-muted">Browse at <code class="text-accent-light">myapp-feature.prt.dev</code> while local integrations use port 3000. Remote webhook services need a public tunnel or a local forwarding tool.</p>
           </div>
         </div>
       </div>
@@ -150,7 +147,7 @@ const jsonLd = JSON.stringify({
 
       <!-- Isolation -->
       <FeatureCard title="Two branches. Two apps. Zero conflicts." link="/features/isolation/" linkText="How isolation works →">
-        <p>Not containers — separate ports, databases, and config for every worktree. Declare what each branch needs in <code class="text-accent-light">.treeline.yml</code> and a git hook installed by <code class="text-accent-light">gtl install</code> allocates resources on every checkout.</p>
+        <p>Not containers — separate ports, databases, and config for every worktree. Declare what each branch needs in <code class="text-accent-light">.treeline.yml</code> and a git hook installed by <code class="text-accent-light">gtl install</code> provisions unallocated worktrees and refreshes editor settings when you switch branches in an existing allocation.</p>
         <Fragment slot="demo">
           <p class="text-base uppercase tracking-wider text-accent-light mb-2">Environment isolation</p>
           <Terminal>
@@ -191,7 +188,7 @@ const jsonLd = JSON.stringify({
 
       <!-- Workflows -->
       <FeatureCard title="Type a PR number. Get a running app." link="/features/workflows/" linkText="Review and supervisor →">
-        <p><code class="text-accent-light">gtl review 42</code> fetches a PR and boots the app in one command. A lightweight process supervisor handles start, stop, and restart — no PID files, no signal guessing.</p>
+        <p><code class="text-accent-light">gtl review 42 --start</code> fetches a PR and boots the app in one command. A lightweight process supervisor handles start, stop, and restart — no PID files, no signal guessing.</p>
         <Fragment slot="demo">
           <p class="text-base uppercase tracking-wider text-accent-light mb-2">Workflows</p>
           <FeatureDemo label="gtl review">
@@ -199,7 +196,7 @@ const jsonLd = JSON.stringify({
               <p class="mb-3"><span class="text-accent-light">$</span> <span class="text-white">gtl review 42 --start</span></p>
               <div class="flex items-start gap-3 py-2 relative">
                 <span class="text-accent text-sm font-bold shrink-0 mt-0.5">&#10003;</span>
-                <span class="text-base text-muted min-w-0">Fetched PR <strong class="text-white">#42</strong></span>
+                <span class="text-base text-muted min-w-0">Fetched PR <strong class="text-white">#42</strong> (add-oauth-login)</span>
               </div>
               <div class="flex items-start gap-3 py-2 relative">
                 <span class="text-accent text-sm font-bold shrink-0 mt-0.5">&#10003;</span>
@@ -215,7 +212,7 @@ const jsonLd = JSON.stringify({
               </div>
               <div class="flex items-start gap-3 pt-2 pb-0 relative">
                 <span class="text-accent font-mono font-bold shrink-0 mt-0.5">&rarr;</span>
-                <span class="text-base font-mono text-accent min-w-0">https://myapp-pr-42.prt.dev</span>
+                <span class="text-base font-mono text-accent min-w-0">https://myapp-add-oauth-login.prt.dev</span>
               </div>
               <p class="text-muted text-sm mt-1 pl-7">named URL via gtl serve</p>
             </div>
@@ -290,12 +287,12 @@ const jsonLd = JSON.stringify({
       <a href="/use-cases/integrations-urls/" class="group block rounded-lg border border-surface-border bg-surface-raised p-5 sm:p-6 hover:border-accent/40 transition-colors text-left">
         <p class="text-xs uppercase tracking-wider text-accent-light mb-2 font-mono">Networking</p>
         <h3 class="text-white font-mono text-base mb-2 group-hover:text-accent-light transition-colors">Why port 3000 stays free</h3>
-        <p class="text-base text-muted leading-relaxed">OAuth, Stripe, and CORS all expect <code class="text-accent-light">localhost:3000</code>. Here&rsquo;s why that still works.</p>
+        <p class="text-base text-muted leading-relaxed">Keep a stable local origin for browser callbacks and forward Stripe events to the branch you choose.</p>
       </a>
       <a href="/use-cases/database-per-branch/" class="group block rounded-lg border border-surface-border bg-surface-raised p-5 sm:p-6 hover:border-accent/40 transition-colors text-left">
         <p class="text-xs uppercase tracking-wider text-accent-light mb-2 font-mono">Isolation</p>
         <h3 class="text-white font-mono text-base mb-2 group-hover:text-accent-light transition-colors">Database per branch</h3>
-        <p class="text-base text-muted leading-relaxed">Clone from a template in seconds, seed from hooks, or copy a SQLite file.</p>
+        <p class="text-base text-muted leading-relaxed">Clone from a template in seconds, seed with setup commands, or copy a SQLite file.</p>
       </a>
     </div>
     <p class="text-center mt-8">
@@ -307,16 +304,11 @@ const jsonLd = JSON.stringify({
   <section id="get-started" class="px-4 sm:px-6 py-16 sm:py-28 bg-surface-raised text-center">
     <div class="max-w-xl mx-auto">
       <h2 class="text-2xl sm:text-3xl md:text-4xl font-mono font-bold text-white mb-6 sm:mb-4 text-balance">Every branch, fully provisioned</h2>
-      <div class="bg-surface-raised border border-surface-border rounded-lg px-3 sm:px-5 py-2.5 sm:py-3 font-mono text-base flex items-center justify-center gap-3 sm:gap-4 min-w-0 max-w-full overflow-x-auto mb-4">
-        <code class="text-accent-light whitespace-nowrap text-sm sm:text-base">brew install git-treeline/tap/git-treeline</code>
-        <button type="button" onclick="navigator.clipboard.writeText('brew install git-treeline/tap/git-treeline')" class="text-muted hover:text-white transition-colors shrink-0" aria-label="Copy install command">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-        </button>
-      </div>
-      <p class="text-base text-muted mb-10">Also <code class="text-accent-light">go install</code> or a <a href="https://github.com/git-treeline/git-treeline/releases" class="text-accent-light hover:text-accent underline underline-offset-2">release binary</a>.</p>
+      <InstallCommand />
+      <p class="text-base text-muted mb-10">Also <code class="text-accent-light">go install</code> or a <a href="https://github.com/git-treeline/cli/releases" class="text-accent-light hover:text-accent underline underline-offset-2">release binary</a>.</p>
       <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
         <a href="/use-cases/first-time-setup/" class="inline-flex items-center justify-center px-5 py-3 rounded-md bg-accent text-surface text-base font-mono font-semibold hover:bg-accent-light transition-colors">Setup walkthrough</a>
-        <a href="https://github.com/git-treeline/git-treeline" class="inline-flex items-center justify-center gap-3 whitespace-nowrap px-5 py-3 border border-surface-border rounded-md text-white hover:border-accent/40 transition-colors text-base">
+        <a href="https://github.com/git-treeline/cli" class="inline-flex items-center justify-center gap-3 whitespace-nowrap px-5 py-3 border border-surface-border rounded-md text-white hover:border-accent/40 transition-colors text-base">
           <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
           GitHub
         </a>

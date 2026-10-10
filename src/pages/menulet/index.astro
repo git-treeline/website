@@ -9,7 +9,7 @@ const features = [
   },
   {
     title: 'One-click open',
-    description: 'Click any worktree to open its URL in your browser. No need to remember ports or type URLs.',
+    description: 'Click a worktree to open your editor; Command-click to open its URL in your browser.',
   },
   {
     title: 'Router status',
@@ -17,14 +17,14 @@ const features = [
   },
   {
     title: 'Quick actions',
-    description: 'Start, stop, or restart any worktree from the menu. Open in Finder or your editor.',
+    description: 'Open worktrees in Terminal or Finder, copy URLs and ports, refresh env files, and release allocations.',
   },
 ];
 ---
 
 <BaseLayout
   title="Menu Bar App — Git Treeline"
-  description="The Git Treeline menu bar app for macOS. See all your worktrees, their ports, and open any branch URL with a click."
+  description="The Git Treeline menu bar app for macOS. See all your worktrees, their ports, and open branch URLs with Command-click."
   canonical="https://git-treeline.dev/menulet/"
 >
   <section class="px-4 sm:px-6 pt-28 sm:pt-36 pb-16 sm:pb-20">
@@ -34,7 +34,7 @@ const features = [
           <p class="text-sm uppercase tracking-wider text-muted mb-3 font-mono">macOS menu bar app</p>
           <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">Every worktree. One&nbsp;click&nbsp;away.</h1>
           <p class="text-base sm:text-lg text-gray-400 mb-8 leading-relaxed">
-            The menu bar app shows all your worktrees grouped by project. See which branches are running, their ports, and open any URL with a click. When you're running six worktrees across three repos, this is faster than remembering URLs.
+            The menu bar app shows all your worktrees grouped by project. See which branches are running, their ports, and open any URL with Command-click. When you're running six worktrees across three repos, this is faster than remembering URLs.
           </p>
           <div class="flex flex-wrap gap-3 mb-8">
             <a href="https://github.com/git-treeline/git-treeline-menulet/releases/latest/download/GitTreelineMenulet.dmg" class="inline-flex items-center gap-2 px-5 py-3 rounded-md bg-accent text-surface text-base font-mono font-semibold hover:bg-accent-light transition-colors">
@@ -47,7 +47,10 @@ const features = [
             </a>
           </div>
           <p class="text-sm text-muted">
-            Requires macOS 13+. The CLI (<code class="text-accent-light">gtl</code>) must be installed for the app to read allocations.
+            Requires macOS 14+. The CLI (<code class="text-accent-light">gtl</code>) must be installed for the app to read allocations.
+          </p>
+          <p class="text-sm text-muted mt-3">
+            Compatibility: Menulet v0.2.0 uses the older supervisor connection path. With CLI v0.58.1 or later, manage servers with <code class="text-accent-light">gtl start</code>, <code class="text-accent-light">gtl stop</code>, and <code class="text-accent-light">gtl restart</code> in the terminal.
           </p>
         </div>
         <div class="flex justify-center lg:justify-end">
@@ -96,7 +99,7 @@ const features = [
           <span class="flex-shrink-0 w-8 h-8 rounded-full bg-accent/20 text-accent flex items-center justify-center font-mono font-bold text-sm">3</span>
           <div>
             <p class="text-white font-medium mb-1">Click to see your worktrees</p>
-            <p class="text-muted">The app shows all registered worktrees grouped by project. Click any row to open its URL. That's it.</p>
+            <p class="text-muted">The app shows all registered worktrees grouped by project. Click a row to open your editor, Command-click to open its URL, or Option-click to copy the URL.</p>
           </div>
         </div>
       </div>

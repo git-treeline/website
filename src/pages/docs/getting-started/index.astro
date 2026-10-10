@@ -1,212 +1,93 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro';
 import Terminal from '../../../components/Terminal.astro';
+import InstallCommand from '../../../components/InstallCommand.astro';
 import DocsPagination from '../../../components/DocsPagination.astro';
 ---
 
 <DocsLayout
   title="Getting started — Git Treeline"
-  description="Install Git Treeline, run gtl install to set up your project, and create your first worktree in under five minutes."
+  description="Install Git Treeline on macOS or Linux, configure your project, and run your first isolated Git worktree."
   canonical="https://git-treeline.dev/docs/getting-started/"
   activePage="getting-started"
 >
   <div class="docs-guide pt-20 sm:pt-24 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-0">
-    <nav class="text-sm text-muted mb-6">
+    <nav aria-label="Breadcrumb" class="text-sm text-muted mb-6">
       <a href="/docs/" class="hover:text-white transition-colors">Docs</a>
       <span class="mx-1.5">/</span>
       <span class="text-white">Getting started</span>
     </nav>
-    <h1 class="text-3xl sm:text-4xl md:text-5xl font-mono font-bold text-white tracking-tight mb-4">
-      Getting started
-    </h1>
-    <p class="text-base sm:text-lg text-muted max-w-2xl mb-12">
-      Git Treeline is a <strong class="text-white">worktree provisioner</strong>: a single CLI that declaratively provisions ports, databases, routing, env files, editor config, and lifecycle hooks for every git worktree. Nothing from Treeline runs inside your app's process or bundle. It writes per-worktree env at setup time.
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-mono font-bold text-white tracking-tight mb-4">Getting started</h1>
+    <p class="text-base sm:text-lg text-muted max-w-2xl mb-4">
+      Run a second branch without sharing the first branch's ports or database. Install the CLI, configure your existing project, then create a worktree.
+    </p>
+    <p class="text-sm text-muted mb-8">Verified against CLI v0.58.3. <a href="#upgrading" class="text-accent-light underline underline-offset-2">Upgrading an existing installation?</a></p>
+    <p class="mb-8">
+      You'll need <strong class="text-white">macOS or Linux, Git, and your project's runtimes and dependencies</strong>. For database cloning, prepare a PostgreSQL template database or SQLite file. Containers are optional.
     </p>
 
-    <h2>Install the CLI</h2>
-    <p>Homebrew (macOS and Linux):</p>
-    <div class="mb-6">
-      <Terminal>
-        <div class="space-y-2">
-          <p>
-            <span class="text-accent-light">$</span>{' '}
-            <span class="text-white">brew install git-treeline/tap/git-treeline</span>
-          </p>
-        </div>
-      </Terminal>
-    </div>
-    <p>Go install:</p>
-    <div class="mb-6">
-      <Terminal>
-        <div class="space-y-2">
-          <p>
-            <span class="text-accent-light">$</span>{' '}
-            <span class="text-white">go install github.com/git-treeline/git-treeline@latest</span>
-          </p>
-        </div>
-      </Terminal>
-    </div>
-    <p class="mb-10">
-      Or download a binary from the <a
-        href="https://github.com/git-treeline/git-treeline/releases"
-        class="text-accent-light hover:text-accent underline underline-offset-2">releases page</a>.
-      The binary installs as <code class="text-accent-light">git-treeline</code> with a short alias <code class="text-accent-light">gtl</code>. It also works as <code class="text-accent-light">git treeline</code>.
-    </p>
+    <h2 id="install">1. Install the CLI</h2>
+    <p class="mb-3">With Homebrew on macOS or Linux:</p>
+    <InstallCommand />
+    <details class="rounded-lg border border-surface-border px-4 py-3 mt-4 mb-8">
+      <summary class="cursor-pointer text-accent-light">Go install or download a binary</summary>
+      <div class="pt-4 space-y-4">
+        <p>With Go 1.26 or later:</p>
+        <pre class="overflow-x-auto rounded bg-surface-raised p-3 text-sm"><code>go install github.com/git-treeline/cli/cmd/git-treeline@latest</code></pre>
+        <p>Or download a binary from the <a href="https://github.com/git-treeline/cli/releases" class="text-accent-light underline underline-offset-2">releases page</a>.</p>
+        <p>Homebrew installs both <code class="text-accent-light">git-treeline</code> and the <code class="text-accent-light">gtl</code> alias used below. Go install provides <code class="text-accent-light">git-treeline</code>; use that command in place of <code class="text-accent-light">gtl</code>. It also works as <code class="text-accent-light">git treeline</code>.</p>
+      </div>
+    </details>
 
-    <h2>Set up a project</h2>
+    <h2 id="configure">2. Configure your project</h2>
+    <div class="mb-5">
+      <Terminal>
+        <pre class="text-sm sm:text-base"><code>cd ~/myapp
+gtl install</code></pre>
+      </Terminal>
+    </div>
     <p class="mb-4">
-      From the root of any repo:
+      Treeline detects supported frameworks, creates <code class="text-accent-light">.treeline.yml</code> if needed, installs a Git hook, and allocates resources for the current checkout. Review the generated setup and start commands for your app.
     </p>
-    <div class="mb-6">
-      <Terminal>
-        <div class="space-y-2">
-          <p>
-            <span class="text-accent-light">$</span>{' '}
-            <span class="text-white">cd ~/myapp</span>
-          </p>
-          <p>
-            <span class="text-accent-light">$</span>{' '}
-            <span class="text-white">gtl install</span>
-          </p>
-          <p class="text-muted">
-            Detected <span class="text-accent">Rails</span> project
-          </p>
-          <p class="text-muted">
-            Wrote <span class="text-accent">.treeline.yml</span>
-          </p>
-          <p class="text-muted">
-            Created user config at <span class="text-accent">~/.config/git-treeline/config.yml</span>
-          </p>
-          <p class="text-muted">
-            Post-checkout hook: <span class="text-accent">.git/hooks/post-checkout</span>
-          </p>
-          <p class="text-muted">
-            Allocated port <span class="text-accent">3000</span>
-          </p>
-          <p class="text-muted">
-            Wrote <span class="text-accent">.env.local</span>
-          </p>
-          <p class="text-muted mt-2">
-            Local HTTPS routing lets you access worktrees at <span class="text-accent">https://myapp-main.prt.dev</span>
-          </p>
-          <p class="text-muted">HTTPS router setup: <span class="text-accent">Yes, install now</span></p>
-          <p class="text-muted mt-1 text-accent">
-            Ready. Run <span class="text-white">gtl start</span> to start your server.
-          </p>
-        </div>
-      </Terminal>
-    </div>
-    <p>
-      <code class="text-accent-light">gtl install</code> does everything in one step:
-    </p>
-    <ol class="text-muted space-y-2 mb-4 list-decimal pl-5">
-      <li>Creates <code class="text-accent-light">.treeline.yml</code> if missing (auto-detects framework, writes <code class="text-accent-light">AGENTS.md</code>)</li>
-      <li>Creates user config if this is your first project</li>
-      <li>Installs the post-checkout hook for automatic worktree setup</li>
-      <li>Allocates ports and writes the env file for the current worktree</li>
-      <li>Offers to enable the <strong class="text-white">local HTTPS router</strong> (optional)</li>
-    </ol>
     <p class="mb-4">
-      Every step is idempotent — safe to re-run any time. If you already have a <code class="text-accent-light">.treeline.yml</code>, it skips config generation and goes straight to allocation and setup.
+      Local HTTPS is optional. Accepting the router setup requires administrator authorization to trust a local certificate and configure forwarding. Skip it to use <code class="text-accent-light">localhost</code>; you can run <code class="text-accent-light">gtl serve install</code> later.
     </p>
-    <p class="mb-10">
-      The HTTPS router prompt (step 5) requires <code class="text-white">sudo</code> to trust a local CA certificate and set up port forwarding. You can skip it and use localhost-only workflows — core commands like <code class="text-accent-light">setup</code>, <code class="text-accent-light">new</code>, <code class="text-accent-light">clone</code>, and <code class="text-accent-light">review</code> work without it. You can always run <code class="text-accent-light">gtl serve install</code> later. See the <a href="/docs/networking/" class="text-accent-light hover:text-accent underline underline-offset-2">Networking guide</a> for the full picture on routing, proxy, tunnel, and share.
+    <p class="mb-8">
+      For an annotated config and framework-specific setup, follow the <a href="/use-cases/first-time-setup/" class="text-accent-light underline underline-offset-2">full setup walkthrough</a>.
     </p>
 
-    <h2>Create your first worktree</h2>
-    <div class="mb-6">
+    <h2 id="create">3. Create and start a worktree</h2>
+    <div class="mb-5">
       <Terminal>
-        <div class="space-y-2">
-          <p>
-            <span class="text-accent-light">$</span>{' '}
-            <span class="text-white">gtl new feature-auth</span>
-          </p>
-          <p class="text-muted">
-            Creating worktree <span class="text-accent">feature-auth</span>
-          </p>
-          <p class="text-muted">
-            Allocated port <span class="text-accent">3010</span>
-          </p>
-          <p class="text-muted">
-            Cloned database <span class="text-accent">myapp_dev_feature_auth</span>
-          </p>
-          <p class="text-muted">
-            Wrote <span class="text-accent">.env.local</span>
-          </p>
-          <p class="text-muted">Running setup commands&hellip;</p>
-          <p class="text-muted text-accent mt-1">Ready. Start your server in this worktree.</p>
-        </div>
+        <pre class="text-sm sm:text-base"><code>gtl new feature-auth --start</code></pre>
       </Terminal>
     </div>
+    <p class="mb-4">
+      This creates the worktree, allocates its ports, writes its env file, runs your setup commands, and starts the configured server. If database cloning is configured, the worktree gets its own copy of the template. A named HTTPS URL requires the optional router.
+    </p>
+    <p class="mb-8">
+      Open another terminal in the new worktree and run <code class="text-accent-light">gtl doctor</code> to check its configuration and runtime. To review a GitHub PR instead, use <code class="text-accent-light">gtl review 42 --start</code> from the main checkout; this requires the <a href="https://cli.github.com/" class="text-accent-light underline underline-offset-2">GitHub CLI</a>.
+    </p>
+
+    <h2 id="next">Choose what you need next</h2>
+    <ul class="list-disc pl-5 space-y-3 mb-8">
+      <li><a href="/docs/database/" class="text-accent-light underline underline-offset-2">Database isolation</a> — PostgreSQL cloning, SQLite copies, and template updates.</li>
+      <li><a href="/docs/networking/" class="text-accent-light underline underline-offset-2">Networking</a> — local HTTPS names, stable callback ports, and public tunnels.</li>
+      <li><a href="/docs/lifecycle/" class="text-accent-light underline underline-offset-2">Lifecycle</a> — switch branches, start and stop servers, and release resources.</li>
+      <li><a href="/docs/agents/" class="text-accent-light underline underline-offset-2">AI agents</a> — give agents access to real allocations and server controls.</li>
+    </ul>
+
+    <h2 id="upgrading">Upgrading to v0.58.3</h2>
+    <p class="mb-4">
+      Run <code class="text-accent-light">gtl update</code>, then <code class="text-accent-light">gtl version</code> to confirm the installed version.
+      See the <a href="https://github.com/git-treeline/cli/releases/tag/v0.58.3" class="text-accent-light underline underline-offset-2">release notes</a> for all changes.
+    </p>
+    <p class="mb-4">
+      Template updates now run in a temporary detached checkout, leaving your primary checkout unchanged. They require Git 2.29 or later and an explicit primary database mapping in <code class="text-accent-light">env</code>. Review the <a href="/docs/database/#updating-the-template" class="text-accent-light underline underline-offset-2">template update requirements</a> before using <code class="text-accent-light">database.sync_on_create</code> or <code class="text-accent-light">gtl db template update</code>.
+    </p>
     <p class="mb-10">
-      Add <code class="text-accent-light">--start</code> to boot the app immediately after setup. Every worktree gets its own port, database, env file, and HTTPS URL automatically.
+      Coming from v0.58.0 or earlier? Stop each older supervisor with <code class="text-accent-light">gtl stop --kill</code> from the same directory path used to launch it (including any symlink alias), then run <code class="text-accent-light">gtl start</code>. Ctrl+C in its original terminal also works.
     </p>
-
-    <h2>Review a GitHub PR</h2>
-    <div class="mb-6">
-      <Terminal>
-        <div class="space-y-2">
-          <p>
-            <span class="text-accent-light">$</span>{' '}
-            <span class="text-white">gtl review 42 --start</span>
-          </p>
-          <p class="text-muted">
-            Fetching PR <span class="text-accent">#42</span> (Add OAuth login)
-          </p>
-          <p class="text-muted">
-            Creating worktree <span class="text-accent">myapp-pr-42</span>
-          </p>
-          <p class="text-muted">
-            Allocated port <span class="text-accent">3020</span>
-          </p>
-          <p class="text-muted">
-            Cloned database <span class="text-accent">myapp_dev_pr_42</span>
-          </p>
-          <p class="text-muted text-accent mt-1">Starting server on port 3020&hellip;</p>
-        </div>
-      </Terminal>
-    </div>
-    <p class="mb-10">
-      Requires the <a href="https://cli.github.com/" class="text-accent-light hover:text-accent underline underline-offset-2">GitHub CLI</a> (<code class="text-accent-light">gh</code>). From inside a worktree, <code class="text-accent-light">review</code> prompts to switch the current worktree to the PR branch.
-    </p>
-
-    <h2>Switch branches</h2>
-    <div class="mb-6">
-      <Terminal>
-        <div class="space-y-2">
-          <p>
-            <span class="text-accent-light">$</span>{' '}
-            <span class="text-white">gtl switch feature-payments</span>
-          </p>
-          <p class="text-muted">Fetching from origin&hellip;</p>
-          <p class="text-muted">
-            Switched to <span class="text-accent">feature-payments</span>
-          </p>
-          <p class="text-muted">
-            Refreshed <span class="text-accent">.env.local</span>
-          </p>
-        </div>
-      </Terminal>
-    </div>
-    <p class="mb-10">
-      Fetches from origin, checks out the branch, updates the registry, and refreshes the env file. Accepts PR numbers too: <code class="text-accent-light">gtl switch 42</code> resolves the branch via <code class="text-accent-light">gh</code>. Add <code class="text-accent-light">--setup</code> to re-run <code class="text-accent-light">commands.setup</code> after switching.
-    </p>
-
-    <h2>Check project health</h2>
-    <div class="mb-6">
-      <Terminal>
-        <div class="space-y-2">
-          <p>
-            <span class="text-accent-light">$</span>{' '}
-            <span class="text-white">gtl doctor</span>
-          </p>
-        </div>
-      </Terminal>
-    </div>
-    <p class="mb-16">
-      Checks config presence, env file status, port allocation, supervisor state, and framework-specific guidance in one view. Run it when something seems off.
-    </p>
-
-    <DocsPagination next={{ href: "/docs/lifecycle/", label: "Lifecycle" }} />
+    <DocsPagination next={{ href: '/docs/lifecycle/', label: 'Lifecycle' }} />
   </div>
 </DocsLayout>

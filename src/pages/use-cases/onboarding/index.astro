@@ -5,12 +5,12 @@ import Terminal from '../../../components/Terminal.astro';
 
 <ArticleLayout
   title="New developer, one command &mdash; Git Treeline"
-  description="A new teammate clones the repo, runs gtl install and gtl new, and has a fully isolated environment — ports, database, env, and a running server — in under a minute."
+  description="Give teammates a repeatable worktree setup with Git Treeline: configured ports, databases, env files, dependency installation, and server startup."
   canonical="https://git-treeline.dev/use-cases/onboarding/"
   breadcrumb="Use cases"
   breadcrumbHref="/use-cases/"
   heading="New developer, one&nbsp;command"
-  lead='A new teammate clones the repo. The README says &ldquo;run these 14 steps.&rdquo; Half are macOS-specific, two reference a database dump that doesn&rsquo;t exist yet, and the env example file is three months stale. With Treeline in the repo, the README says <code class="text-accent-light">gtl new main --start</code>.'
+  lead='A new teammate clones the repo. The README says &ldquo;run these 14 steps.&rdquo; Half are macOS-specific, two reference a database dump that doesn&rsquo;t exist yet, and the env example file is three months stale. With Treeline in the repo, the README says <code class="text-accent-light">gtl new feature-onboarding --start</code>.'
 >
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-10">The scenario</h2>
   <p class="text-muted mb-4">
@@ -31,7 +31,7 @@ import Terminal from '../../../components/Terminal.astro';
         <p><span class="text-accent-light">$</span> <span class="text-white">gtl install</span></p>
         <p class="text-muted">Detected <span class="text-accent">Rails</span> project</p>
         <p class="text-muted">Wrote <span class="text-accent">.treeline.yml</span></p>
-        <p class="text-muted">Created user config at <span class="text-accent">~/.config/git-treeline/config.yml</span></p>
+        <p class="text-muted">Created user config: <span class="text-accent">config.json</span></p>
         <p class="text-muted">Post-checkout hook: <span class="text-accent">.git/hooks/post-checkout</span></p>
         <p class="text-muted">Allocated port <span class="text-accent">3002</span></p>
         <p class="text-muted">Wrote <span class="text-accent">.env.local</span></p>
@@ -76,7 +76,7 @@ import Terminal from '../../../components/Terminal.astro';
 
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Step 2: A new developer joins</h2>
   <p class="text-muted mb-4">
-    The new developer installs <code class="text-accent-light">gtl</code>, clones the repo, and runs one command. No manual port selection, no env file editing, no database creation.
+    First install the project runtimes and database service, prepare the template database, and obtain required secrets such as <code class="text-accent-light">config/master.key</code>. A configured <code class="text-accent-light">gtl provision</code> can prepare host prerequisites. Then clone the repo and run <code class="text-accent-light">gtl install</code> once before creating a worktree. The named HTTPS URL below requires the optional router.
   </p>
 
   <div class="mb-6">
@@ -85,16 +85,17 @@ import Terminal from '../../../components/Terminal.astro';
         <p><span class="text-accent-light">$</span> <span class="text-white">brew install git-treeline/tap/git-treeline</span></p>
         <p><span class="text-accent-light">$</span> <span class="text-white">git clone git@github.com:acme/myapp.git</span></p>
         <p><span class="text-accent-light">$</span> <span class="text-white">cd myapp</span></p>
-        <p><span class="text-accent-light">$</span> <span class="text-white">gtl new main --start</span></p>
-        <p class="text-muted">Creating worktree <span class="text-accent">main</span></p>
-        <p class="text-muted">Allocated ports <span class="text-accent">3002</span>, <span class="text-accent">3003</span></p>
-        <p class="text-muted">Cloned database <span class="text-accent">myapp_development_main</span></p>
+        <p><span class="text-accent-light">$</span> <span class="text-white">gtl install</span></p>
+        <p><span class="text-accent-light">$</span> <span class="text-white">gtl new feature-onboarding --start</span></p>
+        <p class="text-muted">Creating worktree <span class="text-accent">feature-onboarding</span></p>
+        <p class="text-muted">Allocated ports <span class="text-accent">3004</span>, <span class="text-accent">3005</span></p>
+        <p class="text-muted">Cloned database <span class="text-accent">myapp_development_feature_onboarding</span></p>
         <p class="text-muted">Wrote <span class="text-accent">.env.local</span></p>
         <p class="text-muted">Copied <span class="text-accent">config/master.key</span></p>
         <p class="text-muted">Running setup: bundle install --quiet</p>
         <p class="text-muted">Running setup: yarn install --silent</p>
-        <p class="text-muted text-accent">==&gt; https://myapp-main.prt.dev</p>
-        <p class="text-muted">Starting: bin/dev (port 3002)</p>
+        <p class="text-muted text-accent">==&gt; https://myapp-feature-onboarding.prt.dev</p>
+        <p class="text-muted">Starting: bin/dev (port 3004)</p>
       </div>
     </Terminal>
   </div>
@@ -165,10 +166,10 @@ import Terminal from '../../../components/Terminal.astro';
 
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">The post-checkout hook</h2>
   <p class="text-muted mb-4">
-    <code class="text-accent-light">gtl install</code> sets up a <code class="text-accent-light">post-checkout</code> git hook. Every subsequent <code class="text-accent-light">git checkout</code> &mdash; or <code class="text-accent-light">git worktree add</code> &mdash; triggers resource allocation automatically. New worktrees get their own port, database, and env file without the developer running <code class="text-accent-light">gtl setup</code> manually.
+    <code class="text-accent-light">gtl install</code> sets up a <code class="text-accent-light">post-checkout</code> git hook. It provisions unallocated linked worktrees after <code class="text-accent-light">git worktree add</code> and refreshes editor settings on branch changes in already allocated worktrees. New worktrees get their own port, database, and env file without the developer running <code class="text-accent-light">gtl setup</code> manually.
   </p>
   <p class="text-muted mb-8">
-    The hook is idempotent: if resources are already allocated for the worktree, it&rsquo;s a no-op.
+    The hook reuses existing allocations. Treeline defers hook-driven setup during <code class="text-accent-light">gtl new</code> and <code class="text-accent-light">gtl review</code> so setup runs once, after creation.
   </p>
 
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Framework examples</h2>
@@ -233,13 +234,13 @@ import Terminal from '../../../components/Terminal.astro';
 
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Lifecycle hooks for validation</h2>
   <p class="text-muted mb-4">
-    If onboarding has prerequisites &mdash; a database dump must exist, or a secret must be in the keychain &mdash; use <code class="text-accent-light">hooks.pre_setup</code> to fail fast:
+    Use <code class="text-accent-light">hooks.pre_setup</code> to validate prerequisites for your setup commands. This hook runs after resource allocation, env writing, and attempted database cloning; it does not guard the initial clone:
   </p>
   <div class="mb-8">
     <Terminal label=".treeline.yml (partial)">
       <pre class="m-0 text-sm leading-relaxed font-mono"><code><span class="text-accent-light">hooks</span>:
   <span class="text-accent-light">pre_setup</span>:
-    - psql -lqt | grep myapp_development || echo "Template DB missing" && exit 1
+    - {'psql -lqt | grep -q myapp_development || { echo "Template DB missing"; exit 1; }'}
   <span class="text-accent-light">post_setup</span>:
     - echo "Setup complete. Run gtl start to boot."</code></pre>
     </Terminal>
@@ -257,10 +258,10 @@ import Terminal from '../../../components/Terminal.astro';
         <p class="text-muted">&nbsp; &check; .treeline.yml found</p>
         <p class="text-muted">&nbsp; &check; User config loaded</p>
         <p class="text-muted">Allocation:</p>
-        <p class="text-muted">&nbsp; &check; Ports 3002-3003 allocated</p>
-        <p class="text-muted">&nbsp; &check; Database myapp_development_main exists</p>
+        <p class="text-muted">&nbsp; &check; Ports 3004-3005 allocated</p>
+        <p class="text-muted">&nbsp; &check; Database myapp_development_feature_onboarding exists</p>
         <p class="text-muted">Runtime:</p>
-        <p class="text-muted">&nbsp; &check; Server listening on :3002</p>
+        <p class="text-muted">&nbsp; &check; Server listening on :3004</p>
         <p class="text-muted">&nbsp; &check; .env.local matches allocation</p>
       </div>
     </Terminal>

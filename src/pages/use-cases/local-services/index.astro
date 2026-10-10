@@ -91,17 +91,12 @@ import Terminal from '../../../components/Terminal.astro';
 
 <span class="text-accent-light">aliases</span>:
   <span class="text-white">mailhog</span>: 8025
-  <span class="text-white">sidekiq</span>: 9292
-
-<span class="text-accent-light">hooks</span>:
-  <span class="text-accent-light">post_setup</span>:
-    - mailhog &amp;
-    - bundle exec sidekiq &amp;</code></pre>
+  <span class="text-white">sidekiq</span>: 9292</code></pre>
     </Terminal>
   </div>
 
   <p class="text-muted mb-4">
-    After any teammate runs <code class="text-accent-light">gtl setup</code> or creates a worktree with <code class="text-accent-light">gtl new</code>, the router learns these aliases within ~5 seconds. Everyone on the team gets <code class="text-white">https://mailhog.prt.dev</code> and <code class="text-white">https://sidekiq.prt.dev</code> without any per-machine configuration.
+    After a teammate runs <code class="text-accent-light">gtl setup</code> or creates a worktree with <code class="text-accent-light">gtl new</code>, the router learns these aliases within ~5 seconds. Aliases route to already running HTTP services; they do not start them. Start Mailhog on port 8025 and your app&rsquo;s Sidekiq web dashboard on port 9292 to use <code class="text-white">https://mailhog.prt.dev</code> and <code class="text-white">https://sidekiq.prt.dev</code>.
   </p>
   <p class="text-muted mb-8">
     This is the key difference: <strong class="text-white">personal aliases live in your user config and travel with you</strong>. <strong class="text-white">Project aliases live in <code class="text-accent-light">.treeline.yml</code> and travel with the repo.</strong> The router merges both.

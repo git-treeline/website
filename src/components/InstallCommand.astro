@@ -1,0 +1,24 @@
+<div class="w-full max-w-xl" data-install-command>
+  <div class="flex items-center gap-3 rounded-lg border border-surface-border bg-surface-raised pl-4 pr-2 py-2 text-left">
+    <code class="min-w-0 flex-1 text-sm sm:text-base text-accent-light [overflow-wrap:anywhere]">brew install git-treeline/tap/git-treeline</code>
+    <button type="button" data-copy-install aria-label="Copy install command" class="shrink-0 min-h-11 px-3 rounded-md text-sm text-white hover:bg-surface transition-colors">Copy</button>
+  </div>
+  <p role="status" class="min-h-6 mt-1 text-xs text-accent-light text-left" data-copy-status></p>
+</div>
+
+<script>
+  document.addEventListener('click', async (event) => {
+    const button = event.target instanceof Element ? event.target.closest('[data-copy-install]') : null;
+    const container = button?.closest('[data-install-command]');
+    const command = container?.querySelector('code');
+    const status = container?.querySelector('[data-copy-status]');
+    if (!button || !command || !status) return;
+
+    try {
+      await navigator.clipboard.writeText(command.textContent ?? '');
+      status.textContent = 'Copied to clipboard.';
+    } catch {
+      status.textContent = 'Could not copy. Select and copy the command above.';
+    }
+  });
+</script>

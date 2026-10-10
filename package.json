@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "astro dev --port ${PORT:-4321}",
     "build": "astro build",
+    "check": "npm run build && python3 scripts/check-site.py",
     "preview": "astro preview"
   },
   "dependencies": {

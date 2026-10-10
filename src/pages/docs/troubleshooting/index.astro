@@ -243,7 +243,7 @@ const issueGroup =
 
       <div>
         <p class="text-white font-medium mb-1"><code class="text-accent-light">createdb: ERROR: syntax error at or near &quot;-&quot;</code></p>
-        <p class="text-muted mb-2">A dash in <code class="text-accent-light">project:</code> or <code class="text-accent-light">database.template:</code> flows through <code class="text-accent-light">{'{project}'}</code>/<code class="text-accent-light">{'{template}'}</code> substitution and lands in an identifier Postgres rejects. v0.40.2 validates these at config load and prints a <code class="text-accent-light">gtl rename &lt;suggested&gt;</code> hint. <code class="text-accent-light">gtl rename</code> updates the registry, drops the old DBs, and re-runs setup so worktrees come back up under the sanitized name.</p>
+        <p class="text-muted mb-2">A dash in <code class="text-accent-light">project:</code> or <code class="text-accent-light">database.template:</code> flows through <code class="text-accent-light">{'{project}'}</code>/<code class="text-accent-light">{'{template}'}</code> substitution and lands in an identifier Postgres rejects. v0.40.2 validates these at config load and prints a <code class="text-accent-light">gtl rename &lt;suggested&gt;</code> hint. <code class="text-accent-light">gtl rename</code> updates project and user config, then lists affected worktrees. Propagate the config change and run <code class="text-accent-light">gtl setup</code> in each worktree to re-provision under the new name; that setup step replaces its old database.</p>
         <Terminal>
           <p>
             <span class="text-accent-light">$</span>{' '}

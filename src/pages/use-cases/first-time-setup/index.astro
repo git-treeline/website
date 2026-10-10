@@ -21,14 +21,14 @@ import Terminal from '../../../components/Terminal.astro';
           <p><span class="text-accent-light">$</span> <span class="text-white">brew install git-treeline/tap/git-treeline</span></p>
         </div>
         <div>
-          <p class="text-xs text-muted mb-1"># or from source</p>
-          <p><span class="text-accent-light">$</span> <span class="text-white">go install github.com/git-treeline/git-treeline@latest</span></p>
+          <p class="text-xs text-muted mb-1"># or from source (Go 1.26+)</p>
+          <p><span class="text-accent-light">$</span> <span class="text-white">go install github.com/git-treeline/cli/cmd/git-treeline@latest</span></p>
         </div>
       </div>
     </Terminal>
   </div>
   <p class="text-muted mb-8">
-    Treeline is a single binary with no runtime dependencies. It works on macOS and Linux. Windows is supported for core features (ports, env, databases); the HTTPS subdomain router (<code class="text-accent-light">gtl serve</code>) is macOS/Linux only.
+    Treeline is available for macOS and Linux. Install Git and the tools required by your database and setup commands. Homebrew provides the <code class="text-accent-light">gtl</code> alias used below; with Go install, use <code class="text-accent-light">git-treeline</code> instead.
   </p>
 
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">2. Run <code class="text-accent-light">gtl install</code></h2>
@@ -39,9 +39,9 @@ import Terminal from '../../../components/Terminal.astro';
         <p><span class="text-accent-light">$</span> <span class="text-white">gtl install</span></p>
         <p class="text-muted">Detected <span class="text-accent">Rails</span> project</p>
         <p class="text-muted">Wrote <span class="text-accent">.treeline.yml</span></p>
-        <p class="text-muted">Created user config at <span class="text-accent">~/.config/git-treeline/config.yml</span></p>
+        <p class="text-muted">Created user config: <span class="text-accent">config.json</span></p>
         <p class="text-muted">Post-checkout hook: <span class="text-accent">.git/hooks/post-checkout</span></p>
-        <p class="text-muted">Allocated port <span class="text-accent">3000</span></p>
+        <p class="text-muted">Allocated port <span class="text-accent">3002</span></p>
         <p class="text-muted">Wrote <span class="text-accent">.env.local</span></p>
         <p class="text-muted mt-2">Local HTTPS routing lets you access worktrees at <span class="text-accent">https://myapp-main.prt.dev</span></p>
         <p class="text-muted">HTTPS router setup: <span class="text-accent">Yes, install now</span></p>
@@ -232,7 +232,7 @@ import Terminal from '../../../components/Terminal.astro';
     <li><strong class="text-white">pattern:</strong> naming pattern for cloned databases. <code class="text-accent-light">{'{template}_{worktree}'}</code> produces names like <code class="text-white">myapp_development_feature_auth</code></li>
   </ul>
   <p class="text-muted mb-8">
-    The template database is never modified. Use <code class="text-accent-light">gtl db reset</code> to re-clone, <code class="text-accent-light">gtl db restore dump.sql</code> to load from a dump, and <code class="text-accent-light">--drop-db</code> with <code class="text-accent-light">gtl release</code> to clean up. Need more than one database per worktree? <code class="text-accent-light">database.extra</code> declares auxiliary databases — each with its own adapter, template, and pattern — cloned alongside the primary one. For a deep dive, see <a href="/use-cases/database-per-branch/" class="text-accent-light hover:text-accent underline underline-offset-2">Database per branch</a>.
+    Cloning leaves the template unchanged. <code class="text-accent-light">gtl db template update</code> and <code class="text-accent-light">database.sync_on_create</code> intentionally migrate it in a temporary detached checkout; existing worktree databases stay unchanged. Use <code class="text-accent-light">gtl db reset</code> to re-clone, <code class="text-accent-light">gtl db restore dump.sql</code> to load from a dump, and <code class="text-accent-light">--drop-db</code> with <code class="text-accent-light">gtl release</code> to clean up. Need more than one database per worktree? <code class="text-accent-light">database.extra</code> declares auxiliary database names using string patterns. Your framework or setup commands create those databases; Treeline clones only the primary database. For a deep dive, see <a href="/use-cases/database-per-branch/" class="text-accent-light hover:text-accent underline underline-offset-2">Database per branch</a>.
   </p>
 
   <h3 class="text-white font-mono text-lg mb-3">copy_files</h3>
@@ -252,7 +252,7 @@ import Terminal from '../../../components/Terminal.astro';
 
   <h3 class="text-white font-mono text-lg mb-3">hooks</h3>
   <p class="text-muted mb-4">
-    Two hook families. <strong class="text-white">Worktree hooks</strong> fire once at creation or teardown; <strong class="text-white">start hooks</strong> fire per-session when the server starts and stops.
+    Two hook families. <strong class="text-white">Worktree hooks</strong> run during setup or release; <strong class="text-white">start hooks</strong> fire per-session when the server starts and stops.
   </p>
   <div class="overflow-x-auto rounded-lg border border-surface-border mb-4">
     <table class="w-full text-sm text-left">
@@ -298,7 +298,7 @@ import Terminal from '../../../components/Terminal.astro';
     </table>
   </div>
   <p class="text-muted mb-8">
-    Use <code class="text-accent-light">pre_setup</code> to gate on prerequisites (template database must exist, secrets must be present). Use <code class="text-accent-light">post_release</code> for cleanup. Start hooks are useful for claiming a named routing alias on <code class="text-accent-light">gtl start</code> and releasing it on stop — add <code class="text-accent-light">auto: true</code> to activate on every start without <code class="text-accent-light">--with</code>. See <a href="/use-cases/oauth-alias/" class="text-accent-light hover:text-accent underline underline-offset-2">OAuth callbacks across worktrees</a> for a full example.
+    Use <code class="text-accent-light">pre_setup</code> to validate prerequisites for setup commands. It runs after allocation, env writing, and attempted database cloning. Use <code class="text-accent-light">post_release</code> for cleanup. Start hooks are useful for claiming a named routing alias on <code class="text-accent-light">gtl start</code> and releasing it on stop — add <code class="text-accent-light">auto: true</code> to activate on every start without <code class="text-accent-light">--with</code>. See <a href="/use-cases/oauth-alias/" class="text-accent-light hover:text-accent underline underline-offset-2">OAuth callbacks across worktrees</a> for a full example.
   </p>
 
   <h3 class="text-white font-mono text-lg mb-3">aliases</h3>
@@ -318,7 +318,7 @@ import Terminal from '../../../components/Terminal.astro';
 
   <h3 class="text-white font-mono text-lg mb-3">provision (optional)</h3>
   <p class="text-muted mb-4">
-    Declaring a <code class="text-accent-light">provision:</code> block opts the repo into host-level baseline management. When a new machine runs <code class="text-accent-light">gtl provision</code>, Treeline installs apt packages, starts systemd services, pins language runtimes via <a href="https://mise.jdx.dev" class="text-accent-light hover:text-accent underline underline-offset-2">mise</a>, and hydrates the template database — all from the config. After provisioning, <code class="text-accent-light">gtl setup</code> is guaranteed to succeed. Omit the block entirely if teammates set up their own machines manually.
+    Declaring a <code class="text-accent-light">provision:</code> block opts the repo into host-level baseline management. When a new machine runs <code class="text-accent-light">gtl provision</code>, Treeline installs apt packages, starts systemd services, pins language runtimes via <a href="https://mise.jdx.dev" class="text-accent-light hover:text-accent underline underline-offset-2">mise</a>, and hydrates the template database — all from the config. Provisioning prepares the declared host prerequisites; <code class="text-accent-light">gtl setup</code> then configures the worktree and runs your setup commands. Omit the block entirely if teammates set up their own machines manually.
   </p>
   <p class="text-muted mb-8">
     apt and services steps are Linux-only and silently skipped on macOS. All steps are idempotent — re-running is safe. Use <code class="text-accent-light">gtl provision --dry-run</code> to preview what would run.
@@ -331,7 +331,6 @@ import Terminal from '../../../components/Terminal.astro';
   <ul class="text-muted space-y-1 list-disc pl-5 mb-6 text-base">
     <li><strong class="text-white">macOS:</strong> <code class="text-accent-light">~/Library/Application Support/git-treeline/config.json</code></li>
     <li><strong class="text-white">Linux:</strong> <code class="text-accent-light">~/.config/git-treeline/config.json</code></li>
-    <li><strong class="text-white">Windows:</strong> <code class="text-accent-light">%APPDATA%/git-treeline/config.json</code></li>
   </ul>
   <p class="text-muted mb-4">
     <code class="text-accent-light">gtl install</code> creates this automatically if it doesn&rsquo;t exist. You can also run <code class="text-accent-light">gtl config</code> to see or modify it. Here are the key sections:

@@ -14,7 +14,7 @@ import BenefitCard from '../../../components/BenefitCard.astro';
     <p class="text-sm uppercase tracking-wider text-muted mb-4">Environment isolation</p>
     <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-6">Two branches. Two apps.<br />Zero conflicts.</h1>
     <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
-      Not containers — separate ports, databases, Redis namespaces, and env files for every worktree. Declare what your project needs once in <code class="text-accent-light">.treeline.yml</code> and a git hook installed by <code class="text-accent-light">gtl install</code> allocates resources on every checkout.
+      Not containers — separate ports, databases, Redis namespaces, and env files for every worktree. Declare what your project needs once in <code class="text-accent-light">.treeline.yml</code> and a git hook installed by <code class="text-accent-light">gtl install</code> provisions new worktrees and refreshes editor settings when you switch branches in an allocated worktree.
     </p>
   </section>
 
@@ -95,7 +95,7 @@ import BenefitCard from '../../../components/BenefitCard.astro';
           <p class="text-base text-muted leading-relaxed">New developers clone the repo and run <code class="text-accent-light">gtl setup</code> in a worktree. Database clone, env interpolation, <code class="text-accent-light">commands.setup</code>, and hooks run in a predictable order—no one-off “change these three env vars” instructions that drift from reality.</p>
         </BenefitCard>
         <BenefitCard>
-          <h3 class="text-white font-mono text-lg sm:text-xl mb-3 text-balance">Agents and automation get a real sandbox</h3>
+          <h3 class="text-white font-mono text-lg sm:text-xl mb-3 text-balance">Agents and automation get isolated development resources</h3>
           <p class="text-base text-muted leading-relaxed">A worktree created for an agent or script gets the same allocation rules as yours: isolated DB, env, and supervisor-controlled start/stop. Teardown via <code class="text-accent-light">gtl release</code> frees resources when the branch is done—see <a href="/features/agents/" class="text-accent-light hover:text-accent underline underline-offset-2">AI Agents</a> for MCP and JSON surfaces.</p>
         </BenefitCard>
       </div>
@@ -173,7 +173,7 @@ import BenefitCard from '../../../components/BenefitCard.astro';
           </div>
           <div>
             <h3 class="text-white font-mono text-lg sm:text-xl mb-2">Lifecycle hooks</h3>
-            <p class="text-base text-muted leading-relaxed">Two hook families. <strong class="text-white">Worktree hooks</strong> — <code class="text-accent-light">pre_setup</code>, <code class="text-accent-light">post_setup</code>, <code class="text-accent-light">pre_release</code>, <code class="text-accent-light">post_release</code> — run once at worktree creation and teardown. <strong class="text-white">Start hooks</strong> (named, e.g. <code class="text-accent-light">hooks.oauth</code>) run per-session via <code class="text-accent-light">gtl start --with oauth</code>: a <code class="text-accent-light">pre_start</code> command fires before the server boots and <code class="text-accent-light">post_stop</code> fires when it exits — useful for claiming routing aliases or registering dynamic resources that should only be held while the branch is actively running. Pre-hooks <strong class="text-white">abort</strong> on non-zero exit; post-hooks <strong class="text-white">warn</strong> and continue. Full ordering and examples: <a href="/docs/hooks/" class="text-accent-light hover:text-accent underline underline-offset-2">Hooks guide</a>.</p>
+            <p class="text-base text-muted leading-relaxed">Two hook families. <strong class="text-white">Worktree hooks</strong> — <code class="text-accent-light">pre_setup</code>, <code class="text-accent-light">post_setup</code>, <code class="text-accent-light">pre_release</code>, <code class="text-accent-light">post_release</code> — run during setup and release, including repeated setup runs. <strong class="text-white">Start hooks</strong> (named, e.g. <code class="text-accent-light">hooks.oauth</code>) run per-session via <code class="text-accent-light">gtl start --with oauth</code>: a <code class="text-accent-light">pre_start</code> command fires before the server boots and <code class="text-accent-light">post_stop</code> fires when it exits — useful for claiming routing aliases or registering dynamic resources that should only be held while the branch is actively running. Pre-hooks <strong class="text-white">abort</strong> on non-zero exit; post-hooks <strong class="text-white">warn</strong> and continue. Full ordering and examples: <a href="/docs/hooks/" class="text-accent-light hover:text-accent underline underline-offset-2">Hooks guide</a>.</p>
           </div>
         </div>
       </div>

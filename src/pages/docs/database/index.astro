@@ -18,11 +18,12 @@ import DocsPagination from '../../../components/DocsPagination.astro';
     <p class="text-lg sm:text-xl text-gray-400 mb-10 leading-relaxed max-w-3xl">
       Git Treeline can clone a template database for each worktree so branches stay isolated. This page covers naming, PostgreSQL and SQLite behavior, the <code class="text-accent-light">gtl db</code> commands, and cleanup.
     </p>
+    <p class="text-sm text-muted mb-6">Verified against CLI v0.58.3.</p>
   </header>
   <div class="docs-guide px-4 sm:px-6 lg:px-0 pb-20">
     <h2>How database allocation works</h2>
     <p class="text-base text-muted mb-4">
-      Database cloning runs only when <code class="text-accent-light">database.template</code> is set in <code class="text-accent-light">.treeline.yml</code>. The main repository worktree uses the template database itself (no derived name). Additional worktrees get a new database whose name is built from <code class="text-accent-light">database.pattern</code> (default <code class="text-white">{'{template}_{worktree}'}</code>), so names look like <code class="text-white">myapp_development_feature_auth</code>.
+      Database cloning runs only when <code class="text-accent-light">database.template</code> is set in <code class="text-accent-light">.treeline.yml</code>. The main repository worktree uses the template database itself (no derived name). Additional worktrees get a new database whose name is built from <code class="text-accent-light">database.name</code> (default <code class="text-white">{'{template}_{worktree}'}</code>), so names look like <code class="text-white">myapp_development_feature_auth</code>.
     </p>
     <p class="text-base text-muted mb-8">
       If the registry already has an allocation for this worktree path, that allocation is reused and the clone step is skipped. Setup still runs <code class="text-accent-light">commands.setup</code> and refreshes env files.
@@ -36,14 +37,14 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       <code class="text-accent-light">database.template</code> is required for cloning: a PostgreSQL database name to pass to <code class="text-white">createdb --template</code>, or a path to the SQLite file to copy (resolved relative to the main repo for worktrees).
     </p>
     <p class="text-base text-muted mb-4">
-      <code class="text-accent-light">database.pattern</code> defaults to <code class="text-white">{'{template}_{worktree}'}</code>. Tokens: <code class="text-white">{'{template}'}</code>, <code class="text-white">{'{worktree}'}</code> (sanitized directory name), <code class="text-white">{'{project}'}</code>.
+      <code class="text-accent-light">database.name</code> defaults to <code class="text-white">{'{template}_{worktree}'}</code>. Tokens: <code class="text-white">{'{template}'}</code>, <code class="text-white">{'{worktree}'}</code> (sanitized directory name), <code class="text-white">{'{project}'}</code>.
     </p>
     <div class="mb-8">
       <Terminal label=".treeline.yml">
         <pre class="m-0 text-base leading-relaxed font-mono"><code><span class="text-accent-light">database</span>:
   <span class="text-accent-light">adapter</span>: <span class="text-white">postgresql</span>
   <span class="text-accent-light">template</span>: <span class="text-white">myapp_development</span>
-  <span class="text-accent-light">pattern</span>: <span class="text-white">"{'{template}_{worktree}'}"</span></code></pre>
+  <span class="text-accent-light">name</span>: <span class="text-white">"{'{template}_{worktree}'}"</span></code></pre>
       </Terminal>
     </div>
 
@@ -92,7 +93,7 @@ import DocsPagination from '../../../components/DocsPagination.astro';
       </Terminal>
     </div>
     <p class="text-base text-muted mb-4">
-      <code class="text-accent-light">gtl db drop</code> removes the worktree database only (it does not delete the template).
+      <code class="text-accent-light">gtl db drop</code> removes the current allocation's database after confirmation. In the main worktree, that is the template itself. The <code class="text-accent-light">drop</code>, <code class="text-accent-light">reset</code>, and <code class="text-accent-light">restore</code> prompts identify the target; check its database name, host, port, and user before confirming.
     </p>
     <div class="mb-8">
       <Terminal>
@@ -108,6 +109,31 @@ import DocsPagination from '../../../components/DocsPagination.astro';
     <h2>PostgreSQL workflow</h2>
     <p class="text-base text-muted mb-4">
       Maintain a template database with schema and seed data. Point <code class="text-accent-light">database.template</code> at it. On <code class="text-accent-light">gtl new</code> or <code class="text-accent-light">gtl setup</code>, Treeline clones it for the worktree. Run migrations and further setup in <code class="text-accent-light">commands.setup</code>. Use <code class="text-accent-light">gtl db reset</code> when you need a clean copy from the template.
+    </p>
+
+    <h2 id="updating-the-template">Updating the template</h2>
+    <p class="text-base text-muted mb-4">
+      <code class="text-accent-light">gtl db template update</code> fetches <code class="text-accent-light">merge_target</code> from <code class="text-accent-light">origin</code> and runs <code class="text-accent-light">commands.migrate</code> in a temporary detached checkout. If no merge target is configured, Treeline uses <code class="text-accent-light">origin/HEAD</code> when available, otherwise <code class="text-accent-light">main</code>. Git 2.29+ is required. Existing checkout branches and worktree databases stay unchanged.
+    </p>
+    <p class="text-base text-muted mb-4">
+      Map the variable your migration command reads to <code class="text-accent-light">{'{database}'}</code>, <code class="text-accent-light">{'{database.name}'}</code>, or <code class="text-accent-light">{'{database_1}'}</code> in <code class="text-accent-light">env</code>. For this operation, those tokens resolve to the root template. For example:
+    </p>
+    <div class="mb-6">
+      <Terminal label=".treeline.yml">
+        <pre class="m-0 text-base leading-relaxed font-mono"><code>database:
+  template: myapp_development
+  sync_on_create: true
+commands:
+  migrate: bundle install &amp;&amp; bin/rails db:migrate
+env:
+  DATABASE_URL: "postgresql://localhost/{'{database}'}"</code></pre>
+      </Terminal>
+    </div>
+    <p class="text-base text-muted mb-4">
+      Configured <code class="text-accent-light">copy_files</code> and the root repo's env seed prepare the checkout. Normal setup commands and hooks do not run. Dependencies must already be available or be prepared by <code class="text-accent-light">commands.migrate</code>. Unbound <code class="text-accent-light">DATABASE_URL</code> values in common dotenv files and auxiliary database URLs without explicit migration targets are rejected; a shadow database must be separate from the template.
+    </p>
+    <p class="text-base text-muted mb-8">
+      Enable <code class="text-accent-light">database.sync_on_create</code> to refresh before fresh clones. Without a primary database env mapping, automatic sync warns and uses the existing template; manual updates and <code class="text-accent-light">--strict</code> setup fail. To update an existing worktree database afterward, run <code class="text-accent-light">gtl db reset</code> there, replacing its data with a fresh clone.
     </p>
 
     <h2>SQLite workflow</h2>

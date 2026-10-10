@@ -17,7 +17,7 @@ import Terminal from '../../../components/Terminal.astro';
     PostgreSQL&rsquo;s <code class="text-accent-light">createdb --template</code> copies the full schema and data from an existing database without running migrations or seeds. If your template database is ready to go, a new worktree gets a complete database in seconds &mdash; even if your seed file takes 20 minutes.
   </p>
   <p class="text-muted mb-4">
-    The trick: <strong class="text-white">keep your template database up to date.</strong> If you maintain a clean, seeded template (e.g. after each migration, re-seed the template), every clone starts from a known-good state. Your CI can do this, or a <code class="text-accent-light">post_setup</code> hook on the main worktree can keep it fresh.
+    Keep the template schema current with <code class="text-accent-light">gtl db template update</code>, or enable <code class="text-accent-light">database.sync_on_create</code>. Treeline fetches the remote merge target and runs your migration command in a temporary detached checkout, targeting the root template. Existing checkout branches and worktree databases stay unchanged. Requires Git 2.29+, a primary database env mapping, and a migration command that prepares its dependencies. See <a href="/docs/database/#updating-the-template" class="text-accent-light hover:text-accent underline underline-offset-2">template update requirements</a>.
   </p>
 
   <div class="mb-6">
@@ -27,7 +27,7 @@ import Terminal from '../../../components/Terminal.astro';
 <span class="text-accent-light">database</span>:
   <span class="text-accent-light">adapter</span>: postgresql
   <span class="text-accent-light">template</span>: myapp_development
-  <span class="text-accent-light">pattern</span>: {'"{template}_{worktree}"'}
+  <span class="text-accent-light">name</span>: {'"{template}_{worktree}"'}
 
 <span class="text-accent-light">env</span>:
   <span class="text-white">PORT</span>: {'"{port}"'}
@@ -49,7 +49,7 @@ import Terminal from '../../../components/Terminal.astro';
   </div>
 
   <p class="text-muted mb-4">
-    The <code class="text-accent-light">{'{database}'}</code> token in the env block resolves to the cloned database name. The <code class="text-accent-light">pattern</code> field controls the naming: <code class="text-white">myapp_development_feature_auth</code> in this example. The template database is never modified.
+    The <code class="text-accent-light">{'{database}'}</code> token in the env block resolves to the cloned database name. The <code class="text-accent-light">name</code> field controls the naming: <code class="text-white">myapp_development_feature_auth</code> in this example. Cloning reads from the template; template updates and commands run against the main worktree can modify it.
   </p>
 
   <h3 class="text-white font-mono text-lg mb-3 mt-8">Managing worktree databases</h3>
@@ -81,7 +81,7 @@ import Terminal from '../../../components/Terminal.astro';
     </Terminal>
   </div>
 
-  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Option B: Seed from hooks (no template)</h2>
+  <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Option B: Seed with setup commands (no template)</h2>
   <p class="text-muted mb-4">
     If your team prefers running migrations + seeds on every new worktree instead of maintaining a template, skip the <code class="text-accent-light">database</code> block and use <code class="text-accent-light">commands.setup</code> to create the database from scratch.
   </p>
@@ -92,7 +92,7 @@ import Terminal from '../../../components/Terminal.astro';
 
 <span class="text-accent-light">env</span>:
   <span class="text-white">PORT</span>: {'"{port}"'}
-  <span class="text-white">DATABASE_NAME</span>: {'"myapp_dev_{worktree}"'}
+  <span class="text-white">DATABASE_URL</span>: {'"postgresql://localhost/myapp_dev_{worktree}"'}
 
 <span class="text-accent-light">commands</span>:
   <span class="text-accent-light">setup</span>:
@@ -126,7 +126,7 @@ import Terminal from '../../../components/Terminal.astro';
 
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Option D: Auxiliary databases (<code class="font-mono">database.extra</code>)</h2>
   <p class="text-muted mb-4">
-    Some apps need more than one database per worktree — a primary Postgres DB and a separate queue DB, or a main DB alongside an analytics store. <code class="text-accent-light">database.extra</code> declares additional databases that are cloned alongside the primary one. Each entry follows the same <code class="text-accent-light">adapter</code>, <code class="text-accent-light">template</code>, and <code class="text-accent-light">pattern</code> fields as the top-level <code class="text-accent-light">database</code> block.
+    Some apps need more than one database per worktree, such as a primary Postgres database and a separate queue database. <code class="text-accent-light">database.extra</code> allocates names for these auxiliary databases. Each named entry is a string pattern; your framework or <code class="text-accent-light">commands.setup</code> creates the databases.
   </p>
 
   <div class="mb-8">
@@ -138,10 +138,7 @@ import Terminal from '../../../components/Terminal.astro';
   <span class="text-accent-light">template</span>: myapp_development
 
   <span class="text-accent-light">extra</span>:
-    <span class="text-accent-light">queue</span>:
-      <span class="text-accent-light">adapter</span>: postgresql
-      <span class="text-accent-light">template</span>: myapp_queue_template
-      <span class="text-accent-light">name</span>: {'myapp_queue_{worktree}'}
+    <span class="text-accent-light">queue</span>: {'"{database.name}_queue"'}
 
 <span class="text-accent-light">env</span>:
   <span class="text-accent-light">DATABASE_URL</span>: {`"postgresql://localhost/{database}"`}
@@ -150,7 +147,7 @@ import Terminal from '../../../components/Terminal.astro';
   </div>
 
   <p class="text-muted mb-8">
-    Each worktree gets both databases cloned in one <code class="text-accent-light">gtl setup</code> run. Reference extra databases in env using the dotted token <code class="text-accent-light">{'{database.extra.queue}'}</code> — replace <code class="text-accent-light">queue</code> with the key name. All extra databases are released with <code class="text-accent-light">gtl release --drop-db</code>. Note: use <code class="text-accent-light">name:</code> rather than the legacy <code class="text-accent-light">pattern:</code> key in new configs.
+    Treeline clones only the primary database and tracks the auxiliary names for cleanup. Reference extra databases in env using the dotted token <code class="text-accent-light">{'{database.extra.queue}'}</code> — replace <code class="text-accent-light">queue</code> with the key name. All extra databases are released with <code class="text-accent-light">gtl release --drop-db</code>. Auxiliary databases use the project's database adapter and connection settings.
   </p>
 
   <h2 class="text-xl sm:text-2xl font-mono font-bold text-white mb-4 scroll-mt-24 text-balance mt-14">Port-dependent data</h2>
@@ -187,7 +184,7 @@ import Terminal from '../../../components/Terminal.astro';
           <td class="px-4 py-3">Seed is slow, team maintains a clean template database</td>
         </tr>
         <tr>
-          <td class="px-4 py-3"><strong class="text-white">Seed from hooks</strong></td>
+          <td class="px-4 py-3"><strong class="text-white">Seed with setup commands</strong></td>
           <td class="px-4 py-3">Varies</td>
           <td class="px-4 py-3">Seed is fast, or team uses migrations (Prisma, Knex) instead of templates</td>
         </tr>
